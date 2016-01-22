@@ -5,6 +5,9 @@
         Linear,
         SineEaseIn,
         SineEaseOut,
-        SineEaseInOut
+        SineEaseInOut,
+        QuadraticEaseIn,
+        QuadraticEaseOut,
+        QuadraticEaseInOut
     }
 }

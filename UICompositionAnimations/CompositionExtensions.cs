@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Hosting;
 using System.Numerics;
+using Windows.Foundation;
 
 namespace Windows.UI.Composition
 {
@@ -20,7 +21,8 @@ namespace Windows.UI.Composition
         /// <param name="visual">The Visual object for the source FrameworkElement</param>
         private static async Task SetCenterPoint(this FrameworkElement element, Visual visual)
         {
-            if (element.ActualWidth + element.ActualHeight < 0.1)
+            Func<bool> loadedTester = () => element.ActualWidth + element.ActualHeight < 0.1;
+            if (loadedTester())
             {
                 // Wait for the loaded event and set the CenterPoint
                 TaskCompletionSource<object> loadedTcs = new TaskCompletionSource<object>();
@@ -31,7 +33,14 @@ namespace Windows.UI.Composition
                     element.Loaded -= handler;
                 };
                 element.Loaded += handler;
-                await loadedTcs.Task;
+                await Task.WhenAny(loadedTcs.Task, Task.Delay(500));
+                element.Loaded -= handler;
+                if (loadedTester())
+                {
+                    element.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
+                    visual.CenterPoint = new Vector3((float)element.DesiredSize.Width / 2, (float)element.DesiredSize.Height / 2, 0);
+                    return;
+                }
             }
             visual.CenterPoint = new Vector3((float)element.ActualWidth / 2, (float)element.ActualHeight / 2, 0);
         }
@@ -299,7 +308,7 @@ namespace Windows.UI.Composition
         #region Scale only
 
         // Manages the scale animation
-        private static async Task<float> ManageCompositionFadeScaleAnimationAsync(this FrameworkElement element,
+        private static async Task<float> ManageCompositionScaleAnimationAsync(this FrameworkElement element,
             float? startXY, float endXY,
             int ms, int? msDelay, EasingFunctionNames easingFunction)
         {
@@ -375,8 +384,94 @@ namespace Windows.UI.Composition
             float? startScale, float endScale,
             int ms, int? msDelay, EasingFunctionNames easingFunction, bool reverse = false)
         {
-            startScale = await ManageCompositionFadeScaleAnimationAsync(element, startScale, endScale, ms, msDelay, easingFunction);
-            if (reverse) await ManageCompositionFadeScaleAnimationAsync(element, endScale, startScale.Value, ms, msDelay, easingFunction);
+            startScale = await ManageCompositionScaleAnimationAsync(element, startScale, endScale, ms, msDelay, easingFunction);
+            if (reverse) await ManageCompositionScaleAnimationAsync(element, endScale, startScale.Value, ms, msDelay, easingFunction);
+        }
+
+        #endregion
+
+        #region Slide only
+
+        // Manages the scale animation
+        private static async Task<float> ManageCompositionSlideAnimationAsync(this FrameworkElement element,
+            TranslationAxis axis, float? startXY, float endXY,
+            int ms, int? msDelay, EasingFunctionNames easingFunction)
+        {
+            // Get the default values
+            Visual visual = element.GetVisual();
+            visual.StopAnimation("Offset");
+
+            // Get the easing function, the duration and delay
+            CompositionEasingFunction ease = visual.GetEasingFunction(easingFunction);
+            TimeSpan duration = TimeSpan.FromMilliseconds(ms);
+            TimeSpan? delay;
+            if (msDelay.HasValue) delay = TimeSpan.FromMilliseconds(msDelay.Value);
+            else delay = null;
+
+            // Calculate the initial and final offset values
+            Vector3 initialOffset = visual.Offset;
+            Vector3 endOffset = visual.Offset;
+            if (axis == TranslationAxis.X)
+            {
+                if (startXY.HasValue) initialOffset.X = startXY.Value;
+                endOffset.X = endXY;
+            }
+            else
+            {
+                if (startXY.HasValue) initialOffset.Y = startXY.Value;
+                endOffset.Y = endXY;
+            }
+
+            // Scale animation
+            Vector3KeyFrameAnimation offsetAnimation = visual.Compositor.CreateVector3KeyFrameAnimation(endOffset, initialOffset, duration, delay, ease);
+
+            // Get the batch and start the animations
+            CompositionScopedBatch batch = visual.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            TaskCompletionSource<object> tcs = new TaskCompletionSource<object>();
+            batch.Completed += (s, e) => tcs.SetResult(null);
+            visual.StartAnimation("Offset", offsetAnimation);
+            batch.End();
+            await tcs.Task;
+            return initialOffset.X;
+        }
+
+        /// <summary>
+        /// Starts an offset animation on the target FrameworkElement and optionally runs a callback Action when the animations finish
+        /// </summary>
+        /// <param name="element">The UIElement to animate</param>
+        /// <param name="axis">The offset axis</param>
+        /// <param name="startOffset">The initial offset X and Y value. If null, the current offset will be used</param>
+        /// <param name="endOffset">The final offset X and Y value</param>
+        /// <param name="ms">The duration of the animation, in milliseconds</param>
+        /// <param name="msDelay">The delay before the animation starts, in milliseconds. If null, there will be no delay</param>
+        /// <param name="easingFunction">The easing function to use with the new animations</param>
+        /// <param name="reverse">If true, the animation will be played in reverse mode when it finishes for the first time</param>
+        /// <param name="callback">An Action to execute when the new animations end</param>
+        public static async void StartCompositionSlideAnimation(this FrameworkElement element,
+            TranslationAxis axis, float? startOffset, float endOffset,
+            int ms, int? msDelay, EasingFunctionNames easingFunction, bool reverse = false, Action callback = null)
+        {
+            await element.ManageCompositionSlideAnimationAsync(axis, startOffset, endOffset, ms, msDelay, easingFunction);
+            callback?.Invoke();
+        }
+
+        /// <summary>
+        /// Starts an offset animation on the target FrameworkElement and returns a Task that completes when the animation ends
+        /// </summary>
+        /// <param name="element">The UIElement to animate</param>
+        /// <param name="axis">The offset axis</param>
+        /// <param name="startOffset">The initial offset X and Y value. If null, the current offset will be used</param>
+        /// <param name="endOffset">The final offset X and Y value</param>
+        /// <param name="ms">The duration of the animation, in milliseconds</param>
+        /// <param name="msDelay">The delay before the animation starts, in milliseconds. If null, there will be no delay</param>
+        /// <param name="easingFunction">The easing function to use with the new animations</param>
+        /// <param name="reverse">If true, the animation will be played in reverse mode when it finishes for the first time</param>
+        public static async Task StartCompositionSlideAnimationAsync(this FrameworkElement element,
+            TranslationAxis axis, float? startOffset, float endOffset,
+            int ms, int? msDelay, EasingFunctionNames easingFunction, bool reverse = false)
+        {
+            startOffset = await element.ManageCompositionSlideAnimationAsync(axis, startOffset, endOffset, ms, msDelay, easingFunction);
+            if (reverse) await element.ManageCompositionSlideAnimationAsync(axis, endOffset, startOffset.Value, ms, msDelay, easingFunction);
         }
 
         #endregion
@@ -395,6 +490,24 @@ namespace Windows.UI.Composition
         /// <param name="element">The source UIElement</param>
         /// <param name="value">The new opacity value</param>
         public static void SetVisualOpacity(this UIElement element, float value) => element.GetVisual().Opacity = value;
+
+        /// <summary>
+        /// Sets the offset value of a given UIElement
+        /// </summary>
+        /// <param name="element">The UIElement to edit</param>
+        /// <param name="axis">The offset axis to set</param>
+        /// <param name="value">The new value for the axis to set</param>
+        public static void SetVisualOffset(this UIElement element, TranslationAxis axis, float value)
+        {
+            Visual visual = element.GetVisual();
+            Task.Run(() =>
+            {
+                Vector3 offset = visual.Offset;
+                if (axis == TranslationAxis.X) offset.X = value;
+                else offset.Y = value;
+                visual.Offset = offset;
+            });
+        }
 
         /// <summary>
         /// Returns the Visual object for a given UIElement

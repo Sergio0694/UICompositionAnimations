@@ -18,6 +18,9 @@ namespace Windows.UI.Composition
                 case EasingFunctionNames.SineEaseIn: return GetCubicBeizerFunction(compObject, 0.4f, 0, 1, 1);
                 case EasingFunctionNames.SineEaseOut: return GetCubicBeizerFunction(compObject, 0, 0, 0.6f, 1);
                 case EasingFunctionNames.SineEaseInOut: return GetCubicBeizerFunction(compObject, 0, 0.4f, 0.6f, 1);
+                case EasingFunctionNames.QuadraticEaseIn: return GetCubicBeizerFunction(compObject, 0, 0.8f, 1, 1);
+                case EasingFunctionNames.QuadraticEaseOut: return GetCubicBeizerFunction(compObject, 0, 0.4f, 0.8f, 1);
+                case EasingFunctionNames.QuadraticEaseInOut: return GetCubicBeizerFunction(compObject, 0, 0.6f, 0.3f, 1);
                 default: throw new ArgumentOutOfRangeException(nameof(ease), ease, "This shouldn't happen");
             }
         }
