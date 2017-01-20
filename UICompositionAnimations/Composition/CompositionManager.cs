@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Numerics;
+using Windows.UI.Composition;
 using Windows.UI.Xaml;
 
-namespace Windows.UI.Composition
+namespace UICompositionAnimations.Composition
 {
     /// <summary>
     /// Create composition animations using this class
     /// </summary>
-    public static class CompositionManager
+    internal static class CompositionManager
     {
         // UIElement extensions
         public static void BeginScalarAnimation(UIElement element, string propertyPath, float to, float? from, TimeSpan duration, TimeSpan? delay, CompositionEasingFunction ease)

@@ -108,11 +108,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CompositionExtensions.cs" />
-    <Compile Include="Helpers\CompositionManager.cs" />
-    <Compile Include="Helpers\CubicEaseProvider.cs" />
+    <Compile Include="Composition\CompositionManager.cs" />
+    <Compile Include="Composition\CubicBeizerEasingProvider.cs" />
     <Compile Include="Enums\EasingFunctionNames.cs" />
+    <Compile Include="Helpers\ColorConverter.cs" />
+    <Compile Include="Helpers\Extensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Enums\TranslationAxis.cs" />
+    <Compile Include="XAMLTransformExtensions.cs" />
+    <Compile Include="XAMLTransform\EasingFunctionBaseProvider.cs" />
+    <Compile Include="XAMLTransform\XAMLTransformToolkit.cs" />
     <EmbeddedResource Include="Properties\UICompositionAnimations.rd.xml" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">

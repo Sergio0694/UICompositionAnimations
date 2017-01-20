@@ -1,4 +1,4 @@
-﻿namespace Windows.UI.Composition
+﻿namespace UICompositionAnimations
 {
     /// <summary>
     /// Indicates the translation axis to use in an animation

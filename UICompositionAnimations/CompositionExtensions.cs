@@ -4,8 +4,11 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Hosting;
 using System.Numerics;
 using Windows.Foundation;
+using Windows.UI.Composition;
+using UICompositionAnimations.Composition;
+using UICompositionAnimations.Helpers;
 
-namespace Windows.UI.Composition
+namespace UICompositionAnimations
 {
     /// <summary>
     /// A static class that wraps the animation methods in the Windows.UI.Composition namespace
@@ -50,7 +53,7 @@ namespace Windows.UI.Composition
         #region Fade
 
         // Manages the fade animation
-        private static Task ManageCompositionFadeSlidenimationAsync(this UIElement element,
+        private static Task ManageCompositionFadeAnimationAsync(this UIElement element,
             float? startOp, float endOp,
             int ms, int? msDelay, EasingFunctionNames easingFunction)
         {
@@ -92,7 +95,7 @@ namespace Windows.UI.Composition
             float? startOp, float endOp,
             int ms, int? msDelay, EasingFunctionNames easingFunction, Action callback = null)
         {
-            await ManageCompositionFadeSlidenimationAsync(element, startOp, endOp, ms, msDelay, easingFunction);
+            await ManageCompositionFadeAnimationAsync(element, startOp, endOp, ms, msDelay, easingFunction);
             callback?.Invoke();
         }
 
@@ -109,7 +112,7 @@ namespace Windows.UI.Composition
             float? startOp, float endOp,
             int ms, int? msDelay, EasingFunctionNames easingFunction)
         {
-            return ManageCompositionFadeSlidenimationAsync(element, startOp, endOp, ms, msDelay, easingFunction);
+            return ManageCompositionFadeAnimationAsync(element, startOp, endOp, ms, msDelay, easingFunction);
         }
 
         #endregion
@@ -345,7 +348,7 @@ namespace Windows.UI.Composition
             };
 
             // Scale animation
-            Vector3KeyFrameAnimation offsetAnimation = visual.Compositor.CreateVector3KeyFrameAnimation(endScale, initialScale, duration, delay, ease);
+            Vector3KeyFrameAnimation offsetAnimation = visual.Compositor.CreateVector3KeyFrameAnimation(endScale, initialScale, duration, delay, ease); 
 
             // Get the batch and start the animations
             CompositionScopedBatch batch = visual.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
@@ -391,7 +394,7 @@ namespace Windows.UI.Composition
             int ms, int? msDelay, EasingFunctionNames easingFunction, bool reverse = false)
         {
             startScale = await ManageCompositionScaleAnimationAsync(element, startScale, endScale, ms, msDelay, easingFunction);
-            if (reverse) await ManageCompositionScaleAnimationAsync(element, endScale, startScale.Value, ms, msDelay, easingFunction);
+            if (reverse) await ManageCompositionScaleAnimationAsync(element, endScale, startScale.Value, ms, null, easingFunction);
         }
 
         #endregion
@@ -482,7 +485,226 @@ namespace Windows.UI.Composition
 
         #endregion
 
+        #region Roll
+
+        // Manages the roll animation
+        private static async Task<float> ManageCompositionRollAnimationAsync(this FrameworkElement element,
+            float? startOp, float endOp,
+            TranslationAxis axis, float? startXY, float endXY,
+            float? startDegrees, float endDegrees,
+            int ms, int? msDelay, EasingFunctionNames easingFunction)
+        {
+            // Get the default values
+            Visual visual = element.GetVisual();
+            visual.StopAnimation("Opacity");
+            visual.StopAnimation("Offset");
+            visual.StopAnimation("RotationAngle");
+            await element.SetCenterPoint(visual);
+
+            // Get the current opacity
+            if (!startOp.HasValue) startOp = visual.Opacity;
+
+            // Get the easing function, the duration and delay
+            CompositionEasingFunction ease = visual.GetEasingFunction(easingFunction);
+            TimeSpan duration = TimeSpan.FromMilliseconds(ms);
+            TimeSpan? delay;
+            if (msDelay.HasValue) delay = TimeSpan.FromMilliseconds(msDelay.Value);
+            else delay = null;
+
+            // Calculate the initial and final offset values
+            Vector3 initialOffset = visual.Offset;
+            Vector3 endOffset = visual.Offset;
+            if (axis == TranslationAxis.X)
+            {
+                if (startXY.HasValue) initialOffset.X = startXY.Value;
+                endOffset.X = endXY;
+            }
+            else
+            {
+                if (startXY.HasValue) initialOffset.Y = startXY.Value;
+                endOffset.Y = endXY;
+            }
+
+            // Calculate the initial and final rotation angle
+            if (startDegrees == null) startDegrees = visual.RotationAngle.ToDegrees();
+
+            // Get the opacity the animation
+            ScalarKeyFrameAnimation opacityAnimation = visual.Compositor.CreateScalarKeyFrameAnimation(endOp, startOp, duration, delay, ease);
+
+            // Scale animation
+            Vector3KeyFrameAnimation offsetAnimation = visual.Compositor.CreateVector3KeyFrameAnimation(endOffset, initialOffset, duration, delay, ease);
+
+            // Rotate animation
+            ScalarKeyFrameAnimation rotateAnimation = visual.Compositor.CreateScalarKeyFrameAnimation(endDegrees.ToRadians(), startDegrees.Value.ToRadians(), duration, delay, ease);
+
+            // Get the batch and start the animations
+            CompositionScopedBatch batch = visual.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            TaskCompletionSource<object> tcs = new TaskCompletionSource<object>();
+            batch.Completed += (s, e) => tcs.SetResult(null);
+            visual.StartAnimation("Opacity", opacityAnimation);
+            visual.StartAnimation("Offset", offsetAnimation);
+            visual.StartAnimation("RotationAngle", rotateAnimation);
+            batch.End();
+            await tcs.Task;
+            return initialOffset.X;
+        }
+
+        /// <summary>
+        /// Starts a roll animation on the target FrameworkElement and optionally runs a callback Action when the animations finish
+        /// </summary>
+        /// <param name="element">The UIElement to animate</param>
+        /// <param name="startOp">The initial opacity value. If null, the current opacity will be used</param>
+        /// <param name="endOp">The final opacity value</param>
+        /// <param name="axis">The offset axis</param>
+        /// <param name="startXY">The initial offset X and Y value. If null, the current offset will be used</param>
+        /// <param name="endXY">The final offset X and Y value</param>
+        /// <param name="startDegrees">The initial angle in degrees</param>
+        /// <param name="endDegrees">The target angle in degrees</param>
+        /// <param name="ms">The duration of the animation, in milliseconds</param>
+        /// <param name="msDelay">The delay before the animation starts, in milliseconds. If null, there will be no delay</param>
+        /// <param name="easingFunction">The easing function to use with the new animations</param>
+        /// <param name="reverse">If true, the animation will be played in reverse mode when it finishes for the first time</param>
+        /// <param name="callback">An Action to execute when the new animations end</param>
+        public static async void StartCompositionRollAnimation(this FrameworkElement element,
+            float? startOp, float endOp,
+            TranslationAxis axis, float? startXY, float endXY,
+            float? startDegrees, float endDegrees,
+            int ms, int? msDelay, EasingFunctionNames easingFunction, bool reverse = false, Action callback = null)
+        {
+            await element.ManageCompositionRollAnimationAsync(startOp, endOp, axis, startXY, endXY, startDegrees, endDegrees, ms, msDelay, easingFunction);
+            callback?.Invoke();
+        }
+
+        /// <summary>
+        /// Starts a roll animation on the target FrameworkElement and returns a Task that completes when the animation ends
+        /// </summary>
+        /// <param name="element">The UIElement to animate</param>
+        /// <param name="startOp">The initial opacity value. If null, the current opacity will be used</param>
+        /// <param name="endOp">The final opacity value</param>
+        /// <param name="axis">The offset axis</param>
+        /// <param name="startXY">The initial offset X and Y value. If null, the current offset will be used</param>
+        /// <param name="endXY">The final offset X and Y value</param>
+        /// <param name="startDegrees">The initial angle in degrees</param>
+        /// <param name="endDegrees">The target angle in degrees</param>
+        /// <param name="ms">The duration of the animation, in milliseconds</param>
+        /// <param name="msDelay">The delay before the animation starts, in milliseconds. If null, there will be no delay</param>
+        /// <param name="easingFunction">The easing function to use with the new animations</param>
+        /// <param name="reverse">If true, the animation will be played in reverse mode when it finishes for the first time</param>>
+        public static async Task StartCompositionRollAnimationAsync(this FrameworkElement element,
+            float? startOp, float endOp,
+            TranslationAxis axis, float? startXY, float endXY,
+            float? startDegrees, float endDegrees,
+            int ms, int? msDelay, EasingFunctionNames easingFunction, bool reverse = false)
+        {
+            startXY = await element.ManageCompositionRollAnimationAsync(startOp, endOp, axis, startXY, endXY, startDegrees, endDegrees, ms, msDelay, easingFunction);
+            if (reverse) await element.ManageCompositionRollAnimationAsync(startOp, endOp, axis, startXY, endXY, startDegrees, endDegrees, ms, msDelay, easingFunction);
+        }
+
+        #endregion
+
         #region Utility extensions
+
+        /// <summary>
+        /// Starts an animation on the given property of a composition object
+        /// </summary>
+        /// <param name="compObject">The target object</param>
+        /// <param name="property">The name of the property to animate</param>
+        /// <param name="value">The final value of the property</param>
+        /// <param name="duration">The animation duration</param>
+        public static Task StartAnimationAsync(this CompositionObject compObject, String property, float value, TimeSpan duration)
+        {
+            // Stop previous animations
+            compObject.StopAnimation(property);
+
+            // Setup the animation
+            ScalarKeyFrameAnimation animation = compObject.Compositor.CreateScalarKeyFrameAnimation();
+            animation.InsertKeyFrame(1f, value);
+            animation.Duration = duration;
+            compObject.StartAnimation(property, animation);
+
+            // Get the batch and start the animations
+            CompositionScopedBatch batch = compObject.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            TaskCompletionSource<object> tcs = new TaskCompletionSource<object>();
+            batch.Completed += (s, e) => tcs.SetResult(null);
+            compObject.StartAnimation(property, animation);
+            batch.End();
+            return tcs.Task;
+        }
+
+        /// <summary>
+        /// Stops the animations with the target names on the given element
+        /// </summary>
+        /// <param name="element">The target element</param>
+        /// <param name="properties">The names of the animations to stop</param>
+        public static void StopAnimations(this UIElement element, params String[] properties)
+        {
+            if (properties == null || properties.Length == 0) return;
+            Visual visual = element.GetVisual();
+            foreach (String property in properties) visual.StopAnimation(property);
+        }
+
+        /// <summary>
+        /// Sets the scale property of the visual object for a given framework element
+        /// </summary>
+        /// <param name="element">The target element</param>
+        /// <param name="x">The X value of the scale property</param>
+        /// <param name="y">The Y value of the scale property</param>
+        /// <param name="z">The Z value of the scale property</param>
+        public static async Task SetCompositionScalePropertyAsync(this FrameworkElement element, float? x, float? y, float? z)
+        {
+            // Get the default values and set the CenterPoint
+            Visual visual = element.GetVisual();
+            visual.StopAnimation("Scale");
+            await element.SetCenterPoint(visual);
+
+            // Set the scale property
+            if (x == null && y == null && z == null) return;
+            Vector3 targetScale = new Vector3
+            {
+                X = x ?? visual.Scale.X,
+                Y = y ?? visual.Scale.Y,
+                Z = z ?? visual.Scale.Z
+            };
+            visual.Scale = targetScale;
+        }
+
+        /// <summary>
+        /// Sets the offset property of the visual object for a given framework element
+        /// </summary>
+        /// <param name="element">The target element</param>
+        /// <param name="axis">The offset axis to edit</param>
+        /// <param name="offset">The final offset value to set for that axis</param>
+        public static void SetCompositionTranslateProperty(this FrameworkElement element, TranslationAxis axis, float offset)
+        {
+            // Get the element visual and stop the animation
+            Visual visual = element.GetVisual();
+            visual.StopAnimation("Offset");
+
+            // Set the desired offset
+            Vector3 endOffset = visual.Offset;
+            if (axis == TranslationAxis.X) endOffset.X = offset;
+            else endOffset.Y = offset;
+            visual.Offset = endOffset;
+        }
+
+        /// <summary>
+        /// Resets the scale, offset and opacity properties for a framework element
+        /// </summary>
+        /// <param name="element">The element to edit</param>
+        public static async Task ResetCompositionVisualPropertiesAsync(this FrameworkElement element)
+        {
+            // Get the default values and set the CenterPoint
+            Visual visual = element.GetVisual();
+            visual.StopAnimation("Scale");
+            visual.StopAnimation("Offset");
+            visual.StopAnimation("Opacity");
+            await element.SetCenterPoint(visual);
+
+            // Reset the visual properties
+            visual.Scale = Vector3.One;
+            visual.Offset = Vector3.Zero;
+            visual.Opacity = 1.0f;
+        }
 
         /// <summary>
         /// Gets the opacity for the Visual object behind a given UIElement
@@ -503,10 +725,10 @@ namespace Windows.UI.Composition
         /// <param name="element">The UIElement to edit</param>
         /// <param name="axis">The offset axis to set</param>
         /// <param name="value">The new value for the axis to set</param>
-        public static void SetVisualOffset(this UIElement element, TranslationAxis axis, float value)
+        public static Task SetVisualOffsetAsync(this UIElement element, TranslationAxis axis, float value)
         {
             Visual visual = element.GetVisual();
-            Task.Run(() =>
+            return Task.Run(() =>
             {
                 Vector3 offset = visual.Offset;
                 if (axis == TranslationAxis.X) offset.X = value;
