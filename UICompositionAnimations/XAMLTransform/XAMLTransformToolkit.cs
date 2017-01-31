@@ -95,9 +95,17 @@ namespace UICompositionAnimations.XAMLTransform
         /// <param name="to">The final property value</param>
         /// <param name="ms">The duration of the animation</param>
         /// <param name="easing">The easing function to use inside the animation</param>
-        public static DoubleAnimation CreateDoubleAnimation(DependencyObject target, String property, double? from, double? to, int ms, EasingFunctionNames easing)
+        /// <param name="enableDependecyAnimations">Indicates whether or not to apply this animation to elements that need the visual tree to be rearranged</param>
+        public static DoubleAnimation CreateDoubleAnimation(DependencyObject target, String property,
+            double? from, double? to, int ms, EasingFunctionNames easing = EasingFunctionNames.Linear, bool enableDependecyAnimations = false)
         {
-            DoubleAnimation animation = new DoubleAnimation { From = from, To = to, Duration = new Duration(TimeSpan.FromMilliseconds(ms)) };
+            DoubleAnimation animation = new DoubleAnimation
+            {
+                From = from,
+                To = to,
+                Duration = new Duration(TimeSpan.FromMilliseconds(ms)),
+                EnableDependentAnimation = enableDependecyAnimations
+            };
             if (easing != EasingFunctionNames.Linear) animation.EasingFunction = easing.ToEasingFunction();
             Storyboard.SetTarget(animation, target);
             Storyboard.SetTargetProperty(animation, property);
