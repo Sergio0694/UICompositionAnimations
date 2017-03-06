@@ -4,6 +4,7 @@ using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
+using UICompositionAnimations.Enums;
 using UICompositionAnimations.Helpers;
 using UICompositionAnimations.XAMLTransform;
 

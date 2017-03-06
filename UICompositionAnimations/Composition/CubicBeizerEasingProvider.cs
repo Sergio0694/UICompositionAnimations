@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Numerics;
 using Windows.UI.Composition;
+using UICompositionAnimations.Enums;
 
 namespace UICompositionAnimations.Composition
 {

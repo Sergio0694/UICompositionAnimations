@@ -6,6 +6,7 @@ using System.Numerics;
 using Windows.Foundation;
 using Windows.UI.Composition;
 using UICompositionAnimations.Composition;
+using UICompositionAnimations.Enums;
 using UICompositionAnimations.Helpers;
 
 namespace UICompositionAnimations
