@@ -389,7 +389,7 @@ namespace UICompositionAnimations
         /// <param name="endXY">The final axis value</param>
         /// <param name="ms">The duration of the animation in milliseconds</param>
         /// <param name="easing">The easing function to use in the animation</param>
-        public static Storyboard GetXAMLTransformSlideStoryboard(this UIElement element, 
+        public static Storyboard GetXAMLTransformSlideStoryboard(this UIElement element,
             TranslationAxis axis, double? startXY, double? endXY, int ms, EasingFunctionNames easing)
         {
             // Try to get the original starting value if necessary
@@ -425,7 +425,7 @@ namespace UICompositionAnimations
             // Get the target color
             Color targetColor = ColorConverter.String2Color(toColor);
             if (solidColorBrush.Color.Equals(targetColor)) return;
-            
+
             // Prepare the animation
             ColorAnimation animation = new ColorAnimation
             {
