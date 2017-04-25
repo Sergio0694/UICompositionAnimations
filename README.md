@@ -1,6 +1,6 @@
 # UICompositionAnimations
 
-A complete library that contains animations from the UI.Composition namespace (explicit and implicit animations, Win2D effects and more) as well as XAML transform animations.
+A complete library that contains animations from the `UI.Composition` namespace (explicit and implicit animations, Win2D effects like blur, saturation, host backdrop blur effect and more) as well as XAML transform animations.
 
 ## Introduction
 
