@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Sergio0694.UWP.UICompositionAnimations</id>
+    <version>2.1.0.0</version>
+    <title>UICompositionAnimations</title>
+    <description>A wrapper PCL to work with Windows.UI.Composition and XAML animations, and Win2D effects</description>
+    <authors>Sergio Pedri</authors>
+    <owners>Sergio Pedri</owners>
+    <projectUrl>https://github.com/Sergio0694/UICompositionAnimations</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>A wrapper PCL to work with Windows.UI.Composition and XAML animations, and Win2D effects</description>
+    <releaseNotes>Added support for the 15063 SDK, new behaviours implemented</releaseNotes>
+    <copyright>Copyright 2017</copyright>
+    <tags>uwp composition animations xaml csharp windows winrt universal app ui</tags>
+  </metadata>
+</package>
