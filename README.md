@@ -2,6 +2,8 @@
 
 A complete library that contains animations from the `UI.Composition` namespace (explicit and implicit animations, Win2D effects like blur, saturation, host backdrop blur effect and more) as well as XAML transform animations.
 
+The library is also available as a NuGet package: https://www.nuget.org/packages/UICompositionAnimations/
+
 ## Introduction
 
 The library exposes three main classes: `CompositionExtensions`, `XAMLTransformExtensions` and `AttachedCompositionEffectsFactory`, along with other helper classes.
