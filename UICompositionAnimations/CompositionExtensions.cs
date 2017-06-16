@@ -885,7 +885,6 @@ namespace UICompositionAnimations
         {
             // Get the default values and set the CenterPoint
             Visual visual = element.GetVisual();
-            visual.StopAnimation("Scale");
             await element.SetCenterPoint(visual);
 
             // Set the scale property
@@ -900,22 +899,39 @@ namespace UICompositionAnimations
         }
 
         /// <summary>
-        /// Sets the offset property of the visual object for a given framework element
+        /// Sets the offset property of the visual object for a given <see cref="UIElement"/> object
         /// </summary>
         /// <param name="element">The target element</param>
         /// <param name="axis">The offset axis to edit</param>
         /// <param name="offset">The final offset value to set for that axis</param>
-        public static void SetCompositionTranslateProperty(this FrameworkElement element, TranslationAxis axis, float offset)
+        public static void SetVisualOffset(this UIElement element, TranslationAxis axis, float offset)
         {
             // Get the element visual and stop the animation
             Visual visual = element.GetVisual();
-            visual.StopAnimation("Offset");
 
             // Set the desired offset
             Vector3 endOffset = visual.Offset;
             if (axis == TranslationAxis.X) endOffset.X = offset;
             else endOffset.Y = offset;
             visual.Offset = endOffset;
+        }
+
+        /// <summary>
+        /// Sets the offset value of a given <see cref="UIElement"/> object
+        /// </summary>
+        /// <param name="element">The <see cref="UIElement"/> to edit</param>
+        /// <param name="axis">The offset axis to set</param>
+        /// <param name="value">The new value for the axis to set</param>
+        public static Task SetVisualOffsetAsync(this UIElement element, TranslationAxis axis, float value)
+        {
+            Visual visual = element.GetVisual();
+            return Task.Run(() =>
+            {
+                Vector3 offset = visual.Offset;
+                if (axis == TranslationAxis.X) offset.X = value;
+                else offset.Y = value;
+                visual.Offset = offset;
+            });
         }
 
         /// <summary>
@@ -949,24 +965,6 @@ namespace UICompositionAnimations
         /// <param name="element">The source UIElement</param>
         /// <param name="value">The new opacity value</param>
         public static void SetVisualOpacity(this UIElement element, float value) => element.GetVisual().Opacity = value;
-
-        /// <summary>
-        /// Sets the offset value of a given UIElement
-        /// </summary>
-        /// <param name="element">The UIElement to edit</param>
-        /// <param name="axis">The offset axis to set</param>
-        /// <param name="value">The new value for the axis to set</param>
-        public static Task SetVisualOffsetAsync(this UIElement element, TranslationAxis axis, float value)
-        {
-            Visual visual = element.GetVisual();
-            return Task.Run(() =>
-            {
-                Vector3 offset = visual.Offset;
-                if (axis == TranslationAxis.X) offset.X = value;
-                else offset.Y = value;
-                visual.Offset = offset;
-            });
-        }
 
         /// <summary>
         /// Returns the Visual object for a given UIElement
