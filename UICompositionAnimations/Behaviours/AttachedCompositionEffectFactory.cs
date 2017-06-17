@@ -95,7 +95,7 @@ namespace UICompositionAnimations.Behaviours
         /// <param name="fadeIn">Indicates whether or not to fade the effect in</param>
         [MustUseReturnValue, NotNull]
         public static async Task<AttachedStaticCompositionEffect<T>> GetAttachedInAppSemiAcrylicEffectAsync<TSource, T>(
-            [NotNull] this TSource element, T target, float blur, int ms, Color color, float colorMix,
+            [NotNull] this TSource element, [NotNull] T target, float blur, int ms, Color color, float colorMix,
             [NotNull] CanvasControl canvas, [NotNull] Uri uri, int timeThreshold = 1000, bool reload = false, bool fadeIn = false)
             where TSource : FrameworkElement
             where T : FrameworkElement
@@ -534,6 +534,114 @@ namespace UICompositionAnimations.Behaviours
                 if (initiallyVisible) element.Opacity = 1;
             });
             return new AttachedAnimatableCompositionEffect<T>(element, sprite, effectBrush, Tuple.Create(animationPropertyName, on, off));
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="AttachedAnimatableCompositionEffect{T}"/> instance with blur, tint and noise effects
+        /// </summary>
+        /// <typeparam name="TSource">The type of the element that will be the source for the composition effect</typeparam>
+        /// <typeparam name="T">The type of the target element that will host the resulting <see cref="SpriteVisual"/></typeparam>
+        /// <param name="element">The target element that will host the effect</param>
+        /// <param name="target">The target host for the resulting effect</param>
+        /// <param name="on">The amount of blur effect to apply</param>
+        /// <param name="off">The default amount of blur effect to apply</param>
+        /// <param name="initiallyVisible">Indicates whether or not to apply the effect right away</param>
+        /// <param name="color">The tint color for the effect</param>
+        /// <param name="colorMix">The opacity of the color over the blurred background</param>
+        /// <param name="canvas">The source <see cref="CanvasControl"/> to generate the noise image using Win2D</param>
+        /// <param name="uri">The path of the noise image to use</param>
+        /// <param name="timeThreshold">The maximum time to wait for the Win2D device to be restored in case of initial failure</param>
+        /// <param name="reload">Indicates whether or not to force the reload of the Win2D image</param>
+        [MustUseReturnValue, NotNull]
+        public static async Task<AttachedAnimatableCompositionEffect<T>> GetAttachedAnimatableAcrylicEffectAsync<TSource, T>(
+            [NotNull] this TSource element, [NotNull] T target,
+            float on, float off, bool initiallyVisible,
+            Color color, float colorMix, [NotNull] CanvasControl canvas, [NotNull] Uri uri,
+            int timeThreshold = 1000, bool reload = false) 
+            where TSource : FrameworkElement
+            where T : FrameworkElement
+        {
+            // Get the compositor
+            Visual visual = await DispatcherHelper.GetFromUIThreadAsync(element.GetVisual);
+            Compositor compositor = visual.Compositor;
+
+            // Create the blur effect and the effect factory
+            CompositionBackdropBrush backdropBrush = compositor.CreateBackdropBrush();
+            GaussianBlurEffect blurEffect = new GaussianBlurEffect
+            {
+                Name = "Blur",
+                BlurAmount = 0f,
+                BorderMode = EffectBorderMode.Hard,
+                Optimization = EffectOptimization.Balanced,
+                Source = new CompositionEffectSourceParameter(nameof(backdropBrush))
+            };
+            const String animationPropertyName = "Blur.BlurAmount";
+
+            // Background with blur and tint overlay
+            ArithmeticCompositeEffect composite = new ArithmeticCompositeEffect
+            {
+                MultiplyAmount = 0,
+                Source1Amount = 1 - colorMix,
+                Source2Amount = colorMix, // Mix the background with the desired tint color
+                Source1 = blurEffect,
+                Source2 = new ColorSourceEffect { Color = color }
+            };
+
+            // Prepare the dictionary with the parameters to add
+            IDictionary<String, CompositionBrush> sourceParameters = new Dictionary<String, CompositionBrush>
+            {
+                { nameof(backdropBrush), backdropBrush }
+            };
+
+            // Get the noise brush using Win2D
+            CompositionSurfaceBrush noiseBitmap = await LoadWin2DSurfaceBrushFromImageAsync(compositor, canvas, uri, timeThreshold, reload);
+
+            // Make sure the Win2D brush was loaded correctly
+            CompositionEffectFactory effectFactory;
+            if (noiseBitmap != null)
+            {
+                // Noise effect
+                BorderEffect borderEffect = new BorderEffect
+                {
+                    ExtendX = CanvasEdgeBehavior.Wrap,
+                    ExtendY = CanvasEdgeBehavior.Wrap,
+                    Source = new CompositionEffectSourceParameter(nameof(noiseBitmap))
+                };
+                BlendEffect blendEffect = new BlendEffect
+                {
+                    Background = composite,
+                    Foreground = borderEffect,
+                    Mode = BlendEffectMode.Overlay
+                };
+                effectFactory = compositor.CreateEffectFactory(blendEffect, new[] { animationPropertyName });
+                sourceParameters.Add(nameof(noiseBitmap), noiseBitmap);
+            }
+            else
+            {
+                // Fallback, just use the first layers
+                effectFactory = compositor.CreateEffectFactory(composite, new[] { animationPropertyName });
+            }
+
+            // Create the effect factory and apply the final effect
+            CompositionEffectBrush effectBrush = effectFactory.CreateBrush();
+            foreach (KeyValuePair<String, CompositionBrush> pair in sourceParameters)
+            {
+                effectBrush.SetSourceParameter(pair.Key, pair.Value);
+            }
+
+            // Assign the effect to a brush and display it
+            SpriteVisual sprite = compositor.CreateSpriteVisual();
+            sprite.Brush = effectBrush;
+            await DispatcherHelper.RunOnUIThreadAsync(() =>
+            {
+                // Adjust the sprite size
+                sprite.Size = new Vector2((float)target.ActualWidth, (float)target.ActualHeight);
+
+                // Set the child visual
+                ElementCompositionPreview.SetElementChildVisual(target, sprite);
+                if (initiallyVisible) target.Opacity = 1;
+            });
+            return new AttachedAnimatableCompositionEffect<T>(target, sprite, effectBrush, Tuple.Create(animationPropertyName, on, off));
         }
 
         /// <summary>
