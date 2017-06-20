@@ -412,7 +412,7 @@ namespace UICompositionAnimations.Behaviours
                 blurEffect, sourceParameters, color, colorMix, canvas, uri, timeThreshold, reload);
 
             // Make sure the Win2D brush was loaded correctly
-            CompositionEffectFactory effectFactory = compositor.CreateEffectFactory(source);
+            CompositionEffectFactory effectFactory = compositor.CreateEffectFactory(source, new[] { animationPropertyName });
 
             // Create the effect factory and apply the final effect
             CompositionEffectBrush effectBrush = effectFactory.CreateBrush();
