@@ -2,7 +2,7 @@
 
 A complete library that contains animations from the `UI.Composition` namespace (explicit and implicit animations, Win2D effects like blur, saturation, host backdrop blur effect and more) as well as XAML transform animations.
 
-The library is also available as a NuGet package: https://www.nuget.org/packages/UICompositionAnimations/
+<a href="https://www.nuget.org/packages/UICompositionAnimations/"><img src="http://i.pi.gy/r8Wr.png" alt="Get it from NuGet" width='400' /></a>
 
 ## Introduction
 
@@ -46,6 +46,18 @@ AttachedAnimatableCompositionEffect<Border> attached = await MyBorder.GetAttache
 await attached.AnimateAsync(
   FixedAnimationType.In, // Indicates whether to fade the blur effect in or out
   TimeSpan.FromMilliseconds(500)); // The animation duration
+```
+
+Get a custom acrylic brush effect:
+```C#
+AttachedStaticCompositionEffect<Border> attached = await BlurBorder.GetAttachedInAppSemiAcrylicEffectAsync(
+  BlurBorder, // The target host control for the effect visual (can be the same as the source)
+  8, // The amount of blur to apply
+  800, // The milliseconds to initially apply the blur effect with an automatic animation
+  Color.FromArgb(byte.MaxValue, 0x1B, 0x1B, 0x1B), // The tint overlay color
+  0.8f, // The ratio of tint overlay over the source effect (the strength of the tint effect)
+  Win2DCanvas, // A CanvasControl in the current visual tree, used to render parts of the acrylic brush
+  new Uri("ms-appx:///Assets/Misc/noise.png")); // A Uri to a custom noise texture to use to create the effect
 ```
 
 ColorBrush animation
