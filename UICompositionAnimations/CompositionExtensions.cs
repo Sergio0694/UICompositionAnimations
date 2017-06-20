@@ -4,7 +4,10 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Hosting;
 using System.Numerics;
 using Windows.Foundation;
+using Windows.UI;
 using Windows.UI.Composition;
+using Windows.UI.Xaml.Controls;
+using JetBrains.Annotations;
 using UICompositionAnimations.Composition;
 using UICompositionAnimations.Enums;
 using UICompositionAnimations.Helpers;
@@ -829,6 +832,54 @@ namespace UICompositionAnimations
         {
             startXY = await element.ManageCompositionRollAnimationAsync(startOp, endOp, axis, startXY, endXY, startDegrees, endDegrees, ms, msDelay, easingFunction);
             if (reverse) await element.ManageCompositionRollAnimationAsync(startOp, endOp, axis, startXY, endXY, startDegrees, endDegrees, ms, msDelay, easingFunction);
+        }
+
+        #endregion
+
+        #region Shadows
+
+        /// <summary>
+        /// Creates a <see cref="DropShadow"/> object from the given <see cref="FrameworkElement"/>
+        /// </summary>
+        /// <param name="element">The source element for the shadow</param>
+        /// <param name="target">The optional target element to apply the shadow to (it can be the same as the source element)</param>
+        /// <param name="apply">Indicates whether or not to immediately add the shadow to the visual tree</param>
+        /// <param name="width">The optional width of the shadow (if null, the element width will be used)</param>
+        /// <param name="height">The optional height of the shadow (if null, the element height will be used)</param>
+        /// <param name="color">The shadow color (the default is <see cref="Colors.Black"/></param>
+        /// <param name="opacity">The opacity of the shadow</param>
+        /// <param name="offsetX">The optional horizontal offset of the shadow</param>
+        /// <param name="offsetY">The optional vertical offset of the shadow</param>
+        /// <param name="clipMargin">The optional margin of the clip area of the shadow</param>
+        /// <param name="clipOffsetX">The optional horizontal offset of the clip area of the shadow</param>
+        /// <param name="clipOffsetY">The optional vertical offset of the clip area of the shadow</param>
+        /// <returns>The <see cref="SpriteVisual"/> object that hosts the shadow, and the <see cref="DropShadow"/> itself</returns>
+        public static (SpriteVisual, DropShadow) GetVisualShadow(
+            [NotNull] FrameworkElement element, [NotNull] UIElement target, bool apply,
+            float? width, float? height,
+            Color color, float opacity,
+            float offsetX = 0, float offsetY = 0, 
+            Thickness? clipMargin = null, float clipOffsetX = 0, float clipOffsetY = 0)
+        {
+            // Setup the shadow
+            Visual elementVisual = ElementCompositionPreview.GetElementVisual(element);
+            Compositor compositor = elementVisual.Compositor;
+            SpriteVisual visual = compositor.CreateSpriteVisual();
+            DropShadow shadow = compositor.CreateDropShadow();
+            shadow.Color = color;
+            shadow.Opacity = opacity;
+            visual.Shadow = shadow;
+            visual.Size = new Vector2(width ?? (float)element.Width, height ?? (float)element.Height);
+            visual.Offset = new Vector3(-0.5f, -0.5f, 0);
+
+            // Clip it and add it to the visual tree
+            InsetClip clip = compositor.CreateInsetClip(
+                (float)(clipMargin?.Left ?? 0), (float)(clipMargin?.Top ?? 0),
+                (float)(clipMargin?.Right ?? 0), (float)(clipMargin?.Bottom ?? 0));
+            clip.Offset = new Vector2(clipOffsetX, clipOffsetY);
+            visual.Clip = clip;
+            if (apply) ElementCompositionPreview.SetElementChildVisual(target, visual);
+            return (visual, shadow);
         }
 
         #endregion
