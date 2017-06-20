@@ -1,20 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Numerics;
-using System.Runtime.InteropServices;
-using System.Threading;
 using System.Threading.Tasks;
-using Windows.Foundation;
-using Windows.Graphics.DirectX;
+using Windows.Graphics.Effects;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Hosting;
 using JetBrains.Annotations;
-using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
-using Microsoft.Graphics.Canvas.UI;
-using Microsoft.Graphics.Canvas.UI.Composition;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using UICompositionAnimations.Behaviours.Effects;
 using UICompositionAnimations.Behaviours.Effects.Base;
@@ -123,47 +117,17 @@ namespace UICompositionAnimations.Behaviours
             };
 
             // Background with blur and tint overlay
-            ArithmeticCompositeEffect composite = new ArithmeticCompositeEffect
-            {
-                MultiplyAmount = 0,
-                Source1Amount = 1 - colorMix,
-                Source2Amount = colorMix, // Mix the background with the desired tint color
-                Source1 = blurEffect,
-                Source2 = new ColorSourceEffect { Color = color }
-            };
             IDictionary<String, CompositionBrush> sourceParameters = new Dictionary<String, CompositionBrush>
             {
                 { nameof(backdropBrush), backdropBrush }
             };
 
             // Get the noise brush using Win2D
-            CompositionSurfaceBrush noiseBitmap = await LoadWin2DSurfaceBrushFromImageAsync(compositor, canvas, uri, timeThreshold, reload);
+            IGraphicsEffect source = await AcrylicEffectHelper.ConcatenateEffectWithTintAndBorderAsync(compositor,
+                blurEffect, sourceParameters, color, colorMix, canvas, uri, timeThreshold, reload);
 
             // Make sure the Win2D brush was loaded correctly
-            CompositionEffectFactory factory;
-            if (noiseBitmap != null)
-            {
-                // Noise effect
-                BorderEffect borderEffect = new BorderEffect
-                {
-                    ExtendX = CanvasEdgeBehavior.Wrap,
-                    ExtendY = CanvasEdgeBehavior.Wrap,
-                    Source = new CompositionEffectSourceParameter(nameof(noiseBitmap))
-                };
-                BlendEffect blendEffect = new BlendEffect
-                {
-                    Background = composite,
-                    Foreground = borderEffect,
-                    Mode = BlendEffectMode.Overlay
-                };
-                factory = compositor.CreateEffectFactory(blendEffect, new[] { blurParameterName });
-                sourceParameters.Add(nameof(noiseBitmap), noiseBitmap);
-            }
-            else
-            {
-                // Fallback, just use the first layers
-                factory = compositor.CreateEffectFactory(composite, new[] { blurParameterName });
-            }
+            CompositionEffectFactory factory = compositor.CreateEffectFactory(source);
 
             // Create the effect factory and apply the final effect
             CompositionEffectBrush effectBrush = factory.CreateBrush();
@@ -231,116 +195,6 @@ namespace UICompositionAnimations.Behaviours
         }
 
         /// <summary>
-        /// Gets a shared semaphore to avoid loading multiple Win2D resources at the same time
-        /// </summary>
-        private static readonly SemaphoreSlim Win2DSemaphore = new SemaphoreSlim(1);
-
-        /// <summary>
-        /// Gets the local cache mapping for previously loaded Win2D images
-        /// </summary>
-        private static readonly IDictionary<String, CompositionSurfaceBrush> SurfacesCache = new Dictionary<String, CompositionSurfaceBrush>();
-
-        /// <summary>
-        /// Loads a <see cref="CompositionSurfaceBrush"/> instance with the target image
-        /// </summary>
-        /// <param name="compositor">The compositor to use to render the Win2D image</param>
-        /// <param name="canvas">The <see cref="CanvasControl"/> to use to load the target image</param>
-        /// <param name="uri">The path to the image to load</param>
-        /// <param name="timeThreshold">The maximum time to wait for the Win2D device to be restored in case of initial failure/></param>
-        /// <param name="reload">Indicates whether or not to force the reload of the Win2D image</param>
-        [ItemCanBeNull]
-        private static async Task<CompositionSurfaceBrush> LoadWin2DSurfaceBrushFromImageAsync(
-            [NotNull] Compositor compositor, [NotNull] CanvasControl canvas, [NotNull] Uri uri, int timeThreshold = 1000, bool reload = false)
-        {
-            TaskCompletionSource<CompositionSurfaceBrush> tcs = new TaskCompletionSource<CompositionSurfaceBrush>();
-            async Task<CompositionSurfaceBrush> LoadImageAsync(bool shouldThrow)
-            {
-                // Load the image - this will only succeed when there's an available Win2D device
-                try
-                {
-                    using (CanvasBitmap bitmap = await CanvasBitmap.LoadAsync(canvas, uri))
-                    {
-                        // Get the device and the target surface
-                        CompositionGraphicsDevice device = CanvasComposition.CreateCompositionGraphicsDevice(compositor, canvas.Device);
-                        CompositionDrawingSurface surface = device.CreateDrawingSurface(default(Size),
-                            DirectXPixelFormat.B8G8R8A8UIntNormalized, DirectXAlphaMode.Premultiplied);
-
-                        // Calculate the surface size
-                        Size size = bitmap.Size;
-                        CanvasComposition.Resize(surface, size);
-
-                        // Draw the image on the surface and get the resulting brush
-                        using (CanvasDrawingSession session = CanvasComposition.CreateDrawingSession(surface))
-                        {
-                            session.Clear(Color.FromArgb(0, 0, 0, 0));
-                            session.DrawImage(bitmap, new Rect(0, 0, size.Width, size.Height), new Rect(0, 0, size.Width, size.Height));
-                            CompositionSurfaceBrush brush = surface.Compositor.CreateSurfaceBrush(surface);
-                            return brush;
-                        }
-                    }
-                }
-                catch when (!shouldThrow)
-                {
-                    // Win2D error, just ignore and continue
-                    return null;
-                }
-            }
-            async void Canvas_CreateResources(CanvasControl sender, CanvasCreateResourcesEventArgs args)
-            {
-                // Cancel previous actions
-                args.GetTrackedAction()?.Cancel();
-
-                // Load the image and notify the canvas
-                Task<CompositionSurfaceBrush> task = LoadImageAsync(false);
-                IAsyncAction action = task.AsAsyncAction();
-                try
-                {
-                    args.TrackAsyncAction(action);
-                    CompositionSurfaceBrush brush = await task;
-                    action.Cancel();
-                    tcs.TrySetResult(brush);
-                }
-                catch (COMException)
-                {
-                    // Somehow another action was still being tracked
-                    tcs.TrySetResult(null);
-                }
-            }
-
-            // Lock the semaphore and check the cache first
-            await Win2DSemaphore.WaitAsync();
-            if (!reload && SurfacesCache.TryGetValue(uri.ToString(), out CompositionSurfaceBrush cached))
-            {
-                Win2DSemaphore.Release();
-                return cached;
-            }
-
-            // Load the image
-            canvas.CreateResources += Canvas_CreateResources;
-            try
-            {
-                // This will throw and the canvas will re-initialize the Win2D device if needed
-                await LoadImageAsync(true);
-            }
-            catch (ArgumentException)
-            {
-                // Just ignore here
-            }
-            catch
-            {
-                // Win2D messed up big time
-                tcs.TrySetResult(null);
-            }
-            await Task.WhenAny(tcs.Task, Task.Delay(timeThreshold).ContinueWith(t => tcs.TrySetResult(null)));
-            canvas.CreateResources -= Canvas_CreateResources;
-            CompositionSurfaceBrush instance = tcs.Task.Result;
-            String key = uri.ToString();
-            if (instance != null && !SurfacesCache.ContainsKey(key)) SurfacesCache.Add(key, instance);
-            Win2DSemaphore.Release();
-            return instance;
-        }
-
-        /// <summary>
         /// Creates an effect brush that's similar to the official Acrylic brush in the Fall Creator's Update.
         /// The pipeline uses the following effects: HostBackdropBrush > <see cref="LuminanceToAlphaEffect"/> >
         /// <see cref="OpacityEffect"/> > <see cref="BlendEffect"/> > <see cref="ArithmeticCompositeEffect"/> >
@@ -383,47 +237,17 @@ namespace UICompositionAnimations.Behaviours
                 Foreground = opacityEffect,
                 Mode = BlendEffectMode.Overlay
             };
-            ArithmeticCompositeEffect composite = new ArithmeticCompositeEffect
-            {
-                MultiplyAmount = 0,
-                Source1Amount = 1 - colorMix,
-                Source2Amount = colorMix, // Mix the background with the desired tint color
-                Source1 = alphaBlend,
-                Source2 = new ColorSourceEffect { Color = color }
-            };
             IDictionary<String, CompositionBrush> sourceParameters = new Dictionary<String, CompositionBrush>
             {
                 { nameof(hostBackdropBrush), hostBackdropBrush }
             };
 
             // Get the noise brush using Win2D
-            CompositionSurfaceBrush noiseBitmap = await LoadWin2DSurfaceBrushFromImageAsync(compositor, canvas, uri, timeThreshold, reload);
+            IGraphicsEffect source = await AcrylicEffectHelper.ConcatenateEffectWithTintAndBorderAsync(compositor,
+                alphaBlend, sourceParameters, color, colorMix, canvas, uri, timeThreshold, reload);
 
             // Make sure the Win2D brush was loaded correctly
-            CompositionEffectFactory factory;
-            if (noiseBitmap != null)
-            {
-                // Layer 4 - Noise effect
-                BorderEffect borderEffect = new BorderEffect
-                {
-                    ExtendX = CanvasEdgeBehavior.Wrap,
-                    ExtendY = CanvasEdgeBehavior.Wrap,
-                    Source = new CompositionEffectSourceParameter(nameof(noiseBitmap))
-                };
-                BlendEffect blendEffect = new BlendEffect
-                {
-                    Background = composite,
-                    Foreground = borderEffect,
-                    Mode = BlendEffectMode.Overlay
-                };
-                factory = compositor.CreateEffectFactory(blendEffect);
-                sourceParameters.Add(nameof(noiseBitmap), noiseBitmap);
-            }
-            else
-            {
-                // Fallback, just use the first layers
-                factory = compositor.CreateEffectFactory(composite);
-            }
+            CompositionEffectFactory factory = compositor.CreateEffectFactory(source);
 
             // Create the effect factory and apply the final effect
             CompositionEffectBrush effectBrush = factory.CreateBrush();
@@ -577,16 +401,6 @@ namespace UICompositionAnimations.Behaviours
             };
             const String animationPropertyName = "Blur.BlurAmount";
 
-            // Background with blur and tint overlay
-            ArithmeticCompositeEffect composite = new ArithmeticCompositeEffect
-            {
-                MultiplyAmount = 0,
-                Source1Amount = 1 - colorMix,
-                Source2Amount = colorMix, // Mix the background with the desired tint color
-                Source1 = blurEffect,
-                Source2 = new ColorSourceEffect { Color = color }
-            };
-
             // Prepare the dictionary with the parameters to add
             IDictionary<String, CompositionBrush> sourceParameters = new Dictionary<String, CompositionBrush>
             {
@@ -594,33 +408,11 @@ namespace UICompositionAnimations.Behaviours
             };
 
             // Get the noise brush using Win2D
-            CompositionSurfaceBrush noiseBitmap = await LoadWin2DSurfaceBrushFromImageAsync(compositor, canvas, uri, timeThreshold, reload);
+            IGraphicsEffect source = await AcrylicEffectHelper.ConcatenateEffectWithTintAndBorderAsync(compositor,
+                blurEffect, sourceParameters, color, colorMix, canvas, uri, timeThreshold, reload);
 
             // Make sure the Win2D brush was loaded correctly
-            CompositionEffectFactory effectFactory;
-            if (noiseBitmap != null)
-            {
-                // Noise effect
-                BorderEffect borderEffect = new BorderEffect
-                {
-                    ExtendX = CanvasEdgeBehavior.Wrap,
-                    ExtendY = CanvasEdgeBehavior.Wrap,
-                    Source = new CompositionEffectSourceParameter(nameof(noiseBitmap))
-                };
-                BlendEffect blendEffect = new BlendEffect
-                {
-                    Background = composite,
-                    Foreground = borderEffect,
-                    Mode = BlendEffectMode.Overlay
-                };
-                effectFactory = compositor.CreateEffectFactory(blendEffect, new[] { animationPropertyName });
-                sourceParameters.Add(nameof(noiseBitmap), noiseBitmap);
-            }
-            else
-            {
-                // Fallback, just use the first layers
-                effectFactory = compositor.CreateEffectFactory(composite, new[] { animationPropertyName });
-            }
+            CompositionEffectFactory effectFactory = compositor.CreateEffectFactory(source);
 
             // Create the effect factory and apply the final effect
             CompositionEffectBrush effectBrush = effectFactory.CreateBrush();

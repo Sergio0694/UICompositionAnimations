@@ -113,6 +113,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Behaviours\AttachedCompositionEffectFactory.cs" />
+    <Compile Include="Behaviours\AcrylicEffectHelper.cs" />
     <Compile Include="Behaviours\Effects\AttachedAnimatableCompositionEffect.cs" />
     <Compile Include="Behaviours\Effects\AttachedCompositeAnimatableCompositionEffect.cs" />
     <Compile Include="Behaviours\Effects\AttachedCompositionEffectWithAutoResize.cs" />
