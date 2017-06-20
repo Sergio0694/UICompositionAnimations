@@ -935,6 +935,12 @@ namespace UICompositionAnimations
         }
 
         /// <summary>
+        /// Returns the visual offset for a target <see cref="UIElement"/>
+        /// </summary>
+        /// <param name="element">The input element</param>
+        public static Vector3 GetVisualOffset(this UIElement element) => element.GetVisual().Offset;
+
+        /// <summary>
         /// Resets the scale, offset and opacity properties for a framework element
         /// </summary>
         /// <param name="element">The element to edit</param>
