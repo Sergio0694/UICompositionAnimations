@@ -854,8 +854,8 @@ namespace UICompositionAnimations
         /// <param name="clipOffsetX">The optional horizontal offset of the clip area of the shadow</param>
         /// <param name="clipOffsetY">The optional vertical offset of the clip area of the shadow</param>
         /// <returns>The <see cref="SpriteVisual"/> object that hosts the shadow, and the <see cref="DropShadow"/> itself</returns>
-        public static (SpriteVisual, DropShadow) GetVisualShadow(
-            [NotNull] FrameworkElement element, [NotNull] UIElement target, bool apply,
+        public static (SpriteVisual, DropShadow) AttachVisualShadow(
+            [NotNull] this FrameworkElement element, [NotNull] UIElement target, bool apply,
             float? width, float? height,
             Color color, float opacity,
             float offsetX = 0, float offsetY = 0, 
