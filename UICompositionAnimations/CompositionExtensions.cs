@@ -872,7 +872,7 @@ namespace UICompositionAnimations
         public static ExpressionAnimation StartExpressionAnimation(
             [NotNull] this UIElement element, [NotNull] ScrollViewer scroller,
             TranslationAxis sourceXY, float parameter, 
-            TranslationAxis? targetXY, bool invertSourceAxis = false)
+            TranslationAxis? targetXY = null, bool invertSourceAxis = false)
         {
             // Get the property set and setup the scroller offset sign
             CompositionPropertySet scrollSet = ElementCompositionPreview.GetScrollViewerManipulationPropertySet(scroller);
