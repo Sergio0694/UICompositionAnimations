@@ -982,13 +982,36 @@ namespace UICompositionAnimations
         }
 
         /// <summary>
-        /// Sets the scale property of the visual object for a given framework element
+        /// Sets the scale property of the visual object for a given <see cref="UIElement"/>
         /// </summary>
         /// <param name="element">The target element</param>
         /// <param name="x">The X value of the scale property</param>
         /// <param name="y">The Y value of the scale property</param>
         /// <param name="z">The Z value of the scale property</param>
-        public static async Task SetCompositionScalePropertyAsync(this FrameworkElement element, float? x, float? y, float? z)
+        public static void SetVisualScale(this UIElement element, float? x, float? y, float? z)
+        {
+            // Get the default values and set the CenterPoint
+            Visual visual = element.GetVisual();
+
+            // Set the scale property
+            if (x == null && y == null && z == null) return;
+            Vector3 targetScale = new Vector3
+            {
+                X = x ?? visual.Scale.X,
+                Y = y ?? visual.Scale.Y,
+                Z = z ?? visual.Scale.Z
+            };
+            visual.Scale = targetScale;
+        }
+
+        /// <summary>
+        /// Sets the scale property of the visual object for a given <see cref="FrameworkElement"/> and sets the center point to the center of the element
+        /// </summary>
+        /// <param name="element">The target element</param>
+        /// <param name="x">The X value of the scale property</param>
+        /// <param name="y">The Y value of the scale property</param>
+        /// <param name="z">The Z value of the scale property</param>
+        public static async Task SetVisualScaleAsync(this FrameworkElement element, float? x, float? y, float? z)
         {
             // Get the default values and set the CenterPoint
             Visual visual = element.GetVisual();
