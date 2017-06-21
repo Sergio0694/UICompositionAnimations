@@ -76,7 +76,7 @@ namespace UICompositionAnimations.Behaviours
         /// </summary>
         /// <typeparam name="TSource">The type of the element that will be the source for the composition effect</typeparam>
         /// <typeparam name="T">The type of the target element that will host the resulting <see cref="SpriteVisual"/></typeparam>
-        /// <param name="element">The target element that will host the effect</param>
+        /// <param name="element">The <see cref="FrameworkElement"/> that will be the source of the effect</param>
         /// <param name="target">The target host for the resulting effect</param>
         /// <param name="blur">The amount of blur to apply to the element</param>
         /// <param name="ms">The duration of the initial blur animation, in milliseconds</param>
@@ -365,7 +365,7 @@ namespace UICompositionAnimations.Behaviours
         /// </summary>
         /// <typeparam name="TSource">The type of the element that will be the source for the composition effect</typeparam>
         /// <typeparam name="T">The type of the target element that will host the resulting <see cref="SpriteVisual"/></typeparam>
-        /// <param name="element">The target element that will host the effect</param>
+        /// <param name="element">The <see cref="FrameworkElement"/> that will be the source of the effect</param>
         /// <param name="target">The target host for the resulting effect</param>
         /// <param name="on">The amount of blur effect to apply</param>
         /// <param name="off">The default amount of blur effect to apply</param>
