@@ -37,7 +37,7 @@ await MyControl.StartCompositionFadeScaleAnimationAsync(
 
 Get an attached blur effect that can be animated (using composition and Win2D effects):
 ```C#
-AttachedAnimatableCompositionEffect<Border> attached = await MyBorder.GetAttachedAnimatableBlurEffectAsync(
+AttachedAnimatableCompositionEffect<Border> attached = await MyBorder.AttachCompositionAnimatableBlurEffectAsync(
   14f, // The amount of blur to apply when the effect is enabled
   0f, // The default amount of blur
   false); // Indicates whether or not to immediately apply the effect to the target amount
@@ -50,7 +50,7 @@ await attached.AnimateAsync(
 
 Get a custom acrylic brush effect:
 ```C#
-AttachedStaticCompositionEffect<Border> attached = await BlurBorder.GetAttachedInAppSemiAcrylicEffectAsync(
+AttachedStaticCompositionEffect<Border> attached = await BlurBorder.AttachCompositionInAppCustomAcrylicEffectAsync(
   BlurBorder, // The target host control for the effect visual (can be the same as the source)
   8, // The amount of blur to apply
   800, // The milliseconds to initially apply the blur effect with an automatic animation
