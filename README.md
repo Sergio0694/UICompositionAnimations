@@ -56,6 +56,7 @@ AttachedStaticCompositionEffect<Border> attached = await BlurBorder.AttachCompos
   800, // The milliseconds to initially apply the blur effect with an automatic animation
   Color.FromArgb(byte.MaxValue, 0x1B, 0x1B, 0x1B), // The tint overlay color
   0.8f, // The ratio of tint overlay over the source effect (the strength of the tint effect)
+  null, // Use the default saturation value for the effect (1)
   Win2DCanvas, // A CanvasControl in the current visual tree, used to render parts of the acrylic brush
   new Uri("ms-appx:///Assets/Misc/noise.png")); // A Uri to a custom noise texture to use to create the effect
 ```
