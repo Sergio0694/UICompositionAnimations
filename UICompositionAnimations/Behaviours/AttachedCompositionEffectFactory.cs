@@ -82,6 +82,7 @@ namespace UICompositionAnimations.Behaviours
         /// <param name="ms">The duration of the initial blur animation, in milliseconds</param>
         /// <param name="color">The tint color for the effect</param>
         /// <param name="colorMix">The opacity of the color over the blurred background</param>
+        /// <param name="saturation">An optional parameter to set the overall saturation of the effect (if null, it will default to 1)</param>
         /// <param name="canvas">The source <see cref="CanvasControl"/> to generate the noise image using Win2D</param>
         /// <param name="uri">The path of the noise image to use</param>
         /// <param name="timeThreshold">The maximum time to wait for the Win2D device to be restored in case of initial failure</param>
@@ -90,12 +91,13 @@ namespace UICompositionAnimations.Behaviours
         /// <param name="disposeOnUnload">Indicates whether or not to automatically dispose and remove the effect when the target element is unloaded</param>
         [ItemNotNull]
         public static async Task<AttachedStaticCompositionEffect<T>> AttachCompositionInAppCustomAcrylicEffectAsync<TSource, T>(
-            [NotNull] this TSource element, [NotNull] T target, float blur, int ms, Color color, float colorMix,
+            [NotNull] this TSource element, [NotNull] T target, float blur, int ms, Color color, float colorMix, float? saturation,
             [NotNull] CanvasControl canvas, [NotNull] Uri uri, int timeThreshold = 1000, bool reload = false, bool fadeIn = false, bool disposeOnUnload = false)
             where TSource : FrameworkElement
             where T : FrameworkElement
         {
             // Percentage check
+            if (saturation < 0 || saturation > 1) throw new ArgumentOutOfRangeException("The input saturation value must be in the [0,1] range");
             if (colorMix <= 0 || colorMix >= 1) throw new ArgumentOutOfRangeException("The mix factors must be in the [0,1] range");
             if (timeThreshold <= 0) throw new ArgumentOutOfRangeException("The time threshold must be a positive number");
 
@@ -126,6 +128,17 @@ namespace UICompositionAnimations.Behaviours
             // Get the noise brush using Win2D
             IGraphicsEffect source = await AcrylicEffectHelper.ConcatenateEffectWithTintAndBorderAsync(compositor,
                 blurEffect, sourceParameters, color, colorMix, canvas, uri, timeThreshold, reload);
+
+            // Add the final saturation effect if needed
+            if (saturation != null)
+            {
+                SaturationEffect saturationEffect = new SaturationEffect
+                {
+                    Saturation = saturation.Value,
+                    Source = source
+                };
+                source = saturationEffect;
+            }
 
             // Make sure the Win2D brush was loaded correctly
             CompositionEffectFactory factory = compositor.CreateEffectFactory(source, new[] { blurParameterName });
