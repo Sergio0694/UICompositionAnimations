@@ -409,6 +409,98 @@ namespace UICompositionAnimations.Behaviours
         }
 
         /// <summary>
+        /// Creates a new <see cref="AttachedAnimatableCompositionEffect{T}"/> instance with blur, tint and noise effects
+        /// </summary>
+        /// <typeparam name="TSource">The type of the element that will be the source for the composition effect</typeparam>
+        /// <typeparam name="T">The type of the target element that will host the resulting <see cref="SpriteVisual"/></typeparam>
+        /// <param name="element">The <see cref="FrameworkElement"/> that will be the source of the effect</param>
+        /// <param name="target">The target host for the resulting effect</param>
+        /// <param name="onBlur">The amount of blur effect to apply</param>
+        /// <param name="offBlur">The default amount of blur effect to apply</param>
+        /// <param name="onSaturation">The amount of saturation effect to apply</param>
+        /// <param name="offSaturation">The default amount of saturation effect to apply</param>
+        /// <param name="initiallyVisible">Indicates whether or not to apply the effect right away</param>
+        /// <param name="color">The tint color for the effect</param>
+        /// <param name="colorMix">The opacity of the color over the blurred background</param>
+        /// <param name="canvas">The source <see cref="CanvasControl"/> to generate the noise image using Win2D</param>
+        /// <param name="uri">The path of the noise image to use</param>
+        /// <param name="timeThreshold">The maximum time to wait for the Win2D device to be restored in case of initial failure</param>
+        /// <param name="reload">Indicates whether or not to force the reload of the Win2D image</param>
+        /// <param name="disposeOnUnload">Indicates whether or not to automatically dispose and remove the effect when the target element is unloaded</param>
+        [ItemNotNull]
+        public static async Task<AttachedCompositeAnimatableCompositionEffect<T>> AttachCompositionAnimatableInAppCustomAcrylicAndSaturationEffectAsync<TSource, T>(
+            [NotNull] this TSource element, [NotNull] T target,
+            float onBlur, float offBlur,
+            float onSaturation, float offSaturation,
+            bool initiallyVisible,
+            Color color, float colorMix, [NotNull] CanvasControl canvas, [NotNull] Uri uri,
+            int timeThreshold = 1000, bool reload = false, bool disposeOnUnload = false)
+            where TSource : FrameworkElement
+            where T : FrameworkElement
+        {
+            // Get the compositor
+            Visual visual = await DispatcherHelper.GetFromUIThreadAsync(element.GetVisual);
+            Compositor compositor = visual.Compositor;
+
+            // Create the blur effect and the effect factory
+            CompositionBackdropBrush backdropBrush = compositor.CreateBackdropBrush();
+            GaussianBlurEffect blurEffect = new GaussianBlurEffect
+            {
+                Name = "Blur",
+                BlurAmount = 0f,
+                BorderMode = EffectBorderMode.Hard,
+                Optimization = EffectOptimization.Balanced,
+                Source = new CompositionEffectSourceParameter(nameof(backdropBrush))
+            };
+            const String animationPropertyName = "Blur.BlurAmount";
+
+            // Prepare the dictionary with the parameters to add
+            IDictionary<String, CompositionBrush> sourceParameters = new Dictionary<String, CompositionBrush>
+            {
+                { nameof(backdropBrush), backdropBrush }
+            };
+
+            // Get the noise brush using Win2D
+            IGraphicsEffect source = await AcrylicEffectHelper.ConcatenateEffectWithTintAndBorderAsync(compositor,
+                blurEffect, sourceParameters, color, colorMix, canvas, uri, timeThreshold, reload);
+
+            // Add the final saturation effect
+            SaturationEffect saturationEffect = new SaturationEffect
+            {
+                Name = "SEffect",
+                Saturation = initiallyVisible ? offSaturation : onSaturation,
+                Source = source
+            };
+            const String saturationParameter = "SEffect.Saturation";
+
+            // Make sure the Win2D brush was loaded correctly
+            CompositionEffectFactory effectFactory = compositor.CreateEffectFactory(saturationEffect, new[]
+            {
+                animationPropertyName,
+                saturationParameter
+            });
+
+            // Create the effect factory and apply the final effect
+            CompositionEffectBrush effectBrush = effectFactory.CreateBrush();
+            foreach (KeyValuePair<String, CompositionBrush> pair in sourceParameters)
+            {
+                effectBrush.SetSourceParameter(pair.Key, pair.Value);
+            }
+
+            // Assign the effect to a brush and display it
+            SpriteVisual sprite = compositor.CreateSpriteVisual();
+            sprite.Brush = effectBrush;
+            AddToTreeAndBindSize(target.GetVisual(), target, sprite);
+            if (initiallyVisible) await DispatcherHelper.RunOnUIThreadAsync(() => element.Opacity = 1);
+            return new AttachedCompositeAnimatableCompositionEffect<T>(target, sprite, effectBrush,
+                new Dictionary<String, Tuple<float, float>>
+                {
+                    { animationPropertyName, Tuple.Create(onBlur, offBlur) },
+                    { saturationParameter, Tuple.Create(onSaturation, offSaturation) }
+                }, disposeOnUnload);
+        }
+
+        /// <summary>
         /// Creates a new <see cref="AttachedCompositeAnimatableCompositionEffect{T}"/> instance for the target element that
         /// applies both a blur and a saturation effect to the visual item
         /// </summary>
