@@ -11,7 +11,6 @@ using JetBrains.Annotations;
 using Microsoft.Graphics.Canvas.Effects;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using UICompositionAnimations.Behaviours.Effects;
-using UICompositionAnimations.Behaviours.Effects.Base;
 using UICompositionAnimations.Composition;
 using UICompositionAnimations.Enums;
 using UICompositionAnimations.Helpers;
@@ -27,15 +26,16 @@ namespace UICompositionAnimations.Behaviours
         #region Static effects
 
         /// <summary>
-        /// Creates a new <see cref="AttachedCompositionEffectWithAutoResize{T}"/> instance for the target element
+        /// Creates a new <see cref="AttachedStaticCompositionEffect{T}"/> instance for the target element
         /// </summary>
         /// <typeparam name="T">The type of element to blur</typeparam>
         /// <param name="element">The target element</param>
         /// <param name="blur">The amount of blur to apply to the element</param>
         /// <param name="ms">The duration of the initial blur animation, in milliseconds</param>
-        [MustUseReturnValue, NotNull]
-        public static AttachedCompositionEffectWithAutoResize<T> GetAttachedBlur<T>(
-            [NotNull] this T element, float blur, int ms) where T : FrameworkElement
+        /// <param name="disposeOnUnload">Indicates whether or not to automatically dispose and remove the effect when the target element is unloaded</param>
+        [NotNull]
+        public static AttachedStaticCompositionEffect<T> AttachCompositionBlurEffect<T>(
+            [NotNull] this T element, float blur, int ms, bool disposeOnUnload = false) where T : FrameworkElement
         {
             // Get the visual and the compositor
             Visual visual = element.GetVisual();
@@ -60,13 +60,13 @@ namespace UICompositionAnimations.Behaviours
             SpriteVisual sprite = compositor.CreateSpriteVisual();
             sprite.Brush = effectBrush;
             sprite.Size = new Vector2((float)element.ActualWidth, (float)element.ActualHeight);
-            ElementCompositionPreview.SetElementChildVisual(element, sprite);
+            AddToTreeAndBindSize(visual, element, sprite);
 
             // Animate the blur amount
             effectBrush.StartAnimationAsync("Blur.BlurAmount", blur, TimeSpan.FromMilliseconds(ms));
 
             // Prepare and return the manager
-            return new AttachedCompositionEffectWithAutoResize<T>(element, sprite, effectBrush);
+            return new AttachedStaticCompositionEffect<T>(element, sprite, effectBrush, disposeOnUnload);
         }
 
         /// <summary>
@@ -87,10 +87,11 @@ namespace UICompositionAnimations.Behaviours
         /// <param name="timeThreshold">The maximum time to wait for the Win2D device to be restored in case of initial failure</param>
         /// <param name="reload">Indicates whether or not to force the reload of the Win2D image</param>
         /// <param name="fadeIn">Indicates whether or not to fade the effect in</param>
-        [MustUseReturnValue, NotNull]
-        public static async Task<AttachedStaticCompositionEffect<T>> GetAttachedInAppSemiAcrylicEffectAsync<TSource, T>(
+        /// <param name="disposeOnUnload">Indicates whether or not to automatically dispose and remove the effect when the target element is unloaded</param>
+        [ItemNotNull]
+        public static async Task<AttachedStaticCompositionEffect<T>> AttachCompositionInAppCustomAcrylicEffectAsync<TSource, T>(
             [NotNull] this TSource element, [NotNull] T target, float blur, int ms, Color color, float colorMix,
-            [NotNull] CanvasControl canvas, [NotNull] Uri uri, int timeThreshold = 1000, bool reload = false, bool fadeIn = false)
+            [NotNull] CanvasControl canvas, [NotNull] Uri uri, int timeThreshold = 1000, bool reload = false, bool fadeIn = false, bool disposeOnUnload = false)
             where TSource : FrameworkElement
             where T : FrameworkElement
         {
@@ -139,20 +140,6 @@ namespace UICompositionAnimations.Behaviours
             // Create the sprite to display and add it to the visual tree
             SpriteVisual sprite = compositor.CreateSpriteVisual();
             sprite.Brush = effectBrush;
-            if (target.ActualHeight + target.ActualWidth > 0.1)
-            {
-                sprite.Size = new Vector2((float)target.ActualWidth, (float)target.ActualHeight);
-            }
-            else
-            {
-                // Schedule the size update
-                void OneShotResizer(object sender, SizeChangedEventArgs e)
-                {
-                    sprite.Size = new Vector2((float)e.NewSize.Width, (float)e.NewSize.Height);
-                    target.SizeChanged -= OneShotResizer;
-                }
-                target.SizeChanged += OneShotResizer;
-            }
 
             // Assign the visual
             if (fadeIn)
@@ -160,7 +147,7 @@ namespace UICompositionAnimations.Behaviours
                 sprite.StopAnimation("Opacity");
                 sprite.Opacity = 0;
             }
-            ElementCompositionPreview.SetElementChildVisual(target, sprite);
+            AddToTreeAndBindSize(target.GetVisual(), target, sprite);
             if (fadeIn)
             {
                 // Fade the effect in
@@ -171,7 +158,7 @@ namespace UICompositionAnimations.Behaviours
 
             // Animate the blur and return the result
             effectBrush.StartAnimationAsync(blurParameterName, blur, TimeSpan.FromMilliseconds(ms)).Forget();
-            return new AttachedStaticCompositionEffect<T>(target, sprite, effectBrush);
+            return new AttachedStaticCompositionEffect<T>(target, sprite, effectBrush, disposeOnUnload);
         }
 
         /// <summary>
@@ -179,9 +166,10 @@ namespace UICompositionAnimations.Behaviours
         /// </summary>
         /// <typeparam name="T">The type of element to use to host the effect</typeparam>
         /// <param name="element">The target element</param>
-        [MustUseReturnValue, NotNull]
-        public static AttachedStaticCompositionEffect<T> GetAttachedHostBackdropBlur<T>(
-            [NotNull] this T element) where T : FrameworkElement
+        /// <param name="disposeOnUnload">Indicates whether or not to automatically dispose and remove the effect when the target element is unloaded</param>
+        [NotNull]
+        public static AttachedStaticCompositionEffect<T> AttachCompositionHostBackdropBlurEffect<T>(
+            [NotNull] this T element, bool disposeOnUnload = false) where T : FrameworkElement
         {
             // Setup the host backdrop effect
             Visual visual = ElementCompositionPreview.GetElementVisual(element);
@@ -189,9 +177,8 @@ namespace UICompositionAnimations.Behaviours
             CompositionBackdropBrush brush = compositor.CreateHostBackdropBrush();
             SpriteVisual sprite = compositor.CreateSpriteVisual();
             sprite.Brush = brush;
-            sprite.Size = new Vector2((float)element.ActualWidth, (float)element.ActualHeight);
-            ElementCompositionPreview.SetElementChildVisual(element, sprite);
-            return new AttachedStaticCompositionEffect<T>(element, sprite, brush);
+            AddToTreeAndBindSize(visual, element, sprite);
+            return new AttachedStaticCompositionEffect<T>(element, sprite, brush, disposeOnUnload);
         }
 
         /// <summary>
@@ -208,9 +195,12 @@ namespace UICompositionAnimations.Behaviours
         /// <param name="uri">The path of the noise image to use</param>
         /// <param name="timeThreshold">The maximum time to wait for the Win2D device to be restored in case of initial failure/></param>
         /// <param name="reload">Indicates whether or not to force the reload of the Win2D image</param>
-        public static async Task<AttachedStaticCompositionEffect<T>> GetAttachedSemiAcrylicEffectAsync<T>(
+        /// <param name="disposeOnUnload">Indicates whether or not to automatically dispose and remove the effect when the target element is unloaded</param>
+        [ItemNotNull]
+        public static async Task<AttachedStaticCompositionEffect<T>> AttachCompositionCustomAcrylicEffectAsync<T>(
             [NotNull] this T element, Color color, float colorMix,
-            [NotNull] CanvasControl canvas, [NotNull] Uri uri, int timeThreshold = 1000, bool reload = false) where T : FrameworkElement
+            [NotNull] CanvasControl canvas, [NotNull] Uri uri, int timeThreshold = 1000, bool reload = false, bool disposeOnUnload = false) 
+            where T : FrameworkElement
         {
             // Percentage check
             if (colorMix <= 0 || colorMix >= 1) throw new ArgumentOutOfRangeException("The mix factors must be in the [0,1] range");
@@ -259,9 +249,8 @@ namespace UICompositionAnimations.Behaviours
             // Create the sprite to display and add it to the visual tree
             SpriteVisual sprite = compositor.CreateSpriteVisual();
             sprite.Brush = effectBrush;
-            sprite.Size = new Vector2((float)element.ActualWidth, (float)element.ActualHeight);
-            ElementCompositionPreview.SetElementChildVisual(element, sprite);
-            return new AttachedStaticCompositionEffect<T>(element, sprite, effectBrush);
+            AddToTreeAndBindSize(visual, element, sprite);
+            return new AttachedStaticCompositionEffect<T>(element, sprite, effectBrush, disposeOnUnload);
         }
 
         #endregion
@@ -276,9 +265,11 @@ namespace UICompositionAnimations.Behaviours
         /// <param name="on">The amount of saturation effect to apply</param>
         /// <param name="off">The default amount of saturation effect to apply</param>
         /// <param name="initiallyVisible">Indicates whether or not to apply the effect right away</param>
-        [MustUseReturnValue, NotNull]
-        public static async Task<AttachedAnimatableCompositionEffect<T>> GetAttachedAnimatableSaturationEffectAsync<T>(
-            [NotNull] this T element, float on, float off, bool initiallyVisible) where T : FrameworkElement
+        /// <param name="disposeOnUnload">Indicates whether or not to automatically dispose and remove the effect when the target element is unloaded</param>
+        [ItemNotNull]
+        public static async Task<AttachedAnimatableCompositionEffect<T>> AttachCompositionAnimatableSaturationEffectAsync<T>(
+            [NotNull] this T element, float on, float off, bool initiallyVisible, bool disposeOnUnload = false) 
+            where T : FrameworkElement
         {
             // Get the compositor
             Visual visual = await DispatcherHelper.GetFromUIThreadAsync(element.GetVisual);
@@ -301,16 +292,9 @@ namespace UICompositionAnimations.Behaviours
             // Assign the effect to a brush and display it
             SpriteVisual sprite = compositor.CreateSpriteVisual();
             sprite.Brush = effectBrush;
-            await DispatcherHelper.RunOnUIThreadAsync(() =>
-            {
-                // Adjust the sprite size
-                sprite.Size = new Vector2((float)element.ActualWidth, (float)element.ActualHeight);
-
-                // Set the child visual
-                ElementCompositionPreview.SetElementChildVisual(element, sprite);
-                if (initiallyVisible) element.Opacity = 1;
-            });
-            return new AttachedAnimatableCompositionEffect<T>(element, sprite, effectBrush, Tuple.Create(animationPropertyName, on, off));
+            AddToTreeAndBindSize(visual, element, sprite);
+            if (initiallyVisible) await DispatcherHelper.RunOnUIThreadAsync(() => element.Opacity = 1);
+            return new AttachedAnimatableCompositionEffect<T>(element, sprite, effectBrush, Tuple.Create(animationPropertyName, on, off), disposeOnUnload);
         }
 
         /// <summary>
@@ -321,9 +305,10 @@ namespace UICompositionAnimations.Behaviours
         /// <param name="on">The amount of blur effect to apply</param>
         /// <param name="off">The default amount of blur effect to apply</param>
         /// <param name="initiallyVisible">Indicates whether or not to apply the effect right away</param>
-        [MustUseReturnValue, NotNull]
-        public static async Task<AttachedAnimatableCompositionEffect<T>> GetAttachedAnimatableBlurEffectAsync<T>(
-            [NotNull] this T element, float on, float off, bool initiallyVisible) where T : FrameworkElement
+        /// <param name="disposeOnUnload">Indicates whether or not to automatically dispose and remove the effect when the target element is unloaded</param>
+        [ItemNotNull]
+        public static async Task<AttachedAnimatableCompositionEffect<T>> AttachCompositionAnimatableBlurEffectAsync<T>(
+            [NotNull] this T element, float on, float off, bool initiallyVisible, bool disposeOnUnload = false) where T : FrameworkElement
         {
             // Get the compositor
             Visual visual = await DispatcherHelper.GetFromUIThreadAsync(element.GetVisual);
@@ -348,16 +333,9 @@ namespace UICompositionAnimations.Behaviours
             // Assign the effect to a brush and display it
             SpriteVisual sprite = compositor.CreateSpriteVisual();
             sprite.Brush = effectBrush;
-            await DispatcherHelper.RunOnUIThreadAsync(() =>
-            {
-                // Adjust the sprite size
-                sprite.Size = new Vector2((float)element.ActualWidth, (float)element.ActualHeight);
-
-                // Set the child visual
-                ElementCompositionPreview.SetElementChildVisual(element, sprite);
-                if (initiallyVisible) element.Opacity = 1;
-            });
-            return new AttachedAnimatableCompositionEffect<T>(element, sprite, effectBrush, Tuple.Create(animationPropertyName, on, off));
+            AddToTreeAndBindSize(visual, element, sprite);
+            if (initiallyVisible) await DispatcherHelper.RunOnUIThreadAsync(() => element.Opacity = 1);
+            return new AttachedAnimatableCompositionEffect<T>(element, sprite, effectBrush, Tuple.Create(animationPropertyName, on, off), disposeOnUnload);
         }
 
         /// <summary>
@@ -376,12 +354,13 @@ namespace UICompositionAnimations.Behaviours
         /// <param name="uri">The path of the noise image to use</param>
         /// <param name="timeThreshold">The maximum time to wait for the Win2D device to be restored in case of initial failure</param>
         /// <param name="reload">Indicates whether or not to force the reload of the Win2D image</param>
-        [MustUseReturnValue, NotNull]
-        public static async Task<AttachedAnimatableCompositionEffect<T>> GetAttachedAnimatableAcrylicEffectAsync<TSource, T>(
+        /// <param name="disposeOnUnload">Indicates whether or not to automatically dispose and remove the effect when the target element is unloaded</param>
+        [ItemNotNull]
+        public static async Task<AttachedAnimatableCompositionEffect<T>> AttachCompositionAnimatableInAppCustomAcrylicEffectAsync<TSource, T>(
             [NotNull] this TSource element, [NotNull] T target,
             float on, float off, bool initiallyVisible,
             Color color, float colorMix, [NotNull] CanvasControl canvas, [NotNull] Uri uri,
-            int timeThreshold = 1000, bool reload = false) 
+            int timeThreshold = 1000, bool reload = false, bool disposeOnUnload = false) 
             where TSource : FrameworkElement
             where T : FrameworkElement
         {
@@ -424,16 +403,9 @@ namespace UICompositionAnimations.Behaviours
             // Assign the effect to a brush and display it
             SpriteVisual sprite = compositor.CreateSpriteVisual();
             sprite.Brush = effectBrush;
-            await DispatcherHelper.RunOnUIThreadAsync(() =>
-            {
-                // Adjust the sprite size
-                sprite.Size = new Vector2((float)target.ActualWidth, (float)target.ActualHeight);
-
-                // Set the child visual
-                ElementCompositionPreview.SetElementChildVisual(target, sprite);
-                if (initiallyVisible) target.Opacity = 1;
-            });
-            return new AttachedAnimatableCompositionEffect<T>(target, sprite, effectBrush, Tuple.Create(animationPropertyName, on, off));
+            AddToTreeAndBindSize(target.GetVisual(), target, sprite);
+            if (initiallyVisible) await DispatcherHelper.RunOnUIThreadAsync(() => element.Opacity = 1);
+            return new AttachedAnimatableCompositionEffect<T>(target, sprite, effectBrush, Tuple.Create(animationPropertyName, on, off), false);
         }
 
         /// <summary>
@@ -447,9 +419,11 @@ namespace UICompositionAnimations.Behaviours
         /// <param name="onSaturation">The amount of saturation effect to apply</param>
         /// <param name="offSaturation">The default amount of saturation effect to apply</param>
         /// <param name="initiallyVisible">Indicates whether or not to apply the effect right away</param>
-        [MustUseReturnValue, NotNull]
-        public static async Task<AttachedCompositeAnimatableCompositionEffect<T>> GetAttachedAnimatableBlurAndSaturationEffectAsync<T>(
-            [NotNull] this T element, float onBlur, float offBlur, float onSaturation, float offSaturation, bool initiallyVisible) where T : FrameworkElement
+        /// <param name="disposeOnUnload">Indicates whether or not to automatically dispose and remove the effect when the target element is unloaded</param>
+        [ItemNotNull]
+        public static async Task<AttachedCompositeAnimatableCompositionEffect<T>> AttachCompositionAnimatableBlurAndSaturationEffectAsync<T>(
+            [NotNull] this T element, float onBlur, float offBlur, float onSaturation, float offSaturation, bool initiallyVisible, bool disposeOnUnload = false) 
+            where T : FrameworkElement
         {
             // Get the compositor
             Visual visual = await DispatcherHelper.GetFromUIThreadAsync(element.GetVisual);
@@ -484,15 +458,8 @@ namespace UICompositionAnimations.Behaviours
             // Assign the effect to a brush and display it
             SpriteVisual sprite = compositor.CreateSpriteVisual();
             sprite.Brush = effectBrush;
-            await DispatcherHelper.RunOnUIThreadAsync(() =>
-            {
-                // Adjust the sprite size
-                sprite.Size = new Vector2((float)element.ActualWidth, (float)element.ActualHeight);
-
-                // Set the child visual
-                ElementCompositionPreview.SetElementChildVisual(element, sprite);
-                if (initiallyVisible) element.Opacity = 1;
-            });
+            AddToTreeAndBindSize(visual, element, sprite);
+            if (initiallyVisible) await DispatcherHelper.RunOnUIThreadAsync(() => element.Opacity = 1);
 
             // Prepare and return the wrapped effect
             return new AttachedCompositeAnimatableCompositionEffect<T>(element, sprite, effectBrush,
@@ -500,7 +467,30 @@ namespace UICompositionAnimations.Behaviours
                 {
                     { blurParameter, Tuple.Create(onBlur, offBlur) },
                     { saturationParameter, Tuple.Create(onSaturation, offSaturation) }
-                });
+                }, disposeOnUnload);
+        }
+
+        #endregion
+
+        #region Tools
+
+        /// <summary>
+        /// Adds a <see cref="Visual"/> object on top of the target <see cref="UIElement"/> and binds the size of the two items with an expression animation
+        /// </summary>
+        /// <param name="host">The <see cref="Visual"/> object that will host the effect</param>
+        /// <param name="element">The target <see cref="UIElement"/> (bound to the given visual) that will host the effect</param>
+        /// <param name="visual">The source <see cref="Visual"/> object to display</param>
+        private static void AddToTreeAndBindSize([NotNull] Visual host, [NotNull] UIElement element, [NotNull] Visual visual)
+        {
+            // Add the shadow as a child of the host in the visual tree
+            ElementCompositionPreview.SetElementChildVisual(element, visual);
+
+            // Make sure size of shadow host and shadow visual always stay in sync
+            ExpressionAnimation bindSizeAnimation = host.Compositor.CreateExpressionAnimation($"{nameof(host)}.Size");
+            bindSizeAnimation.SetReferenceParameter(nameof(host), host);
+
+            // Start the animation
+            visual.StartAnimation("Size", bindSizeAnimation);
         }
 
         #endregion

@@ -23,7 +23,7 @@ namespace UICompositionAnimations.Behaviours.Effects
         // Internal constructor
         internal AttachedCompositeAnimatableCompositionEffect(
             [NotNull] T element, [NotNull] SpriteVisual sprite, [NotNull] CompositionEffectBrush effectBrush,
-            [NotNull] IDictionary<String, Tuple<float, float>> propertyValues) : base(element, sprite, effectBrush)
+            [NotNull] IDictionary<String, Tuple<float, float>> propertyValues, bool disposeOnUnload) : base(element, sprite, effectBrush, disposeOnUnload)
         {
             PropertiesAnimationValues = propertyValues;
         }

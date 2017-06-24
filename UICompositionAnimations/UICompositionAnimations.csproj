@@ -116,12 +116,9 @@
     <Compile Include="Behaviours\AcrylicEffectHelper.cs" />
     <Compile Include="Behaviours\Effects\AttachedAnimatableCompositionEffect.cs" />
     <Compile Include="Behaviours\Effects\AttachedCompositeAnimatableCompositionEffect.cs" />
-    <Compile Include="Behaviours\Effects\AttachedCompositionEffectWithAutoResize.cs" />
     <Compile Include="Behaviours\Effects\Base\AttachedAnimatableCompositionEffectBase.cs" />
-    <Compile Include="Behaviours\Effects\Base\AttachedStaticCompositionEffect.cs" />
+    <Compile Include="Behaviours\Effects\AttachedStaticCompositionEffect.cs" />
     <Compile Include="Behaviours\Misc\FixedAnimationType.cs" />
-    <Compile Include="Behaviours\Misc\IAttachedCompositionEffect.cs" />
-    <Compile Include="Behaviours\Misc\IAttachedFixedCompositionEffect.cs" />
     <Compile Include="CompositionExtensions.cs" />
     <Compile Include="Composition\CompositionManager.cs" />
     <Compile Include="Composition\CubicBeizerEasingProvider.cs" />
