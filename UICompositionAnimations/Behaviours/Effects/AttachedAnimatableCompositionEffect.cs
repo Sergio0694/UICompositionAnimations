@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
@@ -25,11 +27,13 @@ namespace UICompositionAnimations.Behaviours.Effects
             Parameters = parameters;
         }
 
-        /// <summary>
-        /// Executes the animation to the desired destination status and returns a task that completes when the animation ends
-        /// </summary>
-        /// <param name="animationType">The target animation status</param>
-        /// <param name="duration">The animation duration</param>
+        /// <inheritdoc />
+        protected override IEnumerable<String> GetAnimatedProperties()
+        {
+            return base.GetAnimatedProperties().Concat(new[] { Parameters.Property });
+        }
+
+        /// <inheritdoc />
         public override Task AnimateAsync(FixedAnimationType animationType, TimeSpan duration)
         {
             return EffectBrush.StartAnimationAsync(Parameters.Property,

@@ -28,11 +28,13 @@ namespace UICompositionAnimations.Behaviours.Effects
             PropertiesAnimationValues = propertyValues;
         }
 
-        /// <summary>
-        /// Executes the animation to the desired destination status and returns a task that completes when the animation ends
-        /// </summary>
-        /// <param name="animationType">The target animation status</param>
-        /// <param name="duration">The animation duration</param>
+        /// <inheritdoc />
+        protected override IEnumerable<String> GetAnimatedProperties()
+        {
+            return base.GetAnimatedProperties().Concat(PropertiesAnimationValues.Keys);
+        }
+
+        /// <inheritdoc />
         public override Task AnimateAsync(FixedAnimationType animationType, TimeSpan duration)
         {
             // Apply all the animations in parallel and wait for their completion

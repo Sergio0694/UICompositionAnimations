@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Hosting;
@@ -39,6 +40,11 @@ namespace UICompositionAnimations.Behaviours.Effects
             if (disposeOnUnload) element.Unloaded += (s, e) => Dispose();
         }
 
+        /// <summary>
+        /// Gets a sequence of all the animated properties for the current instance
+        /// </summary>
+        protected virtual IEnumerable<String> GetAnimatedProperties() => new[] { "Size" };
+
         // Indicates whether or not the wrapped effect has already been disposed
         private bool _Disposed;
 
@@ -51,7 +57,7 @@ namespace UICompositionAnimations.Behaviours.Effects
             _Disposed = true;
             try
             {
-                Sprite.StopAnimation("Size");
+                foreach (String property in GetAnimatedProperties()) Sprite.StopAnimation(property);
                 ElementCompositionPreview.SetElementChildVisual(Element, null);
                 EffectBrush.Dispose();
                 Sprite.Dispose();
