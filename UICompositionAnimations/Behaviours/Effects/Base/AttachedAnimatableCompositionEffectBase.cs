@@ -14,8 +14,8 @@ namespace UICompositionAnimations.Behaviours.Effects.Base
     public abstract class AttachedAnimatableCompositionEffectBase<T> : AttachedStaticCompositionEffect<T> where T : FrameworkElement
     {
         // Protected constructor for the implementations
-        internal AttachedAnimatableCompositionEffectBase([NotNull] T element, [NotNull] SpriteVisual sprite, [NotNull] CompositionEffectBrush effectBrush, bool disposeOnUnload)
-            : base(element, sprite, effectBrush, disposeOnUnload) { }
+        internal AttachedAnimatableCompositionEffectBase([NotNull] T element, [NotNull] SpriteVisual sprite, bool disposeOnUnload)
+            : base(element, sprite, disposeOnUnload) { }
 
         /// <summary>
         /// Executes the animation to the desired destination status and returns a task that completes when the animation ends

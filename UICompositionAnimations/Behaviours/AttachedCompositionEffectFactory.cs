@@ -11,6 +11,7 @@ using JetBrains.Annotations;
 using Microsoft.Graphics.Canvas.Effects;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using UICompositionAnimations.Behaviours.Effects;
+using UICompositionAnimations.Behaviours.Misc;
 using UICompositionAnimations.Composition;
 using UICompositionAnimations.Enums;
 using UICompositionAnimations.Helpers;
@@ -66,7 +67,7 @@ namespace UICompositionAnimations.Behaviours
             effectBrush.StartAnimationAsync("Blur.BlurAmount", blur, TimeSpan.FromMilliseconds(ms));
 
             // Prepare and return the manager
-            return new AttachedStaticCompositionEffect<T>(element, sprite, effectBrush, disposeOnUnload);
+            return new AttachedStaticCompositionEffect<T>(element, sprite, disposeOnUnload);
         }
 
         /// <summary>
@@ -171,7 +172,7 @@ namespace UICompositionAnimations.Behaviours
 
             // Animate the blur and return the result
             effectBrush.StartAnimationAsync(blurParameterName, blur, TimeSpan.FromMilliseconds(ms)).Forget();
-            return new AttachedStaticCompositionEffect<T>(target, sprite, effectBrush, disposeOnUnload);
+            return new AttachedStaticCompositionEffect<T>(target, sprite, disposeOnUnload);
         }
 
         /// <summary>
@@ -191,7 +192,7 @@ namespace UICompositionAnimations.Behaviours
             SpriteVisual sprite = compositor.CreateSpriteVisual();
             sprite.Brush = brush;
             AddToTreeAndBindSize(visual, element, sprite);
-            return new AttachedStaticCompositionEffect<T>(element, sprite, brush, disposeOnUnload);
+            return new AttachedStaticCompositionEffect<T>(element, sprite, disposeOnUnload);
         }
 
         /// <summary>
@@ -263,7 +264,7 @@ namespace UICompositionAnimations.Behaviours
             SpriteVisual sprite = compositor.CreateSpriteVisual();
             sprite.Brush = effectBrush;
             AddToTreeAndBindSize(visual, element, sprite);
-            return new AttachedStaticCompositionEffect<T>(element, sprite, effectBrush, disposeOnUnload);
+            return new AttachedStaticCompositionEffect<T>(element, sprite, disposeOnUnload);
         }
 
         #endregion
@@ -307,7 +308,7 @@ namespace UICompositionAnimations.Behaviours
             sprite.Brush = effectBrush;
             AddToTreeAndBindSize(visual, element, sprite);
             if (initiallyVisible) await DispatcherHelper.RunOnUIThreadAsync(() => element.Opacity = 1);
-            return new AttachedAnimatableCompositionEffect<T>(element, sprite, effectBrush, Tuple.Create(animationPropertyName, on, off), disposeOnUnload);
+            return new AttachedAnimatableCompositionEffect<T>(element, sprite, new CompositionAnimationParameters(animationPropertyName, on, off), disposeOnUnload);
         }
 
         /// <summary>
@@ -348,7 +349,7 @@ namespace UICompositionAnimations.Behaviours
             sprite.Brush = effectBrush;
             AddToTreeAndBindSize(visual, element, sprite);
             if (initiallyVisible) await DispatcherHelper.RunOnUIThreadAsync(() => element.Opacity = 1);
-            return new AttachedAnimatableCompositionEffect<T>(element, sprite, effectBrush, Tuple.Create(animationPropertyName, on, off), disposeOnUnload);
+            return new AttachedAnimatableCompositionEffect<T>(element, sprite, new CompositionAnimationParameters(animationPropertyName, on, off), disposeOnUnload);
         }
 
         /// <summary>
@@ -418,7 +419,7 @@ namespace UICompositionAnimations.Behaviours
             sprite.Brush = effectBrush;
             AddToTreeAndBindSize(target.GetVisual(), target, sprite);
             if (initiallyVisible) await DispatcherHelper.RunOnUIThreadAsync(() => element.Opacity = 1);
-            return new AttachedAnimatableCompositionEffect<T>(target, sprite, effectBrush, Tuple.Create(animationPropertyName, on, off), disposeOnUnload);
+            return new AttachedAnimatableCompositionEffect<T>(target, sprite, new CompositionAnimationParameters(animationPropertyName, on, off), disposeOnUnload);
         }
 
         /// <summary>
@@ -505,11 +506,11 @@ namespace UICompositionAnimations.Behaviours
             sprite.Brush = effectBrush;
             AddToTreeAndBindSize(target.GetVisual(), target, sprite);
             if (initiallyVisible) await DispatcherHelper.RunOnUIThreadAsync(() => element.Opacity = 1);
-            return new AttachedCompositeAnimatableCompositionEffect<T>(target, sprite, effectBrush,
-                new Dictionary<String, Tuple<float, float>>
+            return new AttachedCompositeAnimatableCompositionEffect<T>(target, sprite,
+                new Dictionary<String, CompositionAnimationValueParameters>
                 {
-                    { animationPropertyName, Tuple.Create(onBlur, offBlur) },
-                    { saturationParameter, Tuple.Create(onSaturation, offSaturation) }
+                    { animationPropertyName, new CompositionAnimationValueParameters(onBlur, offBlur) },
+                    { saturationParameter, new CompositionAnimationValueParameters(onSaturation, offSaturation) }
                 }, disposeOnUnload);
         }
 
@@ -567,11 +568,11 @@ namespace UICompositionAnimations.Behaviours
             if (initiallyVisible) await DispatcherHelper.RunOnUIThreadAsync(() => element.Opacity = 1);
 
             // Prepare and return the wrapped effect
-            return new AttachedCompositeAnimatableCompositionEffect<T>(element, sprite, effectBrush,
-                new Dictionary<String, Tuple<float, float>>
+            return new AttachedCompositeAnimatableCompositionEffect<T>(element, sprite,
+                new Dictionary<String, CompositionAnimationValueParameters>
                 {
-                    { blurParameter, Tuple.Create(onBlur, offBlur) },
-                    { saturationParameter, Tuple.Create(onSaturation, offSaturation) }
+                    { blurParameter, new CompositionAnimationValueParameters(onBlur, offBlur) },
+                    { saturationParameter, new CompositionAnimationValueParameters(onSaturation, offSaturation) }
                 }, disposeOnUnload);
         }
 

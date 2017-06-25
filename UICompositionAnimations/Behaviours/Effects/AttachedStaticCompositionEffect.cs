@@ -28,15 +28,14 @@ namespace UICompositionAnimations.Behaviours.Effects
         /// Gets the composition effect brush applied to the visual element
         /// </summary>
         [NotNull]
-        public CompositionBrush EffectBrush { get; }
+        public CompositionBrush EffectBrush => Sprite.Brush;
 
         // Internal constructor
-        internal AttachedStaticCompositionEffect([NotNull] T element, [NotNull] SpriteVisual sprite, [NotNull] CompositionBrush effectBrush, bool disposeOnUnload)
+        internal AttachedStaticCompositionEffect([NotNull] T element, [NotNull] SpriteVisual sprite, bool disposeOnUnload)
         {
             // Store the parameters
             Element = element;
             Sprite = sprite;
-            EffectBrush = effectBrush;
             if (disposeOnUnload) element.Unloaded += (s, e) => Dispose();
         }
 
@@ -46,7 +45,7 @@ namespace UICompositionAnimations.Behaviours.Effects
         /// <summary>
         /// Stops the size animation, removes the effect from the visual tree and disposes it
         /// </summary>
-        public virtual void Dispose()
+        public void Dispose()
         {
             if (_Disposed) return;
             _Disposed = true;
@@ -55,6 +54,7 @@ namespace UICompositionAnimations.Behaviours.Effects
                 Sprite.StopAnimation("Size");
                 ElementCompositionPreview.SetElementChildVisual(Element, null);
                 EffectBrush.Dispose();
+                Sprite.Dispose();
             }
             catch
             {

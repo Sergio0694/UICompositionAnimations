@@ -18,12 +18,12 @@ namespace UICompositionAnimations.Behaviours.Effects
     {
         // Private animations parameters
         [NotNull]
-        private readonly IDictionary<String, Tuple<float, float>> PropertiesAnimationValues;
+        private readonly IDictionary<String, CompositionAnimationValueParameters> PropertiesAnimationValues;
 
         // Internal constructor
         internal AttachedCompositeAnimatableCompositionEffect(
-            [NotNull] T element, [NotNull] SpriteVisual sprite, [NotNull] CompositionEffectBrush effectBrush,
-            [NotNull] IDictionary<String, Tuple<float, float>> propertyValues, bool disposeOnUnload) : base(element, sprite, effectBrush, disposeOnUnload)
+            [NotNull] T element, [NotNull] SpriteVisual sprite,
+            [NotNull] IDictionary<String, CompositionAnimationValueParameters> propertyValues, bool disposeOnUnload) : base(element, sprite, disposeOnUnload)
         {
             PropertiesAnimationValues = propertyValues;
         }
@@ -38,7 +38,7 @@ namespace UICompositionAnimations.Behaviours.Effects
             // Apply all the animations in parallel and wait for their completion
             return Task.WhenAll(
                 from pair in PropertiesAnimationValues
-                let target = animationType == FixedAnimationType.In ? pair.Value.Item1 : pair.Value.Item2
+                let target = animationType == FixedAnimationType.In ? pair.Value.On : pair.Value.Off
                 select EffectBrush.StartAnimationAsync(pair.Key, target, duration));
         }
     }

@@ -15,15 +15,14 @@ namespace UICompositionAnimations.Behaviours.Effects
     public sealed class AttachedAnimatableCompositionEffect<T> : AttachedAnimatableCompositionEffectBase<T> where T : FrameworkElement
     {
         // The animation parameters
-        [NotNull]
-        private readonly Tuple<String, float, float> AnimationValues;
+        private readonly CompositionAnimationParameters Parameters;
 
         // Internal constructor
         internal AttachedAnimatableCompositionEffect(
-            [NotNull] T element, [NotNull] SpriteVisual sprite, [NotNull] CompositionEffectBrush effectBrush,
-            [NotNull] Tuple<String, float, float> animationValues, bool disposeOnUnload) : base(element, sprite, effectBrush, disposeOnUnload)
+            [NotNull] T element, [NotNull] SpriteVisual sprite,
+            [NotNull] CompositionAnimationParameters parameters, bool disposeOnUnload) : base(element, sprite, disposeOnUnload)
         {
-            AnimationValues = animationValues;
+            Parameters = parameters;
         }
 
         /// <summary>
@@ -33,8 +32,8 @@ namespace UICompositionAnimations.Behaviours.Effects
         /// <param name="duration">The animation duration</param>
         public override Task AnimateAsync(FixedAnimationType animationType, TimeSpan duration)
         {
-            return EffectBrush.StartAnimationAsync(AnimationValues.Item1,
-                animationType == FixedAnimationType.In ? AnimationValues.Item2 : AnimationValues.Item3, duration);
+            return EffectBrush.StartAnimationAsync(Parameters.Property,
+                animationType == FixedAnimationType.In ? Parameters.On : Parameters.Off, duration);
         }
     }
 }
