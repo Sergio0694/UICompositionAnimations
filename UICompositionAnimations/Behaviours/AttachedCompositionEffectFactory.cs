@@ -418,7 +418,7 @@ namespace UICompositionAnimations.Behaviours
             sprite.Brush = effectBrush;
             AddToTreeAndBindSize(target.GetVisual(), target, sprite);
             if (initiallyVisible) await DispatcherHelper.RunOnUIThreadAsync(() => element.Opacity = 1);
-            return new AttachedAnimatableCompositionEffect<T>(target, sprite, effectBrush, Tuple.Create(animationPropertyName, on, off), false);
+            return new AttachedAnimatableCompositionEffect<T>(target, sprite, effectBrush, Tuple.Create(animationPropertyName, on, off), disposeOnUnload);
         }
 
         /// <summary>
