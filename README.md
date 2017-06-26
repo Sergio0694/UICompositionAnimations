@@ -6,7 +6,7 @@ A complete library that contains animations from the `UI.Composition` namespace 
 
 ## Used by
 
-| [**OneLocker**](https://www.microsoft.com/store/apps/9nblggh3t7g3) | **Brainf\*ck#** |
+| [**OneLocker**](https://www.microsoft.com/store/apps/9nblggh3t7g3?cid=UICompositionAnimations) | **Brainf\*ck#** |
 | ------ | --- |
 | <img src="http://i.pi.gy/ZG4W.png" alt="OneLocker screens" width='564'/> | <img src="http://i.pi.gy/B0go.png" alt="IDE" width='280'/> |
 
