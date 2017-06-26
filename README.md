@@ -2,7 +2,14 @@
 
 A complete library that contains animations from the `UI.Composition` namespace (explicit and implicit animations, Win2D effects like blur, saturation, host backdrop blur effect and more) as well as XAML transform animations.
 
-<a href="https://www.nuget.org/packages/UICompositionAnimations/"><img src="http://i.pi.gy/r8Wr.png" alt="Get it from NuGet" width='400' /></a>
+<a href="https://www.nuget.org/packages/UICompositionAnimations/"><img src="http://i.pi.gy/r8Wr.png" alt="Get it from NuGet" width='280' /></a>
+
+## Used by
+
+| [**OneLocker**](https://www.microsoft.com/store/apps/9nblggh3t7g3) | **Brainf\*ck#** |
+| ------ | --- |
+| <img src="http://i.pi.gy/ZG4W.png" alt="OneLocker screens" width='564'/> | <img src="http://i.pi.gy/B0go.png" alt="IDE" width='280'/> |
+
 
 ## Introduction
 
