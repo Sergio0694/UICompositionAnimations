@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Core;
-using Windows.Foundation;
 using Windows.UI.Core;
 
 namespace UICompositionAnimations.Helpers
@@ -57,24 +56,6 @@ namespace UICompositionAnimations.Helpers
         }
 
         /// <summary>
-        /// Executes a given action on the UI thread and waits for it to be completed
-        /// </summary>
-        /// <param name="asyncCallback">The action to execute on the UI thread</param>
-        public static Task RunOnUIThreadAsync(Func<Task> asyncCallback)
-        {
-            // Check the current thread
-            if (HasUIThreadAccess) return asyncCallback();
-
-            // Schedule on the UI thread if necessary
-            TaskCompletionSource<Task> tcs = new TaskCompletionSource<Task>();
-            _CoreDispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-            {
-                tcs.SetResult(asyncCallback());
-            }).Forget();
-            return tcs.Task.Unwrap();
-        }
-
-        /// <summary>
         /// Executes a given function on the UI thread and returns its result
         /// </summary>
         /// <typeparam name="T">The return type</typeparam>
@@ -89,44 +70,6 @@ namespace UICompositionAnimations.Helpers
                 tcs.SetResult(result);
             }).Forget();
             return await tcs.Task;
-        }
-
-        /// <summary>
-        /// Executes a given async function on the UI thread and returns its result
-        /// </summary>
-        /// <typeparam name="T">The return type</typeparam>
-        /// <param name="function">The async function to execute on the UI thread</param>
-        public static Task<T> GetFromUIThreadAsync<T>(Func<Task<T>> function)
-        {
-            // Check the current thread
-            if (HasUIThreadAccess) return function();
-
-            // Schedule on the UI thread if necessary
-            TaskCompletionSource<Task<T>> tcs = new TaskCompletionSource<Task<T>>();
-            _CoreDispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-            {
-                tcs.SetResult(function());
-            }).Forget();
-            return tcs.Task.Unwrap();
-        }
-
-        /// <summary>
-        /// Executes a given async function that returns an async operation on the UI thread and returns its result
-        /// </summary>
-        /// <typeparam name="T">The return type</typeparam>
-        /// <param name="function">The async function to execute on the UI thread</param>
-        public static Task<T> GetFromUIThreadAsync<T>(Func<IAsyncOperation<T>> function)
-        {
-            // Check the current thread
-            if (HasUIThreadAccess) return function().AsTask();
-
-            // Schedule on the UI thread if necessary
-            TaskCompletionSource<Task<T>> tcs = new TaskCompletionSource<Task<T>>();
-            _CoreDispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-            {
-                tcs.SetResult(function().AsTask());
-            }).Forget();
-            return tcs.Task.Unwrap();
         }
     }
 }

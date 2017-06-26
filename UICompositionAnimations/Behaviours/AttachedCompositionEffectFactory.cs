@@ -34,8 +34,9 @@ namespace UICompositionAnimations.Behaviours
         /// <param name="blur">The amount of blur to apply to the element</param>
         /// <param name="ms">The duration of the initial blur animation, in milliseconds</param>
         /// <param name="disposeOnUnload">Indicates whether or not to automatically dispose and remove the effect when the target element is unloaded</param>
-        [NotNull]
-        public static AttachedStaticCompositionEffect<T> AttachCompositionBlurEffect<T>(
+        /// <remarks>This method returns a <see cref="ValueTask{TResult}"/> instance and runs synchronously if called on the UI thread</remarks>
+        [ItemNotNull]
+        public static async ValueTask<AttachedStaticCompositionEffect<T>> AttachCompositionBlurEffect<T>(
             [NotNull] this T element, float blur, int ms, bool disposeOnUnload = false) where T : FrameworkElement
         {
             // Get the visual and the compositor
@@ -61,10 +62,10 @@ namespace UICompositionAnimations.Behaviours
             SpriteVisual sprite = compositor.CreateSpriteVisual();
             sprite.Brush = effectBrush;
             sprite.Size = new Vector2((float)element.ActualWidth, (float)element.ActualHeight);
-            AddToTreeAndBindSize(visual, element, sprite);
+            await AddToTreeAndBindSizeAsync(visual, element, sprite);
 
             // Animate the blur amount
-            effectBrush.StartAnimationAsync("Blur.BlurAmount", blur, TimeSpan.FromMilliseconds(ms));
+            effectBrush.StartAnimationAsync("Blur.BlurAmount", blur, TimeSpan.FromMilliseconds(ms)).Forget();
 
             // Prepare and return the manager
             return new AttachedStaticCompositionEffect<T>(element, sprite, disposeOnUnload);
@@ -161,7 +162,7 @@ namespace UICompositionAnimations.Behaviours
                 sprite.StopAnimation("Opacity");
                 sprite.Opacity = 0;
             }
-            AddToTreeAndBindSize(target.GetVisual(), target, sprite);
+            await AddToTreeAndBindSizeAsync(target.GetVisual(), target, sprite);
             if (fadeIn)
             {
                 // Fade the effect in
@@ -181,8 +182,9 @@ namespace UICompositionAnimations.Behaviours
         /// <typeparam name="T">The type of element to use to host the effect</typeparam>
         /// <param name="element">The target element</param>
         /// <param name="disposeOnUnload">Indicates whether or not to automatically dispose and remove the effect when the target element is unloaded</param>
-        [NotNull]
-        public static AttachedStaticCompositionEffect<T> AttachCompositionHostBackdropBlurEffect<T>(
+        /// <remarks>This method returns a <see cref="ValueTask{TResult}"/> instance and runs synchronously if called on the UI thread</remarks>
+        [ItemNotNull]
+        public static async ValueTask<AttachedStaticCompositionEffect<T>> AttachCompositionHostBackdropBlurEffect<T>(
             [NotNull] this T element, bool disposeOnUnload = false) where T : FrameworkElement
         {
             // Setup the host backdrop effect
@@ -191,7 +193,7 @@ namespace UICompositionAnimations.Behaviours
             CompositionBackdropBrush brush = compositor.CreateHostBackdropBrush();
             SpriteVisual sprite = compositor.CreateSpriteVisual();
             sprite.Brush = brush;
-            AddToTreeAndBindSize(visual, element, sprite);
+            await AddToTreeAndBindSizeAsync(visual, element, sprite);
             return new AttachedStaticCompositionEffect<T>(element, sprite, disposeOnUnload);
         }
 
@@ -263,7 +265,7 @@ namespace UICompositionAnimations.Behaviours
             // Create the sprite to display and add it to the visual tree
             SpriteVisual sprite = compositor.CreateSpriteVisual();
             sprite.Brush = effectBrush;
-            AddToTreeAndBindSize(visual, element, sprite);
+            await AddToTreeAndBindSizeAsync(visual, element, sprite);
             return new AttachedStaticCompositionEffect<T>(element, sprite, disposeOnUnload);
         }
 
@@ -306,7 +308,7 @@ namespace UICompositionAnimations.Behaviours
             // Assign the effect to a brush and display it
             SpriteVisual sprite = compositor.CreateSpriteVisual();
             sprite.Brush = effectBrush;
-            AddToTreeAndBindSize(visual, element, sprite);
+            await AddToTreeAndBindSizeAsync(visual, element, sprite);
             if (initiallyVisible) await DispatcherHelper.RunOnUIThreadAsync(() => element.Opacity = 1);
             return new AttachedAnimatableCompositionEffect<T>(element, sprite, new CompositionAnimationParameters(animationPropertyName, on, off), disposeOnUnload);
         }
@@ -347,7 +349,7 @@ namespace UICompositionAnimations.Behaviours
             // Assign the effect to a brush and display it
             SpriteVisual sprite = compositor.CreateSpriteVisual();
             sprite.Brush = effectBrush;
-            AddToTreeAndBindSize(visual, element, sprite);
+            await AddToTreeAndBindSizeAsync(visual, element, sprite);
             if (initiallyVisible) await DispatcherHelper.RunOnUIThreadAsync(() => element.Opacity = 1);
             return new AttachedAnimatableCompositionEffect<T>(element, sprite, new CompositionAnimationParameters(animationPropertyName, on, off), disposeOnUnload);
         }
@@ -417,7 +419,7 @@ namespace UICompositionAnimations.Behaviours
             // Assign the effect to a brush and display it
             SpriteVisual sprite = compositor.CreateSpriteVisual();
             sprite.Brush = effectBrush;
-            AddToTreeAndBindSize(target.GetVisual(), target, sprite);
+            await AddToTreeAndBindSizeAsync(target.GetVisual(), target, sprite);
             if (initiallyVisible) await DispatcherHelper.RunOnUIThreadAsync(() => element.Opacity = 1);
             return new AttachedAnimatableCompositionEffect<T>(target, sprite, new CompositionAnimationParameters(animationPropertyName, on, off), disposeOnUnload);
         }
@@ -504,7 +506,7 @@ namespace UICompositionAnimations.Behaviours
             // Assign the effect to a brush and display it
             SpriteVisual sprite = compositor.CreateSpriteVisual();
             sprite.Brush = effectBrush;
-            AddToTreeAndBindSize(target.GetVisual(), target, sprite);
+            await AddToTreeAndBindSizeAsync(target.GetVisual(), target, sprite);
             if (initiallyVisible) await DispatcherHelper.RunOnUIThreadAsync(() => element.Opacity = 1);
             return new AttachedCompositeAnimatableCompositionEffect<T>(target, sprite,
                 new Dictionary<String, CompositionAnimationValueParameters>
@@ -564,7 +566,7 @@ namespace UICompositionAnimations.Behaviours
             // Assign the effect to a brush and display it
             SpriteVisual sprite = compositor.CreateSpriteVisual();
             sprite.Brush = effectBrush;
-            AddToTreeAndBindSize(visual, element, sprite);
+            await AddToTreeAndBindSizeAsync(visual, element, sprite);
             if (initiallyVisible) await DispatcherHelper.RunOnUIThreadAsync(() => element.Opacity = 1);
 
             // Prepare and return the wrapped effect
@@ -586,10 +588,10 @@ namespace UICompositionAnimations.Behaviours
         /// <param name="host">The <see cref="Visual"/> object that will host the effect</param>
         /// <param name="element">The target <see cref="UIElement"/> (bound to the given visual) that will host the effect</param>
         /// <param name="visual">The source <see cref="Visual"/> object to display</param>
-        private static void AddToTreeAndBindSize([NotNull] Visual host, [NotNull] UIElement element, [NotNull] Visual visual)
+        private static async Task AddToTreeAndBindSizeAsync([NotNull] Visual host, [NotNull] UIElement element, [NotNull] Visual visual)
         {
             // Add the shadow as a child of the host in the visual tree
-            ElementCompositionPreview.SetElementChildVisual(element, visual);
+            await DispatcherHelper.RunOnUIThreadAsync(() => ElementCompositionPreview.SetElementChildVisual(element, visual));
 
             // Make sure size of shadow host and shadow visual always stay in sync
             ExpressionAnimation bindSizeAnimation = host.Compositor.CreateExpressionAnimation($"{nameof(host)}.Size");
