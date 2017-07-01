@@ -85,7 +85,7 @@ namespace UICompositionAnimations.Behaviours
         /// <param name="color">The tint color for the effect</param>
         /// <param name="colorMix">The opacity of the color over the blurred background</param>
         /// <param name="saturation">An optional parameter to set the overall saturation of the effect (if null, it will default to 1)</param>
-        /// <param name="canvas">The source <see cref="CanvasControl"/> to generate the noise image using Win2D</param>
+        /// <param name="canvas">The optional source <see cref="CanvasControl"/> to generate the noise image using Win2D</param>
         /// <param name="uri">The path of the noise image to use</param>
         /// <param name="timeThreshold">The maximum time to wait for the Win2D device to be restored in case of initial failure</param>
         /// <param name="reload">Indicates whether or not to force the reload of the Win2D image</param>
@@ -94,7 +94,7 @@ namespace UICompositionAnimations.Behaviours
         [ItemNotNull]
         public static async Task<AttachedStaticCompositionEffect<T>> AttachCompositionInAppCustomAcrylicEffectAsync<TSource, T>(
             [NotNull] this TSource element, [NotNull] T target, float blur, int ms, Color color, float colorMix, float? saturation,
-            [NotNull] CanvasControl canvas, [NotNull] Uri uri, int timeThreshold = 1000, bool reload = false, bool fadeIn = false, bool disposeOnUnload = false)
+            [CanBeNull] CanvasControl canvas, [NotNull] Uri uri, int timeThreshold = 1000, bool reload = false, bool fadeIn = false, bool disposeOnUnload = false)
             where TSource : FrameworkElement
             where T : FrameworkElement
         {
@@ -207,7 +207,7 @@ namespace UICompositionAnimations.Behaviours
         /// <param name="element">The target element that will host the effect</param>
         /// <param name="color">The tint color for the effect</param>
         /// <param name="colorMix">The opacity of the color over the blurred background</param>
-        /// <param name="canvas">The source <see cref="CanvasControl"/> to generate the noise image using Win2D</param>
+        /// <param name="canvas">The optional source <see cref="CanvasControl"/> to generate the noise image using Win2D</param>
         /// <param name="uri">The path of the noise image to use</param>
         /// <param name="timeThreshold">The maximum time to wait for the Win2D device to be restored in case of initial failure/></param>
         /// <param name="reload">Indicates whether or not to force the reload of the Win2D image</param>
@@ -215,7 +215,7 @@ namespace UICompositionAnimations.Behaviours
         [ItemNotNull]
         public static async Task<AttachedStaticCompositionEffect<T>> AttachCompositionCustomAcrylicEffectAsync<T>(
             [NotNull] this T element, Color color, float colorMix,
-            [NotNull] CanvasControl canvas, [NotNull] Uri uri, int timeThreshold = 1000, bool reload = false, bool disposeOnUnload = false) 
+            [CanBeNull] CanvasControl canvas, [NotNull] Uri uri, int timeThreshold = 1000, bool reload = false, bool disposeOnUnload = false) 
             where T : FrameworkElement
         {
             // Percentage check
@@ -366,7 +366,7 @@ namespace UICompositionAnimations.Behaviours
         /// <param name="initiallyVisible">Indicates whether or not to apply the effect right away</param>
         /// <param name="color">The tint color for the effect</param>
         /// <param name="colorMix">The opacity of the color over the blurred background</param>
-        /// <param name="canvas">The source <see cref="CanvasControl"/> to generate the noise image using Win2D</param>
+        /// <param name="canvas">The optional source <see cref="CanvasControl"/> to generate the noise image using Win2D</param>
         /// <param name="uri">The path of the noise image to use</param>
         /// <param name="timeThreshold">The maximum time to wait for the Win2D device to be restored in case of initial failure</param>
         /// <param name="reload">Indicates whether or not to force the reload of the Win2D image</param>
@@ -375,7 +375,7 @@ namespace UICompositionAnimations.Behaviours
         public static async Task<AttachedAnimatableCompositionEffect<T>> AttachCompositionAnimatableInAppCustomAcrylicEffectAsync<TSource, T>(
             [NotNull] this TSource element, [NotNull] T target,
             float on, float off, bool initiallyVisible,
-            Color color, float colorMix, [NotNull] CanvasControl canvas, [NotNull] Uri uri,
+            Color color, float colorMix, [CanBeNull] CanvasControl canvas, [NotNull] Uri uri,
             int timeThreshold = 1000, bool reload = false, bool disposeOnUnload = false) 
             where TSource : FrameworkElement
             where T : FrameworkElement
@@ -438,7 +438,7 @@ namespace UICompositionAnimations.Behaviours
         /// <param name="initiallyVisible">Indicates whether or not to apply the effect right away</param>
         /// <param name="color">The tint color for the effect</param>
         /// <param name="colorMix">The opacity of the color over the blurred background</param>
-        /// <param name="canvas">The source <see cref="CanvasControl"/> to generate the noise image using Win2D</param>
+        /// <param name="canvas">The optional source <see cref="CanvasControl"/> to generate the noise image using Win2D</param>
         /// <param name="uri">The path of the noise image to use</param>
         /// <param name="timeThreshold">The maximum time to wait for the Win2D device to be restored in case of initial failure</param>
         /// <param name="reload">Indicates whether or not to force the reload of the Win2D image</param>
@@ -449,7 +449,7 @@ namespace UICompositionAnimations.Behaviours
             float onBlur, float offBlur,
             float onSaturation, float offSaturation,
             bool initiallyVisible,
-            Color color, float colorMix, [NotNull] CanvasControl canvas, [NotNull] Uri uri,
+            Color color, float colorMix, [CanBeNull] CanvasControl canvas, [NotNull] Uri uri,
             int timeThreshold = 1000, bool reload = false, bool disposeOnUnload = false)
             where TSource : FrameworkElement
             where T : FrameworkElement

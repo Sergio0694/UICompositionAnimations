@@ -2,14 +2,14 @@
 <package >
   <metadata>
     <id>Sergio0694.UWP.UICompositionAnimations</id>
-    <version>2.5.4.0</version>
+    <version>2.5.5.0</version>
     <title>UICompositionAnimations</title>
     <description>A wrapper UWP PCL to work with Windows.UI.Composition and XAML animations, and Win2D effects</description>
     <authors>Sergio Pedri</authors>
     <owners>Sergio Pedri</owners>
     <projectUrl>https://github.com/Sergio0694/UICompositionAnimations</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <releaseNotes>The attached effects are now working properly even when created on a background thread</releaseNotes>
+    <releaseNotes>The custom acrylic effects can now be created without using an external CanvasDevice control</releaseNotes>
     <copyright>Copyright 2017</copyright>
     <tags>uwp composition animations xaml csharp windows winrt universal app ui win2d graphics</tags>
   </metadata>

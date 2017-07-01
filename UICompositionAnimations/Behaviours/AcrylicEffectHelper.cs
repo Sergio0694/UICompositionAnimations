@@ -133,6 +133,61 @@ namespace UICompositionAnimations.Behaviours
         }
 
         /// <summary>
+        /// Loads a <see cref="CompositionSurfaceBrush"/> instance with the target image from the shared <see cref="CanvasDevice"/> instance
+        /// </summary>
+        /// <param name="compositor">The compositor to use to render the Win2D image</param>
+        /// <param name="uri">The path to the image to load</param>
+        /// <param name="reload">Indicates whether or not to force the reload of the Win2D image</param>
+        [ItemCanBeNull]
+        private static async Task<CompositionSurfaceBrush> LoadWin2DSurfaceBrushFromImageAsync(
+            [NotNull] Compositor compositor, [NotNull] Uri uri, bool reload = false)
+        {
+            // Lock the semaphore and check the cache first
+            await Win2DSemaphore.WaitAsync();
+            if (!reload && SurfacesCache.TryGetValue(uri.ToString(), out CompositionSurfaceBrush cached))
+            {
+                Win2DSemaphore.Release();
+                return cached;
+            }
+
+            // Load the image
+            CompositionSurfaceBrush brush;
+            try
+            {
+                // This will throw and the canvas will re-initialize the Win2D device if needed
+                CanvasDevice sharedDevice = CanvasDevice.GetSharedDevice();
+                using (CanvasBitmap bitmap = await CanvasBitmap.LoadAsync(sharedDevice, uri))
+                {
+                    // Get the device and the target surface
+                    CompositionGraphicsDevice device = CanvasComposition.CreateCompositionGraphicsDevice(compositor, sharedDevice);
+                    CompositionDrawingSurface surface = device.CreateDrawingSurface(default(Size),
+                        DirectXPixelFormat.B8G8R8A8UIntNormalized, DirectXAlphaMode.Premultiplied);
+
+                    // Calculate the surface size
+                    Size size = bitmap.Size;
+                    CanvasComposition.Resize(surface, size);
+
+                    // Draw the image on the surface and get the resulting brush
+                    using (CanvasDrawingSession session = CanvasComposition.CreateDrawingSession(surface))
+                    {
+                        session.Clear(Color.FromArgb(0, 0, 0, 0));
+                        session.DrawImage(bitmap, new Rect(0, 0, size.Width, size.Height), new Rect(0, 0, size.Width, size.Height));
+                        brush = surface.Compositor.CreateSurfaceBrush(surface);
+                    }
+                }
+            }
+            catch
+            {
+                // Device error
+                brush = null;
+            }
+            String key = uri.ToString();
+            if (brush != null && !SurfacesCache.ContainsKey(key)) SurfacesCache.Add(key, brush);
+            Win2DSemaphore.Release();
+            return brush;
+        }
+
+        /// <summary>
         /// Concatenates the source effect with a tint overlay and a border effect
         /// </summary>
         /// <param name="compositor">The current <see cref="Compositor"/> object to use</param>
@@ -140,7 +195,7 @@ namespace UICompositionAnimations.Behaviours
         /// <param name="parameters">A dictionary to use to keep track of reference parameters to add when creating a <see cref="CompositionEffectFactory"/></param>
         /// <param name="color">The tint color</param>
         /// <param name="colorMix">The amount of tint color to apply</param>
-        /// <param name="canvas">The <see cref="CanvasControl"/> to use to generate the image for the <see cref="BorderEffect"/></param>
+        /// <param name="canvas">The optional <see cref="CanvasControl"/> to use to generate the image for the <see cref="BorderEffect"/></param>
         /// <param name="uri">The path to the source image to use for the <see cref="BorderEffect"/></param>
         /// <param name="timeThreshold">The maximum time to wait for the Win2D device to be restored in case of initial failure/></param>
         /// <param name="reload">Indicates whether or not to force the reload of the Win2D image</param>
@@ -151,7 +206,7 @@ namespace UICompositionAnimations.Behaviours
             [NotNull] Compositor compositor,
             [NotNull] IGraphicsEffectSource source, [NotNull] IDictionary<String, CompositionBrush> parameters,
             Color color, float colorMix,
-            [NotNull] CanvasControl canvas, [NotNull] Uri uri, int timeThreshold = 1000, bool reload = false)
+            [CanBeNull] CanvasControl canvas, [NotNull] Uri uri, int timeThreshold = 1000, bool reload = false)
         {
             // Setup the tint effect
             ArithmeticCompositeEffect tint = new ArithmeticCompositeEffect
@@ -164,7 +219,9 @@ namespace UICompositionAnimations.Behaviours
             };
 
             // Get the noise brush using Win2D
-            CompositionSurfaceBrush noiseBitmap = await LoadWin2DSurfaceBrushFromImageAsync(compositor, canvas, uri, timeThreshold, reload);
+            CompositionSurfaceBrush noiseBitmap = canvas == null
+                ? await LoadWin2DSurfaceBrushFromImageAsync(compositor, uri, reload)
+                : await LoadWin2DSurfaceBrushFromImageAsync(compositor, canvas, uri, timeThreshold, reload);
 
             // Make sure the Win2D brush was loaded correctly
             if (noiseBitmap != null)
