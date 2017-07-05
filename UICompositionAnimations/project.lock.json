@@ -2,6 +2,18 @@
   "version": 2,
   "targets": {
     "UAP,Version=v10.0": {
+      "JetBrains.Annotations/10.4.0": {
+        "type": "package",
+        "dependencies": {
+          "System.Runtime": "4.1.0"
+        },
+        "compile": {
+          "lib/netstandard1.0/JetBrains.Annotations.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard1.0/JetBrains.Annotations.dll": {}
+        }
+      },
       "Microsoft.CSharp/4.0.1": {
         "type": "package",
         "dependencies": {
@@ -29,33 +41,33 @@
           "lib/netcore50/Microsoft.CSharp.dll": {}
         }
       },
-      "Microsoft.Net.Native.Compiler/1.6.0": {
+      "Microsoft.Net.Native.Compiler/1.6.2": {
         "type": "package",
         "dependencies": {
-          "Microsoft.Net.Native.SharedLibrary-arm": "1.6.0",
-          "Microsoft.Net.Native.SharedLibrary-x64": "1.6.0",
-          "Microsoft.Net.Native.SharedLibrary-x86": "1.6.0"
+          "Microsoft.Net.Native.SharedLibrary-arm": "1.6.1",
+          "Microsoft.Net.Native.SharedLibrary-x64": "1.6.1",
+          "Microsoft.Net.Native.SharedLibrary-x86": "1.6.1"
         },
         "build": {
           "build/Microsoft.Net.Native.Compiler.props": {},
           "build/Microsoft.Net.Native.Compiler.targets": {}
         }
       },
-      "Microsoft.Net.Native.SharedLibrary-arm/1.6.0": {
+      "Microsoft.Net.Native.SharedLibrary-arm/1.6.1": {
         "type": "package",
         "build": {
           "build/Microsoft.Net.Native.SharedLibrary-arm.props": {},
           "build/Microsoft.Net.Native.SharedLibrary-arm.targets": {}
         }
       },
-      "Microsoft.Net.Native.SharedLibrary-x64/1.6.0": {
+      "Microsoft.Net.Native.SharedLibrary-x64/1.6.1": {
         "type": "package",
         "build": {
           "build/Microsoft.Net.Native.SharedLibrary-x64.props": {},
           "build/Microsoft.Net.Native.SharedLibrary-x64.targets": {}
         }
       },
-      "Microsoft.Net.Native.SharedLibrary-x86/1.6.0": {
+      "Microsoft.Net.Native.SharedLibrary-x86/1.6.1": {
         "type": "package",
         "build": {
           "build/Microsoft.Net.Native.SharedLibrary-x86.props": {},
@@ -239,14 +251,14 @@
           "lib/netstandard1.0/_._": {}
         }
       },
-      "Microsoft.NETCore.UniversalWindowsPlatform/5.3.1": {
+      "Microsoft.NETCore.UniversalWindowsPlatform/5.3.3": {
         "type": "package",
         "dependencies": {
           "Microsoft.NETCore": "5.0.2",
           "Microsoft.NETCore.Portable.Compatibility": "1.0.2",
           "Microsoft.NETCore.Runtime.CoreCLR": "1.0.3",
           "Microsoft.NETCore.Targets": "1.0.2",
-          "Microsoft.Net.Native.Compiler": "1.6.0",
+          "Microsoft.Net.Native.Compiler": "1.6.2",
           "Microsoft.Win32.Primitives": "4.0.1",
           "System.Collections.NonGeneric": "4.0.1",
           "System.Collections.Specialized": "4.0.1",
@@ -2057,10 +2069,10 @@
           "lib/netstandard1.1/System.Threading.Tasks.Dataflow.dll": {}
         }
       },
-      "System.Threading.Tasks.Extensions/4.0.0": {
+      "System.Threading.Tasks.Extensions/4.3.0": {
         "type": "package",
         "compile": {
-          "lib/portable-net45+win8+wp8+wpa81/_._": {}
+          "lib/portable-net45+win8+wp8+wpa81/System.Threading.Tasks.Extensions.dll": {}
         },
         "runtime": {
           "lib/portable-net45+win8+wp8+wpa81/System.Threading.Tasks.Extensions.dll": {}
@@ -2097,6 +2109,15 @@
         },
         "runtime": {
           "lib/win81/_._": {}
+        }
+      },
+      "System.ValueTuple/4.3.1": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard1.0/System.ValueTuple.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard1.0/System.ValueTuple.dll": {}
         }
       },
       "System.Xml.ReaderWriter/4.0.11": {
@@ -2202,9 +2223,44 @@
             "rid": "aot"
           }
         }
+      },
+      "Win2D.uwp/1.20.0": {
+        "type": "package",
+        "compile": {
+          "lib/uap10.0/Microsoft.Graphics.Canvas.winmd": {}
+        },
+        "runtime": {
+          "lib/uap10.0/Microsoft.Graphics.Canvas.winmd": {}
+        },
+        "runtimeTargets": {
+          "runtimes/win10-arm/native/Microsoft.Graphics.Canvas.dll": {
+            "assetType": "native",
+            "rid": "win10-arm"
+          },
+          "runtimes/win10-x64/native/Microsoft.Graphics.Canvas.dll": {
+            "assetType": "native",
+            "rid": "win10-x64"
+          },
+          "runtimes/win10-x86/native/Microsoft.Graphics.Canvas.dll": {
+            "assetType": "native",
+            "rid": "win10-x86"
+          }
+        }
       }
     },
     "UAP,Version=v10.0/win10-arm": {
+      "JetBrains.Annotations/10.4.0": {
+        "type": "package",
+        "dependencies": {
+          "System.Runtime": "4.1.0"
+        },
+        "compile": {
+          "lib/netstandard1.0/JetBrains.Annotations.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard1.0/JetBrains.Annotations.dll": {}
+        }
+      },
       "Microsoft.CSharp/4.0.1": {
         "type": "package",
         "dependencies": {
@@ -2232,33 +2288,33 @@
           "lib/netcore50/Microsoft.CSharp.dll": {}
         }
       },
-      "Microsoft.Net.Native.Compiler/1.6.0": {
+      "Microsoft.Net.Native.Compiler/1.6.2": {
         "type": "package",
         "dependencies": {
-          "Microsoft.Net.Native.SharedLibrary-arm": "1.6.0",
-          "Microsoft.Net.Native.SharedLibrary-x64": "1.6.0",
-          "Microsoft.Net.Native.SharedLibrary-x86": "1.6.0"
+          "Microsoft.Net.Native.SharedLibrary-arm": "1.6.1",
+          "Microsoft.Net.Native.SharedLibrary-x64": "1.6.1",
+          "Microsoft.Net.Native.SharedLibrary-x86": "1.6.1"
         },
         "build": {
           "build/Microsoft.Net.Native.Compiler.props": {},
           "build/Microsoft.Net.Native.Compiler.targets": {}
         }
       },
-      "Microsoft.Net.Native.SharedLibrary-arm/1.6.0": {
+      "Microsoft.Net.Native.SharedLibrary-arm/1.6.1": {
         "type": "package",
         "build": {
           "build/Microsoft.Net.Native.SharedLibrary-arm.props": {},
           "build/Microsoft.Net.Native.SharedLibrary-arm.targets": {}
         }
       },
-      "Microsoft.Net.Native.SharedLibrary-x64/1.6.0": {
+      "Microsoft.Net.Native.SharedLibrary-x64/1.6.1": {
         "type": "package",
         "build": {
           "build/Microsoft.Net.Native.SharedLibrary-x64.props": {},
           "build/Microsoft.Net.Native.SharedLibrary-x64.targets": {}
         }
       },
-      "Microsoft.Net.Native.SharedLibrary-x86/1.6.0": {
+      "Microsoft.Net.Native.SharedLibrary-x86/1.6.1": {
         "type": "package",
         "build": {
           "build/Microsoft.Net.Native.SharedLibrary-x86.props": {},
@@ -2389,14 +2445,14 @@
           "lib/netstandard1.0/_._": {}
         }
       },
-      "Microsoft.NETCore.UniversalWindowsPlatform/5.3.1": {
+      "Microsoft.NETCore.UniversalWindowsPlatform/5.3.3": {
         "type": "package",
         "dependencies": {
           "Microsoft.NETCore": "5.0.2",
           "Microsoft.NETCore.Portable.Compatibility": "1.0.2",
           "Microsoft.NETCore.Runtime.CoreCLR": "1.0.3",
           "Microsoft.NETCore.Targets": "1.0.2",
-          "Microsoft.Net.Native.Compiler": "1.6.0",
+          "Microsoft.Net.Native.Compiler": "1.6.2",
           "Microsoft.Win32.Primitives": "4.0.1",
           "System.Collections.NonGeneric": "4.0.1",
           "System.Collections.Specialized": "4.0.1",
@@ -4348,10 +4404,10 @@
           "lib/netstandard1.1/System.Threading.Tasks.Dataflow.dll": {}
         }
       },
-      "System.Threading.Tasks.Extensions/4.0.0": {
+      "System.Threading.Tasks.Extensions/4.3.0": {
         "type": "package",
         "compile": {
-          "lib/portable-net45+win8+wp8+wpa81/_._": {}
+          "lib/portable-net45+win8+wp8+wpa81/System.Threading.Tasks.Extensions.dll": {}
         },
         "runtime": {
           "lib/portable-net45+win8+wp8+wpa81/System.Threading.Tasks.Extensions.dll": {}
@@ -4389,6 +4445,15 @@
         },
         "runtime": {
           "lib/win81/_._": {}
+        }
+      },
+      "System.ValueTuple/4.3.1": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard1.0/System.ValueTuple.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard1.0/System.ValueTuple.dll": {}
         }
       },
       "System.Xml.ReaderWriter/4.0.11": {
@@ -4488,9 +4553,33 @@
         "runtime": {
           "lib/netcore50/System.Xml.XmlSerializer.dll": {}
         }
+      },
+      "Win2D.uwp/1.20.0": {
+        "type": "package",
+        "compile": {
+          "lib/uap10.0/Microsoft.Graphics.Canvas.winmd": {}
+        },
+        "runtime": {
+          "lib/uap10.0/Microsoft.Graphics.Canvas.winmd": {}
+        },
+        "native": {
+          "runtimes/win10-arm/native/Microsoft.Graphics.Canvas.dll": {}
+        }
       }
     },
     "UAP,Version=v10.0/win10-arm-aot": {
+      "JetBrains.Annotations/10.4.0": {
+        "type": "package",
+        "dependencies": {
+          "System.Runtime": "4.1.0"
+        },
+        "compile": {
+          "lib/netstandard1.0/JetBrains.Annotations.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard1.0/JetBrains.Annotations.dll": {}
+        }
+      },
       "Microsoft.CSharp/4.0.1": {
         "type": "package",
         "dependencies": {
@@ -4518,33 +4607,33 @@
           "lib/netcore50/Microsoft.CSharp.dll": {}
         }
       },
-      "Microsoft.Net.Native.Compiler/1.6.0": {
+      "Microsoft.Net.Native.Compiler/1.6.2": {
         "type": "package",
         "dependencies": {
-          "Microsoft.Net.Native.SharedLibrary-arm": "1.6.0",
-          "Microsoft.Net.Native.SharedLibrary-x64": "1.6.0",
-          "Microsoft.Net.Native.SharedLibrary-x86": "1.6.0"
+          "Microsoft.Net.Native.SharedLibrary-arm": "1.6.1",
+          "Microsoft.Net.Native.SharedLibrary-x64": "1.6.1",
+          "Microsoft.Net.Native.SharedLibrary-x86": "1.6.1"
         },
         "build": {
           "build/Microsoft.Net.Native.Compiler.props": {},
           "build/Microsoft.Net.Native.Compiler.targets": {}
         }
       },
-      "Microsoft.Net.Native.SharedLibrary-arm/1.6.0": {
+      "Microsoft.Net.Native.SharedLibrary-arm/1.6.1": {
         "type": "package",
         "build": {
           "build/Microsoft.Net.Native.SharedLibrary-arm.props": {},
           "build/Microsoft.Net.Native.SharedLibrary-arm.targets": {}
         }
       },
-      "Microsoft.Net.Native.SharedLibrary-x64/1.6.0": {
+      "Microsoft.Net.Native.SharedLibrary-x64/1.6.1": {
         "type": "package",
         "build": {
           "build/Microsoft.Net.Native.SharedLibrary-x64.props": {},
           "build/Microsoft.Net.Native.SharedLibrary-x64.targets": {}
         }
       },
-      "Microsoft.Net.Native.SharedLibrary-x86/1.6.0": {
+      "Microsoft.Net.Native.SharedLibrary-x86/1.6.1": {
         "type": "package",
         "build": {
           "build/Microsoft.Net.Native.SharedLibrary-x86.props": {},
@@ -4676,14 +4765,14 @@
           "lib/netstandard1.0/_._": {}
         }
       },
-      "Microsoft.NETCore.UniversalWindowsPlatform/5.3.1": {
+      "Microsoft.NETCore.UniversalWindowsPlatform/5.3.3": {
         "type": "package",
         "dependencies": {
           "Microsoft.NETCore": "5.0.2",
           "Microsoft.NETCore.Portable.Compatibility": "1.0.2",
           "Microsoft.NETCore.Runtime.CoreCLR": "1.0.3",
           "Microsoft.NETCore.Targets": "1.0.2",
-          "Microsoft.Net.Native.Compiler": "1.6.0",
+          "Microsoft.Net.Native.Compiler": "1.6.2",
           "Microsoft.Win32.Primitives": "4.0.1",
           "System.Collections.NonGeneric": "4.0.1",
           "System.Collections.Specialized": "4.0.1",
@@ -6673,10 +6762,10 @@
           "lib/netstandard1.1/System.Threading.Tasks.Dataflow.dll": {}
         }
       },
-      "System.Threading.Tasks.Extensions/4.0.0": {
+      "System.Threading.Tasks.Extensions/4.3.0": {
         "type": "package",
         "compile": {
-          "lib/portable-net45+win8+wp8+wpa81/_._": {}
+          "lib/portable-net45+win8+wp8+wpa81/System.Threading.Tasks.Extensions.dll": {}
         },
         "runtime": {
           "lib/portable-net45+win8+wp8+wpa81/System.Threading.Tasks.Extensions.dll": {}
@@ -6714,6 +6803,15 @@
         },
         "runtime": {
           "lib/win81/_._": {}
+        }
+      },
+      "System.ValueTuple/4.3.1": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard1.0/System.ValueTuple.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard1.0/System.ValueTuple.dll": {}
         }
       },
       "System.Xml.ReaderWriter/4.0.11": {
@@ -6813,9 +6911,33 @@
         "runtime": {
           "runtimes/aot/lib/netcore50/System.Xml.XmlSerializer.dll": {}
         }
+      },
+      "Win2D.uwp/1.20.0": {
+        "type": "package",
+        "compile": {
+          "lib/uap10.0/Microsoft.Graphics.Canvas.winmd": {}
+        },
+        "runtime": {
+          "lib/uap10.0/Microsoft.Graphics.Canvas.winmd": {}
+        },
+        "native": {
+          "runtimes/win10-arm/native/Microsoft.Graphics.Canvas.dll": {}
+        }
       }
     },
     "UAP,Version=v10.0/win10-x64": {
+      "JetBrains.Annotations/10.4.0": {
+        "type": "package",
+        "dependencies": {
+          "System.Runtime": "4.1.0"
+        },
+        "compile": {
+          "lib/netstandard1.0/JetBrains.Annotations.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard1.0/JetBrains.Annotations.dll": {}
+        }
+      },
       "Microsoft.CSharp/4.0.1": {
         "type": "package",
         "dependencies": {
@@ -6843,33 +6965,33 @@
           "lib/netcore50/Microsoft.CSharp.dll": {}
         }
       },
-      "Microsoft.Net.Native.Compiler/1.6.0": {
+      "Microsoft.Net.Native.Compiler/1.6.2": {
         "type": "package",
         "dependencies": {
-          "Microsoft.Net.Native.SharedLibrary-arm": "1.6.0",
-          "Microsoft.Net.Native.SharedLibrary-x64": "1.6.0",
-          "Microsoft.Net.Native.SharedLibrary-x86": "1.6.0"
+          "Microsoft.Net.Native.SharedLibrary-arm": "1.6.1",
+          "Microsoft.Net.Native.SharedLibrary-x64": "1.6.1",
+          "Microsoft.Net.Native.SharedLibrary-x86": "1.6.1"
         },
         "build": {
           "build/Microsoft.Net.Native.Compiler.props": {},
           "build/Microsoft.Net.Native.Compiler.targets": {}
         }
       },
-      "Microsoft.Net.Native.SharedLibrary-arm/1.6.0": {
+      "Microsoft.Net.Native.SharedLibrary-arm/1.6.1": {
         "type": "package",
         "build": {
           "build/Microsoft.Net.Native.SharedLibrary-arm.props": {},
           "build/Microsoft.Net.Native.SharedLibrary-arm.targets": {}
         }
       },
-      "Microsoft.Net.Native.SharedLibrary-x64/1.6.0": {
+      "Microsoft.Net.Native.SharedLibrary-x64/1.6.1": {
         "type": "package",
         "build": {
           "build/Microsoft.Net.Native.SharedLibrary-x64.props": {},
           "build/Microsoft.Net.Native.SharedLibrary-x64.targets": {}
         }
       },
-      "Microsoft.Net.Native.SharedLibrary-x86/1.6.0": {
+      "Microsoft.Net.Native.SharedLibrary-x86/1.6.1": {
         "type": "package",
         "build": {
           "build/Microsoft.Net.Native.SharedLibrary-x86.props": {},
@@ -7003,14 +7125,14 @@
           "lib/netstandard1.0/_._": {}
         }
       },
-      "Microsoft.NETCore.UniversalWindowsPlatform/5.3.1": {
+      "Microsoft.NETCore.UniversalWindowsPlatform/5.3.3": {
         "type": "package",
         "dependencies": {
           "Microsoft.NETCore": "5.0.2",
           "Microsoft.NETCore.Portable.Compatibility": "1.0.2",
           "Microsoft.NETCore.Runtime.CoreCLR": "1.0.3",
           "Microsoft.NETCore.Targets": "1.0.2",
-          "Microsoft.Net.Native.Compiler": "1.6.0",
+          "Microsoft.Net.Native.Compiler": "1.6.2",
           "Microsoft.Win32.Primitives": "4.0.1",
           "System.Collections.NonGeneric": "4.0.1",
           "System.Collections.Specialized": "4.0.1",
@@ -8968,10 +9090,10 @@
           "lib/netstandard1.1/System.Threading.Tasks.Dataflow.dll": {}
         }
       },
-      "System.Threading.Tasks.Extensions/4.0.0": {
+      "System.Threading.Tasks.Extensions/4.3.0": {
         "type": "package",
         "compile": {
-          "lib/portable-net45+win8+wp8+wpa81/_._": {}
+          "lib/portable-net45+win8+wp8+wpa81/System.Threading.Tasks.Extensions.dll": {}
         },
         "runtime": {
           "lib/portable-net45+win8+wp8+wpa81/System.Threading.Tasks.Extensions.dll": {}
@@ -9009,6 +9131,15 @@
         },
         "runtime": {
           "lib/win81/_._": {}
+        }
+      },
+      "System.ValueTuple/4.3.1": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard1.0/System.ValueTuple.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard1.0/System.ValueTuple.dll": {}
         }
       },
       "System.Xml.ReaderWriter/4.0.11": {
@@ -9108,9 +9239,33 @@
         "runtime": {
           "lib/netcore50/System.Xml.XmlSerializer.dll": {}
         }
+      },
+      "Win2D.uwp/1.20.0": {
+        "type": "package",
+        "compile": {
+          "lib/uap10.0/Microsoft.Graphics.Canvas.winmd": {}
+        },
+        "runtime": {
+          "lib/uap10.0/Microsoft.Graphics.Canvas.winmd": {}
+        },
+        "native": {
+          "runtimes/win10-x64/native/Microsoft.Graphics.Canvas.dll": {}
+        }
       }
     },
     "UAP,Version=v10.0/win10-x64-aot": {
+      "JetBrains.Annotations/10.4.0": {
+        "type": "package",
+        "dependencies": {
+          "System.Runtime": "4.1.0"
+        },
+        "compile": {
+          "lib/netstandard1.0/JetBrains.Annotations.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard1.0/JetBrains.Annotations.dll": {}
+        }
+      },
       "Microsoft.CSharp/4.0.1": {
         "type": "package",
         "dependencies": {
@@ -9138,33 +9293,33 @@
           "lib/netcore50/Microsoft.CSharp.dll": {}
         }
       },
-      "Microsoft.Net.Native.Compiler/1.6.0": {
+      "Microsoft.Net.Native.Compiler/1.6.2": {
         "type": "package",
         "dependencies": {
-          "Microsoft.Net.Native.SharedLibrary-arm": "1.6.0",
-          "Microsoft.Net.Native.SharedLibrary-x64": "1.6.0",
-          "Microsoft.Net.Native.SharedLibrary-x86": "1.6.0"
+          "Microsoft.Net.Native.SharedLibrary-arm": "1.6.1",
+          "Microsoft.Net.Native.SharedLibrary-x64": "1.6.1",
+          "Microsoft.Net.Native.SharedLibrary-x86": "1.6.1"
         },
         "build": {
           "build/Microsoft.Net.Native.Compiler.props": {},
           "build/Microsoft.Net.Native.Compiler.targets": {}
         }
       },
-      "Microsoft.Net.Native.SharedLibrary-arm/1.6.0": {
+      "Microsoft.Net.Native.SharedLibrary-arm/1.6.1": {
         "type": "package",
         "build": {
           "build/Microsoft.Net.Native.SharedLibrary-arm.props": {},
           "build/Microsoft.Net.Native.SharedLibrary-arm.targets": {}
         }
       },
-      "Microsoft.Net.Native.SharedLibrary-x64/1.6.0": {
+      "Microsoft.Net.Native.SharedLibrary-x64/1.6.1": {
         "type": "package",
         "build": {
           "build/Microsoft.Net.Native.SharedLibrary-x64.props": {},
           "build/Microsoft.Net.Native.SharedLibrary-x64.targets": {}
         }
       },
-      "Microsoft.Net.Native.SharedLibrary-x86/1.6.0": {
+      "Microsoft.Net.Native.SharedLibrary-x86/1.6.1": {
         "type": "package",
         "build": {
           "build/Microsoft.Net.Native.SharedLibrary-x86.props": {},
@@ -9299,14 +9454,14 @@
           "lib/netstandard1.0/_._": {}
         }
       },
-      "Microsoft.NETCore.UniversalWindowsPlatform/5.3.1": {
+      "Microsoft.NETCore.UniversalWindowsPlatform/5.3.3": {
         "type": "package",
         "dependencies": {
           "Microsoft.NETCore": "5.0.2",
           "Microsoft.NETCore.Portable.Compatibility": "1.0.2",
           "Microsoft.NETCore.Runtime.CoreCLR": "1.0.3",
           "Microsoft.NETCore.Targets": "1.0.2",
-          "Microsoft.Net.Native.Compiler": "1.6.0",
+          "Microsoft.Net.Native.Compiler": "1.6.2",
           "Microsoft.Win32.Primitives": "4.0.1",
           "System.Collections.NonGeneric": "4.0.1",
           "System.Collections.Specialized": "4.0.1",
@@ -11302,10 +11457,10 @@
           "lib/netstandard1.1/System.Threading.Tasks.Dataflow.dll": {}
         }
       },
-      "System.Threading.Tasks.Extensions/4.0.0": {
+      "System.Threading.Tasks.Extensions/4.3.0": {
         "type": "package",
         "compile": {
-          "lib/portable-net45+win8+wp8+wpa81/_._": {}
+          "lib/portable-net45+win8+wp8+wpa81/System.Threading.Tasks.Extensions.dll": {}
         },
         "runtime": {
           "lib/portable-net45+win8+wp8+wpa81/System.Threading.Tasks.Extensions.dll": {}
@@ -11343,6 +11498,15 @@
         },
         "runtime": {
           "lib/win81/_._": {}
+        }
+      },
+      "System.ValueTuple/4.3.1": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard1.0/System.ValueTuple.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard1.0/System.ValueTuple.dll": {}
         }
       },
       "System.Xml.ReaderWriter/4.0.11": {
@@ -11442,9 +11606,33 @@
         "runtime": {
           "runtimes/aot/lib/netcore50/System.Xml.XmlSerializer.dll": {}
         }
+      },
+      "Win2D.uwp/1.20.0": {
+        "type": "package",
+        "compile": {
+          "lib/uap10.0/Microsoft.Graphics.Canvas.winmd": {}
+        },
+        "runtime": {
+          "lib/uap10.0/Microsoft.Graphics.Canvas.winmd": {}
+        },
+        "native": {
+          "runtimes/win10-x64/native/Microsoft.Graphics.Canvas.dll": {}
+        }
       }
     },
     "UAP,Version=v10.0/win10-x86": {
+      "JetBrains.Annotations/10.4.0": {
+        "type": "package",
+        "dependencies": {
+          "System.Runtime": "4.1.0"
+        },
+        "compile": {
+          "lib/netstandard1.0/JetBrains.Annotations.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard1.0/JetBrains.Annotations.dll": {}
+        }
+      },
       "Microsoft.CSharp/4.0.1": {
         "type": "package",
         "dependencies": {
@@ -11472,33 +11660,33 @@
           "lib/netcore50/Microsoft.CSharp.dll": {}
         }
       },
-      "Microsoft.Net.Native.Compiler/1.6.0": {
+      "Microsoft.Net.Native.Compiler/1.6.2": {
         "type": "package",
         "dependencies": {
-          "Microsoft.Net.Native.SharedLibrary-arm": "1.6.0",
-          "Microsoft.Net.Native.SharedLibrary-x64": "1.6.0",
-          "Microsoft.Net.Native.SharedLibrary-x86": "1.6.0"
+          "Microsoft.Net.Native.SharedLibrary-arm": "1.6.1",
+          "Microsoft.Net.Native.SharedLibrary-x64": "1.6.1",
+          "Microsoft.Net.Native.SharedLibrary-x86": "1.6.1"
         },
         "build": {
           "build/Microsoft.Net.Native.Compiler.props": {},
           "build/Microsoft.Net.Native.Compiler.targets": {}
         }
       },
-      "Microsoft.Net.Native.SharedLibrary-arm/1.6.0": {
+      "Microsoft.Net.Native.SharedLibrary-arm/1.6.1": {
         "type": "package",
         "build": {
           "build/Microsoft.Net.Native.SharedLibrary-arm.props": {},
           "build/Microsoft.Net.Native.SharedLibrary-arm.targets": {}
         }
       },
-      "Microsoft.Net.Native.SharedLibrary-x64/1.6.0": {
+      "Microsoft.Net.Native.SharedLibrary-x64/1.6.1": {
         "type": "package",
         "build": {
           "build/Microsoft.Net.Native.SharedLibrary-x64.props": {},
           "build/Microsoft.Net.Native.SharedLibrary-x64.targets": {}
         }
       },
-      "Microsoft.Net.Native.SharedLibrary-x86/1.6.0": {
+      "Microsoft.Net.Native.SharedLibrary-x86/1.6.1": {
         "type": "package",
         "build": {
           "build/Microsoft.Net.Native.SharedLibrary-x86.props": {},
@@ -11632,14 +11820,14 @@
           "lib/netstandard1.0/_._": {}
         }
       },
-      "Microsoft.NETCore.UniversalWindowsPlatform/5.3.1": {
+      "Microsoft.NETCore.UniversalWindowsPlatform/5.3.3": {
         "type": "package",
         "dependencies": {
           "Microsoft.NETCore": "5.0.2",
           "Microsoft.NETCore.Portable.Compatibility": "1.0.2",
           "Microsoft.NETCore.Runtime.CoreCLR": "1.0.3",
           "Microsoft.NETCore.Targets": "1.0.2",
-          "Microsoft.Net.Native.Compiler": "1.6.0",
+          "Microsoft.Net.Native.Compiler": "1.6.2",
           "Microsoft.Win32.Primitives": "4.0.1",
           "System.Collections.NonGeneric": "4.0.1",
           "System.Collections.Specialized": "4.0.1",
@@ -13597,10 +13785,10 @@
           "lib/netstandard1.1/System.Threading.Tasks.Dataflow.dll": {}
         }
       },
-      "System.Threading.Tasks.Extensions/4.0.0": {
+      "System.Threading.Tasks.Extensions/4.3.0": {
         "type": "package",
         "compile": {
-          "lib/portable-net45+win8+wp8+wpa81/_._": {}
+          "lib/portable-net45+win8+wp8+wpa81/System.Threading.Tasks.Extensions.dll": {}
         },
         "runtime": {
           "lib/portable-net45+win8+wp8+wpa81/System.Threading.Tasks.Extensions.dll": {}
@@ -13638,6 +13826,15 @@
         },
         "runtime": {
           "lib/win81/_._": {}
+        }
+      },
+      "System.ValueTuple/4.3.1": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard1.0/System.ValueTuple.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard1.0/System.ValueTuple.dll": {}
         }
       },
       "System.Xml.ReaderWriter/4.0.11": {
@@ -13737,9 +13934,33 @@
         "runtime": {
           "lib/netcore50/System.Xml.XmlSerializer.dll": {}
         }
+      },
+      "Win2D.uwp/1.20.0": {
+        "type": "package",
+        "compile": {
+          "lib/uap10.0/Microsoft.Graphics.Canvas.winmd": {}
+        },
+        "runtime": {
+          "lib/uap10.0/Microsoft.Graphics.Canvas.winmd": {}
+        },
+        "native": {
+          "runtimes/win10-x86/native/Microsoft.Graphics.Canvas.dll": {}
+        }
       }
     },
     "UAP,Version=v10.0/win10-x86-aot": {
+      "JetBrains.Annotations/10.4.0": {
+        "type": "package",
+        "dependencies": {
+          "System.Runtime": "4.1.0"
+        },
+        "compile": {
+          "lib/netstandard1.0/JetBrains.Annotations.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard1.0/JetBrains.Annotations.dll": {}
+        }
+      },
       "Microsoft.CSharp/4.0.1": {
         "type": "package",
         "dependencies": {
@@ -13767,33 +13988,33 @@
           "lib/netcore50/Microsoft.CSharp.dll": {}
         }
       },
-      "Microsoft.Net.Native.Compiler/1.6.0": {
+      "Microsoft.Net.Native.Compiler/1.6.2": {
         "type": "package",
         "dependencies": {
-          "Microsoft.Net.Native.SharedLibrary-arm": "1.6.0",
-          "Microsoft.Net.Native.SharedLibrary-x64": "1.6.0",
-          "Microsoft.Net.Native.SharedLibrary-x86": "1.6.0"
+          "Microsoft.Net.Native.SharedLibrary-arm": "1.6.1",
+          "Microsoft.Net.Native.SharedLibrary-x64": "1.6.1",
+          "Microsoft.Net.Native.SharedLibrary-x86": "1.6.1"
         },
         "build": {
           "build/Microsoft.Net.Native.Compiler.props": {},
           "build/Microsoft.Net.Native.Compiler.targets": {}
         }
       },
-      "Microsoft.Net.Native.SharedLibrary-arm/1.6.0": {
+      "Microsoft.Net.Native.SharedLibrary-arm/1.6.1": {
         "type": "package",
         "build": {
           "build/Microsoft.Net.Native.SharedLibrary-arm.props": {},
           "build/Microsoft.Net.Native.SharedLibrary-arm.targets": {}
         }
       },
-      "Microsoft.Net.Native.SharedLibrary-x64/1.6.0": {
+      "Microsoft.Net.Native.SharedLibrary-x64/1.6.1": {
         "type": "package",
         "build": {
           "build/Microsoft.Net.Native.SharedLibrary-x64.props": {},
           "build/Microsoft.Net.Native.SharedLibrary-x64.targets": {}
         }
       },
-      "Microsoft.Net.Native.SharedLibrary-x86/1.6.0": {
+      "Microsoft.Net.Native.SharedLibrary-x86/1.6.1": {
         "type": "package",
         "build": {
           "build/Microsoft.Net.Native.SharedLibrary-x86.props": {},
@@ -13928,14 +14149,14 @@
           "lib/netstandard1.0/_._": {}
         }
       },
-      "Microsoft.NETCore.UniversalWindowsPlatform/5.3.1": {
+      "Microsoft.NETCore.UniversalWindowsPlatform/5.3.3": {
         "type": "package",
         "dependencies": {
           "Microsoft.NETCore": "5.0.2",
           "Microsoft.NETCore.Portable.Compatibility": "1.0.2",
           "Microsoft.NETCore.Runtime.CoreCLR": "1.0.3",
           "Microsoft.NETCore.Targets": "1.0.2",
-          "Microsoft.Net.Native.Compiler": "1.6.0",
+          "Microsoft.Net.Native.Compiler": "1.6.2",
           "Microsoft.Win32.Primitives": "4.0.1",
           "System.Collections.NonGeneric": "4.0.1",
           "System.Collections.Specialized": "4.0.1",
@@ -15931,10 +16152,10 @@
           "lib/netstandard1.1/System.Threading.Tasks.Dataflow.dll": {}
         }
       },
-      "System.Threading.Tasks.Extensions/4.0.0": {
+      "System.Threading.Tasks.Extensions/4.3.0": {
         "type": "package",
         "compile": {
-          "lib/portable-net45+win8+wp8+wpa81/_._": {}
+          "lib/portable-net45+win8+wp8+wpa81/System.Threading.Tasks.Extensions.dll": {}
         },
         "runtime": {
           "lib/portable-net45+win8+wp8+wpa81/System.Threading.Tasks.Extensions.dll": {}
@@ -15972,6 +16193,15 @@
         },
         "runtime": {
           "lib/win81/_._": {}
+        }
+      },
+      "System.ValueTuple/4.3.1": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard1.0/System.ValueTuple.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard1.0/System.ValueTuple.dll": {}
         }
       },
       "System.Xml.ReaderWriter/4.0.11": {
@@ -16071,10 +16301,39 @@
         "runtime": {
           "runtimes/aot/lib/netcore50/System.Xml.XmlSerializer.dll": {}
         }
+      },
+      "Win2D.uwp/1.20.0": {
+        "type": "package",
+        "compile": {
+          "lib/uap10.0/Microsoft.Graphics.Canvas.winmd": {}
+        },
+        "runtime": {
+          "lib/uap10.0/Microsoft.Graphics.Canvas.winmd": {}
+        },
+        "native": {
+          "runtimes/win10-x86/native/Microsoft.Graphics.Canvas.dll": {}
+        }
       }
     }
   },
   "libraries": {
+    "JetBrains.Annotations/10.4.0": {
+      "sha512": "BHOL9R1ueuzAJTHvWpczsxCFoKBzv2ya3zC7mvj4Rp1HkFNSMZOPTNSYSwwTmva/Lv3DHmqOTZ50IBOQh8Lg1g==",
+      "type": "package",
+      "path": "jetbrains.annotations/10.4.0",
+      "files": [
+        "jetbrains.annotations.10.4.0.nupkg.sha512",
+        "jetbrains.annotations.nuspec",
+        "lib/net/JetBrains.Annotations.dll",
+        "lib/net/JetBrains.Annotations.xml",
+        "lib/netstandard1.0/JetBrains.Annotations.dll",
+        "lib/netstandard1.0/JetBrains.Annotations.xml",
+        "lib/portable-net4+sl4+wp7+netcore45/JetBrains.Annotations.dll",
+        "lib/portable-net4+sl4+wp7+netcore45/JetBrains.Annotations.xml",
+        "lib/portable-net4+sl5+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1/JetBrains.Annotations.dll",
+        "lib/portable-net4+sl5+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1/JetBrains.Annotations.xml"
+      ]
+    },
     "Microsoft.CSharp/4.0.1": {
       "sha512": "17h8b5mXa87XYKrrVqdgZ38JefSUqLChUQpXgSnpzsM0nDOhE40FTeNWOJ/YmySGV6tG6T8+hjz6vxbknHJr6A==",
       "type": "package",
@@ -16132,15 +16391,15 @@
         "ref/xamarinwatchos10/_._"
       ]
     },
-    "Microsoft.Net.Native.Compiler/1.6.0": {
-      "sha512": "ZWKiTdHteE3oSVoD6y2wb2k//Om2M5oMx8qIHXUbYdCCXvGL8isMnlwfIKmeft3L57imGDwd8PknuE588I4KeA==",
+    "Microsoft.Net.Native.Compiler/1.6.2": {
+      "sha512": "28VesDpHpRatYNlydGB2JbCpjOo2Ils4v2J/O46lHKpLgmCrf6UzAwWnUZq5fhLzJETWb+a0AlENY3hABASQEg==",
       "type": "package",
-      "path": "microsoft.net.native.compiler/1.6.0",
+      "path": "microsoft.net.native.compiler/1.6.2",
       "files": [
-        "Microsoft.Net.Native.Compiler.1.6.0.nupkg.sha512",
-        "Microsoft.Net.Native.Compiler.nuspec",
         "build/Microsoft.Net.Native.Compiler.props",
         "build/Microsoft.Net.Native.Compiler.targets",
+        "microsoft.net.native.compiler.1.6.2.nupkg.sha512",
+        "microsoft.net.native.compiler.nuspec",
         "tools/LibraryXML/Callisto.rd.xml",
         "tools/LibraryXML/GalaSoft.MvvmLight.Extras.Win8.rd.xml",
         "tools/LibraryXML/GalaSoft.MvvmLight.Win8.rd.xml",
@@ -17027,15 +17286,15 @@
         "tools/x86/mrt100etw.dll"
       ]
     },
-    "Microsoft.Net.Native.SharedLibrary-arm/1.6.0": {
-      "sha512": "6tms4tVQoedKirFMs8q6qCLESDW3uAmFLWwUOB4lKDGtN+MHktTvA+VomsOWYtI//ByH1VSCIBvHVIqiNY8HXQ==",
+    "Microsoft.Net.Native.SharedLibrary-arm/1.6.1": {
+      "sha512": "PmgXdc9F6HPU2J9s4rtzkgTqGcMx3ycradUvxRK82WTL0ltknTX4/+ZDgqYUiEdOMHwkXoAHnKcQfsIC3GQ2Ng==",
       "type": "package",
-      "path": "microsoft.net.native.sharedlibrary-arm/1.6.0",
+      "path": "microsoft.net.native.sharedlibrary-arm/1.6.1",
       "files": [
-        "Microsoft.Net.Native.SharedLibrary-arm.1.6.0.nupkg.sha512",
-        "Microsoft.Net.Native.SharedLibrary-arm.nuspec",
         "build/Microsoft.Net.Native.SharedLibrary-arm.props",
         "build/Microsoft.Net.Native.SharedLibrary-arm.targets",
+        "microsoft.net.native.sharedlibrary-arm.1.6.1.nupkg.sha512",
+        "microsoft.net.native.sharedlibrary-arm.nuspec",
         "tools/SharedLibrary/chk/AnalysisILToc/System.Collections.Concurrent.iltoc",
         "tools/SharedLibrary/chk/AnalysisILToc/System.Collections.Concurrent.iltocpdb",
         "tools/SharedLibrary/chk/AnalysisILToc/System.Collections.iltoc",
@@ -17427,15 +17686,15 @@
         "tools/SharedLibrary/ret/Toc/System.Text.RegularExpressions.toc"
       ]
     },
-    "Microsoft.Net.Native.SharedLibrary-x64/1.6.0": {
-      "sha512": "pLNmswGR+pzjLOgq+0oABz3e2C5XjSmTo81MFPSN9CeKyYiMb2eybU1fJRjyk86XFMfENK26gGUSVMhAo4zH/g==",
+    "Microsoft.Net.Native.SharedLibrary-x64/1.6.1": {
+      "sha512": "AEd9UK6oq46NBMO29LquKza/cyaIsrrfFRMZbmDlOArS5sMVOUGga3vBDebwgRzmYtUdFFmRu3XaaKhVrncEbw==",
       "type": "package",
-      "path": "microsoft.net.native.sharedlibrary-x64/1.6.0",
+      "path": "microsoft.net.native.sharedlibrary-x64/1.6.1",
       "files": [
-        "Microsoft.Net.Native.SharedLibrary-x64.1.6.0.nupkg.sha512",
-        "Microsoft.Net.Native.SharedLibrary-x64.nuspec",
         "build/Microsoft.Net.Native.SharedLibrary-x64.props",
         "build/Microsoft.Net.Native.SharedLibrary-x64.targets",
+        "microsoft.net.native.sharedlibrary-x64.1.6.1.nupkg.sha512",
+        "microsoft.net.native.sharedlibrary-x64.nuspec",
         "tools/SharedLibrary/chk/AnalysisILToc/System.Collections.Concurrent.iltoc",
         "tools/SharedLibrary/chk/AnalysisILToc/System.Collections.Concurrent.iltocpdb",
         "tools/SharedLibrary/chk/AnalysisILToc/System.Collections.iltoc",
@@ -17827,15 +18086,15 @@
         "tools/SharedLibrary/ret/Toc/System.Text.RegularExpressions.toc"
       ]
     },
-    "Microsoft.Net.Native.SharedLibrary-x86/1.6.0": {
-      "sha512": "AC1O3na4oqgWdvjoMjVPvt2vCO9VESTkArknbTlep5NWVRdMU2nay4XHYWBleOhweE2kw52kJHv1BGN0dcXjhQ==",
+    "Microsoft.Net.Native.SharedLibrary-x86/1.6.1": {
+      "sha512": "jurbK0IemAFs0NDxXRCVMmC18p3NLKkk3SU+kqjzuOQyUiz9KTl4+ZOUDBRNcPGWnwuT5DIKdv6kYvywj0LjPw==",
       "type": "package",
-      "path": "microsoft.net.native.sharedlibrary-x86/1.6.0",
+      "path": "microsoft.net.native.sharedlibrary-x86/1.6.1",
       "files": [
-        "Microsoft.Net.Native.SharedLibrary-x86.1.6.0.nupkg.sha512",
-        "Microsoft.Net.Native.SharedLibrary-x86.nuspec",
         "build/Microsoft.Net.Native.SharedLibrary-x86.props",
         "build/Microsoft.Net.Native.SharedLibrary-x86.targets",
+        "microsoft.net.native.sharedlibrary-x86.1.6.1.nupkg.sha512",
+        "microsoft.net.native.sharedlibrary-x86.nuspec",
         "tools/SharedLibrary/chk/AnalysisILToc/System.Collections.Concurrent.iltoc",
         "tools/SharedLibrary/chk/AnalysisILToc/System.Collections.Concurrent.iltocpdb",
         "tools/SharedLibrary/chk/AnalysisILToc/System.Collections.iltoc",
@@ -17991,7 +18250,6 @@
         "tools/SharedLibrary/chk/Native/Microsoft.NET.Native.Framework.Debug.1.6.appx",
         "tools/SharedLibrary/chk/Native/SharedLibrary.dll",
         "tools/SharedLibrary/chk/Native/SharedLibrary.pdb",
-        "tools/SharedLibrary/chk/Native/SharedLibrary.pdb.srcsrv.txt",
         "tools/SharedLibrary/chk/ResW/FxResources.System.Collections.Concurrent.SR.resw",
         "tools/SharedLibrary/chk/ResW/FxResources.System.Collections.SR.resw",
         "tools/SharedLibrary/chk/ResW/FxResources.System.Diagnostics.Tracing.SR.resw",
@@ -18370,14 +18628,14 @@
         "runtime.json"
       ]
     },
-    "Microsoft.NETCore.UniversalWindowsPlatform/5.3.1": {
-      "sha512": "pYCI0GC3pt29yFzhboHYnWmTIjaJ2K/L/aPNOHshrM1yQojxIp8cYdcDDd27r4GCSrSnkELVJ/x38OF06jqdmQ==",
+    "Microsoft.NETCore.UniversalWindowsPlatform/5.3.3": {
+      "sha512": "aCy8WhdcWqIl+gUoY905OWPCP1NqVOtT4Oejn7SIZb9KPKkB5cUfvLEmsY3xwud0TIaJaExKTUhrFluzKtSblQ==",
       "type": "package",
-      "path": "microsoft.netcore.universalwindowsplatform/5.3.1",
+      "path": "microsoft.netcore.universalwindowsplatform/5.3.3",
       "files": [
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
-        "microsoft.netcore.universalwindowsplatform.5.3.1.nupkg.sha512",
+        "microsoft.netcore.universalwindowsplatform.5.3.3.nupkg.sha512",
         "microsoft.netcore.universalwindowsplatform.nuspec"
       ]
     },
@@ -23971,19 +24229,19 @@
         "lib/netstandard1.1/System.Threading.Tasks.Dataflow.dll"
       ]
     },
-    "System.Threading.Tasks.Extensions/4.0.0": {
-      "sha512": "pH4FZDsZQ/WmgJtN4LWYmRdJAEeVkyriSwrv2Teoe5FOU0Yxlb6II6GL8dBPOfRmutHGATduj3ooMt7dJ2+i+w==",
+    "System.Threading.Tasks.Extensions/4.3.0": {
+      "sha512": "npvJkVKl5rKXrtl1Kkm6OhOUaYGEiF9wFbppFRWSMoApKzt2PiPHT2Bb8a5sAWxprvdOAtvaARS9QYMznEUtug==",
       "type": "package",
-      "path": "system.threading.tasks.extensions/4.0.0",
+      "path": "system.threading.tasks.extensions/4.3.0",
       "files": [
-        "System.Threading.Tasks.Extensions.4.0.0.nupkg.sha512",
-        "System.Threading.Tasks.Extensions.nuspec",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/netstandard1.0/System.Threading.Tasks.Extensions.dll",
         "lib/netstandard1.0/System.Threading.Tasks.Extensions.xml",
         "lib/portable-net45+win8+wp8+wpa81/System.Threading.Tasks.Extensions.dll",
-        "lib/portable-net45+win8+wp8+wpa81/System.Threading.Tasks.Extensions.xml"
+        "lib/portable-net45+win8+wp8+wpa81/System.Threading.Tasks.Extensions.xml",
+        "system.threading.tasks.extensions.4.3.0.nupkg.sha512",
+        "system.threading.tasks.extensions.nuspec"
       ]
     },
     "System.Threading.Tasks.Parallel/4.0.1": {
@@ -24092,6 +24350,33 @@
         "ref/xamarinmac20/_._",
         "ref/xamarintvos10/_._",
         "ref/xamarinwatchos10/_._"
+      ]
+    },
+    "System.ValueTuple/4.3.1": {
+      "sha512": "xzDmg26Wb2x2rFDjwziaMYQJqxhrK+b4OUC008o7CnZhUMb2p5XfwgOgAQ/WlKhqxMUSDWRUm5/lNTKdh27pJA==",
+      "type": "package",
+      "path": "system.valuetuple/4.3.1",
+      "files": [
+        "ThirdPartyNotices.txt",
+        "dotnet_library_license.txt",
+        "lib/MonoAndroid10/_._",
+        "lib/MonoTouch10/_._",
+        "lib/netstandard1.0/.xml",
+        "lib/netstandard1.0/System.ValueTuple.dll",
+        "lib/portable-net40+sl4+win8+wp8/.xml",
+        "lib/portable-net40+sl4+win8+wp8/System.ValueTuple.dll",
+        "lib/xamarinios10/_._",
+        "lib/xamarinmac20/_._",
+        "lib/xamarintvos10/_._",
+        "lib/xamarinwatchos10/_._",
+        "ref/MonoAndroid10/_._",
+        "ref/MonoTouch10/_._",
+        "ref/xamarinios10/_._",
+        "ref/xamarinmac20/_._",
+        "ref/xamarintvos10/_._",
+        "ref/xamarinwatchos10/_._",
+        "system.valuetuple.4.3.1.nupkg.sha512",
+        "system.valuetuple.nuspec"
       ]
     },
     "System.Xml.ReaderWriter/4.0.11": {
@@ -24335,27 +24620,53 @@
         "ref/xamarinwatchos10/_._",
         "runtimes/aot/lib/netcore50/System.Xml.XmlSerializer.dll"
       ]
+    },
+    "Win2D.uwp/1.20.0": {
+      "sha512": "sFyNT2EiV6vmEFMrkiJdSolaKNyOyk+kfjgvXN8XqUhdEPqBd2zPrFdl7SojNHQGm2Br6JLIBOdrj9fB1Qy4GA==",
+      "type": "package",
+      "path": "win2d.uwp/1.20.0",
+      "files": [
+        "Win2d.githash.txt",
+        "build/native/Win2D.uwp.targets",
+        "include/Microsoft.Graphics.Canvas.h",
+        "include/Microsoft.Graphics.Canvas.native.h",
+        "lib/uap10.0/Microsoft.Graphics.Canvas.winmd",
+        "lib/uap10.0/Microsoft.Graphics.Canvas.xml",
+        "runtimes/win10-arm/native/Microsoft.Graphics.Canvas.dll",
+        "runtimes/win10-x64/native/Microsoft.Graphics.Canvas.dll",
+        "runtimes/win10-x86/native/Microsoft.Graphics.Canvas.dll",
+        "win2d.uwp.1.20.0.nupkg.sha512",
+        "win2d.uwp.nuspec"
+      ]
     }
   },
   "projectFileDependencyGroups": {
     "": [
-      "Microsoft.NETCore.UniversalWindowsPlatform >= 5.3.1"
+      "JetBrains.Annotations >= 10.4.0",
+      "Microsoft.NETCore.UniversalWindowsPlatform >= 5.3.3",
+      "System.Threading.Tasks.Extensions >= 4.3.0",
+      "System.ValueTuple >= 4.3.1",
+      "Win2D.uwp >= 1.20.0"
     ],
     "UAP,Version=v10.0": []
   },
   "packageFolders": {
-    "C:\\Users\\Sergi\\.nuget\\packages\\": {}
+    "C:\\Users\\Chris\\.nuget\\packages\\": {}
   },
   "project": {
     "restore": {
-      "projectUniqueName": "C:\\Users\\Sergi\\Documents\\GitHub\\UICompositionAnimations\\UICompositionAnimations\\UICompositionAnimations.csproj",
+      "projectUniqueName": "C:\\Users\\Chris\\Documents\\GitHub\\UICompositionAnimations\\UICompositionAnimations\\UICompositionAnimations.csproj",
       "projectName": "UICompositionAnimations",
-      "projectPath": "C:\\Users\\Sergi\\Documents\\GitHub\\UICompositionAnimations\\UICompositionAnimations\\UICompositionAnimations.csproj",
-      "projectJsonPath": "C:\\Users\\Sergi\\Documents\\GitHub\\UICompositionAnimations\\UICompositionAnimations\\project.json",
+      "projectPath": "C:\\Users\\Chris\\Documents\\GitHub\\UICompositionAnimations\\UICompositionAnimations\\UICompositionAnimations.csproj",
+      "projectJsonPath": "C:\\Users\\Chris\\Documents\\GitHub\\UICompositionAnimations\\UICompositionAnimations\\project.json",
       "projectStyle": "ProjectJson"
     },
     "dependencies": {
-      "Microsoft.NETCore.UniversalWindowsPlatform": "[5.3.1, )"
+      "JetBrains.Annotations": "10.4.0",
+      "Microsoft.NETCore.UniversalWindowsPlatform": "5.3.3",
+      "System.Threading.Tasks.Extensions": "4.3.0",
+      "System.ValueTuple": "4.3.1",
+      "Win2D.uwp": "1.20.0"
     },
     "frameworks": {
       "uap10.0": {}
