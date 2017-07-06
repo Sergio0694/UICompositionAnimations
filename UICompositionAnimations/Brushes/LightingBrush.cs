@@ -1,41 +1,40 @@
-﻿using Microsoft.Graphics.Canvas;
-using Microsoft.Graphics.Canvas.Effects;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Windows.UI;
+﻿using Microsoft.Graphics.Canvas.Effects;
 using Windows.UI.Composition;
 using Windows.UI.Composition.Effects;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
+using UICompositionAnimations.Helpers;
 
 namespace UICompositionAnimations.Brushes
 {
-    public class LightingBrush : XamlCompositionBrushBase
+    /// <summary>
+    /// A custom XAML brush that includes a lighting effect
+    /// </summary>
+    public sealed class LightingBrush : XamlCompositionBrushBase
     {
-
-
+        /// <summary>
+        /// Gets or sets the diffuse property for the brush
+        /// </summary>
         public double DiffuseAmount
         {
             get { return (double)GetValue(DiffuseAmountProperty); }
             set { SetValue(DiffuseAmountProperty, value); }
         }
 
-        // Using a DependencyProperty as the backing store for Diffuseamount.  This enables animation, styling, binding, etc...
+        /// <summary>
+        /// Gets the <see cref="DependencyProperty"/> for the <see cref="DiffuseAmount"/> property
+        /// </summary>
         public static readonly DependencyProperty DiffuseAmountProperty =
-            DependencyProperty.Register("DiffuseAmount", typeof(double), typeof(LightingBrush), new PropertyMetadata(1d, OnDiffuseAmountChanged));
+            DependencyProperty.Register(nameof(DiffuseAmount), typeof(double), typeof(LightingBrush), new PropertyMetadata(1d, OnDiffuseAmountChanged));
 
         private static void OnDiffuseAmountChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var b = d as LightingBrush;
-            b.CompositionBrush?.Properties.InsertScalar("Light.DiffuseAmount", (float)(double)e.NewValue);
+            d.To<LightingBrush>()?.CompositionBrush?.Properties.InsertScalar("Light.DiffuseAmount", (float)(double)e.NewValue);
         }
 
 
         /// <summary>
-        /// Specular shine of the light. Default value is 16. Must be between 1 and 128.
+        /// Gets or sets the specular shine of the light. The default value is 16 and it must be between 1 and 128
         /// </summary>
         public double SpecularShine
         {
@@ -43,44 +42,56 @@ namespace UICompositionAnimations.Brushes
             set { SetValue(SpecularShineProperty, value); }
         }
 
-        // Using a DependencyProperty as the backing store for SpecularShine.  This enables animation, styling, binding, etc...
+        /// <summary>
+        /// Gets the <see cref="DependencyProperty"/> for the <see cref="SpecularShine"/> property
+        /// </summary>
         public static readonly DependencyProperty SpecularShineProperty =
-            DependencyProperty.Register("SpecularShine", typeof(double), typeof(LightingBrush), new PropertyMetadata(16d, OnSpecularShineChanged));
+            DependencyProperty.Register(nameof(SpecularShine), typeof(double), typeof(LightingBrush), new PropertyMetadata(16d, OnSpecularShineChanged));
 
         private static void OnSpecularShineChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var b = d as LightingBrush;
-            b.CompositionBrush?.Properties.InsertScalar("Light.SpecularShine", (float)(double)e.NewValue);
+            d.To<LightingBrush>()?.CompositionBrush?.Properties.InsertScalar("Light.SpecularShine", (float)(double)e.NewValue);
         }
 
-
-
+        /// <summary>
+        /// Gets or sets the specular amount for the effect
+        /// </summary>
         public double SpecularAmount
         {
             get { return (double)GetValue(SpecularAmountProperty); }
             set { SetValue(SpecularAmountProperty, value); }
         }
 
-        // Using a DependencyProperty as the backing store for SpecularAmount.  This enables animation, styling, binding, etc...
+        /// <summary>
+        /// Gets the <see cref="DependencyProperty"/> for the <see cref="SpecularAmount"/> property
+        /// </summary>
         public static readonly DependencyProperty SpecularAmountProperty =
-            DependencyProperty.Register("SpecularAmount", typeof(double), typeof(LightingBrush), new PropertyMetadata(1d, OnSpecularAmountChanged));
+            DependencyProperty.Register(nameof(SpecularAmount), typeof(double), typeof(LightingBrush), new PropertyMetadata(1d, OnSpecularAmountChanged));
 
         private static void OnSpecularAmountChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var b = d as LightingBrush;
-            b.CompositionBrush?.Properties.InsertScalar("Light.SpecularAmount", (float)(double)e.NewValue);
+            d.To<LightingBrush>()?.CompositionBrush?.Properties.InsertScalar("Light.SpecularAmount", (float)(double)e.NewValue);
         }
 
-        CompositionEffectBrush brush;
-        CompositionEffectFactory factory;
-        CompositionColorBrush color;
-        InvertEffect inverse;
-        LuminanceToAlphaEffect luminance;
+        // The effect brush to use
+        CompositionEffectBrush _Brush;
+
+        // The factory to create the brush
+        CompositionEffectFactory _Factory;
+
+        // The invert effect for the opacity mask
+        InvertEffect _InverseEffect;
+
+        // The luminance effect to generate the opacity mask
+        LuminanceToAlphaEffect _LuminanceEffect;
+
+        /// <inheritdoc cref="XamlCompositionBrushBase"/>
         protected override void OnConnected()
         {
             if (CompositionBrush == null)
             {
-                SceneLightingEffect sceneLightingEffect = new SceneLightingEffect()
+                // Effects setup
+                SceneLightingEffect sceneLightingEffect = new SceneLightingEffect // Base lighting effect
                 {
                     Name = "Light",
                     SpecularShine = (float)SpecularShine,
@@ -88,23 +99,26 @@ namespace UICompositionAnimations.Brushes
                     DiffuseAmount = (float)DiffuseAmount,
                     AmbientAmount = 0
                 };
-                luminance = new LuminanceToAlphaEffect() { Source = sceneLightingEffect };
-                inverse = new InvertEffect() { Source = luminance };
-                factory = Window.Current.Compositor.CreateEffectFactory(inverse, new String[] { "Light.DiffuseAmount", "Light.SpecularShine", "Light.SpecularAmount" });
+                _LuminanceEffect = new LuminanceToAlphaEffect { Source = sceneLightingEffect }; // Map the bright areas of the light to an opacity mask
+                _InverseEffect = new InvertEffect { Source = _LuminanceEffect }; // Invert the colors to make the brighter areas white
+                _Factory = Window.Current.Compositor.CreateEffectFactory(_InverseEffect, new[] { "Light.DiffuseAmount", "Light.SpecularShine", "Light.SpecularAmount" });
 
-                brush = factory.CreateBrush();
-                CompositionBrush = brush;
+                // Create and store the brush
+                _Brush = _Factory.CreateBrush();
+                CompositionBrush = _Brush;
             }
             base.OnConnected();
         }
+
+        /// <inheritdoc cref="XamlCompositionBrushBase"/>
         protected override void OnDisconnected()
         {
             if (CompositionBrush != null)
             {
-                brush?.Dispose();
-                factory?.Dispose();
-                luminance?.Dispose();
-                inverse?.Dispose();
+                _Brush?.Dispose();
+                _Factory?.Dispose();
+                _LuminanceEffect?.Dispose();
+                _InverseEffect?.Dispose();
                 CompositionBrush = null;
             }
             base.OnDisconnected();
