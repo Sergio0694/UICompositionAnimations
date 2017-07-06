@@ -18,7 +18,7 @@ Most of the animation methods are available in two versions: a synchronous one t
 
 ## Examples
 
-Synchronous fade animation
+#### Synchronous fade animation
 ```C#
 MyControl.StartCompositionFadeAnimation(
   null, // Using null will make the fade animation start from the current value
@@ -29,7 +29,7 @@ MyControl.StartCompositionFadeAnimation(
   () => Foo()); // Optional callback
 ```
 
-Asynchronous fade and scale animation
+#### Asynchronous fade and scale animation
 ```C#
 await MyControl.StartCompositionFadeScaleAnimationAsync(
   null, // Initial opacity (use current value)
@@ -42,7 +42,7 @@ await MyControl.StartCompositionFadeScaleAnimationAsync(
   EasingFunctionNames.Linear); // Easing function
 ```
 
-Get an attached blur effect that can be animated (using composition and Win2D effects):
+#### Get an attached blur effect that can be animated (using composition and Win2D effects):
 ```C#
 AttachedAnimatableCompositionEffect<Border> attached = await MyBorder.AttachCompositionAnimatableBlurEffectAsync(
   14f, // The amount of blur to apply when the effect is enabled
@@ -55,7 +55,7 @@ await attached.AnimateAsync(
   TimeSpan.FromMilliseconds(500)); // The animation duration
 ```
 
-Get a custom acrylic brush effect:
+#### Get a custom acrylic brush effect:
 ```C#
 AttachedStaticCompositionEffect<Border> attached = await BlurBorder.AttachCompositionInAppCustomAcrylicEffectAsync(
   BlurBorder, // The target host control for the effect visual (can be the same as the source)
@@ -68,7 +68,23 @@ AttachedStaticCompositionEffect<Border> attached = await BlurBorder.AttachCompos
   new Uri("ms-appx:///Assets/Misc/noise.png")); // A Uri to a custom noise texture to use to create the effect
 ```
 
-ColorBrush animation
+#### Setup a custom reveal highlight effect brush:
+````XAML
+<ResourceDictionary
+    ...
+    xmlns:brushes="using:UICompositionAnimations.Brushes"
+    xmlns:lights="using:UICompositionAnimations.Lights">
+    <brushes:LightingBrush
+            x:Key="BorderLightBrush"
+            lights:PointerPositionSpotLight.IsTarget="True"/>
+    ...
+</ResourceDictionary/>
+````
+```C#
+Window.Current.Content.Lights.Add(new PointerPositionSpotLight());
+```
+
+#### ColorBrush animation
 ```C#
 MyBrush.AnimateColor(
   #FFFF2B1C, // Target color
@@ -79,4 +95,4 @@ MyBrush.AnimateColor(
 Many utility methods are also available. The `XAMLTransformToolkit` class for example, exposes methods to manually create, start and wait for `DoubleAnimation`(s) and `Storyboard`(s), as well as for quickly assigning a certain `RenderTransform` object to a `UIElement`.
 
 ## Requirements
-At least Windows 10 Anniversary Update (14393.x)
+At least Windows 10 November Update (10586.x)
