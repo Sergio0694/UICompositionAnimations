@@ -171,18 +171,6 @@ namespace UICompositionAnimations.Lights
             base.OnConnected(newElement);
         }
 
-        /// <inheritdoc cref="XamlLight"/>
-        protected override void OnDisconnected(UIElement oldElement)
-        {
-            if (CompositionLight != null)
-            {
-                _Light.Dispose();
-                _Light = null;
-                CompositionLight = null;
-            }
-            base.OnDisconnected(oldElement);
-        }
-
         /// <summary>
         /// Gets or sets a custom appendage for the <see cref="GetIdStatic"/> method
         /// </summary>
