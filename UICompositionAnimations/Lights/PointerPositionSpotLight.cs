@@ -197,7 +197,7 @@ namespace UICompositionAnimations.Lights
                 _Animation.SetReferenceParameter("pointer", pointer);
                 _Animation.SetReferenceParameter("props", _Properties);
                 _Light.StartAnimation("Offset", _Animation);
-                _Light.InnerConeColor = _Light.OuterConeColor = Colors.White;
+                _Light.InnerConeColor = _Light.OuterConeColor = Color.FromArgb(Alpha, Shade, Shade, Shade);
                 _Light.InnerConeAngleInDegrees = 0;
                 _Light.OuterConeAngleInDegrees = OuterConeAngle;
                 CompositionLight = _Light;
