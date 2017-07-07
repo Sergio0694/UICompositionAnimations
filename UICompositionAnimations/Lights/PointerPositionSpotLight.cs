@@ -15,26 +15,61 @@ namespace UICompositionAnimations.Lights
     public class PointerPositionSpotLight : XamlLight
     {
         /// <summary>
-        /// Gets or sets the color of the light
+        /// Gets or sets the alpha channel value for the light to display
         /// </summary>
-        public Color Color
+        public byte Alpha
         {
-            get { return (Color)GetValue(ColorProperty); }
-            set { SetValue(ColorProperty, value); }
+            get { return GetValue(AlphaProperty).To<byte>(); }
+            set { SetValue(AlphaProperty, value); }
         }
 
         /// <summary>
-        /// Gets the <see cref="DependencyProperty"/> for the <see cref="Color"/> property
+        /// Gets the <see cref="DependencyProperty"/> for the <see cref="Alpha"/> property
         /// </summary>
-        public static readonly DependencyProperty ColorProperty =
-            DependencyProperty.Register(nameof(Color), typeof(Color), typeof(PointerPositionSpotLight), new PropertyMetadata(Colors.White, OnColorChanged));
+        public static readonly DependencyProperty AlphaProperty =
+            DependencyProperty.Register(nameof(Alpha), typeof(byte), typeof(PointerPositionSpotLight), new PropertyMetadata(byte.MaxValue, OnAlphaPropertyChanged));
 
-        private static void OnColorChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void OnAlphaPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             PointerPositionSpotLight l = d as PointerPositionSpotLight;
             if (l?._Light != null)
             {
-                l._Light.InnerConeColor = l._Light.OuterConeColor = (Color)e.NewValue;
+                byte alpha = e.NewValue.To<byte>();
+                Color color = l._Light.InnerConeColor;
+                color.A = alpha;
+                l._Light.InnerConeColor = l._Light.OuterConeColor = color;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the intensity of the light. A higher value will result in a brighter light
+        /// </summary>
+        public byte Shade
+        {
+            get { return GetValue(ShadeProperty).To<byte>(); }
+            set { SetValue(ShadeProperty, value); }
+        }
+
+        /// <summary>
+        /// Gets the <see cref="DependencyProperty"/> for the <see cref="Shade"/> property
+        /// </summary>
+        public static readonly DependencyProperty ShadeProperty =
+            DependencyProperty.Register(nameof(Shade), typeof(byte), typeof(PointerPositionSpotLight), new PropertyMetadata(byte.MaxValue, OnShadePropertyChanged));
+
+        private static void OnShadePropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            PointerPositionSpotLight l = d as PointerPositionSpotLight;
+            if (l?._Light != null)
+            {
+                byte shade = e.NewValue.To<byte>();
+                Color color = new Color
+                {
+                    A = l.Alpha,
+                    R = shade,
+                    G = shade,
+                    B = shade
+                };
+                l._Light.InnerConeColor = l._Light.OuterConeColor = color;
             }
         }
 
@@ -162,8 +197,7 @@ namespace UICompositionAnimations.Lights
                 _Animation.SetReferenceParameter("pointer", pointer);
                 _Animation.SetReferenceParameter("props", _Properties);
                 _Light.StartAnimation("Offset", _Animation);
-                _Light.InnerConeColor = Color;
-                _Light.OuterConeColor = Color;
+                _Light.InnerConeColor = _Light.OuterConeColor = Colors.White;
                 _Light.InnerConeAngleInDegrees = 0;
                 _Light.OuterConeAngleInDegrees = OuterConeAngle;
                 CompositionLight = _Light;
