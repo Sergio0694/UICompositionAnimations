@@ -28,13 +28,14 @@ namespace UICompositionAnimations.Behaviours.Effects
             PropertiesAnimationValues = propertyValues;
         }
 
-        /// <inheritdoc />
-        protected override IEnumerable<String> GetAnimatedProperties()
+        /// <inheritdoc/>
+        protected override void DisposeCore()
         {
-            return base.GetAnimatedProperties().Concat(PropertiesAnimationValues.Keys);
+            foreach (String key in PropertiesAnimationValues.Keys) Sprite.StopAnimation(key);
+            base.DisposeCore();
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc/>
         public override Task AnimateAsync(FixedAnimationType animationType, TimeSpan duration)
         {
             // Apply all the animations in parallel and wait for their completion

@@ -27,10 +27,11 @@ namespace UICompositionAnimations.Behaviours.Effects
             Parameters = parameters;
         }
 
-        /// <inheritdoc />
-        protected override IEnumerable<String> GetAnimatedProperties()
+        /// <inheritdoc/>
+        protected override void DisposeCore()
         {
-            return base.GetAnimatedProperties().Concat(new[] { Parameters.Property });
+            Sprite.StopAnimation(Parameters.Property);
+            base.DisposeCore();
         }
 
         /// <inheritdoc />
