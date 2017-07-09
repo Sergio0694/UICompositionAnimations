@@ -871,7 +871,7 @@ namespace UICompositionAnimations
         [NotNull]
         public static ExpressionAnimation StartExpressionAnimation(
             [NotNull] this UIElement element, [NotNull] ScrollViewer scroller,
-            TranslationAxis sourceXY, float parameter, 
+            TranslationAxis sourceXY, float parameter,
             TranslationAxis? targetXY = null, bool invertSourceAxis = false)
         {
             // Get the property set and setup the scroller offset sign
@@ -943,6 +943,24 @@ namespace UICompositionAnimations
         #region Utility extensions
 
         /// <summary>
+        /// Sets a target property to the given value
+        /// </summary>
+        /// <param name="compObject">The target object</param>
+        /// <param name="property">The name of the property to animate</param>
+        /// <param name="value">The final value of the property</param>
+        public static void SetInstantValue(this CompositionObject compObject, String property, float value)
+        {
+            // Stop previous animations
+            compObject.StopAnimation(property);
+
+            // Setup the animation
+            ScalarKeyFrameAnimation animation = compObject.Compositor.CreateScalarKeyFrameAnimation();
+            animation.InsertKeyFrame(1f, value);
+            animation.Duration = TimeSpan.FromMilliseconds(1);
+            compObject.StartAnimation(property, animation);
+        }
+
+        /// <summary>
         /// Starts an animation on the given property of a composition object
         /// </summary>
         /// <param name="compObject">The target object</param>
@@ -958,7 +976,6 @@ namespace UICompositionAnimations
             ScalarKeyFrameAnimation animation = compObject.Compositor.CreateScalarKeyFrameAnimation();
             animation.InsertKeyFrame(1f, value);
             animation.Duration = duration;
-            compObject.StartAnimation(property, animation);
 
             // Get the batch and start the animations
             CompositionScopedBatch batch = compObject.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);

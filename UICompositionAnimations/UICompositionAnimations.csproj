@@ -114,8 +114,10 @@
   <ItemGroup>
     <Compile Include="Behaviours\AttachedCompositionEffectFactory.cs" />
     <Compile Include="Behaviours\AcrylicEffectHelper.cs" />
+    <Compile Include="Behaviours\Effects\AcrylicEffectMode.cs" />
     <Compile Include="Behaviours\Effects\AttachedAnimatableCompositionEffect.cs" />
     <Compile Include="Behaviours\Effects\AttachedCompositeAnimatableCompositionEffect.cs" />
+    <Compile Include="Behaviours\Effects\AttachedToggleAcrylicEffect.cs" />
     <Compile Include="Behaviours\Effects\Base\AttachedAnimatableCompositionEffectBase.cs" />
     <Compile Include="Behaviours\Effects\AttachedStaticCompositionEffect.cs" />
     <Compile Include="Behaviours\Misc\CompositionAnimationParameters.cs" />

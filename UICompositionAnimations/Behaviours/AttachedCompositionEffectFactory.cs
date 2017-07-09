@@ -269,6 +269,147 @@ namespace UICompositionAnimations.Behaviours
             return new AttachedStaticCompositionEffect<T>(element, sprite, disposeOnUnload);
         }
 
+        /// <summary>
+        /// Creates an effect brush that's similar to the official Acrylic brush in the Fall Creator's Update and can be toggled
+        /// between the host backdrop blur effect and the in-app acrylic brush effect.
+        /// The pipeline uses the following effects: HostBackdropBrush > <see cref="LuminanceToAlphaEffect"/> >
+        /// <see cref="OpacityEffect"/> > <see cref="BlendEffect"/> > <see cref="ArithmeticCompositeEffect"/> >
+        /// <see cref="ColorSourceEffect"/> > <see cref="BorderEffect"/> with customizable blend factors for each couple of layers
+        /// </summary>
+        /// <typeparam name="T">The type of the target element that will host the resulting <see cref="SpriteVisual"/></typeparam>
+        /// <param name="element">The target element that will host the effect</param>
+        /// <param name="color">The tint color for the effect</param>
+        /// <param name="inAppColorMix">The opacity of the color over the in-app blurred contents</param>
+        /// <param name="hostColorMix">The opacity of the color over the blurred background</param>
+        /// <param name="mode">Indicates the initial mode for the custom effect</param>
+        /// <param name="blur">The amount of blur to apply to the element</param>
+        /// <param name="ms">The duration of the initial blur animation, in milliseconds</param>
+        /// <param name="canvas">The optional source <see cref="CanvasControl"/> to generate the noise image using Win2D</param>
+        /// <param name="uri">The path of the noise image to use</param>
+        /// <param name="timeThreshold">The maximum time to wait for the Win2D device to be restored in case of initial failure/></param>
+        /// <param name="reload">Indicates whether or not to force the reload of the Win2D image</param>
+        /// <param name="disposeOnUnload">Indicates whether or not to automatically dispose and remove the effect when the target element is unloaded</param>
+        [ItemNotNull]
+        public static async Task<AttachedToggleAcrylicEffect<T>> AttachCompositionCustomAcrylicToggleEffectAsync<T>(
+            [NotNull] this T element, Color color, float inAppColorMix, float hostColorMix,
+            AcrylicEffectMode mode, float blur, int ms,
+            [CanBeNull] CanvasControl canvas, [NotNull] Uri uri, int timeThreshold = 1000, bool reload = false, bool disposeOnUnload = false)
+            where T : FrameworkElement
+        {
+            // Percentage check
+            if (hostColorMix <= 0 || hostColorMix >= 1 ||
+                inAppColorMix <= 0 || inAppColorMix >= 1) throw new ArgumentOutOfRangeException("The mix factors must be in the [0,1] range");
+            if (timeThreshold <= 0) throw new ArgumentOutOfRangeException("The time threshold must be a positive number");
+
+            // Setup the compositor
+            Visual visual = ElementCompositionPreview.GetElementVisual(element);
+            Compositor compositor = visual.Compositor;
+
+            // Prepare a luminosity to alpha effect to adjust the background contrast
+            CompositionBackdropBrush hostBackdropBrush = compositor.CreateHostBackdropBrush();
+            CompositionEffectSourceParameter backgroundParameter = new CompositionEffectSourceParameter(nameof(hostBackdropBrush));
+            LuminanceToAlphaEffect alphaEffect = new LuminanceToAlphaEffect { Source = backgroundParameter };
+            OpacityEffect opacityEffect = new OpacityEffect
+            {
+                Source = alphaEffect,
+                Opacity = 0.4f // Reduce the amount of the effect to avoid making bright areas completely black
+            };
+
+            // Layer [0,1,3] - Desktop background with blur and tint overlay
+            BlendEffect alphaBlend = new BlendEffect
+            {
+                Background = backgroundParameter,
+                Foreground = opacityEffect,
+                Mode = BlendEffectMode.Overlay
+            };
+
+            // In-app backdrop effect
+            CompositionBackdropBrush backdropBrush = compositor.CreateBackdropBrush();
+            const String
+                blurName = "Blur",
+                blurParameterName = "Blur.BlurAmount";
+            GaussianBlurEffect blurEffect = new GaussianBlurEffect
+            {
+                Name = blurName,
+                BlurAmount = 0f,
+                BorderMode = EffectBorderMode.Hard,
+                Optimization = EffectOptimization.Balanced,
+                Source = new CompositionEffectSourceParameter(nameof(backdropBrush))
+            };
+
+            // Setup the switch effect
+            ArithmeticCompositeEffect switchEffect = new ArithmeticCompositeEffect
+            {
+                Name = "Switch",
+                MultiplyAmount = 0,
+                Source1Amount = mode == AcrylicEffectMode.InAppBlur ? 1 : 0,
+                Source2Amount = mode == AcrylicEffectMode.InAppBlur ? 0 : 1,
+                Source1 = blurEffect,
+                Source2 = alphaBlend
+            };
+
+            // Get the tint and noise brushes using Win2D
+            IDictionary<String, CompositionBrush> sourceParameters = new Dictionary<String, CompositionBrush>
+            {
+                { nameof(hostBackdropBrush), hostBackdropBrush },
+                { nameof(backdropBrush), backdropBrush }
+            };
+            IGraphicsEffect source = await AcrylicEffectHelper.ConcatenateEffectWithTintAndBorderAsync(compositor,
+                switchEffect, sourceParameters, color, mode == AcrylicEffectMode.InAppBlur ? inAppColorMix : hostColorMix, canvas, uri, timeThreshold, reload);
+
+            // Setup the tint effect
+            ArithmeticCompositeEffect tint = source as ArithmeticCompositeEffect ?? source.To<BlendEffect>().Background as ArithmeticCompositeEffect;
+            if (tint == null) throw new InvalidOperationException("Error while retrieving the tint effect");
+            tint.Name = "Tint";
+            const String
+                tint1Name = "Tint.Source1Amount",
+                tint2Name = "Tint.Source2Amount";
+
+            // Make sure the Win2D brush was loaded correctly
+            const String
+                source1Name = "Switch.Source1Amount",
+                source2Name = "Switch.Source2Amount";
+            CompositionEffectFactory factory = compositor.CreateEffectFactory(source, new[]
+            {
+                blurParameterName,
+                tint1Name,
+                tint2Name,
+                source1Name,
+                source2Name
+            });
+
+            // Create the effect factory and apply the final effect
+            CompositionEffectBrush effectBrush = factory.CreateBrush();
+            foreach (KeyValuePair<String, CompositionBrush> pair in sourceParameters)
+            {
+                effectBrush.SetSourceParameter(pair.Key, pair.Value);
+            }
+
+            // Setup the toggle function
+            void Toggle(AcrylicEffectMode m)
+            {
+                effectBrush.SetInstantValue(source1Name, m == AcrylicEffectMode.InAppBlur ? 1 : 0);
+                effectBrush.SetInstantValue(source2Name, m == AcrylicEffectMode.InAppBlur ? 0 :1);
+                float
+                    mix = m == AcrylicEffectMode.InAppBlur ? inAppColorMix : hostColorMix,
+                    source1 = 1 - mix,
+                    source2 = mix;
+                effectBrush.SetInstantValue(tint1Name, source1);
+                effectBrush.SetInstantValue(tint2Name, source2);
+            }
+
+            // Create the sprite to display and add it to the visual tree
+            SpriteVisual sprite = compositor.CreateSpriteVisual();
+            sprite.Brush = effectBrush;
+            await AddToTreeAndBindSizeAsync(visual, element, sprite);
+            if (mode == AcrylicEffectMode.InAppBlur) effectBrush.StartAnimationAsync(blurParameterName, blur, TimeSpan.FromMilliseconds(ms)).Forget();
+            return new AttachedToggleAcrylicEffect<T>(element, mode,
+                mode == AcrylicEffectMode.InAppBlur
+                    ? (Action)null
+                    : () => effectBrush.StartAnimationAsync(blurParameterName, blur, TimeSpan.FromMilliseconds(ms)).Forget(),
+                Toggle, sprite, disposeOnUnload);
+        }
+
         #endregion
 
         #region Animated effects
