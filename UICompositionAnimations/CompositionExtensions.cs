@@ -909,8 +909,8 @@ namespace UICompositionAnimations
         /// <param name="clipMargin">The optional margin of the clip area of the shadow</param>
         /// <param name="clipOffsetX">The optional horizontal offset of the clip area of the shadow</param>
         /// <param name="clipOffsetY">The optional vertical offset of the clip area of the shadow</param>
-        /// <returns>The <see cref="SpriteVisual"/> object that hosts the shadow, and the <see cref="DropShadow"/> itself</returns>
-        public static (SpriteVisual, DropShadow) AttachVisualShadow(
+        /// <returns>The <see cref="SpriteVisual"/> object that hosts the shadow</returns>
+        public static SpriteVisual AttachVisualShadow(
             [NotNull] this FrameworkElement element, [NotNull] UIElement target, bool apply,
             float? width, float? height,
             Color color, float opacity,
@@ -920,22 +920,22 @@ namespace UICompositionAnimations
             // Setup the shadow
             Visual elementVisual = ElementCompositionPreview.GetElementVisual(element);
             Compositor compositor = elementVisual.Compositor;
-            SpriteVisual visual = compositor.CreateSpriteVisual();
+            SpriteVisual sprite = compositor.CreateSpriteVisual();
             DropShadow shadow = compositor.CreateDropShadow();
             shadow.Color = color;
             shadow.Opacity = opacity;
-            visual.Shadow = shadow;
-            visual.Size = new Vector2(width ?? (float)element.Width, height ?? (float)element.Height);
-            visual.Offset = new Vector3(-0.5f, -0.5f, 0);
+            sprite.Shadow = shadow;
+            sprite.Size = new Vector2(width ?? (float)element.Width, height ?? (float)element.Height);
+            sprite.Offset = new Vector3(-0.5f, -0.5f, 0);
 
             // Clip it and add it to the visual tree
             InsetClip clip = compositor.CreateInsetClip(
                 (float)(clipMargin?.Left ?? 0), (float)(clipMargin?.Top ?? 0),
                 (float)(clipMargin?.Right ?? 0), (float)(clipMargin?.Bottom ?? 0));
             clip.Offset = new Vector2(clipOffsetX, clipOffsetY);
-            visual.Clip = clip;
-            if (apply) ElementCompositionPreview.SetElementChildVisual(target, visual);
-            return (visual, shadow);
+            sprite.Clip = clip;
+            if (apply) ElementCompositionPreview.SetElementChildVisual(target, sprite);
+            return sprite;
         }
 
         #endregion
