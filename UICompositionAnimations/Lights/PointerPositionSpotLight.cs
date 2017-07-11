@@ -14,6 +14,8 @@ namespace UICompositionAnimations.Lights
     /// </summary>
     public class PointerPositionSpotLight : XamlLight
     {
+        #region Properties
+
         /// <summary>
         /// Gets or sets the alpha channel value for the light to display
         /// </summary>
@@ -117,6 +119,32 @@ namespace UICompositionAnimations.Lights
             }
         }
 
+        // The constant attenuation value to use when the light is inactive
+        private const int InactiveAttenuationValue = 50;
+
+        /// <summary>
+        /// Gets or sets whether or not the light is active
+        /// </summary>
+        public bool Active
+        {
+            get { return GetValue(ActiveProperty).To<bool>(); }
+            set { SetValue(ActiveProperty, value); }
+        }
+
+        /// <summary>
+        /// Gets the <see cref="DependencyProperty"/> for the <see cref="Active"/> property
+        /// </summary>
+        public static readonly DependencyProperty ActiveProperty =
+            DependencyProperty.Register(nameof(Active), typeof(bool), typeof(PointerPositionSpotLight), new PropertyMetadata(true, OnActivePropertyChanged));
+
+        private static void OnActivePropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            PointerPositionSpotLight l = d as PointerPositionSpotLight;
+            l?._Light?.StartAnimationAsync("ConstantAttenuation", e.NewValue.To<bool>() ? 0 : InactiveAttenuationValue, TimeSpan.FromMilliseconds(250));
+        }
+
+        #endregion
+
         /// <summary>
         /// Gets the <see cref="IsTargetProperty"/> value for the target object
         /// </summary>
@@ -200,6 +228,7 @@ namespace UICompositionAnimations.Lights
                 _Light.InnerConeColor = _Light.OuterConeColor = Color.FromArgb(Alpha, Shade, Shade, Shade);
                 _Light.InnerConeAngleInDegrees = 0;
                 _Light.OuterConeAngleInDegrees = OuterConeAngle;
+                _Light.ConstantAttenuation = Active ? 0 : InactiveAttenuationValue;
                 CompositionLight = _Light;
             }
             base.OnConnected(newElement);
