@@ -55,6 +55,23 @@ await attached.AnimateAsync(
   TimeSpan.FromMilliseconds(500)); // The animation duration
 ```
 
+#### Declare a shared acrylic brush in XAML
+
+```XAML
+<ResourceDictionary
+  ...
+  xmlns:brushes="using:UICompositionAnimations.Brushes">
+  <brushes:CustomAcrylicBrush
+      x:Key="InAppGrayAcrylicBrush"
+      Mode="InAppBlur"
+      BlurAmount="8"
+      Tint="#FF222222"
+      TintMix="0.6"
+      NoiseTextureUri="/Assets/Misc/noise.png"/>
+  ...
+</ResourceDictionary/>
+```
+
 #### Get a custom acrylic brush effect:
 ```C#
 AttachedStaticCompositionEffect<Border> attached = await BlurBorder.AttachCompositionInAppCustomAcrylicEffectAsync(
