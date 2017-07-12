@@ -122,6 +122,7 @@
     <Compile Include="Behaviours\Effects\AttachedStaticCompositionEffect.cs" />
     <Compile Include="Behaviours\Misc\CompositionAnimationParameters.cs" />
     <Compile Include="Behaviours\Misc\FixedAnimationType.cs" />
+    <Compile Include="Brushes\CustomInAppAcrylicBrush.cs" />
     <Compile Include="Brushes\LightingBrush.cs" />
     <Compile Include="CompositionExtensions.cs" />
     <Compile Include="Composition\CompositionManager.cs" />
