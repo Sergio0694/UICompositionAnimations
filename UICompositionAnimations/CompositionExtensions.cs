@@ -926,7 +926,7 @@ namespace UICompositionAnimations
             shadow.Opacity = opacity;
             sprite.Shadow = shadow;
             sprite.Size = new Vector2(width ?? (float)element.Width, height ?? (float)element.Height);
-            sprite.Offset = new Vector3(-0.5f, -0.5f, 0);
+            sprite.Offset = new Vector3(offsetX, offsetY, 0);
 
             // Clip it and add it to the visual tree
             InsetClip clip = compositor.CreateInsetClip(

@@ -1,4 +1,6 @@
 ﻿using System;
+using Windows.ApplicationModel.Resources.Core;
+using Windows.Foundation.Collections;
 using Windows.Foundation.Metadata;
 using Windows.System.Profile;
 using Windows.UI.Composition;
@@ -182,6 +184,62 @@ namespace UICompositionAnimations.Helpers
         /// Gets whether or not the RequiresPointer property is available
         /// </summary>
         public static bool IsRequiresPointerAvailable => ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Controls.Control", nameof(Control.RequiresPointer));
+
+        #endregion
+
+        #region Device family
+
+        private static bool? _IsMobileDevice;
+
+        /// <summary>
+        /// Gets whether or not the device is a mobile phone
+        /// </summary>
+        public static bool IsMobileDevice
+        {
+            get
+            {
+                if (_IsMobileDevice == null)
+                {
+                    try
+                    {
+                        IObservableMap<String, String> qualifiers = ResourceContext.GetForCurrentView().QualifierValues;
+                        _IsMobileDevice = qualifiers.ContainsKey("DeviceFamily") && qualifiers["DeviceFamily"] == "Mobile";
+                    }
+                    catch (UnauthorizedAccessException)
+                    {
+                        // No idea why this should happen
+                        return ApiInformation.IsTypePresent("Windows.Phone.UI.Input.HardwareButtons");
+                    }
+                }
+                return _IsMobileDevice.Value;
+            }
+        }
+
+        private static bool? _IsDesktop;
+
+        /// <summary>
+        /// Gets whether or not the device is running Windows 10 Desktop
+        /// </summary>
+        public static bool IsDesktop
+        {
+            get
+            {
+                if (_IsDesktop == null)
+                {
+                    try
+                    {
+                        IObservableMap<String, String> qualifiers = ResourceContext.GetForCurrentView().QualifierValues;
+                        _IsDesktop = qualifiers.ContainsKey("DeviceFamily") && qualifiers["DeviceFamily"] == "Desktop";
+                    }
+                    catch (UnauthorizedAccessException)
+                    {
+                        // Weird crash, but still...
+                        return false;
+                    }
+                }
+                return _IsDesktop.Value;
+            }
+        }
 
         #endregion
     }
