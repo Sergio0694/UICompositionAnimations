@@ -2111,15 +2111,6 @@
           "lib/win81/_._": {}
         }
       },
-      "System.ValueTuple/4.3.1": {
-        "type": "package",
-        "compile": {
-          "lib/netstandard1.0/System.ValueTuple.dll": {}
-        },
-        "runtime": {
-          "lib/netstandard1.0/System.ValueTuple.dll": {}
-        }
-      },
       "System.Xml.ReaderWriter/4.0.11": {
         "type": "package",
         "dependencies": {
@@ -2224,7 +2215,7 @@
           }
         }
       },
-      "Win2D.uwp/1.20.0": {
+      "Win2D.uwp/1.21.0": {
         "type": "package",
         "compile": {
           "lib/uap10.0/Microsoft.Graphics.Canvas.winmd": {}
@@ -4447,15 +4438,6 @@
           "lib/win81/_._": {}
         }
       },
-      "System.ValueTuple/4.3.1": {
-        "type": "package",
-        "compile": {
-          "lib/netstandard1.0/System.ValueTuple.dll": {}
-        },
-        "runtime": {
-          "lib/netstandard1.0/System.ValueTuple.dll": {}
-        }
-      },
       "System.Xml.ReaderWriter/4.0.11": {
         "type": "package",
         "dependencies": {
@@ -4554,7 +4536,7 @@
           "lib/netcore50/System.Xml.XmlSerializer.dll": {}
         }
       },
-      "Win2D.uwp/1.20.0": {
+      "Win2D.uwp/1.21.0": {
         "type": "package",
         "compile": {
           "lib/uap10.0/Microsoft.Graphics.Canvas.winmd": {}
@@ -6805,15 +6787,6 @@
           "lib/win81/_._": {}
         }
       },
-      "System.ValueTuple/4.3.1": {
-        "type": "package",
-        "compile": {
-          "lib/netstandard1.0/System.ValueTuple.dll": {}
-        },
-        "runtime": {
-          "lib/netstandard1.0/System.ValueTuple.dll": {}
-        }
-      },
       "System.Xml.ReaderWriter/4.0.11": {
         "type": "package",
         "dependencies": {
@@ -6912,7 +6885,7 @@
           "runtimes/aot/lib/netcore50/System.Xml.XmlSerializer.dll": {}
         }
       },
-      "Win2D.uwp/1.20.0": {
+      "Win2D.uwp/1.21.0": {
         "type": "package",
         "compile": {
           "lib/uap10.0/Microsoft.Graphics.Canvas.winmd": {}
@@ -9133,15 +9106,6 @@
           "lib/win81/_._": {}
         }
       },
-      "System.ValueTuple/4.3.1": {
-        "type": "package",
-        "compile": {
-          "lib/netstandard1.0/System.ValueTuple.dll": {}
-        },
-        "runtime": {
-          "lib/netstandard1.0/System.ValueTuple.dll": {}
-        }
-      },
       "System.Xml.ReaderWriter/4.0.11": {
         "type": "package",
         "dependencies": {
@@ -9240,7 +9204,7 @@
           "lib/netcore50/System.Xml.XmlSerializer.dll": {}
         }
       },
-      "Win2D.uwp/1.20.0": {
+      "Win2D.uwp/1.21.0": {
         "type": "package",
         "compile": {
           "lib/uap10.0/Microsoft.Graphics.Canvas.winmd": {}
@@ -11500,15 +11464,6 @@
           "lib/win81/_._": {}
         }
       },
-      "System.ValueTuple/4.3.1": {
-        "type": "package",
-        "compile": {
-          "lib/netstandard1.0/System.ValueTuple.dll": {}
-        },
-        "runtime": {
-          "lib/netstandard1.0/System.ValueTuple.dll": {}
-        }
-      },
       "System.Xml.ReaderWriter/4.0.11": {
         "type": "package",
         "dependencies": {
@@ -11607,7 +11562,7 @@
           "runtimes/aot/lib/netcore50/System.Xml.XmlSerializer.dll": {}
         }
       },
-      "Win2D.uwp/1.20.0": {
+      "Win2D.uwp/1.21.0": {
         "type": "package",
         "compile": {
           "lib/uap10.0/Microsoft.Graphics.Canvas.winmd": {}
@@ -13828,15 +13783,6 @@
           "lib/win81/_._": {}
         }
       },
-      "System.ValueTuple/4.3.1": {
-        "type": "package",
-        "compile": {
-          "lib/netstandard1.0/System.ValueTuple.dll": {}
-        },
-        "runtime": {
-          "lib/netstandard1.0/System.ValueTuple.dll": {}
-        }
-      },
       "System.Xml.ReaderWriter/4.0.11": {
         "type": "package",
         "dependencies": {
@@ -13935,7 +13881,7 @@
           "lib/netcore50/System.Xml.XmlSerializer.dll": {}
         }
       },
-      "Win2D.uwp/1.20.0": {
+      "Win2D.uwp/1.21.0": {
         "type": "package",
         "compile": {
           "lib/uap10.0/Microsoft.Graphics.Canvas.winmd": {}
@@ -16195,15 +16141,6 @@
           "lib/win81/_._": {}
         }
       },
-      "System.ValueTuple/4.3.1": {
-        "type": "package",
-        "compile": {
-          "lib/netstandard1.0/System.ValueTuple.dll": {}
-        },
-        "runtime": {
-          "lib/netstandard1.0/System.ValueTuple.dll": {}
-        }
-      },
       "System.Xml.ReaderWriter/4.0.11": {
         "type": "package",
         "dependencies": {
@@ -16302,7 +16239,7 @@
           "runtimes/aot/lib/netcore50/System.Xml.XmlSerializer.dll": {}
         }
       },
-      "Win2D.uwp/1.20.0": {
+      "Win2D.uwp/1.21.0": {
         "type": "package",
         "compile": {
           "lib/uap10.0/Microsoft.Graphics.Canvas.winmd": {}
@@ -24352,33 +24289,6 @@
         "ref/xamarinwatchos10/_._"
       ]
     },
-    "System.ValueTuple/4.3.1": {
-      "sha512": "xzDmg26Wb2x2rFDjwziaMYQJqxhrK+b4OUC008o7CnZhUMb2p5XfwgOgAQ/WlKhqxMUSDWRUm5/lNTKdh27pJA==",
-      "type": "package",
-      "path": "system.valuetuple/4.3.1",
-      "files": [
-        "ThirdPartyNotices.txt",
-        "dotnet_library_license.txt",
-        "lib/MonoAndroid10/_._",
-        "lib/MonoTouch10/_._",
-        "lib/netstandard1.0/.xml",
-        "lib/netstandard1.0/System.ValueTuple.dll",
-        "lib/portable-net40+sl4+win8+wp8/.xml",
-        "lib/portable-net40+sl4+win8+wp8/System.ValueTuple.dll",
-        "lib/xamarinios10/_._",
-        "lib/xamarinmac20/_._",
-        "lib/xamarintvos10/_._",
-        "lib/xamarinwatchos10/_._",
-        "ref/MonoAndroid10/_._",
-        "ref/MonoTouch10/_._",
-        "ref/xamarinios10/_._",
-        "ref/xamarinmac20/_._",
-        "ref/xamarintvos10/_._",
-        "ref/xamarinwatchos10/_._",
-        "system.valuetuple.4.3.1.nupkg.sha512",
-        "system.valuetuple.nuspec"
-      ]
-    },
     "System.Xml.ReaderWriter/4.0.11": {
       "sha512": "ZIiLPsf67YZ9zgr31vzrFaYQqxRPX9cVHjtPSnmx4eN6lbS/yEyYNr2vs1doGDEscF0tjCZFsk9yUg1sC9e8tg==",
       "type": "package",
@@ -24621,10 +24531,10 @@
         "runtimes/aot/lib/netcore50/System.Xml.XmlSerializer.dll"
       ]
     },
-    "Win2D.uwp/1.20.0": {
-      "sha512": "sFyNT2EiV6vmEFMrkiJdSolaKNyOyk+kfjgvXN8XqUhdEPqBd2zPrFdl7SojNHQGm2Br6JLIBOdrj9fB1Qy4GA==",
+    "Win2D.uwp/1.21.0": {
+      "sha512": "4Ds/p7HgysgV67pBo/+w7Lidj08Hfa4GD9Zg9HdN3/zLfzRPttHrIn2TUiOUZCgH4eLVJwzOk114ntv4bveS1Q==",
       "type": "package",
-      "path": "win2d.uwp/1.20.0",
+      "path": "win2d.uwp/1.21.0",
       "files": [
         "Win2d.githash.txt",
         "build/native/Win2D.uwp.targets",
@@ -24635,7 +24545,7 @@
         "runtimes/win10-arm/native/Microsoft.Graphics.Canvas.dll",
         "runtimes/win10-x64/native/Microsoft.Graphics.Canvas.dll",
         "runtimes/win10-x86/native/Microsoft.Graphics.Canvas.dll",
-        "win2d.uwp.1.20.0.nupkg.sha512",
+        "win2d.uwp.1.21.0.nupkg.sha512",
         "win2d.uwp.nuspec"
       ]
     }
@@ -24645,8 +24555,7 @@
       "JetBrains.Annotations >= 10.4.0",
       "Microsoft.NETCore.UniversalWindowsPlatform >= 5.3.3",
       "System.Threading.Tasks.Extensions >= 4.3.0",
-      "System.ValueTuple >= 4.3.1",
-      "Win2D.uwp >= 1.20.0"
+      "Win2D.uwp >= 1.21.0"
     ],
     "UAP,Version=v10.0": []
   },
@@ -24665,8 +24574,7 @@
       "JetBrains.Annotations": "10.4.0",
       "Microsoft.NETCore.UniversalWindowsPlatform": "5.3.3",
       "System.Threading.Tasks.Extensions": "4.3.0",
-      "System.ValueTuple": "4.3.1",
-      "Win2D.uwp": "1.20.0"
+      "Win2D.uwp": "1.21.0"
     },
     "frameworks": {
       "uap10.0": {}

@@ -8,7 +8,7 @@ namespace UICompositionAnimations.Composition
     /// <summary>
     /// Create composition animations using this class
     /// </summary>
-    internal static class CompositionManager
+    public static class CompositionManager
     {
         // UIElement scalar animation
         public static void BeginScalarAnimation(UIElement element, String propertyPath, float to, float? from, TimeSpan duration, TimeSpan? delay, CompositionEasingFunction ease)
