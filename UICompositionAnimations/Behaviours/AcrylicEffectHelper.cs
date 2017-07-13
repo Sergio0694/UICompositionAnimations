@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Graphics.DirectX;
 using Windows.Graphics.Effects;
+using Windows.Graphics.Imaging;
 using Windows.UI;
 using Windows.UI.Composition;
 using JetBrains.Annotations;
@@ -33,6 +34,40 @@ namespace UICompositionAnimations.Behaviours
         private static readonly IDictionary<String, CompositionSurfaceBrush> SurfacesCache = new Dictionary<String, CompositionSurfaceBrush>();
 
         /// <summary>
+        /// Loads a <see cref="CompositionSurfaceBrush"/> from the input <see cref="Uri"/>, and prepares it for the <see cref="BorderEffect"/>
+        /// </summary>
+        /// <param name="creator">The resource creator to use to load the image bitmap (it can be the same <see cref="CanvasDevice"/> used later)</param>
+        /// <param name="compositor">The compositor instance to use to create the final brush</param>
+        /// <param name="canvasDevice">The device to use to process the Win2D image</param>
+        /// <param name="uri">The path to the image to load</param>
+        private static async Task<CompositionSurfaceBrush> LoadSurfaceBrushAsync([NotNull] ICanvasResourceCreator creator, 
+            [NotNull] Compositor compositor, [NotNull] CanvasDevice canvasDevice, [NotNull] Uri uri)
+        {
+            using (CanvasBitmap bitmap = await CanvasBitmap.LoadAsync(creator, uri))
+            {
+                // Get the device and the target surface
+                CompositionGraphicsDevice device = CanvasComposition.CreateCompositionGraphicsDevice(compositor, canvasDevice);
+                CompositionDrawingSurface surface = device.CreateDrawingSurface(default(Size),
+                    DirectXPixelFormat.B8G8R8A8UIntNormalized, DirectXAlphaMode.Premultiplied);
+
+                // Calculate the surface size
+                Size size = bitmap.Size;
+                CanvasComposition.Resize(surface, size);
+
+                // Draw the image on the surface and get the resulting brush
+                using (CanvasDrawingSession session = CanvasComposition.CreateDrawingSession(surface))
+                {
+                    session.Clear(Color.FromArgb(0, 0, 0, 0));
+                    session.DrawImage(bitmap, new Rect(0, 0, size.Width, size.Height), new Rect(0, 0, size.Width, size.Height));
+                    session.EffectTileSize = new BitmapSize { Width = (uint)size.Width, Height = (uint)size.Height };
+                    CompositionSurfaceBrush brush = surface.Compositor.CreateSurfaceBrush(surface);
+                    brush.Stretch = CompositionStretch.None;
+                    return brush;
+                }
+            }
+        }
+
+        /// <summary>
         /// Loads a <see cref="CompositionSurfaceBrush"/> instance with the target image
         /// </summary>
         /// <param name="compositor">The compositor to use to render the Win2D image</param>
@@ -50,26 +85,7 @@ namespace UICompositionAnimations.Behaviours
                 // Load the image - this will only succeed when there's an available Win2D device
                 try
                 {
-                    using (CanvasBitmap bitmap = await CanvasBitmap.LoadAsync(canvas, uri))
-                    {
-                        // Get the device and the target surface
-                        CompositionGraphicsDevice device = CanvasComposition.CreateCompositionGraphicsDevice(compositor, canvas.Device);
-                        CompositionDrawingSurface surface = device.CreateDrawingSurface(default(Size),
-                            DirectXPixelFormat.B8G8R8A8UIntNormalized, DirectXAlphaMode.Premultiplied);
-
-                        // Calculate the surface size
-                        Size size = bitmap.Size;
-                        CanvasComposition.Resize(surface, size);
-
-                        // Draw the image on the surface and get the resulting brush
-                        using (CanvasDrawingSession session = CanvasComposition.CreateDrawingSession(surface))
-                        {
-                            session.Clear(Color.FromArgb(0, 0, 0, 0));
-                            session.DrawImage(bitmap, new Rect(0, 0, size.Width, size.Height), new Rect(0, 0, size.Width, size.Height));
-                            CompositionSurfaceBrush brush = surface.Compositor.CreateSurfaceBrush(surface);
-                            return brush;
-                        }
-                    }
+                    return await LoadSurfaceBrushAsync(canvas, compositor, canvas.Device, uri);
                 }
                 catch when (!shouldThrow)
                 {
@@ -165,25 +181,7 @@ namespace UICompositionAnimations.Behaviours
             {
                 // This will throw and the canvas will re-initialize the Win2D device if needed
                 CanvasDevice sharedDevice = CanvasDevice.GetSharedDevice();
-                using (CanvasBitmap bitmap = await CanvasBitmap.LoadAsync(sharedDevice, uri))
-                {
-                    // Get the device and the target surface
-                    CompositionGraphicsDevice device = CanvasComposition.CreateCompositionGraphicsDevice(compositor, sharedDevice);
-                    CompositionDrawingSurface surface = device.CreateDrawingSurface(default(Size),
-                        DirectXPixelFormat.B8G8R8A8UIntNormalized, DirectXAlphaMode.Premultiplied);
-
-                    // Calculate the surface size
-                    Size size = bitmap.Size;
-                    CanvasComposition.Resize(surface, size);
-
-                    // Draw the image on the surface and get the resulting brush
-                    using (CanvasDrawingSession session = CanvasComposition.CreateDrawingSession(surface))
-                    {
-                        session.Clear(Color.FromArgb(0, 0, 0, 0));
-                        session.DrawImage(bitmap, new Rect(0, 0, size.Width, size.Height), new Rect(0, 0, size.Width, size.Height));
-                        brush = surface.Compositor.CreateSurfaceBrush(surface);
-                    }
-                }
+                brush = await LoadSurfaceBrushAsync(sharedDevice, compositor, sharedDevice, uri);
             }
             catch
             {
