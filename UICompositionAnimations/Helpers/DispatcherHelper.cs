@@ -19,7 +19,7 @@ namespace UICompositionAnimations.Helpers
         /// <param name="dispatcher">The target dispatcher to use to schedule the callback execution</param>
         /// <param name="callback">The action to execute on the UI thread</param>
         [PublicAPI]
-        public static void RunOnUIThread([NotNull] this CoreDispatcher dispatcher, [NotNull] Action callback)
+        public static void Run([NotNull] this CoreDispatcher dispatcher, [NotNull] Action callback)
         {
             if (dispatcher.HasThreadAccess) callback();
             else
@@ -37,7 +37,7 @@ namespace UICompositionAnimations.Helpers
         /// <param name="dispatcher">The target dispatcher to use to schedule the callback execution</param>
         /// <param name="asyncCallback">The action to execute on the UI thread</param>
         [PublicAPI]
-        public static void RunOnUIThread([NotNull] this CoreDispatcher dispatcher, [NotNull] Func<Task> asyncCallback)
+        public static void Run([NotNull] this CoreDispatcher dispatcher, [NotNull] Func<Task> asyncCallback)
         {
             // Check the current thread
             if (dispatcher.HasThreadAccess) asyncCallback();
@@ -55,7 +55,7 @@ namespace UICompositionAnimations.Helpers
         /// <param name="dispatcher">The target dispatcher to use to schedule the callback execution</param>
         /// <param name="callback">The action to execute on the UI thread</param>
         [PublicAPI]
-        public static async Task RunOnUIThreadAsync([NotNull] this CoreDispatcher dispatcher, [NotNull] Action callback)
+        public static async Task RunAsync([NotNull] this CoreDispatcher dispatcher, [NotNull] Action callback)
         {
             if (dispatcher.HasThreadAccess) callback();
             else
@@ -76,7 +76,7 @@ namespace UICompositionAnimations.Helpers
         /// <param name="dispatcher">The target dispatcher to use to schedule the callback execution</param>
         /// <param name="asyncCallback">The action to execute on the UI thread</param>
         [PublicAPI]
-        public static Task RunOnUIThreadAsync([NotNull] this CoreDispatcher dispatcher, [NotNull] Func<Task> asyncCallback)
+        public static Task RunAsync([NotNull] this CoreDispatcher dispatcher, [NotNull] Func<Task> asyncCallback)
         {
             // Check the current thread
             if (dispatcher.HasThreadAccess) return asyncCallback();
@@ -97,7 +97,7 @@ namespace UICompositionAnimations.Helpers
         /// <param name="dispatcher">The target dispatcher to use to schedule the callback execution</param>
         /// <param name="function">The function to execute on the UI thread</param>
         [PublicAPI]
-        public static async ValueTask<T> GetFromUIThreadAsync<T>([NotNull] this CoreDispatcher dispatcher, [NotNull] Func<T> function)
+        public static async ValueTask<T> GetAsync<T>([NotNull] this CoreDispatcher dispatcher, [NotNull] Func<T> function)
         {
             if (dispatcher.HasThreadAccess) return function();
             TaskCompletionSource<T> tcs = new TaskCompletionSource<T>();
@@ -116,7 +116,7 @@ namespace UICompositionAnimations.Helpers
         /// <param name="dispatcher">The target dispatcher to use to schedule the callback execution</param>
         /// <param name="function">The async function to execute on the UI thread</param>
         [PublicAPI]
-        public static Task<T> GetFromUIThreadAsync<T>([NotNull] this CoreDispatcher dispatcher, [NotNull] Func<Task<T>> function)
+        public static Task<T> GetAsync<T>([NotNull] this CoreDispatcher dispatcher, [NotNull] Func<Task<T>> function)
         {
             // Check the current thread
             if (dispatcher.HasThreadAccess) return function();
@@ -152,28 +152,28 @@ namespace UICompositionAnimations.Helpers
         /// </summary>
         /// <param name="callback">The action to execute on the UI thread</param>
         [PublicAPI]
-        public static void RunOnUIThread([NotNull] Action callback) => CoreDispatcher.RunOnUIThread(callback);
+        public static void RunOnUIThread([NotNull] Action callback) => CoreDispatcher.Run(callback);
 
         /// <summary>
         /// Executes a given async action on the UI thread without awaiting the operation
         /// </summary>
         /// <param name="asyncCallback">The action to execute on the UI thread</param>
         [PublicAPI]
-        public static void RunOnUIThread([NotNull] Func<Task> asyncCallback) => CoreDispatcher.RunOnUIThread(asyncCallback);
+        public static void RunOnUIThread([NotNull] Func<Task> asyncCallback) => CoreDispatcher.Run(asyncCallback);
 
         /// <summary>
         /// Executes a given action on the UI thread and waits for it to be completed
         /// </summary>
         /// <param name="callback">The action to execute on the UI thread</param>
         [PublicAPI]
-        public static Task RunOnUIThreadAsync([NotNull] Action callback) => CoreDispatcher.RunOnUIThreadAsync(callback);
+        public static Task RunOnUIThreadAsync([NotNull] Action callback) => CoreDispatcher.RunAsync(callback);
 
         /// <summary>
         /// Executes a given action on the UI thread and waits for it to be completed
         /// </summary>
         /// <param name="asyncCallback">The action to execute on the UI thread</param>
         [PublicAPI]
-        public static Task RunOnUIThreadAsync([NotNull] Func<Task> asyncCallback) => CoreDispatcher.RunOnUIThreadAsync(asyncCallback);
+        public static Task RunOnUIThreadAsync([NotNull] Func<Task> asyncCallback) => CoreDispatcher.RunAsync(asyncCallback);
 
         /// <summary>
         /// Executes a given function on the UI thread and returns its result
@@ -181,7 +181,7 @@ namespace UICompositionAnimations.Helpers
         /// <typeparam name="T">The return type</typeparam>
         /// <param name="function">The function to execute on the UI thread</param>
         [PublicAPI]
-        public static ValueTask<T> GetFromUIThreadAsync<T>([NotNull] Func<T> function) => CoreDispatcher.GetFromUIThreadAsync(function);
+        public static ValueTask<T> GetFromUIThreadAsync<T>([NotNull] Func<T> function) => CoreDispatcher.GetAsync(function);
 
         /// <summary>
         /// Executes a given async function on the UI thread and returns its result
@@ -189,7 +189,7 @@ namespace UICompositionAnimations.Helpers
         /// <typeparam name="T">The return type</typeparam>
         /// <param name="function">The async function to execute on the UI thread</param>
         [PublicAPI]
-        public static Task<T> GetFromUIThreadAsync<T>([NotNull] Func<Task<T>> function) => CoreDispatcher.GetFromUIThreadAsync(function);
+        public static Task<T> GetFromUIThreadAsync<T>([NotNull] Func<Task<T>> function) => CoreDispatcher.GetAsync(function);
 
         #endregion
     }
