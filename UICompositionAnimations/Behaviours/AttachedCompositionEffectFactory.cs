@@ -166,8 +166,8 @@ namespace UICompositionAnimations.Behaviours
             if (fadeIn)
             {
                 // Fade the effect in
-                ScalarKeyFrameAnimation opacityAnimation = sprite.Compositor.CreateScalarKeyFrameAnimation(1, 0,
-                    TimeSpan.FromMilliseconds(ms), null, sprite.GetEasingFunction(EasingFunctionNames.Linear));
+                ScalarKeyFrameAnimation opacityAnimation = sprite.Compositor.CreateScalarKeyFrameAnimation(0,
+                    1, TimeSpan.FromMilliseconds(ms), null, sprite.GetEasingFunction(EasingFunctionNames.Linear));
                 sprite.StartAnimation("Opacity", opacityAnimation);
             }
 

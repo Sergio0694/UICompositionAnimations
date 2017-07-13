@@ -2,52 +2,135 @@
 using System.Numerics;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
+using JetBrains.Annotations;
 
 namespace UICompositionAnimations.Composition
 {
     /// <summary>
     /// Create composition animations using this class
     /// </summary>
-    internal static class CompositionManager
+    public static class CompositionManager
     {
-        // UIElement scalar animation
-        public static void BeginScalarAnimation(UIElement element, String propertyPath, float to, float? from, TimeSpan duration, TimeSpan? delay, CompositionEasingFunction ease)
+        #region Animations initialization
+
+        /// <summary>
+        /// Creates and starts a scalar animation on the target element
+        /// </summary>
+        /// <param name="element">The element to animate</param>
+        /// <param name="propertyPath">The path that identifies the property to animate</param>
+        /// <param name="from">The optional starting value for the animation</param>
+        /// <param name="to">The final value for the animation</param>
+        /// <param name="duration">The animation duration</param>
+        /// <param name="delay">The optional initial delay for the animation</param>
+        /// <param name="ease">The optional easing function for the animation</param>
+        [PublicAPI]
+        public static void BeginScalarAnimation([NotNull] UIElement element, [NotNull] String propertyPath, 
+            float? from, float to, TimeSpan duration, TimeSpan? delay, [CanBeNull] CompositionEasingFunction ease = null)
         {
-            element.GetVisual().BeginScalarAnimation(propertyPath, to, from, duration, delay, ease);
+            element.GetVisual().BeginScalarAnimation(propertyPath, from, to, duration, delay, ease);
         }
 
-        // UIElement Vector2 animation
-        public static void BeginVector2Animation(UIElement element, String propertyPath, Vector2 to, Vector2? from, TimeSpan duration, TimeSpan? delay, CompositionEasingFunction ease)
+        /// <summary>
+        /// Creates and starts a <see cref="Vector2"/> animation on the target element
+        /// </summary>
+        /// <param name="element">The element to animate</param>
+        /// <param name="propertyPath">The path that identifies the property to animate</param>
+        /// <param name="from">The optional starting value for the animation</param>
+        /// <param name="to">The final value for the animation</param>
+        /// <param name="duration">The animation duration</param>
+        /// <param name="delay">The optional initial delay for the animation</param>
+        /// <param name="ease">The optional easing function for the animation</param>
+        [PublicAPI]
+        public static void BeginVector2Animation([NotNull] UIElement element, [NotNull] String propertyPath, 
+            Vector2? from, Vector2 to, TimeSpan duration, TimeSpan? delay, [CanBeNull] CompositionEasingFunction ease = null)
         {
-            element.GetVisual().BeginVector2Animation(propertyPath, to, from, duration, delay, ease);
+            element.GetVisual().BeginVector2Animation(propertyPath, from, to, duration, delay, ease);
         }
 
-        // UIElement Vector3 animation
-        public static void BeginVector3Animation(UIElement element, String propertyPath, Vector3 to, Vector3? from, TimeSpan duration, TimeSpan? delay, CompositionEasingFunction ease)
+        /// <summary>
+        /// Creates and starts a <see cref="Vector3"/> animation on the target element
+        /// </summary>
+        /// <param name="element">The element to animate</param>
+        /// <param name="propertyPath">The path that identifies the property to animate</param>
+        /// <param name="from">The optional starting value for the animation</param>
+        /// <param name="to">The final value for the animation</param>
+        /// <param name="duration">The animation duration</param>
+        /// <param name="delay">The optional initial delay for the animation</param>
+        /// <param name="ease">The optional easing function for the animation</param>
+        public static void BeginVector3Animation([NotNull] UIElement element, [NotNull] String propertyPath, 
+            Vector3? from, Vector3 to, TimeSpan duration, TimeSpan? delay, [CanBeNull] CompositionEasingFunction ease = null)
         {
-            element.GetVisual().BeginVector3Animation(propertyPath, to, from, duration, delay, ease);
+            element.GetVisual().BeginVector3Animation(propertyPath, from, to, duration, delay, ease);
         }
 
-        // CompositionObject scalar animation
-        public static void BeginScalarAnimation(this CompositionObject compObj, String propertyPath, float to, float? from, TimeSpan duration, TimeSpan? delay, CompositionEasingFunction ease)
+        /// <summary>
+        /// Creates and starts a scalar animation on the current <see cref="CompositionObject"/>
+        /// </summary>
+        /// <param name="compObj">The target to animate</param>
+        /// <param name="propertyPath">The path that identifies the property to animate</param>
+        /// <param name="from">The optional starting value for the animation</param>
+        /// <param name="to">The final value for the animation</param>
+        /// <param name="duration">The animation duration</param>
+        /// <param name="delay">The optional initial delay for the animation</param>
+        /// <param name="ease">The optional easing function for the animation</param>
+        [PublicAPI]
+        public static void BeginScalarAnimation([NotNull] this CompositionObject compObj, [NotNull] String propertyPath, 
+            float? from, float to, TimeSpan duration, TimeSpan? delay, [CanBeNull] CompositionEasingFunction ease = null)
         {
-            compObj.StartAnimation(propertyPath, compObj.Compositor.CreateScalarKeyFrameAnimation(to, from, duration, delay, ease));
+            compObj.StartAnimation(propertyPath, compObj.Compositor.CreateScalarKeyFrameAnimation(from, to, duration, delay, ease));
         }
 
-        // CompositionObject Vector2 animation
-        public static void BeginVector2Animation(this CompositionObject compObj, String propertyPath, Vector2 to, Vector2? from, TimeSpan duration, TimeSpan? delay, CompositionEasingFunction ease)
+        /// <summary>
+        /// Creates and starts a <see cref="Vector2"/> animation on the current <see cref="CompositionObject"/>
+        /// </summary>
+        /// <param name="compObj">The target to animate</param>
+        /// <param name="propertyPath">The path that identifies the property to animate</param>
+        /// <param name="from">The optional starting value for the animation</param>
+        /// <param name="to">The final value for the animation</param>
+        /// <param name="duration">The animation duration</param>
+        /// <param name="delay">The optional initial delay for the animation</param>
+        /// <param name="ease">The optional easing function for the animation</param>
+        [PublicAPI]
+        public static void BeginVector2Animation([NotNull]this CompositionObject compObj, [NotNull] String propertyPath, 
+            Vector2? from, Vector2 to, TimeSpan duration, TimeSpan? delay, [CanBeNull] CompositionEasingFunction ease = null)
         {
-            compObj.StartAnimation(propertyPath, compObj.Compositor.CreateVector2KeyFrameAnimation(to, from, duration, delay, ease));
+            compObj.StartAnimation(propertyPath, compObj.Compositor.CreateVector2KeyFrameAnimation(from, to, duration, delay, ease));
         }
 
-        // CompositionObject Vector3 animation
-        public static void BeginVector3Animation(this CompositionObject compObj, String propertyPath, Vector3 to, Vector3? from, TimeSpan duration, TimeSpan? delay, CompositionEasingFunction ease)
+        /// <summary>
+        /// Creates and starts a <see cref="Vector3"/> animation on the current <see cref="CompositionObject"/>
+        /// </summary>
+        /// <param name="compObj">The target to animate</param>
+        /// <param name="propertyPath">The path that identifies the property to animate</param>
+        /// <param name="from">The optional starting value for the animation</param>
+        /// <param name="to">The final value for the animation</param>
+        /// <param name="duration">The animation duration</param>
+        /// <param name="delay">The optional initial delay for the animation</param>
+        /// <param name="ease">The optional easing function for the animation</param>
+        [PublicAPI]
+        public static void BeginVector3Animation([NotNull] this CompositionObject compObj, [NotNull] String propertyPath, 
+            Vector3? from, Vector3 to, TimeSpan duration, TimeSpan? delay, [CanBeNull] CompositionEasingFunction ease = null)
         {
-            compObj.StartAnimation(propertyPath, compObj.Compositor.CreateVector3KeyFrameAnimation(to, from, duration, delay, ease));
+            compObj.StartAnimation(propertyPath, compObj.Compositor.CreateVector3KeyFrameAnimation(from, to, duration, delay, ease));
         }
 
-        // Create scalar animation from compositor
-        public static ScalarKeyFrameAnimation CreateScalarKeyFrameAnimation(this Compositor compositor, float to, float? from, TimeSpan duration, TimeSpan? delay, CompositionEasingFunction ease)
+        #endregion
+
+        #region KeyFrame animations
+
+        /// <summary>
+        /// Creates a <see cref="ScalarKeyFrameAnimation"/> instance with the given parameters to on a target element
+        /// </summary>
+        /// <param name="compositor">The current <see cref="Compositor"/> instance used to create the animation</param>
+        /// <param name="from">The optional starting value for the animation</param>
+        /// <param name="to">The final value for the animation</param>
+        /// <param name="duration">The animation duration</param>
+        /// <param name="delay">The optional initial delay for the animation</param>
+        /// <param name="ease">The optional easing function for the animation</param>
+        [PublicAPI]
+        [Pure, NotNull]
+        public static ScalarKeyFrameAnimation CreateScalarKeyFrameAnimation([NotNull] this Compositor compositor, 
+            float? from, float to, TimeSpan duration, TimeSpan? delay, [CanBeNull] CompositionEasingFunction ease = null)
         {
             // Set duration and delay time
             ScalarKeyFrameAnimation ani = compositor.CreateScalarKeyFrameAnimation();
@@ -60,8 +143,19 @@ namespace UICompositionAnimations.Composition
             return ani;
         }
 
-        // Create expression scalar animation from compositor
-        public static ScalarKeyFrameAnimation CreateScalarKeyFrameAnimation(this Compositor compositor, String to, float? from, TimeSpan duration, TimeSpan? delay, CompositionEasingFunction ease)
+        /// <summary>
+        /// Creates a <see cref="ScalarKeyFrameAnimation"/> instance with the given parameters to on a target element, using an expression animation
+        /// </summary>
+        /// <param name="compositor">The current <see cref="Compositor"/> instance used to create the animation</param>
+        /// <param name="from">The optional starting value for the animation</param>
+        /// <param name="to">A string that indicates the final value for the animation</param>
+        /// <param name="duration">The animation duration</param>
+        /// <param name="delay">The optional initial delay for the animation</param>
+        /// <param name="ease">The optional easing function for the animation</param>
+        [PublicAPI]
+        [Pure, NotNull]
+        public static ScalarKeyFrameAnimation CreateScalarKeyFrameAnimation([NotNull] this Compositor compositor, 
+            float? from, [NotNull] String to, TimeSpan duration, TimeSpan? delay, [CanBeNull] CompositionEasingFunction ease = null)
         {
             // Set duration and delay time
             ScalarKeyFrameAnimation ani = compositor.CreateScalarKeyFrameAnimation();
@@ -74,8 +168,19 @@ namespace UICompositionAnimations.Composition
             return ani;
         }
 
-        // Create Vector2 animation from compositor
-        public static Vector2KeyFrameAnimation CreateVector2KeyFrameAnimation(this Compositor compositor, Vector2 to, Vector2? from, TimeSpan duration, TimeSpan? delay, CompositionEasingFunction ease)
+        /// <summary>
+        /// Creates a <see cref="ScalarKeyFrameAnimation"/> instance with the given parameters to on a target element
+        /// </summary>
+        /// <param name="compositor">The current <see cref="Compositor"/> instance used to create the animation</param>
+        /// <param name="from">The optional starting value for the animation</param>
+        /// <param name="to">The final value for the animation</param>
+        /// <param name="duration">The animation duration</param>
+        /// <param name="delay">The optional initial delay for the animation</param>
+        /// <param name="ease">The optional easing function for the animation</param>
+        [PublicAPI]
+        [Pure, NotNull]
+        public static Vector2KeyFrameAnimation CreateVector2KeyFrameAnimation([NotNull] this Compositor compositor, 
+            Vector2? from, Vector2 to, TimeSpan duration, TimeSpan? delay, [CanBeNull] CompositionEasingFunction ease = null)
         {
             // Set duration and delay time
             Vector2KeyFrameAnimation ani = compositor.CreateVector2KeyFrameAnimation();
@@ -88,8 +193,19 @@ namespace UICompositionAnimations.Composition
             return ani;
         }
 
-        // Create Vector2 expression animation from compositor
-        public static Vector2KeyFrameAnimation CreateVector2KeyFrameAnimation(this Compositor compositor, String to, Vector2? from, TimeSpan duration, TimeSpan? delay, CompositionEasingFunction ease)
+        /// <summary>
+        /// Creates a <see cref="ScalarKeyFrameAnimation"/> instance with the given parameters to on a target element, using an expression animation
+        /// </summary>
+        /// <param name="compositor">The current <see cref="Compositor"/> instance used to create the animation</param>
+        /// <param name="from">The optional starting value for the animation</param>
+        /// <param name="to">A string that indicates the final value for the animation</param>
+        /// <param name="duration">The animation duration</param>
+        /// <param name="delay">The optional initial delay for the animation</param>
+        /// <param name="ease">The optional easing function for the animation</param>
+        [PublicAPI]
+        [Pure, NotNull]
+        public static Vector2KeyFrameAnimation CreateVector2KeyFrameAnimation([NotNull] this Compositor compositor, 
+            Vector2? from, [NotNull] String to, TimeSpan duration, TimeSpan? delay, [CanBeNull] CompositionEasingFunction ease = null)
         {
             // Set duration and delay time
             Vector2KeyFrameAnimation ani = compositor.CreateVector2KeyFrameAnimation();
@@ -102,8 +218,19 @@ namespace UICompositionAnimations.Composition
             return ani;
         }
 
-        // Create Vector3 animation from compositor
-        public static Vector3KeyFrameAnimation CreateVector3KeyFrameAnimation(this Compositor compositor, Vector3 to, Vector3? from, TimeSpan duration, TimeSpan? delay, CompositionEasingFunction ease)
+        /// <summary>
+        /// Creates a <see cref="ScalarKeyFrameAnimation"/> instance with the given parameters to on a target element
+        /// </summary>
+        /// <param name="compositor">The current <see cref="Compositor"/> instance used to create the animation</param>
+        /// <param name="from">The optional starting value for the animation</param>
+        /// <param name="to">The final value for the animation</param>
+        /// <param name="duration">The animation duration</param>
+        /// <param name="delay">The optional initial delay for the animation</param>
+        /// <param name="ease">The optional easing function for the animation</param>
+        [PublicAPI]
+        [Pure, NotNull]
+        public static Vector3KeyFrameAnimation CreateVector3KeyFrameAnimation([NotNull] this Compositor compositor, 
+            Vector3? from, Vector3 to, TimeSpan duration, TimeSpan? delay, [CanBeNull] CompositionEasingFunction ease = null)
         {
             // Set duration and delay time
             Vector3KeyFrameAnimation ani = compositor.CreateVector3KeyFrameAnimation();
@@ -116,8 +243,19 @@ namespace UICompositionAnimations.Composition
             return ani;
         }
 
-        // Create Vector3 expression animation from compositor
-        public static Vector3KeyFrameAnimation CreateVector3KeyFrameAnimation(this Compositor compositor, String to, Vector3? from, TimeSpan duration, TimeSpan? delay, CompositionEasingFunction ease)
+        /// <summary>
+        /// Creates a <see cref="ScalarKeyFrameAnimation"/> instance with the given parameters to on a target element, using an expression animation
+        /// </summary>
+        /// <param name="compositor">The current <see cref="Compositor"/> instance used to create the animation</param>
+        /// <param name="from">The optional starting value for the animation</param>
+        /// <param name="to">A string that indicates the final value for the animation</param>
+        /// <param name="duration">The animation duration</param>
+        /// <param name="delay">The optional initial delay for the animation</param>
+        /// <param name="ease">The optional easing function for the animation</param>
+        [PublicAPI]
+        [Pure, NotNull]
+        public static Vector3KeyFrameAnimation CreateVector3KeyFrameAnimation([NotNull] this Compositor compositor, 
+            Vector3? from, [NotNull] String to, TimeSpan duration, TimeSpan? delay, [CanBeNull] CompositionEasingFunction ease = null)
         {
             // Set duration and delay time
             Vector3KeyFrameAnimation ani = compositor.CreateVector3KeyFrameAnimation();
@@ -129,5 +267,7 @@ namespace UICompositionAnimations.Composition
             if (from.HasValue) ani.InsertKeyFrame(0, from.Value);
             return ani;
         }
+
+        #endregion
     }
 }

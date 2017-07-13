@@ -73,7 +73,7 @@ namespace UICompositionAnimations
             else delay = null;
 
             // Get the opacity animation
-            ScalarKeyFrameAnimation opacityAnimation = visual.Compositor.CreateScalarKeyFrameAnimation(endOp, startOp, duration, delay, ease);
+            ScalarKeyFrameAnimation opacityAnimation = visual.Compositor.CreateScalarKeyFrameAnimation(startOp, endOp, duration, delay, ease);
 
             // Close the batch and manage its event
             CompositionScopedBatch batch = visual.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
@@ -144,7 +144,7 @@ namespace UICompositionAnimations
 
             // Get the opacity animation
             CompositionAnimationGroup group = visual.Compositor.CreateAnimationGroup();
-            ScalarKeyFrameAnimation opacityAnimation = visual.Compositor.CreateScalarKeyFrameAnimation(end, start, duration, delay, ease);
+            ScalarKeyFrameAnimation opacityAnimation = visual.Compositor.CreateScalarKeyFrameAnimation(start, end, duration, delay, ease);
             opacityAnimation.Target = "Opacity";
             group.Add(opacityAnimation);
 
@@ -195,10 +195,10 @@ namespace UICompositionAnimations
             CompositionScopedBatch batch = visual.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
 
             // Get the opacity the animation
-            ScalarKeyFrameAnimation opacityAnimation = visual.Compositor.CreateScalarKeyFrameAnimation(endOp, startOp, durationOp, delay, ease);
+            ScalarKeyFrameAnimation opacityAnimation = visual.Compositor.CreateScalarKeyFrameAnimation(startOp, endOp, durationOp, delay, ease);
 
             // Offset animation
-            Vector3KeyFrameAnimation offsetAnimation = visual.Compositor.CreateVector3KeyFrameAnimation(endOffset, initialOffset, durationSlide, delay, ease);
+            Vector3KeyFrameAnimation offsetAnimation = visual.Compositor.CreateVector3KeyFrameAnimation(initialOffset, endOffset, durationSlide, delay, ease);
 
             // Close the batch and manage its event
             TaskCompletionSource<object> tcs = new TaskCompletionSource<object>();
@@ -299,10 +299,10 @@ namespace UICompositionAnimations
 
             // Create and return the animations
             CompositionAnimationGroup group = visual.Compositor.CreateAnimationGroup();
-            ScalarKeyFrameAnimation fade = visual.Compositor.CreateScalarKeyFrameAnimation(endOp, startOp, durationOp, delay, ease);
+            ScalarKeyFrameAnimation fade = visual.Compositor.CreateScalarKeyFrameAnimation(startOp, endOp, durationOp, delay, ease);
             fade.Target = "Opacity";
             group.Add(fade);
-            Vector3KeyFrameAnimation slide = visual.Compositor.CreateVector3KeyFrameAnimation(endOffset, initialOffset, durationSlide, delay, ease);
+            Vector3KeyFrameAnimation slide = visual.Compositor.CreateVector3KeyFrameAnimation(initialOffset, endOffset, durationSlide, delay, ease);
             slide.Target = "Offset";
             group.Add(slide);
 
@@ -351,10 +351,10 @@ namespace UICompositionAnimations
             };
 
             // Get the opacity the animation
-            ScalarKeyFrameAnimation opacityAnimation = visual.Compositor.CreateScalarKeyFrameAnimation(endOp, startOp, durationOp, delay, ease);
+            ScalarKeyFrameAnimation opacityAnimation = visual.Compositor.CreateScalarKeyFrameAnimation(startOp, endOp, durationOp, delay, ease);
 
             // Scale animation
-            Vector3KeyFrameAnimation scaleAnimation = visual.Compositor.CreateVector3KeyFrameAnimation(endScale, initialScale, durationScale, delay, ease);
+            Vector3KeyFrameAnimation scaleAnimation = visual.Compositor.CreateVector3KeyFrameAnimation(initialScale, endScale, durationScale, delay, ease);
 
             // Get the batch and start the animations
             CompositionScopedBatch batch = visual.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
@@ -444,10 +444,10 @@ namespace UICompositionAnimations
 
             // Get the animations
             CompositionAnimationGroup group = visual.Compositor.CreateAnimationGroup();
-            ScalarKeyFrameAnimation opacityAnimation = visual.Compositor.CreateScalarKeyFrameAnimation(endOp, startOp, durationOp, delay, ease);
+            ScalarKeyFrameAnimation opacityAnimation = visual.Compositor.CreateScalarKeyFrameAnimation(startOp, endOp, durationOp, delay, ease);
             opacityAnimation.Target = "Opacity";
             group.Add(opacityAnimation);
-            Vector3KeyFrameAnimation scaleAnimation = visual.Compositor.CreateVector3KeyFrameAnimation(endScale3, initialScale, durationScale, delay, ease);
+            Vector3KeyFrameAnimation scaleAnimation = visual.Compositor.CreateVector3KeyFrameAnimation(initialScale, endScale3, durationScale, delay, ease);
             scaleAnimation.Target = "Scale";
             group.Add(scaleAnimation);
 
@@ -492,7 +492,7 @@ namespace UICompositionAnimations
             };
 
             // Scale animation
-            Vector3KeyFrameAnimation scaleAnimation = visual.Compositor.CreateVector3KeyFrameAnimation(endScale, initialScale, duration, delay, ease);
+            Vector3KeyFrameAnimation scaleAnimation = visual.Compositor.CreateVector3KeyFrameAnimation(initialScale, endScale, duration, delay, ease);
 
             // Get the batch and start the animations
             CompositionScopedBatch batch = visual.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
@@ -572,7 +572,7 @@ namespace UICompositionAnimations
 
             // Get the animations
             CompositionAnimationGroup group = visual.Compositor.CreateAnimationGroup();
-            Vector3KeyFrameAnimation scaleAnimation = visual.Compositor.CreateVector3KeyFrameAnimation(endScale, initialScale, duration, delay, ease);
+            Vector3KeyFrameAnimation scaleAnimation = visual.Compositor.CreateVector3KeyFrameAnimation(initialScale, endScale, duration, delay, ease);
             scaleAnimation.Target = "Scale";
             group.Add(scaleAnimation);
 
@@ -616,7 +616,7 @@ namespace UICompositionAnimations
             }
 
             // Scale animation
-            Vector3KeyFrameAnimation offsetAnimation = visual.Compositor.CreateVector3KeyFrameAnimation(endOffset, initialOffset, duration, delay, ease);
+            Vector3KeyFrameAnimation offsetAnimation = visual.Compositor.CreateVector3KeyFrameAnimation(initialOffset, endOffset, duration, delay, ease);
 
             // Get the batch and start the animations
             CompositionScopedBatch batch = visual.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
@@ -708,7 +708,7 @@ namespace UICompositionAnimations
 
             // Get the animations
             CompositionAnimationGroup group = visual.Compositor.CreateAnimationGroup();
-            Vector3KeyFrameAnimation offsetAnimation = visual.Compositor.CreateVector3KeyFrameAnimation(endOffset, initialOffset, duration, delay, ease);
+            Vector3KeyFrameAnimation offsetAnimation = visual.Compositor.CreateVector3KeyFrameAnimation(initialOffset, endOffset, duration, delay, ease);
             offsetAnimation.Target = "Offset";
             group.Add(offsetAnimation);
 
@@ -763,13 +763,13 @@ namespace UICompositionAnimations
             if (startDegrees == null) startDegrees = visual.RotationAngle.ToDegrees();
 
             // Get the opacity the animation
-            ScalarKeyFrameAnimation opacityAnimation = visual.Compositor.CreateScalarKeyFrameAnimation(endOp, startOp, duration, delay, ease);
+            ScalarKeyFrameAnimation opacityAnimation = visual.Compositor.CreateScalarKeyFrameAnimation(startOp, endOp, duration, delay, ease);
 
             // Scale animation
-            Vector3KeyFrameAnimation offsetAnimation = visual.Compositor.CreateVector3KeyFrameAnimation(endOffset, initialOffset, duration, delay, ease);
+            Vector3KeyFrameAnimation offsetAnimation = visual.Compositor.CreateVector3KeyFrameAnimation(initialOffset, endOffset, duration, delay, ease);
 
             // Rotate animation
-            ScalarKeyFrameAnimation rotateAnimation = visual.Compositor.CreateScalarKeyFrameAnimation(endDegrees.ToRadians(), startDegrees.Value.ToRadians(), duration, delay, ease);
+            ScalarKeyFrameAnimation rotateAnimation = visual.Compositor.CreateScalarKeyFrameAnimation(startDegrees.Value.ToRadians(), endDegrees.ToRadians(), duration, delay, ease);
 
             // Get the batch and start the animations
             CompositionScopedBatch batch = visual.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
