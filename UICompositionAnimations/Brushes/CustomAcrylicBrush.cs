@@ -80,7 +80,7 @@ namespace UICompositionAnimations.Brushes
         /// Gets the <see cref="DependencyProperty"/> for the <see cref="BlurAmount"/> property
         /// </summary>
         public static readonly DependencyProperty BlurAmountProperty =
-            DependencyProperty.Register(nameof(BlurAmount), typeof(double), typeof(LightingBrush), new PropertyMetadata(8, OnBlurAmountPropertyChanged));
+            DependencyProperty.Register(nameof(BlurAmount), typeof(double), typeof(LightingBrush), new PropertyMetadata(8d, OnBlurAmountPropertyChanged));
 
         private static async void OnBlurAmountPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -131,7 +131,7 @@ namespace UICompositionAnimations.Brushes
         /// Gets the <see cref="DependencyProperty"/> for the <see cref="TintMix"/> property
         /// </summary>
         public static readonly DependencyProperty TintMixProperty =
-            DependencyProperty.Register(nameof(Tint), typeof(double), typeof(LightingBrush), new PropertyMetadata(0, OnTintMixPropertyChanged));
+            DependencyProperty.Register(nameof(Tint), typeof(double), typeof(LightingBrush), new PropertyMetadata(0d, OnTintMixPropertyChanged));
 
         private static async void OnTintMixPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
