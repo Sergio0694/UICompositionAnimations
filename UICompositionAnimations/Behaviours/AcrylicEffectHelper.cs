@@ -34,7 +34,7 @@ namespace UICompositionAnimations.Behaviours
         private static readonly IDictionary<String, CompositionSurfaceBrush> SurfacesCache = new Dictionary<String, CompositionSurfaceBrush>();
 
         /// <summary>
-        /// Loads a <see cref="CompositionSurfaceBrush"/> from the input <see cref="Uri"/>, and prepares it for the <see cref="BorderEffect"/>
+        /// Loads a <see cref="CompositionSurfaceBrush"/> from the input <see cref="System.Uri"/>, and prepares it for the <see cref="BorderEffect"/>
         /// </summary>
         /// <param name="creator">The resource creator to use to load the image bitmap (it can be the same <see cref="CanvasDevice"/> used later)</param>
         /// <param name="compositor">The compositor instance to use to create the final brush</param>
