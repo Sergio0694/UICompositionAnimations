@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
@@ -30,7 +28,7 @@ namespace UICompositionAnimations.Behaviours.Effects
         /// <inheritdoc/>
         protected override void DisposeCore()
         {
-            Sprite.StopAnimation(Parameters.Property);
+            EffectBrush.StopAnimation(Parameters.Property);
             base.DisposeCore();
         }
 

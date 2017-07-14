@@ -31,7 +31,7 @@ namespace UICompositionAnimations.Behaviours.Effects
         /// <inheritdoc/>
         protected override void DisposeCore()
         {
-            foreach (String key in PropertiesAnimationValues.Keys) Sprite.StopAnimation(key);
+            foreach (String key in PropertiesAnimationValues.Keys) EffectBrush.StopAnimation(key);
             base.DisposeCore();
         }
 
