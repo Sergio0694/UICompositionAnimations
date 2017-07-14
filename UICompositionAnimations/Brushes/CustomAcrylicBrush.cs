@@ -10,6 +10,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 using UICompositionAnimations.Behaviours;
 using UICompositionAnimations.Behaviours.Effects;
+using UICompositionAnimations.Enums;
 using UICompositionAnimations.Helpers;
 
 namespace UICompositionAnimations.Brushes
@@ -34,7 +35,10 @@ namespace UICompositionAnimations.Brushes
         private const String TintColor2ParameterName = "Tint.Source2Amount";
 
         // The name of the animatable color property of the color effect
-        private const String ColorSourceColorParameterName = "ColorSource.Color";
+        private const String ColorSourceParameterName = "ColorSource.Color";
+
+        // The name of the animatable color property of the fallback color effect
+        private const String FallbackColorParameterName = "FallbackColor.Color";
 
         #endregion
 
@@ -62,6 +66,9 @@ namespace UICompositionAnimations.Brushes
             if (@this.CompositionBrush != null)
             {
                 // Rebuild the effects pipeline when needed
+                @this.CompositionBrush.Dispose();
+                @this.CompositionBrush = null;
+                @this._State = AcrylicBrushEffectState.Default;
                 await @this.SetupEffectAsync();
             }
             @this.ConnectedSemaphore.Release();
@@ -113,7 +120,7 @@ namespace UICompositionAnimations.Brushes
             await @this.ConnectedSemaphore.WaitAsync();
             if (@this.CompositionBrush != null)
             {
-                d.To<CustomAcrylicBrush>()?._EffectBrush.Properties.InsertColor(ColorSourceColorParameterName, e.NewValue.To<Color>());
+                @this._EffectBrush?.Properties.InsertColor(ColorSourceParameterName, e.NewValue.To<Color>());
             }
             @this.ConnectedSemaphore.Release();
         }
@@ -149,6 +156,55 @@ namespace UICompositionAnimations.Brushes
         }
 
         /// <summary>
+        /// Gets or sets the optional color to use for the brush, if the effect can't be loaded
+        /// </summary>
+        public Color? UnsupportedEffectFallbackColor
+        {
+            get { return GetValue(UnsupportedEffectFallbackColorProperty).To<Color?>(); }
+            set { SetValue(UnsupportedEffectFallbackColorProperty, value); }
+        }
+
+        /// <summary>
+        /// Gets the <see cref="DependencyProperty"/> for the <see cref="UnsupportedEffectFallbackColor"/> property
+        /// </summary>
+        public static readonly DependencyProperty UnsupportedEffectFallbackColorProperty =
+            DependencyProperty.Register(nameof(UnsupportedEffectFallbackColor), typeof(Color?), typeof(LightingBrush), 
+                new PropertyMetadata(null, OnUnsupportedEffectFallbackColorPropertyChanged));
+
+        private static async void OnUnsupportedEffectFallbackColorPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            // Unpack and lock
+            CustomAcrylicBrush @this = d.To<CustomAcrylicBrush>();
+            await @this.ConnectedSemaphore.WaitAsync();
+            Color? value = e.NewValue.To<Color?>();
+
+            // The fallback mode is currently enabled
+            if (@this._State == AcrylicBrushEffectState.FallbackMode)
+            {
+                // New value is null, reset the current effect
+                if (value == null)
+                {
+                    @this.CompositionBrush.Dispose();
+                    @this.CompositionBrush = null;
+                    @this._State = AcrylicBrushEffectState.Default;
+                }
+                else
+                {
+                    // Otherwise, update the fallback color effect
+                    @this._EffectBrush?.Properties.InsertColor(FallbackColorParameterName, value.Value);
+                }
+            }
+            else if (@this._State == AcrylicBrushEffectState.Default && // The effect is currently disabled
+                     @this.Mode == AcrylicEffectMode.HostBackdrop &&    // The current settings are not valid
+                     ApiInformationHelper.IsMobileDevice &&
+                     value != null)                                     // The new value allows the fallback mode to be enabled
+            {
+                await @this.SetupEffectAsync();
+            }
+            @this.ConnectedSemaphore.Release();
+        }
+
+        /// <summary>
         /// Gets or sets the <see cref="Uri"/> to the noise texture to use (NOTE: this must be initialized before using the brush)
         /// </summary>
         public Uri NoiseTextureUri { get; set; }
@@ -165,6 +221,9 @@ namespace UICompositionAnimations.Brushes
 
         // The composition brush used to render the effect
         private CompositionEffectBrush _EffectBrush;
+
+        // Gets the current brush shate
+        private AcrylicBrushEffectState _State = AcrylicBrushEffectState.Default;
 
         /// <inheritdoc cref="XamlCompositionBrushBase"/>
         protected override async void OnConnected()
@@ -191,6 +250,7 @@ namespace UICompositionAnimations.Brushes
                 {
                     CompositionBrush.Dispose();
                     CompositionBrush = null;
+                    _State = AcrylicBrushEffectState.Default;
                 }
                 ConnectedSemaphore.Release();
             }
@@ -203,7 +263,23 @@ namespace UICompositionAnimations.Brushes
         private async Task SetupEffectAsync()
         {
             // Platform check
-            if (ApiInformationHelper.IsMobileDevice && Mode == AcrylicEffectMode.HostBackdrop) return;
+            if (ApiInformationHelper.IsMobileDevice && Mode == AcrylicEffectMode.HostBackdrop)
+            {
+                // Create the fallback brush effect when needed
+                if (UnsupportedEffectFallbackColor != null)
+                {
+                    ColorSourceEffect fallback = new ColorSourceEffect
+                    {
+                        Name = "FallbackColor",
+                        Color = UnsupportedEffectFallbackColor.Value
+                    };
+                    CompositionEffectFactory fallbackFactory = Window.Current.Compositor.CreateEffectFactory(fallback);
+                    _EffectBrush = fallbackFactory.CreateBrush();
+                    CompositionBrush = _EffectBrush;
+                    _State = AcrylicBrushEffectState.FallbackMode;
+                }
+                return;
+            }
 
             // Dictionary to track the reference and animatable parameters
             IDictionary<String, CompositionBrush> sourceParameters = new Dictionary<String, CompositionBrush>();
@@ -211,7 +287,7 @@ namespace UICompositionAnimations.Brushes
             {
                 TintColor1ParameterName,
                 TintColor2ParameterName,
-                ColorSourceColorParameterName
+                ColorSourceParameterName
             };
 
             // Setup the base effect
@@ -279,6 +355,7 @@ namespace UICompositionAnimations.Brushes
             if (Mode == AcrylicEffectMode.InAppBlur)
                 _EffectBrush.StartAnimationAsync(BlurAmountParameterName, (float)BlurAmount, TimeSpan.FromMilliseconds(BlurAnimationDuration)).Forget();
             CompositionBrush = _EffectBrush;
+            _State = AcrylicBrushEffectState.EffectEnabled;
         }
     }
 }
