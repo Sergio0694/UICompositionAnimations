@@ -202,6 +202,9 @@ namespace UICompositionAnimations.Brushes
         /// </summary>
         private async Task SetupEffectAsync()
         {
+            // Platform check
+            if (ApiInformationHelper.IsMobileDevice && Mode == AcrylicEffectMode.HostBackdrop) return;
+
             // Dictionary to track the reference and animatable parameters
             IDictionary<String, CompositionBrush> sourceParameters = new Dictionary<String, CompositionBrush>();
             List<String> animatableParameters = new List<String>
