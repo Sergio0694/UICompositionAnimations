@@ -8,9 +8,9 @@ using Windows.Graphics.DirectX;
 using Windows.Graphics.Imaging;
 using Windows.UI;
 using Windows.UI.Composition;
+using Windows.UI.Xaml;
 using JetBrains.Annotations;
 using Microsoft.Graphics.Canvas;
-using Microsoft.Graphics.Canvas.Effects;
 using Microsoft.Graphics.Canvas.UI;
 using Microsoft.Graphics.Canvas.UI.Composition;
 using Microsoft.Graphics.Canvas.UI.Xaml;
@@ -35,13 +35,43 @@ namespace UICompositionAnimations.Helpers
         /// </summary>
         private static readonly IDictionary<Uri, CompositionSurfaceBrush> SurfacesCache = new Dictionary<Uri, CompositionSurfaceBrush>();
 
+        #region Public APIs
+
         /// <summary>
-        /// Loads a <see cref="CompositionSurfaceBrush"/> from the input <see cref="System.Uri"/>, and prepares it for the <see cref="BorderEffect"/>
+        /// Loads a <see cref="CompositionSurfaceBrush"/> instance with the target image from the shared <see cref="CanvasDevice"/> instance
+        /// </summary>
+        /// <param name="uri">The path to the image to load</param>
+        [PublicAPI]
+        [Pure, ItemCanBeNull]
+        public static Task<CompositionSurfaceBrush> LoadImageAsync([NotNull] Uri uri)
+        {
+            return LoadImageAsync(Window.Current.Compositor, uri, CacheLoadingMode.DisableCaching);
+        }
+
+        /// <summary>
+        /// Loads a <see cref="CompositionSurfaceBrush"/> instance with the target image
+        /// </summary>
+        /// <param name="canvas">The <see cref="CanvasControl"/> to use to load the target image</param>
+        /// <param name="uri">The path to the image to load</param>
+        [PublicAPI]
+        [Pure, ItemCanBeNull]
+        internal static Task<CompositionSurfaceBrush> LoadImageAsync([NotNull] this CanvasControl canvas, [NotNull] Uri uri)
+        {
+            return LoadImageAsync(Window.Current.Compositor, canvas, uri, CacheLoadingMode.DisableCaching);
+        }
+
+        #endregion
+
+        #region Library APIs
+
+        /// <summary>
+        /// Loads a <see cref="CompositionSurfaceBrush"/> from the input <see cref="System.Uri"/>, and prepares it to be used in a tile effect
         /// </summary>
         /// <param name="creator">The resource creator to use to load the image bitmap (it can be the same <see cref="CanvasDevice"/> used later)</param>
         /// <param name="compositor">The compositor instance to use to create the final brush</param>
         /// <param name="canvasDevice">The device to use to process the Win2D image</param>
         /// <param name="uri">The path to the image to load</param>
+        [ItemNotNull]
         private static async Task<CompositionSurfaceBrush> LoadSurfaceBrushAsync([NotNull] ICanvasResourceCreator creator,
             [NotNull] Compositor compositor, [NotNull] CanvasDevice canvasDevice, [NotNull] Uri uri)
         {
@@ -200,5 +230,7 @@ namespace UICompositionAnimations.Helpers
             Win2DSemaphore.Release();
             return brush;
         }
+
+        #endregion
     }
 }
