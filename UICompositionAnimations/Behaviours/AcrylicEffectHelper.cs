@@ -31,7 +31,7 @@ namespace UICompositionAnimations.Behaviours
         /// <summary>
         /// Gets the local cache mapping for previously loaded Win2D images
         /// </summary>
-        private static readonly IDictionary<String, CompositionSurfaceBrush> SurfacesCache = new Dictionary<String, CompositionSurfaceBrush>();
+        private static readonly IDictionary<Uri, CompositionSurfaceBrush> SurfacesCache = new Dictionary<Uri, CompositionSurfaceBrush>();
 
         /// <summary>
         /// Loads a <see cref="CompositionSurfaceBrush"/> from the input <see cref="System.Uri"/>, and prepares it for the <see cref="BorderEffect"/>
@@ -117,7 +117,7 @@ namespace UICompositionAnimations.Behaviours
 
             // Lock the semaphore and check the cache first
             await Win2DSemaphore.WaitAsync();
-            if (!reload && SurfacesCache.TryGetValue(uri.ToString(), out CompositionSurfaceBrush cached))
+            if (!reload && SurfacesCache.TryGetValue(uri, out CompositionSurfaceBrush cached))
             {
                 Win2DSemaphore.Release();
                 return cached;
@@ -142,8 +142,7 @@ namespace UICompositionAnimations.Behaviours
             await Task.WhenAny(tcs.Task, Task.Delay(timeThreshold).ContinueWith(t => tcs.TrySetResult(null)));
             canvas.CreateResources -= Canvas_CreateResources;
             CompositionSurfaceBrush instance = tcs.Task.Result;
-            String key = uri.ToString();
-            if (instance != null && !SurfacesCache.ContainsKey(key)) SurfacesCache.Add(key, instance);
+            if (instance != null && !SurfacesCache.ContainsKey(uri)) SurfacesCache.Add(uri, instance);
             Win2DSemaphore.Release();
             return instance;
         }
@@ -169,7 +168,7 @@ namespace UICompositionAnimations.Behaviours
 
             // Lock the semaphore and check the cache first
             await Win2DSemaphore.WaitAsync();
-            if (!reload && SurfacesCache.TryGetValue(uri.ToString(), out CompositionSurfaceBrush cached))
+            if (!reload && SurfacesCache.TryGetValue(uri, out CompositionSurfaceBrush cached))
             {
                 Win2DSemaphore.Release();
                 return cached;
@@ -188,8 +187,7 @@ namespace UICompositionAnimations.Behaviours
                 // Device error
                 brush = null;
             }
-            String key = uri.ToString();
-            if (brush != null && !SurfacesCache.ContainsKey(key)) SurfacesCache.Add(key, brush);
+            if (brush != null && !SurfacesCache.ContainsKey(uri)) SurfacesCache.Add(uri, brush);
             Win2DSemaphore.Release();
             return brush;
         }
