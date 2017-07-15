@@ -56,24 +56,22 @@ namespace UICompositionAnimations
         #region Fade
 
         // Manages the fade animation
-        private static Task ManageCompositionFadeAnimationAsync(this UIElement element,
+        private static Task ManageCompositionFadeAnimationAsync(this Visual visual,
             float? startOp, float endOp,
-            int ms, int? msDelay, EasingFunctionNames easingFunction)
+            int ms, int? msDelay, CompositionEasingFunction easingFunction)
         {
             // Get the default values
-            Visual visual = element.GetVisual();
             visual.StopAnimation("Opacity");
             if (!startOp.HasValue) startOp = visual.Opacity;
 
             // Get the easing function, the duration and delay
-            CompositionEasingFunction ease = visual.GetEasingFunction(easingFunction);
             TimeSpan duration = TimeSpan.FromMilliseconds(ms);
             TimeSpan? delay;
             if (msDelay.HasValue) delay = TimeSpan.FromMilliseconds(msDelay.Value);
             else delay = null;
 
             // Get the opacity animation
-            ScalarKeyFrameAnimation opacityAnimation = visual.Compositor.CreateScalarKeyFrameAnimation(startOp, endOp, duration, delay, ease);
+            ScalarKeyFrameAnimation opacityAnimation = visual.Compositor.CreateScalarKeyFrameAnimation(startOp, endOp, duration, delay, easingFunction);
 
             // Close the batch and manage its event
             CompositionScopedBatch batch = visual.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
@@ -98,7 +96,28 @@ namespace UICompositionAnimations
             float? startOp, float endOp,
             int ms, int? msDelay, EasingFunctionNames easingFunction, Action callback = null)
         {
-            await ManageCompositionFadeAnimationAsync(element, startOp, endOp, ms, msDelay, easingFunction);
+            await StartCompositionFadeAnimationAsync(element, startOp, endOp, ms, msDelay, easingFunction);
+            callback?.Invoke();
+        }
+
+        /// <summary>
+        /// Starts a fade animation on the target UIElement and optionally runs a callback Action when the animations finish
+        /// </summary>
+        /// <param name="element">The UIElement to animate</param>
+        /// <param name="startOp">The initial opacity value. If null, the current opacity will be used</param>
+        /// <param name="endOp">The final opacity value</param>
+        /// <param name="ms">The duration of the animation, in milliseconds</param>
+        /// <param name="msDelay">The delay before the animation starts, in milliseconds. If null, there will be no delay</param>
+        /// <param name="x1">The X coordinate of the first control point</param>
+        /// <param name="y1">The Y coordinate of the first control point</param>
+        /// <param name="x2">The X coordinate of the second control point</param>
+        /// <param name="y2">The Y coordinate of the second control point</param>
+        /// <param name="callback">An Action to execute when the new animations end</param>
+        public static async void StartCompositionFadeAnimation(this UIElement element,
+            float? startOp, float endOp,
+            int ms, int? msDelay, float x1, float y1, float x2, float y2, Action callback = null)
+        {
+            await StartCompositionFadeAnimationAsync(element, startOp, endOp, ms, msDelay, x1,y1, x2, y2);
             callback?.Invoke();
         }
 
@@ -115,42 +134,94 @@ namespace UICompositionAnimations
             float? startOp, float endOp,
             int ms, int? msDelay, EasingFunctionNames easingFunction)
         {
-            return ManageCompositionFadeAnimationAsync(element, startOp, endOp, ms, msDelay, easingFunction);
+            Visual visual = element.GetVisual();
+            CompositionEasingFunction ease = visual.GetEasingFunction(easingFunction);
+            return ManageCompositionFadeAnimationAsync(visual, startOp, endOp, ms, msDelay, ease);
         }
 
         /// <summary>
-        /// Sets an implicit fade animation on the target FrameworkElement
+        /// Starts a fade animation on the target UIElement and returns a Task that completes when the animation ends
         /// </summary>
         /// <param name="element">The UIElement to animate</param>
-        /// <param name="type">The type of implicit animation to set</param>
-        /// <param name="start">The initial opacity value. If null, the current opacity will be used</param>
-        /// <param name="end">The final opacity value</param>
-        /// <param name="ms">The duration of the fade animation, in milliseconds</param>
+        /// <param name="startOp">The initial opacity value. If null, the current opacity will be used</param>
+        /// <param name="endOp">The final opacity value</param>
+        /// <param name="ms">The duration of the animation, in milliseconds</param>
         /// <param name="msDelay">The delay before the animation starts, in milliseconds. If null, there will be no delay</param>
-        /// <param name="easingFunction">The easing function to use with the new animations</param>
-        public static void SetCompositionFadeImplicitAnimation(this FrameworkElement element, ImplicitAnimationType type,
-            float start, float end,
-            int ms, int? msDelay, EasingFunctionNames easingFunction)
+        /// <param name="x1">The X coordinate of the first control point</param>
+        /// <param name="y1">The Y coordinate of the first control point</param>
+        /// <param name="x2">The X coordinate of the second control point</param>
+        /// <param name="y2">The Y coordinate of the second control point</param>
+        public static Task StartCompositionFadeAnimationAsync(this UIElement element,
+            float? startOp, float endOp,
+            int ms, int? msDelay, float x1, float y1, float x2, float y2)
         {
-            // Get the default values
             Visual visual = element.GetVisual();
+            CompositionEasingFunction ease = visual.GetEasingFunction(x1, y1, x2, y2);
+            return ManageCompositionFadeAnimationAsync(visual, startOp, endOp, ms, msDelay, ease);
+        }
 
+        // Sets an implicit fade animation on the target element
+        private static void SetCompositionFadeImplicitAnimation(this UIElement element, Compositor compositor, ImplicitAnimationType type,
+            float start, float end,
+            int ms, int? msDelay, CompositionEasingFunction easingFunction)
+        {
             // Get the easing function, the duration and delay
-            CompositionEasingFunction ease = visual.GetEasingFunction(easingFunction);
             TimeSpan duration = TimeSpan.FromMilliseconds(ms);
             TimeSpan? delay;
             if (msDelay.HasValue) delay = TimeSpan.FromMilliseconds(msDelay.Value);
             else delay = null;
 
             // Get the opacity animation
-            CompositionAnimationGroup group = visual.Compositor.CreateAnimationGroup();
-            ScalarKeyFrameAnimation opacityAnimation = visual.Compositor.CreateScalarKeyFrameAnimation(start, end, duration, delay, ease);
+            CompositionAnimationGroup group = compositor.CreateAnimationGroup();
+            ScalarKeyFrameAnimation opacityAnimation = compositor.CreateScalarKeyFrameAnimation(start, end, duration, delay, easingFunction);
             opacityAnimation.Target = "Opacity";
             group.Add(opacityAnimation);
 
             // Set the implicit animation
             if (type == ImplicitAnimationType.Show) ElementCompositionPreview.SetImplicitShowAnimation(element, group);
             else ElementCompositionPreview.SetImplicitHideAnimation(element, group);
+        }
+
+        /// <summary>
+        /// Sets an implicit fade animation on the target <see cref="UIElement"/>
+        /// </summary>
+        /// <param name="element">The <see cref="UIElement"/> to animate</param>
+        /// <param name="type">The type of implicit animation to set</param>
+        /// <param name="start">The initial opacity value. If null, the current opacity will be used</param>
+        /// <param name="end">The final opacity value</param>
+        /// <param name="ms">The duration of the fade animation, in milliseconds</param>
+        /// <param name="msDelay">The delay before the animation starts, in milliseconds. If null, there will be no delay</param>
+        /// <param name="easingFunction">The easing function to use with the new animations</param>
+        public static void SetCompositionFadeImplicitAnimation(this UIElement element, ImplicitAnimationType type,
+            float start, float end,
+            int ms, int? msDelay, EasingFunctionNames easingFunction)
+        {
+            Visual visual = element.GetVisual();
+            CompositionEasingFunction ease = visual.GetEasingFunction(easingFunction);
+            SetCompositionFadeImplicitAnimation(element, visual.Compositor, type, start, end, ms, msDelay, ease);
+        }
+
+        /// <summary>
+        /// Sets an implicit fade animation on the target <see cref="UIElement"/>
+        /// </summary>
+        /// <param name="element">The <see cref="UIElement"/> to animate</param>
+        /// <param name="type">The type of implicit animation to set</param>
+        /// <param name="start">The initial opacity value. If null, the current opacity will be used</param>
+        /// <param name="end">The final opacity value</param>
+        /// <param name="ms">The duration of the fade animation, in milliseconds</param>
+        /// <param name="msDelay">The delay before the animation starts, in milliseconds. If null, there will be no delay</param>
+        /// <param name="x1">The X coordinate of the first control point</param>
+        /// <param name="y1">The Y coordinate of the first control point</param>
+        /// <param name="x2">The X coordinate of the second control point</param>
+        /// <param name="y2">The Y coordinate of the second control point</param>
+        public static void SetCompositionFadeImplicitAnimation(this UIElement element, ImplicitAnimationType type,
+            float start, float end,
+            int ms, int? msDelay, float x1, float y1, float x2, float y2)
+        {
+            Visual visual = element.GetVisual();
+            CompositionEasingFunction ease = visual.GetEasingFunction(x1, y1, x2, y2);
+            SetCompositionFadeImplicitAnimation(element, visual.Compositor, type, start, end, ms, msDelay, ease);
+
         }
 
         #endregion
@@ -161,7 +232,7 @@ namespace UICompositionAnimations
         private static Task ManageCompositionFadeSlideAnimationAsync(this UIElement element,
             float? startOp, float endOp,
             TranslationAxis axis, float? startXY, float endXY,
-            int msOp, int? msSlide, int? msDelay, EasingFunctionNames easingFunction)
+            int msOp, int? msSlide, int? msDelay, CompositionEasingFunction easingFunction)
         {
             // Get the default values
             Visual visual = element.GetVisual();
@@ -170,7 +241,6 @@ namespace UICompositionAnimations
             if (!startOp.HasValue) startOp = visual.Opacity;
 
             // Get the easing function, the duration and delay
-            CompositionEasingFunction ease = visual.GetEasingFunction(easingFunction);
             TimeSpan durationOp = TimeSpan.FromMilliseconds(msOp);
             TimeSpan durationSlide = TimeSpan.FromMilliseconds(msSlide ?? msOp);
             TimeSpan? delay;
@@ -195,10 +265,10 @@ namespace UICompositionAnimations
             CompositionScopedBatch batch = visual.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
 
             // Get the opacity the animation
-            ScalarKeyFrameAnimation opacityAnimation = visual.Compositor.CreateScalarKeyFrameAnimation(startOp, endOp, durationOp, delay, ease);
+            ScalarKeyFrameAnimation opacityAnimation = visual.Compositor.CreateScalarKeyFrameAnimation(startOp, endOp, durationOp, delay, easingFunction);
 
             // Offset animation
-            Vector3KeyFrameAnimation offsetAnimation = visual.Compositor.CreateVector3KeyFrameAnimation(initialOffset, endOffset, durationSlide, delay, ease);
+            Vector3KeyFrameAnimation offsetAnimation = visual.Compositor.CreateVector3KeyFrameAnimation(initialOffset, endOffset, durationSlide, delay, easingFunction);
 
             // Close the batch and manage its event
             TaskCompletionSource<object> tcs = new TaskCompletionSource<object>();
@@ -228,7 +298,33 @@ namespace UICompositionAnimations
             TranslationAxis axis, float? startXY, float endXY,
             int msOp, int? msSlide, int? msDelay, EasingFunctionNames easingFunction, Action callback = null)
         {
-            await ManageCompositionFadeSlideAnimationAsync(element, startOp, endOp, axis, startXY, endXY, msOp, msSlide, msDelay, easingFunction);
+            await StartCompositionFadeSlideAnimationAsync(element, startOp, endOp, axis, startXY, endXY, msOp, msSlide, msDelay, easingFunction);
+            callback?.Invoke();
+        }
+
+        /// <summary>
+        /// Starts a fade and slide animation on the target UIElement and optionally runs a callback Action when the animations finish
+        /// </summary>
+        /// <param name="element">The UIElement to animate</param>
+        /// <param name="startOp">The initial opacity value. If null, the current opacity will be used</param>
+        /// <param name="endOp">The final opacity value</param>
+        /// <param name="axis">The offset axis to use on the translation animation</param>
+        /// <param name="startXY">The initial offset value. If null, the current offset will be used</param>
+        /// <param name="endXY">The final offset value</param>
+        /// <param name="msOp">The duration of the fade animation, in milliseconds</param>
+        /// <param name="msSlide">The duration of the slide animation, in milliseconds</param>
+        /// <param name="msDelay">The delay before the animation starts, in milliseconds. If null, there will be no delay</param>
+        /// <param name="x1">The X coordinate of the first control point</param>
+        /// <param name="y1">The Y coordinate of the first control point</param>
+        /// <param name="x2">The X coordinate of the second control point</param>
+        /// <param name="y2">The Y coordinate of the second control point</param>
+        /// <param name="callback">An Action to execute when the new animations end</param>
+        public static async void StartCompositionFadeSlideAnimation(this UIElement element,
+            float? startOp, float endOp,
+            TranslationAxis axis, float? startXY, float endXY,
+            int msOp, int? msSlide, int? msDelay, float x1, float y1, float x2, float y2, Action callback = null)
+        {
+            await StartCompositionFadeSlideAnimationAsync(element, startOp, endOp, axis, startXY, endXY, msOp, msSlide, msDelay, x1, y1, x2, y2);
             callback?.Invoke();
         }
 
@@ -250,33 +346,44 @@ namespace UICompositionAnimations
             TranslationAxis axis, float? startXY, float endXY,
             int msOp, int? msSlide, int? msDelay, EasingFunctionNames easingFunction)
         {
-            return ManageCompositionFadeSlideAnimationAsync(element, startOp, endOp, axis, startXY, endXY, msOp, msSlide, msDelay, easingFunction);
+            Visual visual = element.GetVisual();
+            CompositionEasingFunction ease = visual.GetEasingFunction(easingFunction);
+            return ManageCompositionFadeSlideAnimationAsync(element, startOp, endOp, axis, startXY, endXY, msOp, msSlide, msDelay, ease);
         }
 
         /// <summary>
-        /// Sets an implicit fade and slide animation on the target FrameworkElement
+        /// Starts a fade and slide animation on the target UIElement and returns a Task that completes when the animation ends
         /// </summary>
         /// <param name="element">The UIElement to animate</param>
-        /// <param name="type">The type of implicit animation to set</param>
         /// <param name="startOp">The initial opacity value. If null, the current opacity will be used</param>
         /// <param name="endOp">The final opacity value</param>
         /// <param name="axis">The offset axis to use on the translation animation</param>
-        /// <param name="startXY">The initial offset value</param>
+        /// <param name="startXY">The initial offset value. If null, the current offset will be used</param>
         /// <param name="endXY">The final offset value</param>
         /// <param name="msOp">The duration of the fade animation, in milliseconds</param>
         /// <param name="msSlide">The duration of the slide animation, in milliseconds</param>
         /// <param name="msDelay">The delay before the animation starts, in milliseconds. If null, there will be no delay</param>
-        /// <param name="easingFunction">The easing function to use with the new animations</param>
-        public static void SetCompositionFadeSlideImplicitAnimation(this FrameworkElement element, ImplicitAnimationType type,
+        /// <param name="x1">The X coordinate of the first control point</param>
+        /// <param name="y1">The Y coordinate of the first control point</param>
+        /// <param name="x2">The X coordinate of the second control point</param>
+        /// <param name="y2">The Y coordinate of the second control point</param>
+        public static Task StartCompositionFadeSlideAnimationAsync(this UIElement element,
+            float? startOp, float endOp,
+            TranslationAxis axis, float? startXY, float endXY,
+            int msOp, int? msSlide, int? msDelay, float x1, float y1, float x2, float y2)
+        {
+            Visual visual = element.GetVisual();
+            CompositionEasingFunction ease = visual.GetEasingFunction(x1, y1, x2, y2);
+            return ManageCompositionFadeSlideAnimationAsync(element, startOp, endOp, axis, startXY, endXY, msOp, msSlide, msDelay, ease);
+        }
+
+        // Sets an implicit fade and slide animation on the target element
+        private static void SetCompositionFadeSlideImplicitAnimation(this FrameworkElement element, Visual visual, ImplicitAnimationType type,
             float startOp, float endOp,
             TranslationAxis axis, float startXY, float endXY,
-            int msOp, int? msSlide, int? msDelay, EasingFunctionNames easingFunction)
+            int msOp, int? msSlide, int? msDelay, CompositionEasingFunction easingFunction)
         {
-            // Get the default values and set the CenterPoint
-            Visual visual = element.GetVisual();
-
             // Get the easing function, the duration and delay
-            CompositionEasingFunction ease = visual.GetEasingFunction(easingFunction);
             TimeSpan durationOp = TimeSpan.FromMilliseconds(msOp);
             TimeSpan durationSlide = TimeSpan.FromMilliseconds(msSlide ?? msOp);
             TimeSpan? delay;
@@ -299,10 +406,10 @@ namespace UICompositionAnimations
 
             // Create and return the animations
             CompositionAnimationGroup group = visual.Compositor.CreateAnimationGroup();
-            ScalarKeyFrameAnimation fade = visual.Compositor.CreateScalarKeyFrameAnimation(startOp, endOp, durationOp, delay, ease);
+            ScalarKeyFrameAnimation fade = visual.Compositor.CreateScalarKeyFrameAnimation(startOp, endOp, durationOp, delay, easingFunction);
             fade.Target = "Opacity";
             group.Add(fade);
-            Vector3KeyFrameAnimation slide = visual.Compositor.CreateVector3KeyFrameAnimation(initialOffset, endOffset, durationSlide, delay, ease);
+            Vector3KeyFrameAnimation slide = visual.Compositor.CreateVector3KeyFrameAnimation(initialOffset, endOffset, durationSlide, delay, easingFunction);
             slide.Target = "Offset";
             group.Add(slide);
 
@@ -311,25 +418,74 @@ namespace UICompositionAnimations
             else ElementCompositionPreview.SetImplicitHideAnimation(element, group);
         }
 
+        /// <summary>
+        /// Sets an implicit fade and slide animation on the target FrameworkElement
+        /// </summary>
+        /// <param name="element">The UIElement to animate</param>
+        /// <param name="type">The type of implicit animation to set</param>
+        /// <param name="startOp">The initial opacity value. If null, the current opacity will be used</param>
+        /// <param name="endOp">The final opacity value</param>
+        /// <param name="axis">The offset axis to use on the translation animation</param>
+        /// <param name="startXY">The initial offset value</param>
+        /// <param name="endXY">The final offset value</param>
+        /// <param name="msOp">The duration of the fade animation, in milliseconds</param>
+        /// <param name="msSlide">The duration of the slide animation, in milliseconds</param>
+        /// <param name="msDelay">The delay before the animation starts, in milliseconds. If null, there will be no delay</param>
+        /// <param name="easingFunction">The easing function to use with the new animations</param>
+        public static void SetCompositionFadeSlideImplicitAnimation(this FrameworkElement element, ImplicitAnimationType type,
+            float startOp, float endOp,
+            TranslationAxis axis, float startXY, float endXY,
+            int msOp, int? msSlide, int? msDelay, EasingFunctionNames easingFunction)
+        {
+            Visual visual = element.GetVisual();
+            CompositionEasingFunction ease = visual.GetEasingFunction(easingFunction);
+            SetCompositionFadeSlideImplicitAnimation(element, visual, type, startOp, endOp, axis, startXY, endXY, msOp, msSlide, msDelay, ease);
+        }
+
+        /// <summary>
+        /// Sets an implicit fade and slide animation on the target FrameworkElement
+        /// </summary>
+        /// <param name="element">The UIElement to animate</param>
+        /// <param name="type">The type of implicit animation to set</param>
+        /// <param name="startOp">The initial opacity value. If null, the current opacity will be used</param>
+        /// <param name="endOp">The final opacity value</param>
+        /// <param name="axis">The offset axis to use on the translation animation</param>
+        /// <param name="startXY">The initial offset value</param>
+        /// <param name="endXY">The final offset value</param>
+        /// <param name="msOp">The duration of the fade animation, in milliseconds</param>
+        /// <param name="msSlide">The duration of the slide animation, in milliseconds</param>
+        /// <param name="msDelay">The delay before the animation starts, in milliseconds. If null, there will be no delay</param>
+        /// <param name="x1">The X coordinate of the first control point</param>
+        /// <param name="y1">The Y coordinate of the first control point</param>
+        /// <param name="x2">The X coordinate of the second control point</param>
+        /// <param name="y2">The Y coordinate of the second control point</param>
+        public static void SetCompositionFadeSlideImplicitAnimation(this FrameworkElement element, ImplicitAnimationType type,
+            float startOp, float endOp,
+            TranslationAxis axis, float startXY, float endXY,
+            int msOp, int? msSlide, int? msDelay, float x1, float y1, float x2, float y2)
+        {
+            Visual visual = element.GetVisual();
+            CompositionEasingFunction ease = visual.GetEasingFunction(x1, y1, x2, y2);
+            SetCompositionFadeSlideImplicitAnimation(element, visual, type, startOp, endOp, axis, startXY, endXY, msOp, msSlide, msDelay, ease);
+        }
+
         #endregion
 
         #region Fade and scale
 
         // Manages the fade and scale animation
-        private static async Task ManageCompositionFadeScaleAnimationAsync(this FrameworkElement element,
+        private static async Task ManageCompositionFadeScaleAnimationAsync(this FrameworkElement element, Visual visual,
             float? startOp, float endOp,
             float? startXY, float endXY,
-            int msOp, int? msScale, int? msDelay, EasingFunctionNames easingFunction)
+            int msOp, int? msScale, int? msDelay, CompositionEasingFunction easingFunction)
         {
             // Get the default values and set the CenterPoint
-            Visual visual = element.GetVisual();
             visual.StopAnimation("Opacity");
             visual.StopAnimation("Scale");
             await element.SetCenterPoint(visual);
             if (!startOp.HasValue) startOp = visual.Opacity;
 
             // Get the easing function, the duration and delay
-            CompositionEasingFunction ease = visual.GetEasingFunction(easingFunction);
             TimeSpan durationOp = TimeSpan.FromMilliseconds(msOp);
             TimeSpan durationScale = TimeSpan.FromMilliseconds(msScale ?? msOp);
             TimeSpan? delay;
@@ -351,10 +507,10 @@ namespace UICompositionAnimations
             };
 
             // Get the opacity the animation
-            ScalarKeyFrameAnimation opacityAnimation = visual.Compositor.CreateScalarKeyFrameAnimation(startOp, endOp, durationOp, delay, ease);
+            ScalarKeyFrameAnimation opacityAnimation = visual.Compositor.CreateScalarKeyFrameAnimation(startOp, endOp, durationOp, delay, easingFunction);
 
             // Scale animation
-            Vector3KeyFrameAnimation scaleAnimation = visual.Compositor.CreateVector3KeyFrameAnimation(initialScale, endScale, durationScale, delay, ease);
+            Vector3KeyFrameAnimation scaleAnimation = visual.Compositor.CreateVector3KeyFrameAnimation(initialScale, endScale, durationScale, delay, easingFunction);
 
             // Get the batch and start the animations
             CompositionScopedBatch batch = visual.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
@@ -384,7 +540,32 @@ namespace UICompositionAnimations
             float? startScale, float endScale,
             int msOp, int? msScale, int? msDelay, EasingFunctionNames easingFunction, Action callback = null)
         {
-            await ManageCompositionFadeScaleAnimationAsync(element, startOp, endOp, startScale, endScale, msOp, msScale, msDelay, easingFunction);
+            await StartCompositionFadeScaleAnimationAsync(element, startOp, endOp, startScale, endScale, msOp, msScale, msDelay, easingFunction);
+            callback?.Invoke();
+        }
+
+        /// <summary>
+        /// Starts a fade and scale animation on the target FrameworkElement and optionally runs a callback Action when the animations finish
+        /// </summary>
+        /// <param name="element">The UIElement to animate</param>
+        /// <param name="startOp">The initial opacity value. If null, the current opacity will be used</param>
+        /// <param name="endOp">The final opacity value</param>
+        /// <param name="startScale">The initial scale X and Y value. If null, the current scale will be used</param>
+        /// <param name="endScale">The final scale X and Y value</param>
+        /// <param name="msOp">The duration of the fade animation, in milliseconds</param>
+        /// <param name="msScale">The duration of the scale animation, in milliseconds</param>
+        /// <param name="msDelay">The delay before the animation starts, in milliseconds. If null, there will be no delay</param>
+        /// <param name="x1">The X coordinate of the first control point</param>
+        /// <param name="y1">The Y coordinate of the first control point</param>
+        /// <param name="x2">The X coordinate of the second control point</param>
+        /// <param name="y2">The Y coordinate of the second control point</param>
+        /// <param name="callback">An Action to execute when the new animations end</param>
+        public static async void StartCompositionFadeScaleAnimation(this FrameworkElement element,
+            float? startOp, float endOp,
+            float? startScale, float endScale,
+            int msOp, int? msScale, int? msDelay, float x1, float y1, float x2, float y2, Action callback = null)
+        {
+            await StartCompositionFadeScaleAnimationAsync(element, startOp, endOp, startScale, endScale, msOp, msScale, msDelay, x1, y1, x2, y2);
             callback?.Invoke();
         }
 
@@ -405,7 +586,68 @@ namespace UICompositionAnimations
             float? startScale, float endScale,
             int msOp, int? msScale, int? msDelay, EasingFunctionNames easingFunction)
         {
-            return ManageCompositionFadeScaleAnimationAsync(element, startOp, endOp, startScale, endScale, msOp, msScale, msDelay, easingFunction);
+            Visual visual = element.GetVisual();
+            CompositionEasingFunction ease = visual.GetEasingFunction(easingFunction);
+            return ManageCompositionFadeScaleAnimationAsync(element, visual, startOp, endOp, startScale, endScale, msOp, msScale, msDelay, ease);
+        }
+
+        /// <summary>
+        /// Starts a fade and scale animation on the target FrameworkElement and returns a Task that completes when the animation ends
+        /// </summary>
+        /// <param name="element">The UIElement to animate</param>
+        /// <param name="startOp">The initial opacity value. If null, the current opacity will be used</param>
+        /// <param name="endOp">The final opacity value</param>
+        /// <param name="startScale">The initial scale X and Y value. If null, the current scale will be used</param>
+        /// <param name="endScale">The final scale X and Y value</param>
+        /// <param name="msOp">The duration of the fade animation, in milliseconds</param>
+        /// <param name="msScale">The duration of the scale animation, in milliseconds</param>
+        /// <param name="msDelay">The delay before the animation starts, in milliseconds. If null, there will be no delay</param>
+        /// <param name="x1">The X coordinate of the first control point</param>
+        /// <param name="y1">The Y coordinate of the first control point</param>
+        /// <param name="x2">The X coordinate of the second control point</param>
+        /// <param name="y2">The Y coordinate of the second control point</param>
+        public static Task StartCompositionFadeScaleAnimationAsync(this FrameworkElement element,
+            float? startOp, float endOp,
+            float? startScale, float endScale,
+            int msOp, int? msScale, int? msDelay, float x1, float y1, float x2, float y2)
+        {
+            Visual visual = element.GetVisual();
+            CompositionEasingFunction ease = visual.GetEasingFunction(x1, y1, x2, y2);
+            return ManageCompositionFadeScaleAnimationAsync(element, visual, startOp, endOp, startScale, endScale, msOp, msScale, msDelay, ease);
+        }
+
+        // Sets an implicit fade and scale animation on the target element
+        private static async Task SetCompositionFadeScaleImplicitAnimationAsync(this FrameworkElement element, Visual visual, ImplicitAnimationType type,
+            float startOp, float endOp,
+            float startScale, float endScale,
+            int msOp, int? msScale, int? msDelay, CompositionEasingFunction easingFunction)
+        {
+            // Get the default values and set the CenterPoint
+            await element.SetCenterPoint(visual);
+
+            // Get the easing function, the duration and delay
+            TimeSpan durationOp = TimeSpan.FromMilliseconds(msOp);
+            TimeSpan durationScale = TimeSpan.FromMilliseconds(msScale ?? msOp);
+            TimeSpan? delay;
+            if (msDelay.HasValue) delay = TimeSpan.FromMilliseconds(msDelay.Value);
+            else delay = null;
+
+            // Calculate the initial and final scale values
+            Vector3 initialScale = new Vector3(startScale, startScale, visual.Scale.Z);
+            Vector3 endScale3 = new Vector3(endScale, endScale, visual.Scale.Z);
+
+            // Get the animations
+            CompositionAnimationGroup group = visual.Compositor.CreateAnimationGroup();
+            ScalarKeyFrameAnimation opacityAnimation = visual.Compositor.CreateScalarKeyFrameAnimation(startOp, endOp, durationOp, delay, easingFunction);
+            opacityAnimation.Target = "Opacity";
+            group.Add(opacityAnimation);
+            Vector3KeyFrameAnimation scaleAnimation = visual.Compositor.CreateVector3KeyFrameAnimation(initialScale, endScale3, durationScale, delay, easingFunction);
+            scaleAnimation.Target = "Scale";
+            group.Add(scaleAnimation);
+
+            // Set the implicit animation
+            if (type == ImplicitAnimationType.Show) ElementCompositionPreview.SetImplicitShowAnimation(element, group);
+            else ElementCompositionPreview.SetImplicitHideAnimation(element, group);
         }
 
         /// <summary>
@@ -421,39 +663,40 @@ namespace UICompositionAnimations
         /// <param name="msScale">The duration of the scale animation, in milliseconds</param>
         /// <param name="msDelay">The delay before the animation starts, in milliseconds. If null, there will be no delay</param>
         /// <param name="easingFunction">The easing function to use with the new animations</param>
-        public static async Task SetCompositionFadeScaleImplicitAnimationAsync(this FrameworkElement element, ImplicitAnimationType type,
+        public static Task SetCompositionFadeScaleImplicitAnimationAsync(this FrameworkElement element, ImplicitAnimationType type,
             float startOp, float endOp,
             float startScale, float endScale,
             int msOp, int? msScale, int? msDelay, EasingFunctionNames easingFunction)
         {
-            // Get the default values and set the CenterPoint
             Visual visual = element.GetVisual();
-            await element.SetCenterPoint(visual);
-
-            // Get the easing function, the duration and delay
             CompositionEasingFunction ease = visual.GetEasingFunction(easingFunction);
-            TimeSpan durationOp = TimeSpan.FromMilliseconds(msOp);
-            TimeSpan durationScale = TimeSpan.FromMilliseconds(msScale ?? msOp);
-            TimeSpan? delay;
-            if (msDelay.HasValue) delay = TimeSpan.FromMilliseconds(msDelay.Value);
-            else delay = null;
+            return SetCompositionFadeScaleImplicitAnimationAsync(element, visual, type, startOp, endOp, startScale, endScale, msOp, msScale, msDelay, ease);
+        }
 
-            // Calculate the initial and final scale values
-            Vector3 initialScale = new Vector3(startScale, startScale, visual.Scale.Z);
-            Vector3 endScale3 = new Vector3(endScale, endScale, visual.Scale.Z);
-
-            // Get the animations
-            CompositionAnimationGroup group = visual.Compositor.CreateAnimationGroup();
-            ScalarKeyFrameAnimation opacityAnimation = visual.Compositor.CreateScalarKeyFrameAnimation(startOp, endOp, durationOp, delay, ease);
-            opacityAnimation.Target = "Opacity";
-            group.Add(opacityAnimation);
-            Vector3KeyFrameAnimation scaleAnimation = visual.Compositor.CreateVector3KeyFrameAnimation(initialScale, endScale3, durationScale, delay, ease);
-            scaleAnimation.Target = "Scale";
-            group.Add(scaleAnimation);
-
-            // Set the implicit animation
-            if (type == ImplicitAnimationType.Show) ElementCompositionPreview.SetImplicitShowAnimation(element, group);
-            else ElementCompositionPreview.SetImplicitHideAnimation(element, group);
+        /// <summary>
+        /// Sets an implicit fade and scale animation on the target FrameworkElement
+        /// </summary>
+        /// <param name="element">The UIElement to animate</param>
+        /// <param name="type">The type of implicit animation to set</param>
+        /// <param name="startOp">The initial opacity value. If null, the current opacity will be used</param>
+        /// <param name="endOp">The final opacity value</param>
+        /// <param name="startScale">The initial scale X and Y value. If null, the current scale will be used</param>
+        /// <param name="endScale">The final scale X and Y value</param>
+        /// <param name="msOp">The duration of the fade animation, in milliseconds</param>
+        /// <param name="msScale">The duration of the scale animation, in milliseconds</param>
+        /// <param name="msDelay">The delay before the animation starts, in milliseconds. If null, there will be no delay</param>
+        /// <param name="x1">The X coordinate of the first control point</param>
+        /// <param name="y1">The Y coordinate of the first control point</param>
+        /// <param name="x2">The X coordinate of the second control point</param>
+        /// <param name="y2">The Y coordinate of the second control point</param>
+        public static Task SetCompositionFadeScaleImplicitAnimationAsync(this FrameworkElement element, ImplicitAnimationType type,
+            float startOp, float endOp,
+            float startScale, float endScale,
+            int msOp, int? msScale, int? msDelay, float x1, float y1, float x2, float y2)
+        {
+            Visual visual = element.GetVisual();
+            CompositionEasingFunction ease = visual.GetEasingFunction(x1, y1, x2, y2);
+            return SetCompositionFadeScaleImplicitAnimationAsync(element, visual, type, startOp, endOp, startScale, endScale, msOp, msScale, msDelay, ease);
         }
 
         #endregion
@@ -461,17 +704,15 @@ namespace UICompositionAnimations
         #region Scale only
 
         // Manages the scale animation
-        private static async Task<float> ManageCompositionScaleAnimationAsync(this FrameworkElement element,
+        private static async Task<float> ManageCompositionScaleAnimationAsync(this FrameworkElement element, Visual visual,
             float? startXY, float endXY,
-            int ms, int? msDelay, EasingFunctionNames easingFunction)
+            int ms, int? msDelay, CompositionEasingFunction easingFunction)
         {
             // Get the default values and set the CenterPoint
-            Visual visual = element.GetVisual();
             visual.StopAnimation("Scale");
             await element.SetCenterPoint(visual);
 
             // Get the easing function, the duration and delay
-            CompositionEasingFunction ease = visual.GetEasingFunction(easingFunction);
             TimeSpan duration = TimeSpan.FromMilliseconds(ms);
             TimeSpan? delay;
             if (msDelay.HasValue) delay = TimeSpan.FromMilliseconds(msDelay.Value);
@@ -492,7 +733,7 @@ namespace UICompositionAnimations
             };
 
             // Scale animation
-            Vector3KeyFrameAnimation scaleAnimation = visual.Compositor.CreateVector3KeyFrameAnimation(initialScale, endScale, duration, delay, ease);
+            Vector3KeyFrameAnimation scaleAnimation = visual.Compositor.CreateVector3KeyFrameAnimation(initialScale, endScale, duration, delay, easingFunction);
 
             // Get the batch and start the animations
             CompositionScopedBatch batch = visual.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
@@ -524,6 +765,28 @@ namespace UICompositionAnimations
         }
 
         /// <summary>
+        /// Starts a scale animation on the target FrameworkElement and optionally runs a callback Action when the animations finish
+        /// </summary>
+        /// <param name="element">The UIElement to animate</param>
+        /// <param name="startScale">The initial scale X and Y value. If null, the current scale will be used</param>
+        /// <param name="endScale">The final scale X and Y value</param>
+        /// <param name="ms">The duration of the animation, in milliseconds</param>
+        /// <param name="msDelay">The delay before the animation starts, in milliseconds. If null, there will be no delay</param>
+        /// <param name="x1">The X coordinate of the first control point</param>
+        /// <param name="y1">The Y coordinate of the first control point</param>
+        /// <param name="x2">The X coordinate of the second control point</param>
+        /// <param name="y2">The Y coordinate of the second control point</param>
+        /// <param name="reverse">If true, the animation will be played in reverse mode when it finishes for the first time</param>
+        /// <param name="callback">An Action to execute when the new animations end</param>
+        public static async void StartCompositionScaleAnimation(this FrameworkElement element,
+            float? startScale, float endScale,
+            int ms, int? msDelay, float x1, float y1, float x2, float y2, bool reverse = false, Action callback = null)
+        {
+            await element.StartCompositionScaleAnimationAsync(startScale, endScale, ms, msDelay, x1, y1, x2, y2, reverse);
+            callback?.Invoke();
+        }
+
+        /// <summary>
         /// Starts a scale animation on the target FrameworkElement and returns a Task that completes when the animation ends
         /// </summary>
         /// <param name="element">The UIElement to animate</param>
@@ -537,8 +800,62 @@ namespace UICompositionAnimations
             float? startScale, float endScale,
             int ms, int? msDelay, EasingFunctionNames easingFunction, bool reverse = false)
         {
-            startScale = await ManageCompositionScaleAnimationAsync(element, startScale, endScale, ms, msDelay, easingFunction);
-            if (reverse) await ManageCompositionScaleAnimationAsync(element, endScale, startScale.Value, ms, null, easingFunction);
+            Visual visual = element.GetVisual();
+            CompositionEasingFunction ease = visual.GetEasingFunction(easingFunction);
+            startScale = await ManageCompositionScaleAnimationAsync(element, visual, startScale, endScale, ms, msDelay, ease);
+            if (reverse) await ManageCompositionScaleAnimationAsync(element, visual, endScale, startScale.Value, ms, null, ease);
+        }
+
+        /// <summary>
+        /// Starts a scale animation on the target FrameworkElement and returns a Task that completes when the animation ends
+        /// </summary>
+        /// <param name="element">The UIElement to animate</param>
+        /// <param name="startScale">The initial scale X and Y value. If null, the current scale will be used</param>
+        /// <param name="endScale">The final scale X and Y value</param>
+        /// <param name="ms">The duration of the animation, in milliseconds</param>
+        /// <param name="msDelay">The delay before the animation starts, in milliseconds. If null, there will be no delay</param>
+        /// <param name="x1">The X coordinate of the first control point</param>
+        /// <param name="y1">The Y coordinate of the first control point</param>
+        /// <param name="x2">The X coordinate of the second control point</param>
+        /// <param name="y2">The Y coordinate of the second control point</param>
+        /// <param name="reverse">If true, the animation will be played in reverse mode when it finishes for the first time</param>
+        public static async Task StartCompositionScaleAnimationAsync(this FrameworkElement element,
+            float? startScale, float endScale,
+            int ms, int? msDelay, float x1, float y1, float x2, float y2, bool reverse = false)
+        {
+            Visual visual = element.GetVisual();
+            CompositionEasingFunction ease = visual.GetEasingFunction(x1, y1, x2, y2);
+            startScale = await ManageCompositionScaleAnimationAsync(element, visual, startScale, endScale, ms, msDelay, ease);
+            if (reverse) await ManageCompositionScaleAnimationAsync(element, visual, endScale, startScale.Value, ms, null, ease);
+        }
+
+        // Sets an implicit scale animation on the target element
+        private static async Task SetCompositionScaleImplicitAnimationAsync(this FrameworkElement element, Visual visual, ImplicitAnimationType type,
+            float start, float end,
+            int ms, int? msDelay, CompositionEasingFunction easingFunction)
+        {
+            // Get the default values and set the CenterPoint
+            await element.SetCenterPoint(visual);
+
+            // Get the easing function, the duration and delay
+            TimeSpan duration = TimeSpan.FromMilliseconds(ms);
+            TimeSpan? delay;
+            if (msDelay.HasValue) delay = TimeSpan.FromMilliseconds(msDelay.Value);
+            else delay = null;
+
+            // Calculate the initial and final scale values
+            Vector3 initialScale = new Vector3(start, start, visual.Scale.Z);
+            Vector3 endScale = new Vector3(end, end, visual.Scale.Z);
+
+            // Get the animations
+            CompositionAnimationGroup group = visual.Compositor.CreateAnimationGroup();
+            Vector3KeyFrameAnimation scaleAnimation = visual.Compositor.CreateVector3KeyFrameAnimation(initialScale, endScale, duration, delay, easingFunction);
+            scaleAnimation.Target = "Scale";
+            group.Add(scaleAnimation);
+
+            // Set the implicit animation
+            if (type == ImplicitAnimationType.Show) ElementCompositionPreview.SetImplicitShowAnimation(element, group);
+            else ElementCompositionPreview.SetImplicitHideAnimation(element, group);
         }
 
         /// <summary>
@@ -551,34 +868,35 @@ namespace UICompositionAnimations
         /// <param name="ms">The duration of the scale animation, in milliseconds</param>
         /// <param name="msDelay">The delay before the animation starts, in milliseconds. If null, there will be no delay</param>
         /// <param name="easingFunction">The easing function to use with the new animations</param>
-        public static async Task SetCompositionScaleImplicitAnimationAsync(this FrameworkElement element, ImplicitAnimationType type,
+        public static Task SetCompositionScaleImplicitAnimationAsync(this FrameworkElement element, ImplicitAnimationType type,
             float start, float end,
             int ms, int? msDelay, EasingFunctionNames easingFunction)
         {
-            // Get the default values and set the CenterPoint
             Visual visual = element.GetVisual();
-            await element.SetCenterPoint(visual);
-
-            // Get the easing function, the duration and delay
             CompositionEasingFunction ease = visual.GetEasingFunction(easingFunction);
-            TimeSpan duration = TimeSpan.FromMilliseconds(ms);
-            TimeSpan? delay;
-            if (msDelay.HasValue) delay = TimeSpan.FromMilliseconds(msDelay.Value);
-            else delay = null;
+            return SetCompositionScaleImplicitAnimationAsync(element, visual, type, start, end, ms, msDelay, ease);
+        }
 
-            // Calculate the initial and final scale values
-            Vector3 initialScale = new Vector3(start, start, visual.Scale.Z);
-            Vector3 endScale = new Vector3(end, end, visual.Scale.Z);
-
-            // Get the animations
-            CompositionAnimationGroup group = visual.Compositor.CreateAnimationGroup();
-            Vector3KeyFrameAnimation scaleAnimation = visual.Compositor.CreateVector3KeyFrameAnimation(initialScale, endScale, duration, delay, ease);
-            scaleAnimation.Target = "Scale";
-            group.Add(scaleAnimation);
-
-            // Set the implicit animation
-            if (type == ImplicitAnimationType.Show) ElementCompositionPreview.SetImplicitShowAnimation(element, group);
-            else ElementCompositionPreview.SetImplicitHideAnimation(element, group);
+        /// <summary>
+        /// Sets an implicit scale animation on the target FrameworkElement
+        /// </summary>
+        /// <param name="element">The UIElement to animate</param>
+        /// <param name="type">The type of implicit animation to set</param>
+        /// <param name="start">The initial scale value</param>
+        /// <param name="end">The final value</param>
+        /// <param name="ms">The duration of the scale animation, in milliseconds</param>
+        /// <param name="msDelay">The delay before the animation starts, in milliseconds. If null, there will be no delay</param>
+        /// <param name="x1">The X coordinate of the first control point</param>
+        /// <param name="y1">The Y coordinate of the first control point</param>
+        /// <param name="x2">The X coordinate of the second control point</param>
+        /// <param name="y2">The Y coordinate of the second control point</param>
+        public static Task SetCompositionScaleImplicitAnimationAsync(this FrameworkElement element, ImplicitAnimationType type,
+            float start, float end,
+            int ms, int? msDelay, float x1, float y1, float x2, float y2)
+        {
+            Visual visual = element.GetVisual();
+            CompositionEasingFunction ease = visual.GetEasingFunction(x1, y1, x2, y2);
+            return SetCompositionScaleImplicitAnimationAsync(element, visual, type, start, end, ms, msDelay, ease);
         }
 
         #endregion
@@ -586,16 +904,14 @@ namespace UICompositionAnimations
         #region Slide only
 
         // Manages the scale animation
-        private static async Task<float> ManageCompositionSlideAnimationAsync(this FrameworkElement element,
+        private static async Task<float> ManageCompositionSlideAnimationAsync(this Visual visual,
             TranslationAxis axis, float? startXY, float endXY,
-            int ms, int? msDelay, EasingFunctionNames easingFunction)
+            int ms, int? msDelay, CompositionEasingFunction easingFunction)
         {
             // Get the default values
-            Visual visual = element.GetVisual();
             visual.StopAnimation("Offset");
 
             // Get the easing function, the duration and delay
-            CompositionEasingFunction ease = visual.GetEasingFunction(easingFunction);
             TimeSpan duration = TimeSpan.FromMilliseconds(ms);
             TimeSpan? delay;
             if (msDelay.HasValue) delay = TimeSpan.FromMilliseconds(msDelay.Value);
@@ -616,7 +932,7 @@ namespace UICompositionAnimations
             }
 
             // Scale animation
-            Vector3KeyFrameAnimation offsetAnimation = visual.Compositor.CreateVector3KeyFrameAnimation(initialOffset, endOffset, duration, delay, ease);
+            Vector3KeyFrameAnimation offsetAnimation = visual.Compositor.CreateVector3KeyFrameAnimation(initialOffset, endOffset, duration, delay, easingFunction);
 
             // Get the batch and start the animations
             CompositionScopedBatch batch = visual.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
@@ -644,7 +960,30 @@ namespace UICompositionAnimations
             TranslationAxis axis, float? startOffset, float endOffset,
             int ms, int? msDelay, EasingFunctionNames easingFunction, bool reverse = false, Action callback = null)
         {
-            await element.ManageCompositionSlideAnimationAsync(axis, startOffset, endOffset, ms, msDelay, easingFunction);
+            await element.StartCompositionSlideAnimationAsync(axis, startOffset, endOffset, ms, msDelay, easingFunction, reverse);
+            callback?.Invoke();
+        }
+
+        /// <summary>
+        /// Starts an offset animation on the target FrameworkElement and optionally runs a callback Action when the animations finish
+        /// </summary>
+        /// <param name="element">The UIElement to animate</param>
+        /// <param name="axis">The offset axis</param>
+        /// <param name="startOffset">The initial offset X and Y value. If null, the current offset will be used</param>
+        /// <param name="endOffset">The final offset X and Y value</param>
+        /// <param name="ms">The duration of the animation, in milliseconds</param>
+        /// <param name="msDelay">The delay before the animation starts, in milliseconds. If null, there will be no delay</param>
+        /// <param name="x1">The X coordinate of the first control point</param>
+        /// <param name="y1">The Y coordinate of the first control point</param>
+        /// <param name="x2">The X coordinate of the second control point</param>
+        /// <param name="y2">The Y coordinate of the second control point</param>
+        /// <param name="reverse">If true, the animation will be played in reverse mode when it finishes for the first time</param>
+        /// <param name="callback">An Action to execute when the new animations end</param>
+        public static async void StartCompositionSlideAnimation(this FrameworkElement element,
+            TranslationAxis axis, float? startOffset, float endOffset,
+            int ms, int? msDelay, float x1, float y1, float x2, float y2, bool reverse = false, Action callback = null)
+        {
+            await element.StartCompositionSlideAnimationAsync(axis, startOffset, endOffset, ms, msDelay, x1, y1, x2, y2, reverse);
             callback?.Invoke();
         }
 
@@ -663,30 +1002,42 @@ namespace UICompositionAnimations
             TranslationAxis axis, float? startOffset, float endOffset,
             int ms, int? msDelay, EasingFunctionNames easingFunction, bool reverse = false)
         {
-            startOffset = await element.ManageCompositionSlideAnimationAsync(axis, startOffset, endOffset, ms, msDelay, easingFunction);
-            if (reverse) await element.ManageCompositionSlideAnimationAsync(axis, endOffset, startOffset.Value, ms, msDelay, easingFunction);
+            Visual visual = element.GetVisual();
+            CompositionEasingFunction ease = visual.GetEasingFunction(easingFunction);
+            startOffset = await visual.ManageCompositionSlideAnimationAsync(axis, startOffset, endOffset, ms, msDelay, ease);
+            if (reverse) await visual.ManageCompositionSlideAnimationAsync(axis, endOffset, startOffset.Value, ms, msDelay, ease);
         }
 
         /// <summary>
-        /// Sets an implicit slide animation on the target FrameworkElement
+        /// Starts an offset animation on the target FrameworkElement and returns a Task that completes when the animation ends
         /// </summary>
         /// <param name="element">The UIElement to animate</param>
-        /// <param name="type">The type of implicit animation to set</param>
         /// <param name="axis">The offset axis</param>
-        /// <param name="start">The initial scale value</param>
-        /// <param name="end">The final value</param>
-        /// <param name="ms">The duration of the scale animation, in milliseconds</param>
+        /// <param name="startOffset">The initial offset X and Y value. If null, the current offset will be used</param>
+        /// <param name="endOffset">The final offset X and Y value</param>
+        /// <param name="ms">The duration of the animation, in milliseconds</param>
         /// <param name="msDelay">The delay before the animation starts, in milliseconds. If null, there will be no delay</param>
-        /// <param name="easingFunction">The easing function to use with the new animations</param>
-        public static void SetCompositionSlideImplicitAnimation(this FrameworkElement element, ImplicitAnimationType type,
-            TranslationAxis axis, float start, float end,
-            int ms, int? msDelay, EasingFunctionNames easingFunction)
+        /// <param name="x1">The X coordinate of the first control point</param>
+        /// <param name="y1">The Y coordinate of the first control point</param>
+        /// <param name="x2">The X coordinate of the second control point</param>
+        /// <param name="y2">The Y coordinate of the second control point</param>
+        /// <param name="reverse">If true, the animation will be played in reverse mode when it finishes for the first time</param>
+        public static async Task StartCompositionSlideAnimationAsync(this FrameworkElement element,
+            TranslationAxis axis, float? startOffset, float endOffset,
+            int ms, int? msDelay, float x1, float y1, float x2, float y2, bool reverse = false)
         {
-            // Get the default values
             Visual visual = element.GetVisual();
+            CompositionEasingFunction ease = visual.GetEasingFunction(x1, y1, x2, y2);
+            startOffset = await visual.ManageCompositionSlideAnimationAsync(axis, startOffset, endOffset, ms, msDelay, ease);
+            if (reverse) await visual.ManageCompositionSlideAnimationAsync(axis, endOffset, startOffset.Value, ms, msDelay, ease);
+        }
 
+        // Sets an implicit slide animation on the target element
+        private static void SetCompositionSlideImplicitAnimation(this FrameworkElement element, Visual visual, ImplicitAnimationType type,
+            TranslationAxis axis, float start, float end,
+            int ms, int? msDelay, CompositionEasingFunction easingFunction)
+        {
             // Get the easing function, the duration and delay
-            CompositionEasingFunction ease = visual.GetEasingFunction(easingFunction);
             TimeSpan duration = TimeSpan.FromMilliseconds(ms);
             TimeSpan? delay;
             if (msDelay.HasValue) delay = TimeSpan.FromMilliseconds(msDelay.Value);
@@ -708,13 +1059,56 @@ namespace UICompositionAnimations
 
             // Get the animations
             CompositionAnimationGroup group = visual.Compositor.CreateAnimationGroup();
-            Vector3KeyFrameAnimation offsetAnimation = visual.Compositor.CreateVector3KeyFrameAnimation(initialOffset, endOffset, duration, delay, ease);
+            Vector3KeyFrameAnimation offsetAnimation = visual.Compositor.CreateVector3KeyFrameAnimation(initialOffset, endOffset, duration, delay, easingFunction);
             offsetAnimation.Target = "Offset";
             group.Add(offsetAnimation);
 
             // Set the implicit animation
             if (type == ImplicitAnimationType.Show) ElementCompositionPreview.SetImplicitShowAnimation(element, group);
             else ElementCompositionPreview.SetImplicitHideAnimation(element, group);
+        }
+
+        /// <summary>
+        /// Sets an implicit slide animation on the target FrameworkElement
+        /// </summary>
+        /// <param name="element">The UIElement to animate</param>
+        /// <param name="type">The type of implicit animation to set</param>
+        /// <param name="axis">The offset axis</param>
+        /// <param name="start">The initial scale value</param>
+        /// <param name="end">The final value</param>
+        /// <param name="ms">The duration of the scale animation, in milliseconds</param>
+        /// <param name="msDelay">The delay before the animation starts, in milliseconds. If null, there will be no delay</param>
+        /// <param name="easingFunction">The easing function to use with the new animations</param>
+        public static void SetCompositionSlideImplicitAnimation(this FrameworkElement element, ImplicitAnimationType type,
+            TranslationAxis axis, float start, float end,
+            int ms, int? msDelay, EasingFunctionNames easingFunction)
+        {
+            Visual visual = element.GetVisual();
+            CompositionEasingFunction ease = visual.GetEasingFunction(easingFunction);
+            SetCompositionSlideImplicitAnimation(element, visual, type, axis, start, end, ms, msDelay, ease);
+        }
+
+        /// <summary>
+        /// Sets an implicit slide animation on the target FrameworkElement
+        /// </summary>
+        /// <param name="element">The UIElement to animate</param>
+        /// <param name="type">The type of implicit animation to set</param>
+        /// <param name="axis">The offset axis</param>
+        /// <param name="start">The initial scale value</param>
+        /// <param name="end">The final value</param>
+        /// <param name="ms">The duration of the scale animation, in milliseconds</param>
+        /// <param name="msDelay">The delay before the animation starts, in milliseconds. If null, there will be no delay</param>
+        /// <param name="x1">The X coordinate of the first control point</param>
+        /// <param name="y1">The Y coordinate of the first control point</param>
+        /// <param name="x2">The X coordinate of the second control point</param>
+        /// <param name="y2">The Y coordinate of the second control point</param>
+        public static void SetCompositionSlideImplicitAnimation(this FrameworkElement element, ImplicitAnimationType type,
+            TranslationAxis axis, float start, float end,
+            int ms, int? msDelay, float x1, float y1, float x2, float y2)
+        {
+            Visual visual = element.GetVisual();
+            CompositionEasingFunction ease = visual.GetEasingFunction(x1, y1, x2, y2);
+            SetCompositionSlideImplicitAnimation(element, visual, type, axis, start, end, ms, msDelay, ease);
         }
 
         #endregion
