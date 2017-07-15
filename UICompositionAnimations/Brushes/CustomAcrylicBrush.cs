@@ -210,9 +210,9 @@ namespace UICompositionAnimations.Brushes
         public Uri NoiseTextureUri { get; set; }
 
         /// <summary>
-        /// Gets or sets whether or not the noise texture should be loaded from the internal cache, if possible
+        /// Gets or sets the caching setting for the acrylic brush
         /// </summary>
-        public bool EnableCaching { get; set; } = true;
+        public CacheLoadingMode CacheMode { get; set; } = CacheLoadingMode.EnableCaching;
 
         #endregion
 
@@ -331,7 +331,7 @@ namespace UICompositionAnimations.Brushes
 
             // Get the noise brush using Win2D
             IGraphicsEffect source = await AcrylicEffectHelper.ConcatenateEffectWithTintAndBorderAsync(Window.Current.Compositor,
-                baseEffect, sourceParameters, Tint, (float)TintMix, null, NoiseTextureUri, reload: !EnableCaching);
+                baseEffect, sourceParameters, Tint, (float)TintMix, null, NoiseTextureUri, CacheMode);
 
             // Extract and setup the tint and color effects
             ArithmeticCompositeEffect tint = source as ArithmeticCompositeEffect ?? source.To<BlendEffect>().Background as ArithmeticCompositeEffect;
