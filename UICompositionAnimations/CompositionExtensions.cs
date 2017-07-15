@@ -26,7 +26,7 @@ namespace UICompositionAnimations
         /// </summary>
         /// <param name="element">The source element</param>
         /// <param name="visual">The Visual object for the source FrameworkElement</param>
-        private static async Task SetCenterPoint(this FrameworkElement element, Visual visual)
+        private static async Task SetCenterPoint([NotNull] this FrameworkElement element, [NotNull] Visual visual)
         {
             bool LoadedTester() => element.ActualWidth + element.ActualHeight < 0.1;
             if (LoadedTester())
@@ -56,9 +56,9 @@ namespace UICompositionAnimations
         #region Fade
 
         // Manages the fade animation
-        private static Task ManageCompositionFadeAnimationAsync(this Visual visual,
+        private static Task ManageCompositionFadeAnimationAsync([NotNull] Visual visual,
             float? startOp, float endOp,
-            int ms, int? msDelay, CompositionEasingFunction easingFunction)
+            int ms, int? msDelay, [NotNull] CompositionEasingFunction easingFunction)
         {
             // Get the default values
             visual.StopAnimation("Opacity");
@@ -83,16 +83,16 @@ namespace UICompositionAnimations
         }
 
         /// <summary>
-        /// Starts a fade animation on the target UIElement and optionally runs a callback Action when the animations finish
+        /// Starts a fade animation on the target <see cref="UIElement"/> and optionally runs a callback <see cref="Action"/> when the animation finishes
         /// </summary>
-        /// <param name="element">The UIElement to animate</param>
+        /// <param name="element">The <see cref="UIElement"/> to animate</param>
         /// <param name="startOp">The initial opacity value. If null, the current opacity will be used</param>
         /// <param name="endOp">The final opacity value</param>
         /// <param name="ms">The duration of the animation, in milliseconds</param>
         /// <param name="msDelay">The delay before the animation starts, in milliseconds. If null, there will be no delay</param>
         /// <param name="easingFunction">The easing function to use with the new animations</param>
-        /// <param name="callback">An Action to execute when the new animations end</param>
-        public static async void StartCompositionFadeAnimation(this UIElement element,
+        /// <param name="callback">An <see cref="Action"/> to execute when the new animations end</param>
+        public static async void StartCompositionFadeAnimation([NotNull] this UIElement element,
             float? startOp, float endOp,
             int ms, int? msDelay, EasingFunctionNames easingFunction, Action callback = null)
         {
@@ -101,19 +101,19 @@ namespace UICompositionAnimations
         }
 
         /// <summary>
-        /// Starts a fade animation on the target UIElement and optionally runs a callback Action when the animations finish
+        /// Starts a fade animation on the target <see cref="UIElement"/> and optionally runs a callback <see cref="Action"/> when the animation finishes
         /// </summary>
-        /// <param name="element">The UIElement to animate</param>
+        /// <param name="element">The <see cref="UIElement"/> to animate</param>
         /// <param name="startOp">The initial opacity value. If null, the current opacity will be used</param>
         /// <param name="endOp">The final opacity value</param>
         /// <param name="ms">The duration of the animation, in milliseconds</param>
         /// <param name="msDelay">The delay before the animation starts, in milliseconds. If null, there will be no delay</param>
-        /// <param name="x1">The X coordinate of the first control point</param>
-        /// <param name="y1">The Y coordinate of the first control point</param>
-        /// <param name="x2">The X coordinate of the second control point</param>
-        /// <param name="y2">The Y coordinate of the second control point</param>
-        /// <param name="callback">An Action to execute when the new animations end</param>
-        public static async void StartCompositionFadeAnimation(this UIElement element,
+        /// <param name="x1">The X coordinate of the first control point of the cubic beizer easing function</param>
+        /// <param name="y1">The Y coordinate of the first control point of the cubic beizer easing function</param>
+        /// <param name="x2">The X coordinate of the second control point of the cubic beizer easing function</param>
+        /// <param name="y2">The Y coordinate of the second control point of the cubic beizer easing function</param>
+        /// <param name="callback">An <see cref="Action"/> to execute when the new animations end</param>
+        public static async void StartCompositionFadeAnimation([NotNull] this UIElement element,
             float? startOp, float endOp,
             int ms, int? msDelay, float x1, float y1, float x2, float y2, Action callback = null)
         {
@@ -122,15 +122,15 @@ namespace UICompositionAnimations
         }
 
         /// <summary>
-        /// Starts a fade animation on the target UIElement and returns a Task that completes when the animation ends
+        /// Starts a fade animation on the target <see cref="UIElement"/> and returns a <see cref="Task"/> that completes when the animation ends
         /// </summary>
-        /// <param name="element">The UIElement to animate</param>
+        /// <param name="element">The <see cref="UIElement"/> to animate</param>
         /// <param name="startOp">The initial opacity value. If null, the current opacity will be used</param>
         /// <param name="endOp">The final opacity value</param>
         /// <param name="ms">The duration of the animation, in milliseconds</param>
         /// <param name="msDelay">The delay before the animation starts, in milliseconds. If null, there will be no delay</param>
         /// <param name="easingFunction">The easing function to use with the new animations</param>
-        public static Task StartCompositionFadeAnimationAsync(this UIElement element,
+        public static Task StartCompositionFadeAnimationAsync([NotNull] this UIElement element,
             float? startOp, float endOp,
             int ms, int? msDelay, EasingFunctionNames easingFunction)
         {
@@ -140,18 +140,18 @@ namespace UICompositionAnimations
         }
 
         /// <summary>
-        /// Starts a fade animation on the target UIElement and returns a Task that completes when the animation ends
+        /// Starts a fade animation on the target <see cref="UIElement"/> and returns a <see cref="Task"/> that completes when the animation ends
         /// </summary>
-        /// <param name="element">The UIElement to animate</param>
+        /// <param name="element">The <see cref="UIElement"/> to animate</param>
         /// <param name="startOp">The initial opacity value. If null, the current opacity will be used</param>
         /// <param name="endOp">The final opacity value</param>
         /// <param name="ms">The duration of the animation, in milliseconds</param>
         /// <param name="msDelay">The delay before the animation starts, in milliseconds. If null, there will be no delay</param>
-        /// <param name="x1">The X coordinate of the first control point</param>
-        /// <param name="y1">The Y coordinate of the first control point</param>
-        /// <param name="x2">The X coordinate of the second control point</param>
-        /// <param name="y2">The Y coordinate of the second control point</param>
-        public static Task StartCompositionFadeAnimationAsync(this UIElement element,
+        /// <param name="x1">The X coordinate of the first control point of the cubic beizer easing function</param>
+        /// <param name="y1">The Y coordinate of the first control point of the cubic beizer easing function</param>
+        /// <param name="x2">The X coordinate of the second control point of the cubic beizer easing function</param>
+        /// <param name="y2">The Y coordinate of the second control point of the cubic beizer easing function</param>
+        public static Task StartCompositionFadeAnimationAsync([NotNull] this UIElement element,
             float? startOp, float endOp,
             int ms, int? msDelay, float x1, float y1, float x2, float y2)
         {
@@ -161,9 +161,9 @@ namespace UICompositionAnimations
         }
 
         // Sets an implicit fade animation on the target element
-        private static void SetCompositionFadeImplicitAnimation(this UIElement element, Compositor compositor, ImplicitAnimationType type,
+        private static void SetCompositionFadeImplicitAnimation([NotNull] UIElement element, [NotNull] Compositor compositor, ImplicitAnimationType type,
             float start, float end,
-            int ms, int? msDelay, CompositionEasingFunction easingFunction)
+            int ms, int? msDelay, [NotNull] CompositionEasingFunction easingFunction)
         {
             // Get the easing function, the duration and delay
             TimeSpan duration = TimeSpan.FromMilliseconds(ms);
@@ -192,7 +192,7 @@ namespace UICompositionAnimations
         /// <param name="ms">The duration of the fade animation, in milliseconds</param>
         /// <param name="msDelay">The delay before the animation starts, in milliseconds. If null, there will be no delay</param>
         /// <param name="easingFunction">The easing function to use with the new animations</param>
-        public static void SetCompositionFadeImplicitAnimation(this UIElement element, ImplicitAnimationType type,
+        public static void SetCompositionFadeImplicitAnimation([NotNull] this UIElement element, ImplicitAnimationType type,
             float start, float end,
             int ms, int? msDelay, EasingFunctionNames easingFunction)
         {
@@ -210,11 +210,11 @@ namespace UICompositionAnimations
         /// <param name="end">The final opacity value</param>
         /// <param name="ms">The duration of the fade animation, in milliseconds</param>
         /// <param name="msDelay">The delay before the animation starts, in milliseconds. If null, there will be no delay</param>
-        /// <param name="x1">The X coordinate of the first control point</param>
-        /// <param name="y1">The Y coordinate of the first control point</param>
-        /// <param name="x2">The X coordinate of the second control point</param>
-        /// <param name="y2">The Y coordinate of the second control point</param>
-        public static void SetCompositionFadeImplicitAnimation(this UIElement element, ImplicitAnimationType type,
+        /// <param name="x1">The X coordinate of the first control point of the cubic beizer easing function</param>
+        /// <param name="y1">The Y coordinate of the first control point of the cubic beizer easing function</param>
+        /// <param name="x2">The X coordinate of the second control point of the cubic beizer easing function</param>
+        /// <param name="y2">The Y coordinate of the second control point of the cubic beizer easing function</param>
+        public static void SetCompositionFadeImplicitAnimation([NotNull] this UIElement element, ImplicitAnimationType type,
             float start, float end,
             int ms, int? msDelay, float x1, float y1, float x2, float y2)
         {
@@ -229,10 +229,10 @@ namespace UICompositionAnimations
         #region Fade and slide
 
         // Manages the fade and slide animation
-        private static Task ManageCompositionFadeSlideAnimationAsync(this UIElement element,
+        private static Task ManageCompositionFadeSlideAnimationAsync([NotNull] UIElement element,
             float? startOp, float endOp,
             TranslationAxis axis, float? startXY, float endXY,
-            int msOp, int? msSlide, int? msDelay, CompositionEasingFunction easingFunction)
+            int msOp, int? msSlide, int? msDelay, [NotNull] CompositionEasingFunction easingFunction)
         {
             // Get the default values
             Visual visual = element.GetVisual();
@@ -280,9 +280,9 @@ namespace UICompositionAnimations
         }
 
         /// <summary>
-        /// Starts a fade and slide animation on the target UIElement and optionally runs a callback Action when the animations finish
+        /// Starts a fade and slide animation on the target <see cref="UIElement"/> and optionally runs a callback <see cref="Action"/> when the animations finish
         /// </summary>
-        /// <param name="element">The UIElement to animate</param>
+        /// <param name="element">The <see cref="UIElement"/> to animate</param>
         /// <param name="startOp">The initial opacity value. If null, the current opacity will be used</param>
         /// <param name="endOp">The final opacity value</param>
         /// <param name="axis">The offset axis to use on the translation animation</param>
@@ -292,8 +292,8 @@ namespace UICompositionAnimations
         /// <param name="msSlide">The duration of the slide animation, in milliseconds</param>
         /// <param name="msDelay">The delay before the animation starts, in milliseconds. If null, there will be no delay</param>
         /// <param name="easingFunction">The easing function to use with the new animations</param>
-        /// <param name="callback">An Action to execute when the new animations end</param>
-        public static async void StartCompositionFadeSlideAnimation(this UIElement element,
+        /// <param name="callback">An <see cref="Action"/> to execute when the new animations end</param>
+        public static async void StartCompositionFadeSlideAnimation([NotNull] this UIElement element,
             float? startOp, float endOp,
             TranslationAxis axis, float? startXY, float endXY,
             int msOp, int? msSlide, int? msDelay, EasingFunctionNames easingFunction, Action callback = null)
@@ -303,9 +303,9 @@ namespace UICompositionAnimations
         }
 
         /// <summary>
-        /// Starts a fade and slide animation on the target UIElement and optionally runs a callback Action when the animations finish
+        /// Starts a fade and slide animation on the target <see cref="UIElement"/> and optionally runs a callback <see cref="Action"/> when the animations finish
         /// </summary>
-        /// <param name="element">The UIElement to animate</param>
+        /// <param name="element">The <see cref="UIElement"/> to animate</param>
         /// <param name="startOp">The initial opacity value. If null, the current opacity will be used</param>
         /// <param name="endOp">The final opacity value</param>
         /// <param name="axis">The offset axis to use on the translation animation</param>
@@ -314,12 +314,12 @@ namespace UICompositionAnimations
         /// <param name="msOp">The duration of the fade animation, in milliseconds</param>
         /// <param name="msSlide">The duration of the slide animation, in milliseconds</param>
         /// <param name="msDelay">The delay before the animation starts, in milliseconds. If null, there will be no delay</param>
-        /// <param name="x1">The X coordinate of the first control point</param>
-        /// <param name="y1">The Y coordinate of the first control point</param>
-        /// <param name="x2">The X coordinate of the second control point</param>
-        /// <param name="y2">The Y coordinate of the second control point</param>
-        /// <param name="callback">An Action to execute when the new animations end</param>
-        public static async void StartCompositionFadeSlideAnimation(this UIElement element,
+        /// <param name="x1">The X coordinate of the first control point of the cubic beizer easing function</param>
+        /// <param name="y1">The Y coordinate of the first control point of the cubic beizer easing function</param>
+        /// <param name="x2">The X coordinate of the second control point of the cubic beizer easing function</param>
+        /// <param name="y2">The Y coordinate of the second control point of the cubic beizer easing function</param>
+        /// <param name="callback">An <see cref="Action"/> to execute when the new animations end</param>
+        public static async void StartCompositionFadeSlideAnimation([NotNull] this UIElement element,
             float? startOp, float endOp,
             TranslationAxis axis, float? startXY, float endXY,
             int msOp, int? msSlide, int? msDelay, float x1, float y1, float x2, float y2, Action callback = null)
@@ -329,9 +329,9 @@ namespace UICompositionAnimations
         }
 
         /// <summary>
-        /// Starts a fade and slide animation on the target UIElement and returns a Task that completes when the animation ends
+        /// Starts a fade and slide animation on the target <see cref="UIElement"/> and returns a <see cref="Task"/> that completes when the animation ends
         /// </summary>
-        /// <param name="element">The UIElement to animate</param>
+        /// <param name="element">The <see cref="UIElement"/> to animate</param>
         /// <param name="startOp">The initial opacity value. If null, the current opacity will be used</param>
         /// <param name="endOp">The final opacity value</param>
         /// <param name="axis">The offset axis to use on the translation animation</param>
@@ -341,7 +341,7 @@ namespace UICompositionAnimations
         /// <param name="msSlide">The duration of the slide animation, in milliseconds</param>
         /// <param name="msDelay">The delay before the animation starts, in milliseconds. If null, there will be no delay</param>
         /// <param name="easingFunction">The easing function to use with the new animations</param>
-        public static Task StartCompositionFadeSlideAnimationAsync(this UIElement element,
+        public static Task StartCompositionFadeSlideAnimationAsync([NotNull] this UIElement element,
             float? startOp, float endOp,
             TranslationAxis axis, float? startXY, float endXY,
             int msOp, int? msSlide, int? msDelay, EasingFunctionNames easingFunction)
@@ -352,9 +352,9 @@ namespace UICompositionAnimations
         }
 
         /// <summary>
-        /// Starts a fade and slide animation on the target UIElement and returns a Task that completes when the animation ends
+        /// Starts a fade and slide animation on the target <see cref="UIElement"/> and returns a <see cref="Task"/> that completes when the animation ends
         /// </summary>
-        /// <param name="element">The UIElement to animate</param>
+        /// <param name="element">The <see cref="UIElement"/> to animate</param>
         /// <param name="startOp">The initial opacity value. If null, the current opacity will be used</param>
         /// <param name="endOp">The final opacity value</param>
         /// <param name="axis">The offset axis to use on the translation animation</param>
@@ -363,11 +363,11 @@ namespace UICompositionAnimations
         /// <param name="msOp">The duration of the fade animation, in milliseconds</param>
         /// <param name="msSlide">The duration of the slide animation, in milliseconds</param>
         /// <param name="msDelay">The delay before the animation starts, in milliseconds. If null, there will be no delay</param>
-        /// <param name="x1">The X coordinate of the first control point</param>
-        /// <param name="y1">The Y coordinate of the first control point</param>
-        /// <param name="x2">The X coordinate of the second control point</param>
-        /// <param name="y2">The Y coordinate of the second control point</param>
-        public static Task StartCompositionFadeSlideAnimationAsync(this UIElement element,
+        /// <param name="x1">The X coordinate of the first control point of the cubic beizer easing function</param>
+        /// <param name="y1">The Y coordinate of the first control point of the cubic beizer easing function</param>
+        /// <param name="x2">The X coordinate of the second control point of the cubic beizer easing function</param>
+        /// <param name="y2">The Y coordinate of the second control point of the cubic beizer easing function</param>
+        public static Task StartCompositionFadeSlideAnimationAsync([NotNull] this UIElement element,
             float? startOp, float endOp,
             TranslationAxis axis, float? startXY, float endXY,
             int msOp, int? msSlide, int? msDelay, float x1, float y1, float x2, float y2)
@@ -378,10 +378,10 @@ namespace UICompositionAnimations
         }
 
         // Sets an implicit fade and slide animation on the target element
-        private static void SetCompositionFadeSlideImplicitAnimation(this FrameworkElement element, Visual visual, ImplicitAnimationType type,
+        private static void SetCompositionFadeSlideImplicitAnimation([NotNull] UIElement element, [NotNull] Visual visual, ImplicitAnimationType type,
             float startOp, float endOp,
             TranslationAxis axis, float startXY, float endXY,
-            int msOp, int? msSlide, int? msDelay, CompositionEasingFunction easingFunction)
+            int msOp, int? msSlide, int? msDelay, [NotNull] CompositionEasingFunction easingFunction)
         {
             // Get the easing function, the duration and delay
             TimeSpan durationOp = TimeSpan.FromMilliseconds(msOp);
@@ -419,9 +419,9 @@ namespace UICompositionAnimations
         }
 
         /// <summary>
-        /// Sets an implicit fade and slide animation on the target FrameworkElement
+        /// Sets an implicit fade and slide animation on the target <see cref="UIElement"/>
         /// </summary>
-        /// <param name="element">The UIElement to animate</param>
+        /// <param name="element">The <see cref="UIElement"/> to animate</param>
         /// <param name="type">The type of implicit animation to set</param>
         /// <param name="startOp">The initial opacity value. If null, the current opacity will be used</param>
         /// <param name="endOp">The final opacity value</param>
@@ -432,7 +432,7 @@ namespace UICompositionAnimations
         /// <param name="msSlide">The duration of the slide animation, in milliseconds</param>
         /// <param name="msDelay">The delay before the animation starts, in milliseconds. If null, there will be no delay</param>
         /// <param name="easingFunction">The easing function to use with the new animations</param>
-        public static void SetCompositionFadeSlideImplicitAnimation(this FrameworkElement element, ImplicitAnimationType type,
+        public static void SetCompositionFadeSlideImplicitAnimation([NotNull] this UIElement element, ImplicitAnimationType type,
             float startOp, float endOp,
             TranslationAxis axis, float startXY, float endXY,
             int msOp, int? msSlide, int? msDelay, EasingFunctionNames easingFunction)
@@ -443,9 +443,9 @@ namespace UICompositionAnimations
         }
 
         /// <summary>
-        /// Sets an implicit fade and slide animation on the target FrameworkElement
+        /// Sets an implicit fade and slide animation on the target <see cref="UIElement"/>
         /// </summary>
-        /// <param name="element">The UIElement to animate</param>
+        /// <param name="element">The <see cref="UIElement"/> to animate</param>
         /// <param name="type">The type of implicit animation to set</param>
         /// <param name="startOp">The initial opacity value. If null, the current opacity will be used</param>
         /// <param name="endOp">The final opacity value</param>
@@ -455,11 +455,11 @@ namespace UICompositionAnimations
         /// <param name="msOp">The duration of the fade animation, in milliseconds</param>
         /// <param name="msSlide">The duration of the slide animation, in milliseconds</param>
         /// <param name="msDelay">The delay before the animation starts, in milliseconds. If null, there will be no delay</param>
-        /// <param name="x1">The X coordinate of the first control point</param>
-        /// <param name="y1">The Y coordinate of the first control point</param>
-        /// <param name="x2">The X coordinate of the second control point</param>
-        /// <param name="y2">The Y coordinate of the second control point</param>
-        public static void SetCompositionFadeSlideImplicitAnimation(this FrameworkElement element, ImplicitAnimationType type,
+        /// <param name="x1">The X coordinate of the first control point of the cubic beizer easing function</param>
+        /// <param name="y1">The Y coordinate of the first control point of the cubic beizer easing function</param>
+        /// <param name="x2">The X coordinate of the second control point of the cubic beizer easing function</param>
+        /// <param name="y2">The Y coordinate of the second control point of the cubic beizer easing function</param>
+        public static void SetCompositionFadeSlideImplicitAnimation([NotNull] this UIElement element, ImplicitAnimationType type,
             float startOp, float endOp,
             TranslationAxis axis, float startXY, float endXY,
             int msOp, int? msSlide, int? msDelay, float x1, float y1, float x2, float y2)
@@ -474,10 +474,10 @@ namespace UICompositionAnimations
         #region Fade and scale
 
         // Manages the fade and scale animation
-        private static async Task ManageCompositionFadeScaleAnimationAsync(this FrameworkElement element, Visual visual,
+        private static async Task ManageCompositionFadeScaleAnimationAsync([NotNull] FrameworkElement element, Visual visual,
             float? startOp, float endOp,
             float? startXY, float endXY,
-            int msOp, int? msScale, int? msDelay, CompositionEasingFunction easingFunction)
+            int msOp, int? msScale, int? msDelay, [NotNull] CompositionEasingFunction easingFunction)
         {
             // Get the default values and set the CenterPoint
             visual.StopAnimation("Opacity");
@@ -523,9 +523,9 @@ namespace UICompositionAnimations
         }
 
         /// <summary>
-        /// Starts a fade and scale animation on the target FrameworkElement and optionally runs a callback Action when the animations finish
+        /// Starts a fade and scale animation on the target <see cref="FrameworkElement"/> and optionally runs a callback <see cref="Action"/> when the animations finish
         /// </summary>
-        /// <param name="element">The UIElement to animate</param>
+        /// <param name="element">The <see cref="FrameworkElement"/> to animate</param>
         /// <param name="startOp">The initial opacity value. If null, the current opacity will be used</param>
         /// <param name="endOp">The final opacity value</param>
         /// <param name="startScale">The initial scale X and Y value. If null, the current scale will be used</param>
@@ -534,8 +534,8 @@ namespace UICompositionAnimations
         /// <param name="msScale">The duration of the scale animation, in milliseconds</param>
         /// <param name="msDelay">The delay before the animation starts, in milliseconds. If null, there will be no delay</param>
         /// <param name="easingFunction">The easing function to use with the new animations</param>
-        /// <param name="callback">An Action to execute when the new animations end</param>
-        public static async void StartCompositionFadeScaleAnimation(this FrameworkElement element,
+        /// <param name="callback">An <see cref="Action"/> to execute when the new animations end</param>
+        public static async void StartCompositionFadeScaleAnimation([NotNull] this FrameworkElement element,
             float? startOp, float endOp,
             float? startScale, float endScale,
             int msOp, int? msScale, int? msDelay, EasingFunctionNames easingFunction, Action callback = null)
@@ -545,9 +545,9 @@ namespace UICompositionAnimations
         }
 
         /// <summary>
-        /// Starts a fade and scale animation on the target FrameworkElement and optionally runs a callback Action when the animations finish
+        /// Starts a fade and scale animation on the target <see cref="FrameworkElement"/> and optionally runs a callback <see cref="Action"/> when the animations finish
         /// </summary>
-        /// <param name="element">The UIElement to animate</param>
+        /// <param name="element">The <see cref="FrameworkElement"/> to animate</param>
         /// <param name="startOp">The initial opacity value. If null, the current opacity will be used</param>
         /// <param name="endOp">The final opacity value</param>
         /// <param name="startScale">The initial scale X and Y value. If null, the current scale will be used</param>
@@ -555,12 +555,12 @@ namespace UICompositionAnimations
         /// <param name="msOp">The duration of the fade animation, in milliseconds</param>
         /// <param name="msScale">The duration of the scale animation, in milliseconds</param>
         /// <param name="msDelay">The delay before the animation starts, in milliseconds. If null, there will be no delay</param>
-        /// <param name="x1">The X coordinate of the first control point</param>
-        /// <param name="y1">The Y coordinate of the first control point</param>
-        /// <param name="x2">The X coordinate of the second control point</param>
-        /// <param name="y2">The Y coordinate of the second control point</param>
-        /// <param name="callback">An Action to execute when the new animations end</param>
-        public static async void StartCompositionFadeScaleAnimation(this FrameworkElement element,
+        /// <param name="x1">The X coordinate of the first control point of the cubic beizer easing function</param>
+        /// <param name="y1">The Y coordinate of the first control point of the cubic beizer easing function</param>
+        /// <param name="x2">The X coordinate of the second control point of the cubic beizer easing function</param>
+        /// <param name="y2">The Y coordinate of the second control point of the cubic beizer easing function</param>
+        /// <param name="callback">An <see cref="Action"/> to execute when the new animations end</param>
+        public static async void StartCompositionFadeScaleAnimation([NotNull] this FrameworkElement element,
             float? startOp, float endOp,
             float? startScale, float endScale,
             int msOp, int? msScale, int? msDelay, float x1, float y1, float x2, float y2, Action callback = null)
@@ -570,9 +570,9 @@ namespace UICompositionAnimations
         }
 
         /// <summary>
-        /// Starts a fade and scale animation on the target FrameworkElement and returns a Task that completes when the animation ends
+        /// Starts a fade and scale animation on the target <see cref="FrameworkElement"/> and returns a <see cref="Task"/> that completes when the animation ends
         /// </summary>
-        /// <param name="element">The UIElement to animate</param>
+        /// <param name="element">The <see cref="FrameworkElement"/> to animate</param>
         /// <param name="startOp">The initial opacity value. If null, the current opacity will be used</param>
         /// <param name="endOp">The final opacity value</param>
         /// <param name="startScale">The initial scale X and Y value. If null, the current scale will be used</param>
@@ -581,7 +581,7 @@ namespace UICompositionAnimations
         /// <param name="msScale">The duration of the scale animation, in milliseconds</param>
         /// <param name="msDelay">The delay before the animation starts, in milliseconds. If null, there will be no delay</param>
         /// <param name="easingFunction">The easing function to use with the new animations</param>
-        public static Task StartCompositionFadeScaleAnimationAsync(this FrameworkElement element,
+        public static Task StartCompositionFadeScaleAnimationAsync([NotNull] this FrameworkElement element,
             float? startOp, float endOp,
             float? startScale, float endScale,
             int msOp, int? msScale, int? msDelay, EasingFunctionNames easingFunction)
@@ -592,9 +592,9 @@ namespace UICompositionAnimations
         }
 
         /// <summary>
-        /// Starts a fade and scale animation on the target FrameworkElement and returns a Task that completes when the animation ends
+        /// Starts a fade and scale animation on the target <see cref="FrameworkElement"/> and returns a <see cref="Task"/> that completes when the animation ends
         /// </summary>
-        /// <param name="element">The UIElement to animate</param>
+        /// <param name="element">The <see cref="FrameworkElement"/> to animate</param>
         /// <param name="startOp">The initial opacity value. If null, the current opacity will be used</param>
         /// <param name="endOp">The final opacity value</param>
         /// <param name="startScale">The initial scale X and Y value. If null, the current scale will be used</param>
@@ -602,11 +602,11 @@ namespace UICompositionAnimations
         /// <param name="msOp">The duration of the fade animation, in milliseconds</param>
         /// <param name="msScale">The duration of the scale animation, in milliseconds</param>
         /// <param name="msDelay">The delay before the animation starts, in milliseconds. If null, there will be no delay</param>
-        /// <param name="x1">The X coordinate of the first control point</param>
-        /// <param name="y1">The Y coordinate of the first control point</param>
-        /// <param name="x2">The X coordinate of the second control point</param>
-        /// <param name="y2">The Y coordinate of the second control point</param>
-        public static Task StartCompositionFadeScaleAnimationAsync(this FrameworkElement element,
+        /// <param name="x1">The X coordinate of the first control point of the cubic beizer easing function</param>
+        /// <param name="y1">The Y coordinate of the first control point of the cubic beizer easing function</param>
+        /// <param name="x2">The X coordinate of the second control point of the cubic beizer easing function</param>
+        /// <param name="y2">The Y coordinate of the second control point of the cubic beizer easing function</param>
+        public static Task StartCompositionFadeScaleAnimationAsync([NotNull] this FrameworkElement element,
             float? startOp, float endOp,
             float? startScale, float endScale,
             int msOp, int? msScale, int? msDelay, float x1, float y1, float x2, float y2)
@@ -617,10 +617,10 @@ namespace UICompositionAnimations
         }
 
         // Sets an implicit fade and scale animation on the target element
-        private static async Task SetCompositionFadeScaleImplicitAnimationAsync(this FrameworkElement element, Visual visual, ImplicitAnimationType type,
+        private static async Task SetCompositionFadeScaleImplicitAnimationAsync([NotNull] FrameworkElement element, [NotNull] Visual visual, ImplicitAnimationType type,
             float startOp, float endOp,
             float startScale, float endScale,
-            int msOp, int? msScale, int? msDelay, CompositionEasingFunction easingFunction)
+            int msOp, int? msScale, int? msDelay, [NotNull] CompositionEasingFunction easingFunction)
         {
             // Get the default values and set the CenterPoint
             await element.SetCenterPoint(visual);
@@ -651,9 +651,9 @@ namespace UICompositionAnimations
         }
 
         /// <summary>
-        /// Sets an implicit fade and scale animation on the target FrameworkElement
+        /// Sets an implicit fade and scale animation on the target <see cref="FrameworkElement"/>
         /// </summary>
-        /// <param name="element">The UIElement to animate</param>
+        /// <param name="element">The <see cref="FrameworkElement"/> to animate</param>
         /// <param name="type">The type of implicit animation to set</param>
         /// <param name="startOp">The initial opacity value. If null, the current opacity will be used</param>
         /// <param name="endOp">The final opacity value</param>
@@ -663,7 +663,7 @@ namespace UICompositionAnimations
         /// <param name="msScale">The duration of the scale animation, in milliseconds</param>
         /// <param name="msDelay">The delay before the animation starts, in milliseconds. If null, there will be no delay</param>
         /// <param name="easingFunction">The easing function to use with the new animations</param>
-        public static Task SetCompositionFadeScaleImplicitAnimationAsync(this FrameworkElement element, ImplicitAnimationType type,
+        public static Task SetCompositionFadeScaleImplicitAnimationAsync([NotNull] this FrameworkElement element, ImplicitAnimationType type,
             float startOp, float endOp,
             float startScale, float endScale,
             int msOp, int? msScale, int? msDelay, EasingFunctionNames easingFunction)
@@ -674,9 +674,9 @@ namespace UICompositionAnimations
         }
 
         /// <summary>
-        /// Sets an implicit fade and scale animation on the target FrameworkElement
+        /// Sets an implicit fade and scale animation on the target <see cref="FrameworkElement"/>
         /// </summary>
-        /// <param name="element">The UIElement to animate</param>
+        /// <param name="element">The <see cref="FrameworkElement"/> to animate</param>
         /// <param name="type">The type of implicit animation to set</param>
         /// <param name="startOp">The initial opacity value. If null, the current opacity will be used</param>
         /// <param name="endOp">The final opacity value</param>
@@ -685,11 +685,11 @@ namespace UICompositionAnimations
         /// <param name="msOp">The duration of the fade animation, in milliseconds</param>
         /// <param name="msScale">The duration of the scale animation, in milliseconds</param>
         /// <param name="msDelay">The delay before the animation starts, in milliseconds. If null, there will be no delay</param>
-        /// <param name="x1">The X coordinate of the first control point</param>
-        /// <param name="y1">The Y coordinate of the first control point</param>
-        /// <param name="x2">The X coordinate of the second control point</param>
-        /// <param name="y2">The Y coordinate of the second control point</param>
-        public static Task SetCompositionFadeScaleImplicitAnimationAsync(this FrameworkElement element, ImplicitAnimationType type,
+        /// <param name="x1">The X coordinate of the first control point of the cubic beizer easing function</param>
+        /// <param name="y1">The Y coordinate of the first control point of the cubic beizer easing function</param>
+        /// <param name="x2">The X coordinate of the second control point of the cubic beizer easing function</param>
+        /// <param name="y2">The Y coordinate of the second control point of the cubic beizer easing function</param>
+        public static Task SetCompositionFadeScaleImplicitAnimationAsync([NotNull] this FrameworkElement element, ImplicitAnimationType type,
             float startOp, float endOp,
             float startScale, float endScale,
             int msOp, int? msScale, int? msDelay, float x1, float y1, float x2, float y2)
@@ -704,9 +704,9 @@ namespace UICompositionAnimations
         #region Scale only
 
         // Manages the scale animation
-        private static async Task<float> ManageCompositionScaleAnimationAsync(this FrameworkElement element, Visual visual,
+        private static async Task<float> ManageCompositionScaleAnimationAsync([NotNull] FrameworkElement element, [NotNull] Visual visual,
             float? startXY, float endXY,
-            int ms, int? msDelay, CompositionEasingFunction easingFunction)
+            int ms, int? msDelay, [NotNull] CompositionEasingFunction easingFunction)
         {
             // Get the default values and set the CenterPoint
             visual.StopAnimation("Scale");
@@ -746,17 +746,17 @@ namespace UICompositionAnimations
         }
 
         /// <summary>
-        /// Starts a scale animation on the target FrameworkElement and optionally runs a callback Action when the animations finish
+        /// Starts a scale animation on the target <see cref="FrameworkElement"/> and optionally runs a callback <see cref="Action"/> when the animation finishes
         /// </summary>
-        /// <param name="element">The UIElement to animate</param>
+        /// <param name="element">The <see cref="FrameworkElement"/> to animate</param>
         /// <param name="startScale">The initial scale X and Y value. If null, the current scale will be used</param>
         /// <param name="endScale">The final scale X and Y value</param>
         /// <param name="ms">The duration of the animation, in milliseconds</param>
         /// <param name="msDelay">The delay before the animation starts, in milliseconds. If null, there will be no delay</param>
         /// <param name="easingFunction">The easing function to use with the new animations</param>
         /// <param name="reverse">If true, the animation will be played in reverse mode when it finishes for the first time</param>
-        /// <param name="callback">An Action to execute when the new animations end</param>
-        public static async void StartCompositionScaleAnimation(this FrameworkElement element,
+        /// <param name="callback">An <see cref="Action"/> to execute when the new animations end</param>
+        public static async void StartCompositionScaleAnimation([NotNull] this FrameworkElement element,
             float? startScale, float endScale,
             int ms, int? msDelay, EasingFunctionNames easingFunction, bool reverse = false, Action callback = null)
         {
@@ -765,20 +765,20 @@ namespace UICompositionAnimations
         }
 
         /// <summary>
-        /// Starts a scale animation on the target FrameworkElement and optionally runs a callback Action when the animations finish
+        /// Starts a scale animation on the target <see cref="FrameworkElement"/> and optionally runs a callback <see cref="Action"/> when the animation finishes
         /// </summary>
-        /// <param name="element">The UIElement to animate</param>
+        /// <param name="element">The <see cref="FrameworkElement"/> to animate</param>
         /// <param name="startScale">The initial scale X and Y value. If null, the current scale will be used</param>
         /// <param name="endScale">The final scale X and Y value</param>
         /// <param name="ms">The duration of the animation, in milliseconds</param>
         /// <param name="msDelay">The delay before the animation starts, in milliseconds. If null, there will be no delay</param>
-        /// <param name="x1">The X coordinate of the first control point</param>
-        /// <param name="y1">The Y coordinate of the first control point</param>
-        /// <param name="x2">The X coordinate of the second control point</param>
-        /// <param name="y2">The Y coordinate of the second control point</param>
+        /// <param name="x1">The X coordinate of the first control point of the cubic beizer easing function</param>
+        /// <param name="y1">The Y coordinate of the first control point of the cubic beizer easing function</param>
+        /// <param name="x2">The X coordinate of the second control point of the cubic beizer easing function</param>
+        /// <param name="y2">The Y coordinate of the second control point of the cubic beizer easing function</param>
         /// <param name="reverse">If true, the animation will be played in reverse mode when it finishes for the first time</param>
-        /// <param name="callback">An Action to execute when the new animations end</param>
-        public static async void StartCompositionScaleAnimation(this FrameworkElement element,
+        /// <param name="callback">An <see cref="Action"/> to execute when the new animations end</param>
+        public static async void StartCompositionScaleAnimation([NotNull] this FrameworkElement element,
             float? startScale, float endScale,
             int ms, int? msDelay, float x1, float y1, float x2, float y2, bool reverse = false, Action callback = null)
         {
@@ -787,16 +787,16 @@ namespace UICompositionAnimations
         }
 
         /// <summary>
-        /// Starts a scale animation on the target FrameworkElement and returns a Task that completes when the animation ends
+        /// Starts a scale animation on the target <see cref="FrameworkElement"/> and returns a <see cref="Task"/> that completes when the animation ends
         /// </summary>
-        /// <param name="element">The UIElement to animate</param>
+        /// <param name="element">The <see cref="FrameworkElement"/> to animate</param>
         /// <param name="startScale">The initial scale X and Y value. If null, the current scale will be used</param>
         /// <param name="endScale">The final scale X and Y value</param>
         /// <param name="ms">The duration of the animation, in milliseconds</param>
         /// <param name="msDelay">The delay before the animation starts, in milliseconds. If null, there will be no delay</param>
         /// <param name="easingFunction">The easing function to use with the new animations</param>
         /// <param name="reverse">If true, the animation will be played in reverse mode when it finishes for the first time</param>
-        public static async Task StartCompositionScaleAnimationAsync(this FrameworkElement element,
+        public static async Task StartCompositionScaleAnimationAsync([NotNull] this FrameworkElement element,
             float? startScale, float endScale,
             int ms, int? msDelay, EasingFunctionNames easingFunction, bool reverse = false)
         {
@@ -807,19 +807,19 @@ namespace UICompositionAnimations
         }
 
         /// <summary>
-        /// Starts a scale animation on the target FrameworkElement and returns a Task that completes when the animation ends
+        /// Starts a scale animation on the target <see cref="FrameworkElement"/> and returns a <see cref="Task"/> that completes when the animation ends
         /// </summary>
-        /// <param name="element">The UIElement to animate</param>
+        /// <param name="element">The <see cref="FrameworkElement"/> to animate</param>
         /// <param name="startScale">The initial scale X and Y value. If null, the current scale will be used</param>
         /// <param name="endScale">The final scale X and Y value</param>
         /// <param name="ms">The duration of the animation, in milliseconds</param>
         /// <param name="msDelay">The delay before the animation starts, in milliseconds. If null, there will be no delay</param>
-        /// <param name="x1">The X coordinate of the first control point</param>
-        /// <param name="y1">The Y coordinate of the first control point</param>
-        /// <param name="x2">The X coordinate of the second control point</param>
-        /// <param name="y2">The Y coordinate of the second control point</param>
+        /// <param name="x1">The X coordinate of the first control point of the cubic beizer easing function</param>
+        /// <param name="y1">The Y coordinate of the first control point of the cubic beizer easing function</param>
+        /// <param name="x2">The X coordinate of the second control point of the cubic beizer easing function</param>
+        /// <param name="y2">The Y coordinate of the second control point of the cubic beizer easing function</param>
         /// <param name="reverse">If true, the animation will be played in reverse mode when it finishes for the first time</param>
-        public static async Task StartCompositionScaleAnimationAsync(this FrameworkElement element,
+        public static async Task StartCompositionScaleAnimationAsync([NotNull] this FrameworkElement element,
             float? startScale, float endScale,
             int ms, int? msDelay, float x1, float y1, float x2, float y2, bool reverse = false)
         {
@@ -830,9 +830,9 @@ namespace UICompositionAnimations
         }
 
         // Sets an implicit scale animation on the target element
-        private static async Task SetCompositionScaleImplicitAnimationAsync(this FrameworkElement element, Visual visual, ImplicitAnimationType type,
+        private static async Task SetCompositionScaleImplicitAnimationAsync([NotNull] FrameworkElement element, [NotNull] Visual visual, ImplicitAnimationType type,
             float start, float end,
-            int ms, int? msDelay, CompositionEasingFunction easingFunction)
+            int ms, int? msDelay, [NotNull] CompositionEasingFunction easingFunction)
         {
             // Get the default values and set the CenterPoint
             await element.SetCenterPoint(visual);
@@ -859,16 +859,16 @@ namespace UICompositionAnimations
         }
 
         /// <summary>
-        /// Sets an implicit scale animation on the target FrameworkElement
+        /// Sets an implicit scale animation on the target <see cref="FrameworkElement"/>
         /// </summary>
-        /// <param name="element">The UIElement to animate</param>
+        /// <param name="element">The <see cref="FrameworkElement"/> to animate</param>
         /// <param name="type">The type of implicit animation to set</param>
         /// <param name="start">The initial scale value</param>
         /// <param name="end">The final value</param>
         /// <param name="ms">The duration of the scale animation, in milliseconds</param>
         /// <param name="msDelay">The delay before the animation starts, in milliseconds. If null, there will be no delay</param>
         /// <param name="easingFunction">The easing function to use with the new animations</param>
-        public static Task SetCompositionScaleImplicitAnimationAsync(this FrameworkElement element, ImplicitAnimationType type,
+        public static Task SetCompositionScaleImplicitAnimationAsync([NotNull] this FrameworkElement element, ImplicitAnimationType type,
             float start, float end,
             int ms, int? msDelay, EasingFunctionNames easingFunction)
         {
@@ -878,19 +878,19 @@ namespace UICompositionAnimations
         }
 
         /// <summary>
-        /// Sets an implicit scale animation on the target FrameworkElement
+        /// Sets an implicit scale animation on the target <see cref="FrameworkElement"/>
         /// </summary>
-        /// <param name="element">The UIElement to animate</param>
+        /// <param name="element">The <see cref="FrameworkElement"/> to animate</param>
         /// <param name="type">The type of implicit animation to set</param>
         /// <param name="start">The initial scale value</param>
         /// <param name="end">The final value</param>
         /// <param name="ms">The duration of the scale animation, in milliseconds</param>
         /// <param name="msDelay">The delay before the animation starts, in milliseconds. If null, there will be no delay</param>
-        /// <param name="x1">The X coordinate of the first control point</param>
-        /// <param name="y1">The Y coordinate of the first control point</param>
-        /// <param name="x2">The X coordinate of the second control point</param>
-        /// <param name="y2">The Y coordinate of the second control point</param>
-        public static Task SetCompositionScaleImplicitAnimationAsync(this FrameworkElement element, ImplicitAnimationType type,
+        /// <param name="x1">The X coordinate of the first control point of the cubic beizer easing function</param>
+        /// <param name="y1">The Y coordinate of the first control point of the cubic beizer easing function</param>
+        /// <param name="x2">The X coordinate of the second control point of the cubic beizer easing function</param>
+        /// <param name="y2">The Y coordinate of the second control point of the cubic beizer easing function</param>
+        public static Task SetCompositionScaleImplicitAnimationAsync([NotNull] this FrameworkElement element, ImplicitAnimationType type,
             float start, float end,
             int ms, int? msDelay, float x1, float y1, float x2, float y2)
         {
@@ -904,9 +904,9 @@ namespace UICompositionAnimations
         #region Slide only
 
         // Manages the scale animation
-        private static async Task<float> ManageCompositionSlideAnimationAsync(this Visual visual,
+        private static async Task<float> ManageCompositionSlideAnimationAsync([NotNull] Visual visual,
             TranslationAxis axis, float? startXY, float endXY,
-            int ms, int? msDelay, CompositionEasingFunction easingFunction)
+            int ms, int? msDelay, [NotNull] CompositionEasingFunction easingFunction)
         {
             // Get the default values
             visual.StopAnimation("Offset");
@@ -945,9 +945,9 @@ namespace UICompositionAnimations
         }
 
         /// <summary>
-        /// Starts an offset animation on the target FrameworkElement and optionally runs a callback Action when the animations finish
+        /// Starts an offset animation on the target <see cref="UIElement"/> and optionally runs a callback <see cref="Action"/> when the animation finishes
         /// </summary>
-        /// <param name="element">The UIElement to animate</param>
+        /// <param name="element">The <see cref="UIElement"/> to animate</param>
         /// <param name="axis">The offset axis</param>
         /// <param name="startOffset">The initial offset X and Y value. If null, the current offset will be used</param>
         /// <param name="endOffset">The final offset X and Y value</param>
@@ -955,8 +955,8 @@ namespace UICompositionAnimations
         /// <param name="msDelay">The delay before the animation starts, in milliseconds. If null, there will be no delay</param>
         /// <param name="easingFunction">The easing function to use with the new animations</param>
         /// <param name="reverse">If true, the animation will be played in reverse mode when it finishes for the first time</param>
-        /// <param name="callback">An Action to execute when the new animations end</param>
-        public static async void StartCompositionSlideAnimation(this FrameworkElement element,
+        /// <param name="callback">An <see cref="Action"/> to execute when the new animations end</param>
+        public static async void StartCompositionSlideAnimation([NotNull] this UIElement element,
             TranslationAxis axis, float? startOffset, float endOffset,
             int ms, int? msDelay, EasingFunctionNames easingFunction, bool reverse = false, Action callback = null)
         {
@@ -965,21 +965,21 @@ namespace UICompositionAnimations
         }
 
         /// <summary>
-        /// Starts an offset animation on the target FrameworkElement and optionally runs a callback Action when the animations finish
+        /// Starts an offset animation on the target <see cref="UIElement"/> and optionally runs a callback <see cref="Action"/> when the animation finishes
         /// </summary>
-        /// <param name="element">The UIElement to animate</param>
+        /// <param name="element">The <see cref="UIElement"/> to animate</param>
         /// <param name="axis">The offset axis</param>
         /// <param name="startOffset">The initial offset X and Y value. If null, the current offset will be used</param>
         /// <param name="endOffset">The final offset X and Y value</param>
         /// <param name="ms">The duration of the animation, in milliseconds</param>
         /// <param name="msDelay">The delay before the animation starts, in milliseconds. If null, there will be no delay</param>
-        /// <param name="x1">The X coordinate of the first control point</param>
-        /// <param name="y1">The Y coordinate of the first control point</param>
-        /// <param name="x2">The X coordinate of the second control point</param>
-        /// <param name="y2">The Y coordinate of the second control point</param>
+        /// <param name="x1">The X coordinate of the first control point of the cubic beizer easing function</param>
+        /// <param name="y1">The Y coordinate of the first control point of the cubic beizer easing function</param>
+        /// <param name="x2">The X coordinate of the second control point of the cubic beizer easing function</param>
+        /// <param name="y2">The Y coordinate of the second control point of the cubic beizer easing function</param>
         /// <param name="reverse">If true, the animation will be played in reverse mode when it finishes for the first time</param>
-        /// <param name="callback">An Action to execute when the new animations end</param>
-        public static async void StartCompositionSlideAnimation(this FrameworkElement element,
+        /// <param name="callback">An <see cref="Action"/> to execute when the new animations end</param>
+        public static async void StartCompositionSlideAnimation([NotNull] this UIElement element,
             TranslationAxis axis, float? startOffset, float endOffset,
             int ms, int? msDelay, float x1, float y1, float x2, float y2, bool reverse = false, Action callback = null)
         {
@@ -988,9 +988,9 @@ namespace UICompositionAnimations
         }
 
         /// <summary>
-        /// Starts an offset animation on the target FrameworkElement and returns a Task that completes when the animation ends
+        /// Starts an offset animation on the target <see cref="UIElement"/> and returns a <see cref="Task"/> that completes when the animation ends
         /// </summary>
-        /// <param name="element">The UIElement to animate</param>
+        /// <param name="element">The UIEl<see cref="UIElement"/>ement to animate</param>
         /// <param name="axis">The offset axis</param>
         /// <param name="startOffset">The initial offset X and Y value. If null, the current offset will be used</param>
         /// <param name="endOffset">The final offset X and Y value</param>
@@ -998,44 +998,44 @@ namespace UICompositionAnimations
         /// <param name="msDelay">The delay before the animation starts, in milliseconds. If null, there will be no delay</param>
         /// <param name="easingFunction">The easing function to use with the new animations</param>
         /// <param name="reverse">If true, the animation will be played in reverse mode when it finishes for the first time</param>
-        public static async Task StartCompositionSlideAnimationAsync(this FrameworkElement element,
+        public static async Task StartCompositionSlideAnimationAsync([NotNull] this UIElement element,
             TranslationAxis axis, float? startOffset, float endOffset,
             int ms, int? msDelay, EasingFunctionNames easingFunction, bool reverse = false)
         {
             Visual visual = element.GetVisual();
             CompositionEasingFunction ease = visual.GetEasingFunction(easingFunction);
-            startOffset = await visual.ManageCompositionSlideAnimationAsync(axis, startOffset, endOffset, ms, msDelay, ease);
-            if (reverse) await visual.ManageCompositionSlideAnimationAsync(axis, endOffset, startOffset.Value, ms, msDelay, ease);
+            startOffset = await ManageCompositionSlideAnimationAsync(visual, axis, startOffset, endOffset, ms, msDelay, ease);
+            if (reverse) await ManageCompositionSlideAnimationAsync(visual, axis, endOffset, startOffset.Value, ms, msDelay, ease);
         }
 
         /// <summary>
-        /// Starts an offset animation on the target FrameworkElement and returns a Task that completes when the animation ends
+        /// Starts an offset animation on the target <see cref="UIElement"/> and returns a <see cref="Task"/> that completes when the animation ends
         /// </summary>
-        /// <param name="element">The UIElement to animate</param>
+        /// <param name="element">The <see cref="UIElement"/> to animate</param>
         /// <param name="axis">The offset axis</param>
         /// <param name="startOffset">The initial offset X and Y value. If null, the current offset will be used</param>
         /// <param name="endOffset">The final offset X and Y value</param>
         /// <param name="ms">The duration of the animation, in milliseconds</param>
         /// <param name="msDelay">The delay before the animation starts, in milliseconds. If null, there will be no delay</param>
-        /// <param name="x1">The X coordinate of the first control point</param>
-        /// <param name="y1">The Y coordinate of the first control point</param>
-        /// <param name="x2">The X coordinate of the second control point</param>
-        /// <param name="y2">The Y coordinate of the second control point</param>
+        /// <param name="x1">The X coordinate of the first control point of the cubic beizer easing function</param>
+        /// <param name="y1">The Y coordinate of the first control point of the cubic beizer easing function</param>
+        /// <param name="x2">The X coordinate of the second control point of the cubic beizer easing function</param>
+        /// <param name="y2">The Y coordinate of the second control point of the cubic beizer easing function</param>
         /// <param name="reverse">If true, the animation will be played in reverse mode when it finishes for the first time</param>
-        public static async Task StartCompositionSlideAnimationAsync(this FrameworkElement element,
+        public static async Task StartCompositionSlideAnimationAsync([NotNull] this UIElement element,
             TranslationAxis axis, float? startOffset, float endOffset,
             int ms, int? msDelay, float x1, float y1, float x2, float y2, bool reverse = false)
         {
             Visual visual = element.GetVisual();
             CompositionEasingFunction ease = visual.GetEasingFunction(x1, y1, x2, y2);
-            startOffset = await visual.ManageCompositionSlideAnimationAsync(axis, startOffset, endOffset, ms, msDelay, ease);
-            if (reverse) await visual.ManageCompositionSlideAnimationAsync(axis, endOffset, startOffset.Value, ms, msDelay, ease);
+            startOffset = await ManageCompositionSlideAnimationAsync(visual, axis, startOffset, endOffset, ms, msDelay, ease);
+            if (reverse) await ManageCompositionSlideAnimationAsync(visual, axis, endOffset, startOffset.Value, ms, msDelay, ease);
         }
 
         // Sets an implicit slide animation on the target element
-        private static void SetCompositionSlideImplicitAnimation(this FrameworkElement element, Visual visual, ImplicitAnimationType type,
+        private static void SetCompositionSlideImplicitAnimation([NotNull] UIElement element, [NotNull] Visual visual, ImplicitAnimationType type,
             TranslationAxis axis, float start, float end,
-            int ms, int? msDelay, CompositionEasingFunction easingFunction)
+            int ms, int? msDelay, [NotNull] CompositionEasingFunction easingFunction)
         {
             // Get the easing function, the duration and delay
             TimeSpan duration = TimeSpan.FromMilliseconds(ms);
@@ -1069,9 +1069,9 @@ namespace UICompositionAnimations
         }
 
         /// <summary>
-        /// Sets an implicit slide animation on the target FrameworkElement
+        /// Sets an implicit slide animation on the target <see cref="UIElement"/>
         /// </summary>
-        /// <param name="element">The UIElement to animate</param>
+        /// <param name="element">The <see cref="UIElement"/> to animate</param>
         /// <param name="type">The type of implicit animation to set</param>
         /// <param name="axis">The offset axis</param>
         /// <param name="start">The initial scale value</param>
@@ -1079,7 +1079,7 @@ namespace UICompositionAnimations
         /// <param name="ms">The duration of the scale animation, in milliseconds</param>
         /// <param name="msDelay">The delay before the animation starts, in milliseconds. If null, there will be no delay</param>
         /// <param name="easingFunction">The easing function to use with the new animations</param>
-        public static void SetCompositionSlideImplicitAnimation(this FrameworkElement element, ImplicitAnimationType type,
+        public static void SetCompositionSlideImplicitAnimation([NotNull] this UIElement element, ImplicitAnimationType type,
             TranslationAxis axis, float start, float end,
             int ms, int? msDelay, EasingFunctionNames easingFunction)
         {
@@ -1089,20 +1089,20 @@ namespace UICompositionAnimations
         }
 
         /// <summary>
-        /// Sets an implicit slide animation on the target FrameworkElement
+        /// Sets an implicit slide animation on the target <see cref="UIElement"/>
         /// </summary>
-        /// <param name="element">The UIElement to animate</param>
+        /// <param name="element">The <see cref="UIElement"/> to animate</param>
         /// <param name="type">The type of implicit animation to set</param>
         /// <param name="axis">The offset axis</param>
         /// <param name="start">The initial scale value</param>
         /// <param name="end">The final value</param>
         /// <param name="ms">The duration of the scale animation, in milliseconds</param>
         /// <param name="msDelay">The delay before the animation starts, in milliseconds. If null, there will be no delay</param>
-        /// <param name="x1">The X coordinate of the first control point</param>
-        /// <param name="y1">The Y coordinate of the first control point</param>
-        /// <param name="x2">The X coordinate of the second control point</param>
-        /// <param name="y2">The Y coordinate of the second control point</param>
-        public static void SetCompositionSlideImplicitAnimation(this FrameworkElement element, ImplicitAnimationType type,
+        /// <param name="x1">The X coordinate of the first control point of the cubic beizer easing function</param>
+        /// <param name="y1">The Y coordinate of the first control point of the cubic beizer easing function</param>
+        /// <param name="x2">The X coordinate of the second control point of the cubic beizer easing function</param>
+        /// <param name="y2">The Y coordinate of the second control point of the cubic beizer easing function</param>
+        public static void SetCompositionSlideImplicitAnimation([NotNull] this UIElement element, ImplicitAnimationType type,
             TranslationAxis axis, float start, float end,
             int ms, int? msDelay, float x1, float y1, float x2, float y2)
         {
@@ -1116,7 +1116,7 @@ namespace UICompositionAnimations
         #region Roll
 
         // Manages the roll animation
-        private static async Task<float> ManageCompositionRollAnimationAsync(this FrameworkElement element,
+        private static async Task<float> ManageCompositionRollAnimationAsync([NotNull] this FrameworkElement element,
             float? startOp, float endOp,
             TranslationAxis axis, float? startXY, float endXY,
             float? startDegrees, float endDegrees,
@@ -1178,9 +1178,9 @@ namespace UICompositionAnimations
         }
 
         /// <summary>
-        /// Starts a roll animation on the target FrameworkElement and optionally runs a callback Action when the animations finish
+        /// Starts a roll animation on the target <see cref="FrameworkElement"/> and optionally runs a callback <see cref="Action"/> when the animation finishes
         /// </summary>
-        /// <param name="element">The UIElement to animate</param>
+        /// <param name="element">The <see cref="FrameworkElement"/> to animate</param>
         /// <param name="startOp">The initial opacity value. If null, the current opacity will be used</param>
         /// <param name="endOp">The final opacity value</param>
         /// <param name="axis">The offset axis</param>
@@ -1192,8 +1192,8 @@ namespace UICompositionAnimations
         /// <param name="msDelay">The delay before the animation starts, in milliseconds. If null, there will be no delay</param>
         /// <param name="easingFunction">The easing function to use with the new animations</param>
         /// <param name="reverse">If true, the animation will be played in reverse mode when it finishes for the first time</param>
-        /// <param name="callback">An Action to execute when the new animations end</param>
-        public static async void StartCompositionRollAnimation(this FrameworkElement element,
+        /// <param name="callback">An <see cref="Action"/> to execute when the new animations end</param>
+        public static async void StartCompositionRollAnimation([NotNull] this FrameworkElement element,
             float? startOp, float endOp,
             TranslationAxis axis, float? startXY, float endXY,
             float? startDegrees, float endDegrees,
@@ -1204,9 +1204,9 @@ namespace UICompositionAnimations
         }
 
         /// <summary>
-        /// Starts a roll animation on the target FrameworkElement and returns a Task that completes when the animation ends
+        /// Starts a roll animation on the target <see cref="FrameworkElement"/> and returns a <see cref="Task"/> that completes when the animation ends
         /// </summary>
-        /// <param name="element">The UIElement to animate</param>
+        /// <param name="element">The <see cref="FrameworkElement"/> to animate</param>
         /// <param name="startOp">The initial opacity value. If null, the current opacity will be used</param>
         /// <param name="endOp">The final opacity value</param>
         /// <param name="axis">The offset axis</param>
@@ -1218,7 +1218,7 @@ namespace UICompositionAnimations
         /// <param name="msDelay">The delay before the animation starts, in milliseconds. If null, there will be no delay</param>
         /// <param name="easingFunction">The easing function to use with the new animations</param>
         /// <param name="reverse">If true, the animation will be played in reverse mode when it finishes for the first time</param>>
-        public static async Task StartCompositionRollAnimationAsync(this FrameworkElement element,
+        public static async Task StartCompositionRollAnimationAsync([NotNull] this FrameworkElement element,
             float? startOp, float endOp,
             TranslationAxis axis, float? startXY, float endXY,
             float? startDegrees, float endDegrees,
