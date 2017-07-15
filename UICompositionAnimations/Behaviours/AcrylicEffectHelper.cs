@@ -36,7 +36,7 @@ namespace UICompositionAnimations.Behaviours
             [NotNull] Compositor compositor,
             [NotNull] IGraphicsEffectSource source, [NotNull] IDictionary<String, CompositionBrush> parameters,
             Color color, float colorMix,
-            [CanBeNull] CanvasControl canvas, [NotNull] Uri uri, CacheLoadingMode options)
+            [CanBeNull] CanvasControl canvas, [NotNull] Uri uri, BitmapCacheMode options)
         {
             // Setup the tint effect
             ArithmeticCompositeEffect tint = new ArithmeticCompositeEffect
@@ -50,8 +50,8 @@ namespace UICompositionAnimations.Behaviours
 
             // Get the noise brush using Win2D
             CompositionSurfaceBrush noiseBitmap = canvas == null
-                ? await Win2DImageHelper.LoadImageAsync(compositor, uri, options)
-                : await Win2DImageHelper.LoadImageAsync(compositor, canvas, uri, options);
+                ? await Win2DImageHelper.LoadImageAsync(compositor, uri, options, BitmapDPIMode.CopyDisplayDPISettingsWith96AsLowerBound)
+                : await Win2DImageHelper.LoadImageAsync(compositor, canvas, uri, options, BitmapDPIMode.CopyDisplayDPISettingsWith96AsLowerBound);
 
             // Make sure the Win2D brush was loaded correctly
             if (noiseBitmap != null)

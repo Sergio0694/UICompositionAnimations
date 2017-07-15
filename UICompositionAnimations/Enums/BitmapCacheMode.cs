@@ -3,7 +3,7 @@
     /// <summary>
     /// Indicates the cache mode to use when loading an item
     /// </summary>
-    public enum CacheLoadingMode
+    public enum BitmapCacheMode
     {
         /// <summary>
         /// The new item will be either loaded from the cache when possible, or saved in the cache for future use

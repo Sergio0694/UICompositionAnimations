@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Graphics.DirectX;
+using Windows.Graphics.Display;
 using Windows.Graphics.Imaging;
 using Windows.UI;
 using Windows.UI.Composition;
@@ -44,11 +45,12 @@ namespace UICompositionAnimations.Helpers
         /// Loads a <see cref="CompositionSurfaceBrush"/> instance with the target image from the shared <see cref="CanvasDevice"/> instance
         /// </summary>
         /// <param name="uri">The path to the image to load</param>
+        /// <param name="dpiMode">Indicates the desired DPI mode to use when loading the image</param>
         [PublicAPI]
         [Pure, ItemCanBeNull]
-        public static Task<CompositionSurfaceBrush> LoadImageAsync([NotNull] Uri uri)
+        public static Task<CompositionSurfaceBrush> LoadImageAsync([NotNull] Uri uri, BitmapDPIMode dpiMode)
         {
-            return LoadImageAsync(Window.Current.Compositor, uri, CacheLoadingMode.DisableCaching);
+            return LoadImageAsync(Window.Current.Compositor, uri, BitmapCacheMode.DisableCaching, dpiMode);
         }
 
         /// <summary>
@@ -56,11 +58,12 @@ namespace UICompositionAnimations.Helpers
         /// </summary>
         /// <param name="canvas">The <see cref="CanvasControl"/> to use to load the target image</param>
         /// <param name="uri">The path to the image to load</param>
+        /// <param name="dpiMode">Indicates the desired DPI mode to use when loading the image</param>
         [PublicAPI]
         [Pure, ItemCanBeNull]
-        internal static Task<CompositionSurfaceBrush> LoadImageAsync([NotNull] this CanvasControl canvas, [NotNull] Uri uri)
+        public static Task<CompositionSurfaceBrush> LoadImageAsync([NotNull] this CanvasControl canvas, [NotNull] Uri uri, BitmapDPIMode dpiMode)
         {
-            return LoadImageAsync(Window.Current.Compositor, canvas, uri, CacheLoadingMode.DisableCaching);
+            return LoadImageAsync(Window.Current.Compositor, canvas, uri, BitmapCacheMode.DisableCaching, dpiMode);
         }
 
         /// <summary>
@@ -90,12 +93,35 @@ namespace UICompositionAnimations.Helpers
         /// <param name="compositor">The compositor instance to use to create the final brush</param>
         /// <param name="canvasDevice">The device to use to process the Win2D image</param>
         /// <param name="uri">The path to the image to load</param>
+        /// <param name="dpiMode">Indicates the desired DPI mode to use when loading the image</param>
         [ItemNotNull]
         private static async Task<CompositionSurfaceBrush> LoadSurfaceBrushAsync([NotNull] ICanvasResourceCreator creator,
-            [NotNull] Compositor compositor, [NotNull] CanvasDevice canvasDevice, [NotNull] Uri uri)
+            [NotNull] Compositor compositor, [NotNull] CanvasDevice canvasDevice, [NotNull] Uri uri, BitmapDPIMode dpiMode)
         {
-            using (CanvasBitmap bitmap = await CanvasBitmap.LoadAsync(creator, uri))
+            CanvasBitmap bitmap = null;
+            try
             {
+                // Load the bitmap with the appropriate settings
+                switch (dpiMode)
+                {
+                    case BitmapDPIMode.UseSourceDPI:
+                        bitmap = await CanvasBitmap.LoadAsync(creator, uri);
+                        break;
+                    case BitmapDPIMode.Default96DPI:
+                        bitmap = await CanvasBitmap.LoadAsync(creator, uri, 96);
+                        break;
+                    case BitmapDPIMode.CopyDisplayDPISetting:
+                        float dpi = DisplayInformation.GetForCurrentView().LogicalDpi;
+                        bitmap = await CanvasBitmap.LoadAsync(creator, uri, dpi);
+                        break;
+                    case BitmapDPIMode.CopyDisplayDPISettingsWith96AsLowerBound:
+                        dpi = DisplayInformation.GetForCurrentView().LogicalDpi;
+                        bitmap = await CanvasBitmap.LoadAsync(creator, uri, dpi >= 96 ? dpi : 96);
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException("Unsupported DPI mode");
+                }
+
                 // Get the device and the target surface
                 CompositionGraphicsDevice device = CanvasComposition.CreateCompositionGraphicsDevice(compositor, canvasDevice);
                 CompositionDrawingSurface surface = device.CreateDrawingSurface(default(Size),
@@ -116,6 +142,11 @@ namespace UICompositionAnimations.Helpers
                     return brush;
                 }
             }
+            finally
+            {
+                // Manual using block to allow the initial switch statement
+                bitmap?.Dispose();
+            }
         }
 
         /// <summary>
@@ -125,9 +156,10 @@ namespace UICompositionAnimations.Helpers
         /// <param name="canvas">The <see cref="CanvasControl"/> to use to load the target image</param>
         /// <param name="uri">The path to the image to load</param>
         /// <param name="options">Indicates whether or not to force the reload of the Win2D image</param>
+        /// <param name="dpiMode">Indicates the desired DPI mode to use when loading the image</param>
         [ItemCanBeNull]
         internal static async Task<CompositionSurfaceBrush> LoadImageAsync(
-            [NotNull] Compositor compositor, [NotNull] CanvasControl canvas, [NotNull] Uri uri, CacheLoadingMode options)
+            [NotNull] Compositor compositor, [NotNull] CanvasControl canvas, [NotNull] Uri uri, BitmapCacheMode options, BitmapDPIMode dpiMode)
         {
             TaskCompletionSource<CompositionSurfaceBrush> tcs = new TaskCompletionSource<CompositionSurfaceBrush>();
             async Task<CompositionSurfaceBrush> LoadImageAsync(bool shouldThrow)
@@ -135,7 +167,7 @@ namespace UICompositionAnimations.Helpers
                 // Load the image - this will only succeed when there's an available Win2D device
                 try
                 {
-                    return await LoadSurfaceBrushAsync(canvas, compositor, canvas.Device, uri);
+                    return await LoadSurfaceBrushAsync(canvas, compositor, canvas.Device, uri, dpiMode);
                 }
                 catch when (!shouldThrow)
                 {
@@ -167,7 +199,7 @@ namespace UICompositionAnimations.Helpers
 
             // Lock the semaphore and check the cache first
             await Win2DSemaphore.WaitAsync();
-            if (options == CacheLoadingMode.EnableCaching && SurfacesCache.TryGetValue(uri, out CompositionSurfaceBrush cached))
+            if (options == BitmapCacheMode.EnableCaching && SurfacesCache.TryGetValue(uri, out CompositionSurfaceBrush cached))
             {
                 Win2DSemaphore.Release();
                 return cached;
@@ -195,7 +227,7 @@ namespace UICompositionAnimations.Helpers
 
             // Cache when needed and return the result
             if (instance != null &&
-                options != CacheLoadingMode.DisableCaching &&
+                options != BitmapCacheMode.DisableCaching &&
                 !SurfacesCache.ContainsKey(uri)) SurfacesCache.Add(uri, instance);
             Win2DSemaphore.Release();
             return instance;
@@ -207,9 +239,10 @@ namespace UICompositionAnimations.Helpers
         /// <param name="compositor">The compositor to use to render the Win2D image</param>
         /// <param name="uri">The path to the image to load</param>
         /// <param name="options">Indicates whether or not to force the reload of the Win2D image</param>
+        /// <param name="dpiMode">Indicates the desired DPI mode to use when loading the image</param>
         [ItemCanBeNull]
         internal static async Task<CompositionSurfaceBrush> LoadImageAsync(
-            [NotNull] Compositor compositor, [NotNull] Uri uri, CacheLoadingMode options)
+            [NotNull] Compositor compositor, [NotNull] Uri uri, BitmapCacheMode options, BitmapDPIMode dpiMode)
         {
             // Fix the Uri if it has been generated by the XAML designer
             if (uri.Scheme.Equals("ms-resource"))
@@ -222,7 +255,7 @@ namespace UICompositionAnimations.Helpers
 
             // Lock the semaphore and check the cache first
             await Win2DSemaphore.WaitAsync();
-            if (options == CacheLoadingMode.EnableCaching && SurfacesCache.TryGetValue(uri, out CompositionSurfaceBrush cached))
+            if (options == BitmapCacheMode.EnableCaching && SurfacesCache.TryGetValue(uri, out CompositionSurfaceBrush cached))
             {
                 Win2DSemaphore.Release();
                 return cached;
@@ -234,7 +267,7 @@ namespace UICompositionAnimations.Helpers
             {
                 // This will throw and the canvas will re-initialize the Win2D device if needed
                 CanvasDevice sharedDevice = CanvasDevice.GetSharedDevice();
-                brush = await LoadSurfaceBrushAsync(sharedDevice, compositor, sharedDevice, uri);
+                brush = await LoadSurfaceBrushAsync(sharedDevice, compositor, sharedDevice, uri, dpiMode);
             }
             catch
             {
@@ -244,7 +277,7 @@ namespace UICompositionAnimations.Helpers
 
             // Cache when needed and return the result
             if (brush != null &&
-                options != CacheLoadingMode.DisableCaching &&
+                options != BitmapCacheMode.DisableCaching &&
                 !SurfacesCache.ContainsKey(uri)) SurfacesCache.Add(uri, brush);
             Win2DSemaphore.Release();
             return brush;

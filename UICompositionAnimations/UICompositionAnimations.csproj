@@ -128,7 +128,8 @@
     <Compile Include="Composition\CompositionManager.cs" />
     <Compile Include="Composition\CubicBeizerEasingProvider.cs" />
     <Compile Include="Enums\AcrylicBrushEffectState.cs" />
-    <Compile Include="Enums\CacheLoadingMode.cs" />
+    <Compile Include="Enums\BitmapDPIMode.cs" />
+    <Compile Include="Enums\BitmapCacheMode.cs" />
     <Compile Include="Enums\EasingFunctionNames.cs" />
     <Compile Include="Enums\ImplicitAnimationType.cs" />
     <Compile Include="Helpers\ApiInformaitonHelper.cs" />

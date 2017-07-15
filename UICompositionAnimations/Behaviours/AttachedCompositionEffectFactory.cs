@@ -94,7 +94,7 @@ namespace UICompositionAnimations.Behaviours
         public static async Task<AttachedStaticCompositionEffect<T>> AttachCompositionInAppCustomAcrylicEffectAsync<TSource, T>(
             [NotNull] this TSource element, [NotNull] T target, float blur, int ms, Color color, float colorMix, float? saturation,
             [CanBeNull] CanvasControl canvas, [NotNull] Uri uri, 
-            CacheLoadingMode options = CacheLoadingMode.EnableCaching, bool fadeIn = false, bool disposeOnUnload = false)
+            BitmapCacheMode options = BitmapCacheMode.EnableCaching, bool fadeIn = false, bool disposeOnUnload = false)
             where TSource : FrameworkElement
             where T : FrameworkElement
         {
@@ -213,7 +213,7 @@ namespace UICompositionAnimations.Behaviours
         [ItemNotNull]
         public static async Task<AttachedStaticCompositionEffect<T>> AttachCompositionCustomAcrylicEffectAsync<T>(
             [NotNull] this T element, Color color, float colorMix,
-            [CanBeNull] CanvasControl canvas, [NotNull] Uri uri, CacheLoadingMode options = CacheLoadingMode.EnableCaching, bool disposeOnUnload = false) 
+            [CanBeNull] CanvasControl canvas, [NotNull] Uri uri, BitmapCacheMode options = BitmapCacheMode.EnableCaching, bool disposeOnUnload = false) 
             where T : FrameworkElement
         {
             // Percentage check
@@ -289,7 +289,7 @@ namespace UICompositionAnimations.Behaviours
         public static async Task<AttachedToggleAcrylicEffect<T>> AttachCompositionCustomAcrylicToggleEffectAsync<T>(
             [NotNull] this T element, Color color, float inAppColorMix, float hostColorMix,
             AcrylicEffectMode mode, float blur, int ms,
-            [CanBeNull] CanvasControl canvas, [NotNull] Uri uri, CacheLoadingMode options = CacheLoadingMode.EnableCaching, bool disposeOnUnload = false)
+            [CanBeNull] CanvasControl canvas, [NotNull] Uri uri, BitmapCacheMode options = BitmapCacheMode.EnableCaching, bool disposeOnUnload = false)
             where T : FrameworkElement
         {
             // Percentage check
@@ -511,7 +511,7 @@ namespace UICompositionAnimations.Behaviours
             [NotNull] this TSource element, [NotNull] T target,
             float on, float off, bool initiallyVisible,
             Color color, float colorMix, [CanBeNull] CanvasControl canvas, [NotNull] Uri uri,
-            CacheLoadingMode options = CacheLoadingMode.EnableCaching, bool disposeOnUnload = false) 
+            BitmapCacheMode options = BitmapCacheMode.EnableCaching, bool disposeOnUnload = false) 
             where TSource : FrameworkElement
             where T : FrameworkElement
         {
@@ -584,7 +584,7 @@ namespace UICompositionAnimations.Behaviours
             float onSaturation, float offSaturation,
             bool initiallyVisible,
             Color color, float colorMix, [CanBeNull] CanvasControl canvas, [NotNull] Uri uri,
-            CacheLoadingMode options = CacheLoadingMode.EnableCaching, bool disposeOnUnload = false)
+            BitmapCacheMode options = BitmapCacheMode.EnableCaching, bool disposeOnUnload = false)
             where TSource : FrameworkElement
             where T : FrameworkElement
         {

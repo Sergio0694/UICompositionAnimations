@@ -212,7 +212,7 @@ namespace UICompositionAnimations.Brushes
         /// <summary>
         /// Gets or sets the caching setting for the acrylic brush
         /// </summary>
-        public CacheLoadingMode CacheMode { get; set; } = CacheLoadingMode.EnableCaching;
+        public BitmapCacheMode CacheMode { get; set; } = BitmapCacheMode.EnableCaching;
 
         #endregion
 
