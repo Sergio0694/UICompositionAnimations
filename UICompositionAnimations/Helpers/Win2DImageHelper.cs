@@ -18,6 +18,9 @@ using UICompositionAnimations.Enums;
 
 namespace UICompositionAnimations.Helpers
 {
+    /// <summary>
+    /// A helper classe that loads Win2D images and manages an internal cache of <see cref="CompositionBrush"/> objects with the loaded images
+    /// </summary>
     public static class Win2DImageHelper
     {
         /// <summary>
@@ -58,6 +61,22 @@ namespace UICompositionAnimations.Helpers
         internal static Task<CompositionSurfaceBrush> LoadImageAsync([NotNull] this CanvasControl canvas, [NotNull] Uri uri)
         {
             return LoadImageAsync(Window.Current.Compositor, canvas, uri, CacheLoadingMode.DisableCaching);
+        }
+
+        /// <summary>
+        /// Clears the internal cache of Win2D images
+        /// </summary>
+        /// <returns>A sequence of the <see cref="CompositionBrush"/> objects that were present in the cache</returns>
+        /// <remarks>The returned items should be manually disposed once checked that they are no longer being used in other effect pipelines</remarks>
+        [PublicAPI]
+        [MustUseReturnValue, ItemNotNull]
+        public static async Task<IEnumerable<CompositionBrush>> ClearCacheAsync()
+        {
+            await Win2DSemaphore.WaitAsync();
+            IEnumerable<CompositionSurfaceBrush> surfaces = SurfacesCache.Values;
+            SurfacesCache.Clear();
+            Win2DSemaphore.Release();
+            return surfaces;
         }
 
         #endregion
