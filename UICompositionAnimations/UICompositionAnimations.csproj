@@ -128,12 +128,14 @@
     <Compile Include="Composition\CompositionManager.cs" />
     <Compile Include="Composition\CubicBeizerEasingProvider.cs" />
     <Compile Include="Enums\AcrylicBrushEffectState.cs" />
+    <Compile Include="Enums\CacheLoadingMode.cs" />
     <Compile Include="Enums\EasingFunctionNames.cs" />
     <Compile Include="Enums\ImplicitAnimationType.cs" />
     <Compile Include="Helpers\ApiInformaitonHelper.cs" />
     <Compile Include="Helpers\ColorConverter.cs" />
     <Compile Include="Helpers\DispatcherHelper.cs" />
     <Compile Include="Helpers\Extensions.cs" />
+    <Compile Include="Helpers\Win2DImageHelper.cs" />
     <Compile Include="Helpers\PointerHelper.cs" />
     <Compile Include="Lights\PointerPositionSpotLight.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
