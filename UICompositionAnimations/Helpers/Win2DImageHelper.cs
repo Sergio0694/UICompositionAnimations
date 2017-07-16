@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -102,6 +103,8 @@ namespace UICompositionAnimations.Helpers
             try
             {
                 // Load the bitmap with the appropriate settings
+                DisplayInformation display = DisplayInformation.GetForCurrentView();
+                float dpi = display.LogicalDpi;
                 switch (dpiMode)
                 {
                     case BitmapDPIMode.UseSourceDPI:
@@ -111,11 +114,9 @@ namespace UICompositionAnimations.Helpers
                         bitmap = await CanvasBitmap.LoadAsync(creator, uri, 96);
                         break;
                     case BitmapDPIMode.CopyDisplayDPISetting:
-                        float dpi = DisplayInformation.GetForCurrentView().LogicalDpi;
                         bitmap = await CanvasBitmap.LoadAsync(creator, uri, dpi);
                         break;
                     case BitmapDPIMode.CopyDisplayDPISettingsWith96AsLowerBound:
-                        dpi = DisplayInformation.GetForCurrentView().LogicalDpi;
                         bitmap = await CanvasBitmap.LoadAsync(creator, uri, dpi >= 96 ? dpi : 96);
                         break;
                     default:
@@ -128,17 +129,28 @@ namespace UICompositionAnimations.Helpers
                     DirectXPixelFormat.B8G8R8A8UIntNormalized, DirectXAlphaMode.Premultiplied);
 
                 // Calculate the surface size
-                Size size = bitmap.Size;
-                CanvasComposition.Resize(surface, size);
+                Size
+                    size = bitmap.Size,
+                    sizeInPixels = new Size(bitmap.SizeInPixels.Width, bitmap.SizeInPixels.Height);
+                CanvasComposition.Resize(surface, sizeInPixels);
 
                 // Draw the image on the surface and get the resulting brush
-                using (CanvasDrawingSession session = CanvasComposition.CreateDrawingSession(surface))
+                using (CanvasDrawingSession session = CanvasComposition.CreateDrawingSession(surface, new Rect(0, 0, sizeInPixels.Width, sizeInPixels.Height), dpi))
                 {
+                    // Fill the target surface
                     session.Clear(Color.FromArgb(0, 0, 0, 0));
                     session.DrawImage(bitmap, new Rect(0, 0, size.Width, size.Height), new Rect(0, 0, size.Width, size.Height));
                     session.EffectTileSize = new BitmapSize { Width = (uint)size.Width, Height = (uint)size.Height };
+
+                    // Setup the effect brush to use
                     CompositionSurfaceBrush brush = surface.Compositor.CreateSurfaceBrush(surface);
                     brush.Stretch = CompositionStretch.None;
+                    double pixels = display.RawPixelsPerViewPixel;
+                    if (pixels > 1)
+                    {
+                        brush.Scale = new Vector2((float)(1 / pixels));
+                        brush.BitmapInterpolationMode = CompositionBitmapInterpolationMode.NearestNeighbor;
+                    }
                     return brush;
                 }
             }
