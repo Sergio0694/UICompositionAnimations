@@ -22,9 +22,6 @@ namespace UICompositionAnimations.Brushes
     {
         #region Constants
 
-        // The animation of the blur transition animation
-        private const int BlurAnimationDuration = 250;
-
         // The name of the animatable blur amount property
         private const String BlurAmountParameterName = "Blur.BlurAmount";
 
@@ -94,7 +91,7 @@ namespace UICompositionAnimations.Brushes
             CustomAcrylicBrush @this = d.To<CustomAcrylicBrush>();
             await @this.ConnectedSemaphore.WaitAsync();
             if (@this.Mode == AcrylicEffectMode.InAppBlur)
-                @this._EffectBrush?.StartAnimationAsync(BlurAmountParameterName, (float)e.NewValue.To<double>(), TimeSpan.FromMilliseconds(BlurAnimationDuration)).Forget();
+                @this._EffectBrush?.Properties.InsertScalar(BlurAmountParameterName, (float)e.NewValue.To<double>());
             @this.ConnectedSemaphore.Release();
                 
         }
@@ -299,7 +296,7 @@ namespace UICompositionAnimations.Brushes
                 baseEffect = new GaussianBlurEffect
                 {
                     Name = "Blur",
-                    BlurAmount = 0f,
+                    BlurAmount = 0f, // The blur value is inserted later on as it isn't applied correctly when set from here
                     BorderMode = EffectBorderMode.Hard,
                     Optimization = EffectOptimization.Balanced,
                     Source = new CompositionEffectSourceParameter(nameof(backdropBrush))
@@ -351,9 +348,9 @@ namespace UICompositionAnimations.Brushes
                 _EffectBrush.SetSourceParameter(pair.Key, pair.Value);
             }
 
-            // Animate the blur and store the effect
+            // Update the blur amount and store the effect
             if (Mode == AcrylicEffectMode.InAppBlur)
-                _EffectBrush.StartAnimationAsync(BlurAmountParameterName, (float)BlurAmount, TimeSpan.FromMilliseconds(BlurAnimationDuration)).Forget();
+                _EffectBrush.Properties.InsertScalar(BlurAmountParameterName, (float)BlurAmount);
             CompositionBrush = _EffectBrush;
             _State = AcrylicBrushEffectState.EffectEnabled;
         }
