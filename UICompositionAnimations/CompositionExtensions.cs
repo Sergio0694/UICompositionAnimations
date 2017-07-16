@@ -1263,7 +1263,7 @@ namespace UICompositionAnimations
         /// <param name="targetXY">The optional scrolling axis of the target element, if null the source axis will be used</param>
         /// <param name="invertSourceAxis">Indicates whether or not to invert the animation from the source <see cref="CompositionPropertySet"/></param>
         [NotNull]
-        public static ExpressionAnimation StartExpressionAnimation(
+        public static ExpressionAnimationWithScalarParameter StartExpressionAnimation(
             [NotNull] this UIElement element, [NotNull] ScrollViewer scroller,
             TranslationAxis sourceXY, float parameter,
             TranslationAxis? targetXY = null, bool invertSourceAxis = false)
@@ -1281,7 +1281,7 @@ namespace UICompositionAnimations
             animation.SetReferenceParameter("scroll", scrollSet);
             animation.SetReferenceParameter(nameof(properties), properties);
             element.GetVisual().StartAnimation($"Offset.{targetXY ?? sourceXY}", animation);
-            return animation;
+            return new ExpressionAnimationWithScalarParameter(animation, properties, nameof(parameter));
         }
 
         #endregion
