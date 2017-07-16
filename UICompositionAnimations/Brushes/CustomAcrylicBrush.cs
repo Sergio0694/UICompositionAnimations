@@ -118,7 +118,7 @@ namespace UICompositionAnimations.Brushes
         {
             CustomAcrylicBrush @this = d.To<CustomAcrylicBrush>();
             await @this.ConnectedSemaphore.WaitAsync();
-            if (@this.CompositionBrush != null)
+            if (@this.CompositionBrush != null && @this._State != AcrylicBrushEffectState.FallbackMode)
             {
                 @this._EffectBrush?.Properties.InsertColor(ColorSourceParameterName, e.NewValue.To<Color>());
             }
@@ -147,7 +147,7 @@ namespace UICompositionAnimations.Brushes
             if (value < 0 || value >= 1) throw new ArgumentOutOfRangeException("The tint mix must be in the [0..1) range");
             CustomAcrylicBrush @this = d.To<CustomAcrylicBrush>();
             await @this.ConnectedSemaphore.WaitAsync();
-            if (@this.CompositionBrush != null)
+            if (@this.CompositionBrush != null && @this._State != AcrylicBrushEffectState.FallbackMode)
             {
                 @this._EffectBrush.Properties.InsertScalar(TintColor1ParameterName, 1 - fvalue);
                 @this._EffectBrush.Properties.InsertScalar(TintColor2ParameterName, fvalue);
