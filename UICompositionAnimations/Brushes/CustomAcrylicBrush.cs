@@ -158,9 +158,9 @@ namespace UICompositionAnimations.Brushes
         /// <summary>
         /// Gets or sets the optional color to use for the brush, if the effect can't be loaded
         /// </summary>
-        public Color? UnsupportedEffectFallbackColor
+        public Color UnsupportedEffectFallbackColor
         {
-            get { return GetValue(UnsupportedEffectFallbackColorProperty).To<Color?>(); }
+            get { return GetValue(UnsupportedEffectFallbackColorProperty).To<Color>(); }
             set { SetValue(UnsupportedEffectFallbackColorProperty, value); }
         }
 
@@ -168,21 +168,21 @@ namespace UICompositionAnimations.Brushes
         /// Gets the <see cref="DependencyProperty"/> for the <see cref="UnsupportedEffectFallbackColor"/> property
         /// </summary>
         public static readonly DependencyProperty UnsupportedEffectFallbackColorProperty =
-            DependencyProperty.Register(nameof(UnsupportedEffectFallbackColor), typeof(Color?), typeof(LightingBrush), 
-                new PropertyMetadata(null, OnUnsupportedEffectFallbackColorPropertyChanged));
+            DependencyProperty.Register(nameof(UnsupportedEffectFallbackColor), typeof(Color), typeof(LightingBrush), 
+                new PropertyMetadata(Colors.Transparent, OnUnsupportedEffectFallbackColorPropertyChanged));
 
         private static async void OnUnsupportedEffectFallbackColorPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             // Unpack and lock
             CustomAcrylicBrush @this = d.To<CustomAcrylicBrush>();
             await @this.ConnectedSemaphore.WaitAsync();
-            Color? value = e.NewValue.To<Color?>();
+            Color value = e.NewValue.To<Color>();
 
             // The fallback mode is currently enabled
             if (@this._State == AcrylicBrushEffectState.FallbackMode)
             {
                 // New value is null, reset the current effect
-                if (value == null)
+                if (value.Equals(Colors.Transparent))
                 {
                     @this.CompositionBrush.Dispose();
                     @this.CompositionBrush = null;
@@ -191,13 +191,13 @@ namespace UICompositionAnimations.Brushes
                 else
                 {
                     // Otherwise, update the fallback color effect
-                    @this._EffectBrush?.Properties.InsertColor(FallbackColorParameterName, value.Value);
+                    @this._EffectBrush?.Properties.InsertColor(FallbackColorParameterName, value);
                 }
             }
             else if (@this._State == AcrylicBrushEffectState.Default && // The effect is currently disabled
                      @this.Mode == AcrylicEffectMode.HostBackdrop &&    // The current settings are not valid
                      ApiInformationHelper.IsMobileDevice &&
-                     value != null)                                     // The new value allows the fallback mode to be enabled
+                     !value.Equals(Colors.Transparent))                 // The new value allows the fallback mode to be enabled
             {
                 await @this.SetupEffectAsync();
             }
@@ -266,12 +266,12 @@ namespace UICompositionAnimations.Brushes
             if (ApiInformationHelper.IsMobileDevice && Mode == AcrylicEffectMode.HostBackdrop)
             {
                 // Create the fallback brush effect when needed
-                if (UnsupportedEffectFallbackColor != null)
+                if (!UnsupportedEffectFallbackColor.Equals(Colors.Transparent))
                 {
                     ColorSourceEffect fallback = new ColorSourceEffect
                     {
                         Name = "FallbackColor",
-                        Color = UnsupportedEffectFallbackColor.Value
+                        Color = UnsupportedEffectFallbackColor
                     };
                     CompositionEffectFactory fallbackFactory = Window.Current.Compositor.CreateEffectFactory(fallback);
                     _EffectBrush = fallbackFactory.CreateBrush();
