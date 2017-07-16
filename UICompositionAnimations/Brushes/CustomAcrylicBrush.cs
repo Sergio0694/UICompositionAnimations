@@ -316,12 +316,12 @@ namespace UICompositionAnimations.Brushes
                     Opacity = 0.4f // Reduce the amount of the effect to avoid making bright areas completely black
                 };
 
-                // Layer [0,1,3] - Desktop background with blur and tint overlay
+                // Layer [0,1,3] - Desktop background with blur and opacity mask
                 baseEffect = new BlendEffect
                 {
                     Background = backgroundParameter,
                     Foreground = opacityEffect,
-                    Mode = BlendEffectMode.Overlay
+                    Mode = BlendEffectMode.Multiply
                 };
                 sourceParameters.Add(nameof(hostBackdropBrush), hostBackdropBrush);
             }
