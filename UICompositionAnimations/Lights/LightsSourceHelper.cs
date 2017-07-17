@@ -33,9 +33,9 @@ namespace UICompositionAnimations.Lights
         /// Gets the <see cref="IsLightsContainerProperty"/> value for the target <see cref="UIElement"/>
         /// </summary>
         /// <param name="element">The target element to inspect</param>
-        public static String GetIsLightsContainer(UIElement element)
+        public static bool GetIsLightsContainer(UIElement element)
         {
-            return element.GetValue(IsLightsContainerProperty).To<String>();
+            return element.GetValue(IsLightsContainerProperty).To<bool>();
         }
 
         /// <summary>
