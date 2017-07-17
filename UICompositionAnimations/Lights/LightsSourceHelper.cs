@@ -55,6 +55,7 @@ namespace UICompositionAnimations.Lights
             DependencyProperty.RegisterAttached("IsLightsContainer", typeof(bool), typeof(LightsSourceHelper),
                 new PropertyMetadata(default(bool), OnIsLightsContainerPropertyChanged));
 
+        // Private dictionary to keep track of the added pointer event handlers
         private static readonly IDictionary<UIElement, ControlAttachedHandlersInfo> HandlersMap = new Dictionary<UIElement, ControlAttachedHandlersInfo>();
 
         private static void OnIsLightsContainerPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -92,6 +93,7 @@ namespace UICompositionAnimations.Lights
             }
             else
             {
+                // Remove the lights and the custom pointer handlers
                 if (!HandlersMap.TryGetValue(@this, out ControlAttachedHandlersInfo info))
                     throw new InvalidOperationException("Error retrieving the pointer handlers info on the current control");
                 HandlersMap.Remove(@this);
