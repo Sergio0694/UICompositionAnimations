@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Windows.ApplicationModel;
 using Windows.Devices.Input;
 using Windows.UI.Xaml;
 using JetBrains.Annotations;
@@ -60,10 +61,14 @@ namespace UICompositionAnimations.Lights
 
         private static void OnIsLightsContainerPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
+            // Designer test
+            if (DesignMode.DesignModeEnabled) return;
+
             // Platform test
             if (ApiInformationHelper.IsMobileDevice) return;
 
             // Unpack
+            if (LightGenerators == null) throw new NullReferenceException($"The {nameof(LightsSourceHelper)} class hasn't been initialized");
             UIElement @this = d.To<UIElement>();
             bool value = e.NewValue.To<bool>();
 
