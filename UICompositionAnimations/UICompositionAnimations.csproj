@@ -137,8 +137,12 @@
     <Compile Include="Helpers\ColorConverter.cs" />
     <Compile Include="Helpers\DispatcherHelper.cs" />
     <Compile Include="Helpers\Extensions.cs" />
+    <Compile Include="Helpers\PointerEvents\ControlAttachedHandlersInfo.cs" />
+    <Compile Include="Helpers\PointerEvents\HandlersRemovalResult.cs" />
+    <Compile Include="Helpers\PointerEvents\PointerHandlerInfo.cs" />
     <Compile Include="Helpers\Win2DImageHelper.cs" />
-    <Compile Include="Helpers\PointerHelper.cs" />
+    <Compile Include="Helpers\PointerEvents\PointerHelper.cs" />
+    <Compile Include="Lights\LightsSourceHelper.cs" />
     <Compile Include="Lights\PointerPositionSpotLight.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Enums\TranslationAxis.cs" />
