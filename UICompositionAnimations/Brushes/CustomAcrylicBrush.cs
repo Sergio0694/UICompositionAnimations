@@ -8,8 +8,10 @@ using Microsoft.Graphics.Canvas.Effects;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
+using JetBrains.Annotations;
 using UICompositionAnimations.Behaviours;
 using UICompositionAnimations.Behaviours.Effects;
+using UICompositionAnimations.Brushes.Cache;
 using UICompositionAnimations.Enums;
 using UICompositionAnimations.Helpers;
 
@@ -254,6 +256,51 @@ namespace UICompositionAnimations.Brushes
             base.OnDisconnected();
         }
 
+        #region CompositionBackdropBrush cache
+
+        // The synchronization semaphore for the in-app backdrop brush
+        private static readonly SemaphoreSlim BackdropSemaphore = new SemaphoreSlim(1);
+
+        // The cached in-app backdrop brush
+        private static CompositionBackdropBrush _BackdropInstance;
+
+        // The name to use for the in-app backdrop reference parameter
+        private const String BackdropReferenceParameterName = "BackdropBrush";
+
+        // The synchronization semaphore for the host backdrop brush
+        private static readonly SemaphoreSlim HostBackdropSemaphore = new SemaphoreSlim(1);
+
+        // The cached host backdrop effect and partial pipeline to reuse
+        private static HostBackdropInstanceWrapper _HostBackdropCache;
+
+        // The name to use for the host backdrop reference parameter
+        private const String HostBackdropReferenceParameterName = "HostBackdropBrush";
+
+        /// <summary>
+        /// Clears the internal cache of <see cref="CompositionBackdropBrush"/> instances
+        /// </summary>
+        [PublicAPI]
+        public static async Task ClearCacheAsync(AcrylicEffectMode targets)
+        {
+            // In-app backdrop brush
+            if (targets.HasFlag(AcrylicEffectMode.InAppBlur))
+            {
+                await BackdropSemaphore.WaitAsync();
+                _BackdropInstance = null;
+                BackdropSemaphore.Release();
+            }
+
+            // Host backdrop brush
+            if (targets.HasFlag(AcrylicEffectMode.HostBackdrop))
+            {
+                await HostBackdropSemaphore.WaitAsync();
+                _HostBackdropCache = null;
+                HostBackdropSemaphore.Release();
+            }
+        }
+
+        #endregion
+
         /// <summary>
         /// Initializes the appropriate acrylic effect for the current instance
         /// </summary>
@@ -291,39 +338,61 @@ namespace UICompositionAnimations.Brushes
             IGraphicsEffectSource baseEffect;
             if (Mode == AcrylicEffectMode.InAppBlur)
             {
-                // Prepare a luminosity to alpha effect to adjust the background contrast
-                CompositionBackdropBrush backdropBrush = Window.Current.Compositor.CreateBackdropBrush();
+                // Manage the cache
+                await BackdropSemaphore.WaitAsync();
+                if (_BackdropInstance == null)
+                {
+                    _BackdropInstance = Window.Current.Compositor.CreateBackdropBrush();
+                }
+
+                // Prepare the blur effect for the backdrop brush
                 baseEffect = new GaussianBlurEffect
                 {
                     Name = "Blur",
                     BlurAmount = 0f, // The blur value is inserted later on as it isn't applied correctly when set from here
                     BorderMode = EffectBorderMode.Hard,
                     Optimization = EffectOptimization.Balanced,
-                    Source = new CompositionEffectSourceParameter(nameof(backdropBrush))
+                    Source = new CompositionEffectSourceParameter(nameof(BackdropReferenceParameterName))
                 };
                 animatableParameters.Add(BlurAmountParameterName);
-                sourceParameters.Add(nameof(backdropBrush), backdropBrush);
+                sourceParameters.Add(nameof(BackdropReferenceParameterName), _BackdropInstance);
+                BackdropSemaphore.Release();
             }
             else
             {
-                // Prepare a luminosity to alpha effect to adjust the background contrast
-                CompositionBackdropBrush hostBackdropBrush = Window.Current.Compositor.CreateHostBackdropBrush();
-                CompositionEffectSourceParameter backgroundParameter = new CompositionEffectSourceParameter(nameof(hostBackdropBrush));
-                LuminanceToAlphaEffect alphaEffect = new LuminanceToAlphaEffect { Source = backgroundParameter };
-                OpacityEffect opacityEffect = new OpacityEffect
+                // Manage the cache
+                await HostBackdropSemaphore.WaitAsync();
+                if (_HostBackdropCache == null)
                 {
-                    Source = alphaEffect,
-                    Opacity = 0.4f // Reduce the amount of the effect to avoid making bright areas completely black
-                };
+                    // Prepare a luminosity to alpha effect to adjust the background contrast
+                    CompositionBackdropBrush hostBackdropBrush = Window.Current.Compositor.CreateHostBackdropBrush();
+                    CompositionEffectSourceParameter backgroundParameter = new CompositionEffectSourceParameter(nameof(hostBackdropBrush));
+                    LuminanceToAlphaEffect alphaEffect = new LuminanceToAlphaEffect { Source = backgroundParameter };
+                    OpacityEffect opacityEffect = new OpacityEffect
+                    {
+                        Source = alphaEffect,
+                        Opacity = 0.4f // Reduce the amount of the effect to avoid making bright areas completely black
+                    };
 
-                // Layer [0,1,3] - Desktop background with blur and opacity mask
-                baseEffect = new BlendEffect
+                    // Layer [0,1,3] - Desktop background with blur and opacity mask
+                    baseEffect = new BlendEffect
+                    {
+                        Background = backgroundParameter,
+                        Foreground = opacityEffect,
+                        Mode = BlendEffectMode.Multiply
+                    };
+                    sourceParameters.Add(HostBackdropReferenceParameterName, hostBackdropBrush);
+
+                    // Update the cache
+                    _HostBackdropCache = new HostBackdropInstanceWrapper(baseEffect, hostBackdropBrush);
+                }
+                else
                 {
-                    Background = backgroundParameter,
-                    Foreground = opacityEffect,
-                    Mode = BlendEffectMode.Multiply
-                };
-                sourceParameters.Add(nameof(hostBackdropBrush), hostBackdropBrush);
+                    // Reuse the cached pipeline and effect
+                    baseEffect = _HostBackdropCache.Pipeline;
+                    sourceParameters.Add(HostBackdropReferenceParameterName, _HostBackdropCache.Brush);
+                }
+                HostBackdropSemaphore.Release();
             }
 
             // Get the noise brush using Win2D
