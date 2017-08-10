@@ -74,8 +74,9 @@ namespace UICompositionAnimations.Brushes
         }
 
         /// <summary>
-        /// Gets or sets the blur amount for the effect (NOTE: this property is ignored when the active mode is <see cref="AcrylicEffectMode.HostBackdrop"/>)
+        /// Gets or sets the blur amount for the effect)
         /// </summary>
+        /// <remarks>This property is ignored when the active mode is <see cref="AcrylicEffectMode.HostBackdrop"/></remarks>
         public double BlurAmount
         {
             get { return GetValue(BlurAmountProperty).To<double>(); }
@@ -204,14 +205,27 @@ namespace UICompositionAnimations.Brushes
         }
 
         /// <summary>
-        /// Gets or sets the <see cref="Uri"/> to the noise texture to use (NOTE: this must be initialized before using the brush)
+        /// Gets or sets the <see cref="Uri"/> to the noise texture to use
         /// </summary>
+        /// <remarks>This property must be initialized before using the brush</remarks>
         public Uri NoiseTextureUri { get; set; }
 
         /// <summary>
         /// Gets or sets the caching setting for the acrylic brush
         /// </summary>
         public BitmapCacheMode CacheMode { get; set; } = BitmapCacheMode.EnableCaching;
+
+        /// <summary>
+        /// Indicates whether or not to enable an additional safety procedure when loading the acrylic brush.
+        /// This property should be used for brushes being rendered on secondary windows that use a given acrylic mode for the first
+        /// time in the application, to prevent the internal cache from storing a brush instance that would cause the app to crash if
+        /// reused in the app primary window, due to the different <see cref="Windows.UI.Core.CoreDispatcher"/> associated with that window.
+        /// This property can stay disabled in most cases and should only be turned on when dealing with particular edge cases or issues
+        /// with secondary app windows.
+        /// </summary>
+        /// <remarks>Turning this property on disables the internal cache system for <see cref="CompositionBackdropBrush"/> instances.
+        /// This property, like the <see cref="NoiseTextureUri"/> property, must be initialized before using the brush</remarks>
+        public bool DispatchProtectionEnabled { get; set; }
 
         #endregion
 
@@ -340,7 +354,7 @@ namespace UICompositionAnimations.Brushes
             {
                 // Manage the cache
                 await BackdropSemaphore.WaitAsync();
-                if (_BackdropInstance == null)
+                if (_BackdropInstance == null && !DispatchProtectionEnabled)
                 {
                     _BackdropInstance = Window.Current.Compositor.CreateBackdropBrush();
                 }
@@ -355,14 +369,18 @@ namespace UICompositionAnimations.Brushes
                     Source = new CompositionEffectSourceParameter(nameof(BackdropReferenceParameterName))
                 };
                 animatableParameters.Add(BlurAmountParameterName);
-                sourceParameters.Add(nameof(BackdropReferenceParameterName), _BackdropInstance);
+                sourceParameters.Add(nameof(BackdropReferenceParameterName),
+                    _BackdropInstance?.Dispatcher.HasThreadAccess == true
+                    ? _BackdropInstance
+                    : Window.Current.Compositor.CreateBackdropBrush()); // Create a new instance when on a secondary window
                 BackdropSemaphore.Release();
             }
             else
             {
                 // Manage the cache
                 await HostBackdropSemaphore.WaitAsync();
-                if (_HostBackdropCache == null)
+                if (_HostBackdropCache == null ||                           // Cache not initialized yet
+                    !_HostBackdropCache.Brush.Dispatcher.HasThreadAccess)   // Cache initialized on another UI thread (different window)
                 {
                     // Prepare a luminosity to alpha effect to adjust the background contrast
                     CompositionBackdropBrush hostBackdropBrush = Window.Current.Compositor.CreateHostBackdropBrush();
@@ -383,8 +401,11 @@ namespace UICompositionAnimations.Brushes
                     };
                     sourceParameters.Add(HostBackdropReferenceParameterName, hostBackdropBrush);
 
-                    // Update the cache
-                    _HostBackdropCache = new HostBackdropInstanceWrapper(baseEffect, hostBackdropBrush);
+                    // Update the cache when needed
+                    if (_HostBackdropCache == null && !DispatchProtectionEnabled)
+                    {
+                        _HostBackdropCache = new HostBackdropInstanceWrapper(baseEffect, hostBackdropBrush);
+                    }
                 }
                 else
                 {
