@@ -18,8 +18,8 @@ It also has a collection of helper methods to load Win2D images, dispatch code t
   - [Animations](#animations) 
   - [`UI.Composition` effects](#uicomposition-effects)
   - [Reveal highlight effect](#reveal-highlight-effect)
-  - [Misc](#misc)
-  - [Requirements](#requirements)
+- [Misc](#misc)
+- [Requirements](#requirements)
 
 # Installing from NuGet
 
@@ -174,7 +174,7 @@ At this point we have a series of lights, each targeting an arbitrary number of 
 
 **Note**: the lights only work on `UIElement`s in their visual tree. This means that in order for the `LightingBrush` objects to work correctly in popups or flyouts, the lights must be added to their visual tree too. To do this, just call the `LightsSourceHelper.SetIsLightsContainer` method on the root element of the new object being displayed (for example, the root `Grid` inside a new `Popup`).
 
-## Misc
+# Misc
 
 Many utility methods are also available, here are some useful classes:
 - `XAMLTransformToolkit`: exposes methods to manually create, start and wait for `DoubleAnimation`(s) and `Storyboard`(s), as well as for quickly assigning a certain `RenderTransform` object to a `UIElement`.
@@ -183,5 +183,5 @@ Many utility methods are also available, here are some useful classes:
 - `ApiInformationHelper`: provides useful methods to check the capabilities of the current device
 - `PointerHelper`: exposes APIs to quickly setup pointer event handlers for `UIElement`s
 
-## Requirements
+# Requirements
 At least Windows 10 November Update (10586.x)
