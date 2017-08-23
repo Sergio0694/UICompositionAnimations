@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Windows.ApplicationModel;
 using Windows.Graphics.Effects;
 using Windows.UI;
 using Microsoft.Graphics.Canvas.Effects;
@@ -320,6 +321,9 @@ namespace UICompositionAnimations.Brushes
         /// </summary>
         private async Task SetupEffectAsync()
         {
+            // Designer check
+            if (DesignMode.DesignModeEnabled) return;
+
             // Platform check
             if (ApiInformationHelper.IsMobileDevice && Mode == AcrylicEffectMode.HostBackdrop)
             {
