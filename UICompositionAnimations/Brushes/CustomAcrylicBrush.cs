@@ -75,7 +75,7 @@ namespace UICompositionAnimations.Brushes
         }
 
         /// <summary>
-        /// Gets or sets the blur amount for the effect)
+        /// Gets or sets the blur amount for the effect
         /// </summary>
         /// <remarks>This property is ignored when the active mode is <see cref="AcrylicEffectMode.HostBackdrop"/></remarks>
         public double BlurAmount
@@ -95,10 +95,32 @@ namespace UICompositionAnimations.Brushes
             CustomAcrylicBrush @this = d.To<CustomAcrylicBrush>();
             await @this.ConnectedSemaphore.WaitAsync();
             if (@this.Mode == AcrylicEffectMode.InAppBlur)
-                @this._EffectBrush?.Properties.InsertScalar(BlurAmountParameterName, (float)e.NewValue.To<double>());
+            {
+                // Update the blur value with or without an animation
+                if (@this.BlurAnimationDuration == 0)
+                {
+                    @this._EffectBrush?.Properties.InsertScalar(BlurAmountParameterName, (float)e.NewValue.To<double>());
+                }
+                else @this._EffectBrush?.Properties.StartAnimationAsync(BlurAmountParameterName, (float)e.NewValue, TimeSpan.FromMilliseconds(@this.BlurAnimationDuration));
+            }
             @this.ConnectedSemaphore.Release();
-                
         }
+
+        /// <summary>
+        /// Gets or sets the duration of the optional animation played when changing the <see cref="BlurAmount"/> property
+        /// </summary>
+        /// <remarks>This property is ignored when the active mode is <see cref="AcrylicEffectMode.HostBackdrop"/></remarks>
+        public int BlurAnimationDuration
+        {
+            get { return GetValue(BlurAnimationDurationProperty).To<int>(); }
+            set { SetValue(BlurAnimationDurationProperty, value); }
+        }
+
+        /// <summary>
+        /// Gets the <see cref="DependencyProperty"/> for the <see cref="BlurAnimationDuration"/> property
+        /// </summary>
+        public static readonly DependencyProperty BlurAnimationDurationProperty =
+            DependencyProperty.Register(nameof(BlurAnimationDuration), typeof(int), typeof(LightingBrush), new PropertyMetadata(0));
 
         /// <summary>
         /// Gets or sets the color for the tint effect
@@ -239,7 +261,7 @@ namespace UICompositionAnimations.Brushes
         // Gets the current brush shate
         private AcrylicBrushEffectState _State = AcrylicBrushEffectState.Default;
 
-        /// <inheritdoc cref="XamlCompositionBrushBase"/>
+        /// <inheritdoc/>
         protected override async void OnConnected()
         {
             if (CompositionBrush == null)
@@ -254,7 +276,7 @@ namespace UICompositionAnimations.Brushes
             base.OnConnected();
         }
 
-        /// <inheritdoc cref="XamlCompositionBrushBase"/>
+        /// <inheritdoc/>
         protected override async void OnDisconnected()
         {
             if (CompositionBrush != null)
