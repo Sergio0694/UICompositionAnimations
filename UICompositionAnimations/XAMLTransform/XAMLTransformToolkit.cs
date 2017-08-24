@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
+using JetBrains.Annotations;
 using UICompositionAnimations.Enums;
 using UICompositionAnimations.Helpers;
 
@@ -15,6 +16,18 @@ namespace UICompositionAnimations.XAMLTransform
     public static class XAMLTransformToolkit
     {
         #region Extensions
+
+        /// <summary>
+        /// Creates a new <see cref="Storyboard"/> with the given animation
+        /// </summary>
+        /// <param name="animation">The single animation to insert into the returned <see cref="Storyboard"/></param>
+        [NotNull]
+        public static Storyboard ToStoryboard([NotNull] this Timeline animation)
+        {
+            Storyboard storyboard = new Storyboard();
+            storyboard.Children.Add(animation);
+            return storyboard;
+        }
 
         /// <summary>
         /// Returns the desired XAML transform object after assigning it to the render transform property of the target item
@@ -114,10 +127,10 @@ namespace UICompositionAnimations.XAMLTransform
         }
 
         /// <summary>
-        /// Prepares a storyboard with the given animations
+        /// Prepares a <see cref="Storyboard"/> with the given animations
         /// </summary>
         /// <param name="animations">The animations to run inside the storyboard</param>
-        public static Storyboard PrepareStory(params Timeline[] animations)
+        public static Storyboard PrepareStoryboard(params Timeline[] animations)
         {
             Storyboard storyboard = new Storyboard();
             foreach (Timeline animation in animations)
