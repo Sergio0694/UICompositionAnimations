@@ -3,6 +3,7 @@
     "JetBrains.Annotations": "11.0.0",
     "Microsoft.NETCore.UniversalWindowsPlatform": "5.4.0",
     "System.Threading.Tasks.Extensions": "4.4.0",
+    "System.ValueTuple": "4.4.0",
     "Win2D.uwp": "1.21.0"
   },
   "frameworks": {

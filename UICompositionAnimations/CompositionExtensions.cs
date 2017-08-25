@@ -1123,7 +1123,7 @@ namespace UICompositionAnimations
         #region Roll
 
         // Manages the roll animation
-        private static async Task<float> ManageCompositionRollAnimationAsync([NotNull] this FrameworkElement element,
+        private static async Task<(float, float, float)> ManageCompositionRollAnimationAsync([NotNull] this FrameworkElement element,
             float? startOp, float endOp,
             TranslationAxis axis, float? startXY, float endXY,
             float? startDegrees, float endDegrees,
@@ -1181,7 +1181,7 @@ namespace UICompositionAnimations
             visual.StartAnimation("RotationAngle", rotateAnimation);
             batch.End();
             await tcs.Task;
-            return initialOffset.X;
+            return (startOp.Value, initialOffset.X, startDegrees.Value);
         }
 
         /// <summary>
@@ -1231,8 +1231,123 @@ namespace UICompositionAnimations
             float? startDegrees, float endDegrees,
             int ms, int? msDelay, EasingFunctionNames easingFunction, bool reverse = false)
         {
-            startXY = await element.ManageCompositionRollAnimationAsync(startOp, endOp, axis, startXY, endXY, startDegrees, endDegrees, ms, msDelay, easingFunction);
-            if (reverse) await element.ManageCompositionRollAnimationAsync(startOp, endOp, axis, startXY, endXY, startDegrees, endDegrees, ms, msDelay, easingFunction);
+            (float opacity, float offset, float degrees) = await element.ManageCompositionRollAnimationAsync(startOp, endOp, axis, startXY, endXY, startDegrees, endDegrees, ms, msDelay, easingFunction);
+            if (reverse) await element.ManageCompositionRollAnimationAsync(endOp, opacity, axis, endXY, offset, endDegrees, degrees, ms, msDelay, easingFunction);
+        }
+
+        #endregion
+
+        #region Rotation + fade + slide
+
+        // Manages the composite animation
+        private static async Task<(float, float, float)> ManageCompositionRotationFadeSlideAnimationAsync([NotNull] this FrameworkElement element,
+            float? startOp, float endOp,
+            float? startXY, float endXY,
+            float? startDegrees, float endDegrees,
+            int ms, int? msDelay, EasingFunctionNames easingFunction)
+        {
+            // Get the default values
+            Visual visual = element.GetVisual();
+            visual.StopAnimation("Opacity");
+            visual.StopAnimation("Scale");
+            visual.StopAnimation("RotationAngle");
+            await element.SetCenterPoint(visual);
+
+            // Get the current opacity
+            if (!startOp.HasValue) startOp = visual.Opacity;
+
+            // Get the easing function, the duration and delay
+            CompositionEasingFunction ease = visual.GetEasingFunction(easingFunction);
+            TimeSpan duration = TimeSpan.FromMilliseconds(ms);
+            TimeSpan? delay;
+            if (msDelay.HasValue) delay = TimeSpan.FromMilliseconds(msDelay.Value);
+            else delay = null;
+
+            // Calculate the initial and final scale values
+            Vector3 initialScale = visual.Scale;
+            if (startXY.HasValue)
+            {
+                initialScale.X = startXY.Value;
+                initialScale.Y = startXY.Value;
+            }
+            Vector3 endScale = new Vector3
+            {
+                X = endXY,
+                Y = endXY,
+                Z = visual.Scale.Z
+            };
+
+            // Scale animation
+            Vector3KeyFrameAnimation scaleAnimation = visual.Compositor.CreateVector3KeyFrameAnimation(initialScale, endScale, duration, delay, ease);
+
+            // Calculate the initial and final rotation angle
+            if (startDegrees == null) startDegrees = visual.RotationAngle.ToDegrees();
+
+            // Get the opacity the animation
+            ScalarKeyFrameAnimation opacityAnimation = visual.Compositor.CreateScalarKeyFrameAnimation(startOp, endOp, duration, delay, ease);
+
+            // Rotate animation
+            ScalarKeyFrameAnimation rotateAnimation = visual.Compositor.CreateScalarKeyFrameAnimation(startDegrees.Value.ToRadians(), endDegrees.ToRadians(), duration, delay, ease);
+
+            // Get the batch and start the animations
+            CompositionScopedBatch batch = visual.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            TaskCompletionSource<object> tcs = new TaskCompletionSource<object>();
+            batch.Completed += (s, e) => tcs.SetResult(null);
+            visual.StartAnimation("Opacity", opacityAnimation);
+            visual.StartAnimation("Scale", scaleAnimation);
+            visual.StartAnimation("RotationAngle", rotateAnimation);
+            batch.End();
+            await tcs.Task;
+            return (startOp.Value, initialScale.X, startDegrees.Value);
+        }
+
+        /// <summary>
+        /// Starts a rotation, fade and slide animation on the target <see cref="FrameworkElement"/> and optionally runs a callback <see cref="Action"/> when the animation finishes
+        /// </summary>
+        /// <param name="element">The <see cref="FrameworkElement"/> to animate</param>
+        /// <param name="startOp">The initial opacity value. If null, the current opacity will be used</param>
+        /// <param name="endOp">The final opacity value</param>
+        /// <param name="startXY">The initial scale value. If null, the current scale will be used</param>
+        /// <param name="endXY">The final scale value</param>
+        /// <param name="startDegrees">The initial angle in degrees</param>
+        /// <param name="endDegrees">The target angle in degrees</param>
+        /// <param name="ms">The duration of the animation, in milliseconds</param>
+        /// <param name="msDelay">The delay before the animation starts, in milliseconds. If null, there will be no delay</param>
+        /// <param name="easingFunction">The easing function to use with the new animations</param>
+        /// <param name="reverse">If true, the animation will be played in reverse mode when it finishes for the first time</param>
+        /// <param name="callback">An <see cref="Action"/> to execute when the new animations end</param>
+        public static async void StartCompositionRotationFadeSlideAnimation([NotNull] this FrameworkElement element,
+            float? startOp, float endOp,
+            float? startXY, float endXY,
+            float? startDegrees, float endDegrees,
+            int ms, int? msDelay, EasingFunctionNames easingFunction, bool reverse = false, Action callback = null)
+        {
+            await element.ManageCompositionRotationFadeSlideAnimationAsync(startOp, endOp, startXY, endXY, startDegrees, endDegrees, ms, msDelay, easingFunction);
+            callback?.Invoke();
+        }
+
+        /// <summary>
+        /// Starts a rotation, fade and slide animation on the target <see cref="FrameworkElement"/> and returns a <see cref="Task"/> that completes when the animation ends
+        /// </summary>
+        /// <param name="element">The <see cref="FrameworkElement"/> to animate</param>
+        /// <param name="startOp">The initial opacity value. If null, the current opacity will be used</param>
+        /// <param name="endOp">The final opacity value</param>
+        /// <param name="startXY">The initial scale value. If null, the current scale will be used</param>
+        /// <param name="endXY">The final scale value</param>
+        /// <param name="startDegrees">The initial angle in degrees</param>
+        /// <param name="endDegrees">The target angle in degrees</param>
+        /// <param name="ms">The duration of the animation, in milliseconds</param>
+        /// <param name="msDelay">The delay before the animation starts, in milliseconds. If null, there will be no delay</param>
+        /// <param name="easingFunction">The easing function to use with the new animations</param>
+        /// <param name="reverse">If true, the animation will be played in reverse mode when it finishes for the first time</param>>
+        public static async Task StartCompositionRotationFadeSlideAnimationAsync([NotNull] this FrameworkElement element,
+            float? startOp, float endOp,
+            float? startXY, float endXY,
+            float? startDegrees, float endDegrees,
+            int ms, int? msDelay, EasingFunctionNames easingFunction, bool reverse = false)
+        {
+            (float opacity, float degrees, float scale) = await element.ManageCompositionRotationFadeSlideAnimationAsync(startOp, endOp, startXY, endXY, startDegrees, endDegrees, ms, msDelay, easingFunction);
+            if (reverse) await element.ManageCompositionRotationFadeSlideAnimationAsync(endOp, opacity, endXY, scale, endDegrees, degrees, ms, msDelay, easingFunction);
         }
 
         #endregion
