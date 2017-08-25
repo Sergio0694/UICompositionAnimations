@@ -30,7 +30,7 @@ namespace UICompositionAnimations
         {
             if (double.IsNaN(element.Width) || double.IsNaN(element.Height))
                 throw new InvalidOperationException("The target element must have a fixed size");
-            visual.CenterPoint = new Vector3((float)element.Width, (float)element.Height, 0);
+            visual.CenterPoint = new Vector3((float)element.Width / 2, (float)element.Height / 2, 0);
         }
 
         /// <summary>
