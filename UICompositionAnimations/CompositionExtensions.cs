@@ -28,8 +28,9 @@ namespace UICompositionAnimations
         /// <param name="visual">The Visual object for the source FrameworkElement</param>
         private static async Task SetCenterPoint([NotNull] this FrameworkElement element, [NotNull] Visual visual)
         {
-            bool LoadedTester() => element.ActualWidth + element.ActualHeight < 0.1;
-            if (LoadedTester())
+            // Check if the control hasn't already been loaded
+            bool CheckLoadingPending() => element.ActualWidth + element.ActualHeight < 0.1;
+            if (CheckLoadingPending())
             {
                 // Wait for the loaded event and set the CenterPoint
                 TaskCompletionSource<object> loadedTcs = new TaskCompletionSource<object>();
@@ -38,16 +39,22 @@ namespace UICompositionAnimations
                     loadedTcs.SetResult(null);
                     element.Loaded -= Handler;
                 }
+
+                // Wait for the loaded event for a given time threshold
                 element.Loaded += Handler;
                 await Task.WhenAny(loadedTcs.Task, Task.Delay(500));
                 element.Loaded -= Handler;
-                if (LoadedTester())
+
+                // If the control still hasn't been loaded, approximate the center point with its desired size
+                if (CheckLoadingPending())
                 {
                     element.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
                     visual.CenterPoint = new Vector3((float)element.DesiredSize.Width / 2, (float)element.DesiredSize.Height / 2, 0);
                     return;
                 }
             }
+
+            // Update the center point
             visual.CenterPoint = new Vector3((float)element.ActualWidth / 2, (float)element.ActualHeight / 2, 0);
         }
 
