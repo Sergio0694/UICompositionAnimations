@@ -22,11 +22,23 @@ namespace UICompositionAnimations
         #region Internal tools
 
         /// <summary>
-        /// Sets the CenterPoint of a visual to the center of a given FrameworkElement
+        /// Sets the <see cref="Visual.CenterPoint"/> property of a <see cref="Visual"/> object to the center of a given <see cref="FrameworkElement"/>
         /// </summary>
         /// <param name="element">The source element</param>
-        /// <param name="visual">The Visual object for the source FrameworkElement</param>
-        private static async Task SetCenterPoint([NotNull] this FrameworkElement element, [NotNull] Visual visual)
+        /// <param name="visual">The Visual object for the source <see cref="FrameworkElement"/></param>
+        private static void SetFixedCenterPoint([NotNull] this FrameworkElement element, [NotNull] Visual visual)
+        {
+            if (double.IsNaN(element.Width) || double.IsNaN(element.Height))
+                throw new InvalidOperationException("The target element must have a fixed size");
+            visual.CenterPoint = new Vector3((float)element.Width, (float)element.Height, 0);
+        }
+
+        /// <summary>
+        /// Sets the <see cref="Visual.CenterPoint"/> property of a <see cref="Visual"/> object to the center of a given <see cref="FrameworkElement"/>
+        /// </summary>
+        /// <param name="element">The source element</param>
+        /// <param name="visual">The Visual object for the source <see cref="FrameworkElement"/></param>
+        private static async Task SetCenterPointAsync([NotNull] this FrameworkElement element, [NotNull] Visual visual)
         {
             // Check if the control hasn't already been loaded
             bool CheckLoadingPending() => element.ActualWidth + element.ActualHeight < 0.1;
@@ -484,12 +496,13 @@ namespace UICompositionAnimations
         private static async Task ManageCompositionFadeScaleAnimationAsync([NotNull] FrameworkElement element, Visual visual,
             float? startOp, float endOp,
             float? startXY, float endXY,
-            int msOp, int? msScale, int? msDelay, [NotNull] CompositionEasingFunction easingFunction)
+            int msOp, int? msScale, int? msDelay, [NotNull] CompositionEasingFunction easingFunction, bool useFixedScale)
         {
             // Get the default values and set the CenterPoint
             visual.StopAnimation("Opacity");
             visual.StopAnimation("Scale");
-            await element.SetCenterPoint(visual);
+            if (useFixedScale) element.SetFixedCenterPoint(visual);
+            else await element.SetCenterPointAsync(visual);
             if (!startOp.HasValue) startOp = visual.Opacity;
 
             // Get the easing function, the duration and delay
@@ -542,12 +555,14 @@ namespace UICompositionAnimations
         /// <param name="msDelay">The delay before the animation starts, in milliseconds. If null, there will be no delay</param>
         /// <param name="easingFunction">The easing function to use with the new animations</param>
         /// <param name="callback">An <see cref="Action"/> to execute when the new animations end</param>
+        /// <param name="useFixedSize">If true, the fixed <see cref="FrameworkElement.Height"/> and <see cref="FrameworkElement.Width"/> properties
+        /// will be used, otherwise the center point will be calculated using the <see cref="FrameworkElement.ActualHeight"/> and width</param>
         public static async void StartCompositionFadeScaleAnimation([NotNull] this FrameworkElement element,
             float? startOp, float endOp,
             float? startScale, float endScale,
-            int msOp, int? msScale, int? msDelay, EasingFunctionNames easingFunction, Action callback = null)
+            int msOp, int? msScale, int? msDelay, EasingFunctionNames easingFunction, Action callback = null, bool useFixedSize = false)
         {
-            await StartCompositionFadeScaleAnimationAsync(element, startOp, endOp, startScale, endScale, msOp, msScale, msDelay, easingFunction);
+            await StartCompositionFadeScaleAnimationAsync(element, startOp, endOp, startScale, endScale, msOp, msScale, msDelay, easingFunction, useFixedSize);
             callback?.Invoke();
         }
 
@@ -567,12 +582,14 @@ namespace UICompositionAnimations
         /// <param name="x2">The X coordinate of the second control point of the cubic beizer easing function</param>
         /// <param name="y2">The Y coordinate of the second control point of the cubic beizer easing function</param>
         /// <param name="callback">An <see cref="Action"/> to execute when the new animations end</param>
+        /// <param name="useFixedSize">If true, the fixed <see cref="FrameworkElement.Height"/> and <see cref="FrameworkElement.Width"/> properties
+        /// will be used, otherwise the center point will be calculated using the <see cref="FrameworkElement.ActualHeight"/> and width</param>
         public static async void StartCompositionFadeScaleAnimation([NotNull] this FrameworkElement element,
             float? startOp, float endOp,
             float? startScale, float endScale,
-            int msOp, int? msScale, int? msDelay, float x1, float y1, float x2, float y2, Action callback = null)
+            int msOp, int? msScale, int? msDelay, float x1, float y1, float x2, float y2, Action callback = null, bool useFixedSize = false)
         {
-            await StartCompositionFadeScaleAnimationAsync(element, startOp, endOp, startScale, endScale, msOp, msScale, msDelay, x1, y1, x2, y2);
+            await StartCompositionFadeScaleAnimationAsync(element, startOp, endOp, startScale, endScale, msOp, msScale, msDelay, x1, y1, x2, y2, useFixedSize);
             callback?.Invoke();
         }
 
@@ -588,14 +605,16 @@ namespace UICompositionAnimations
         /// <param name="msScale">The duration of the scale animation, in milliseconds</param>
         /// <param name="msDelay">The delay before the animation starts, in milliseconds. If null, there will be no delay</param>
         /// <param name="easingFunction">The easing function to use with the new animations</param>
+        /// <param name="useFixedSize">If true, the fixed <see cref="FrameworkElement.Height"/> and <see cref="FrameworkElement.Width"/> properties
+        /// will be used, otherwise the center point will be calculated using the <see cref="FrameworkElement.ActualHeight"/> and width</param>
         public static Task StartCompositionFadeScaleAnimationAsync([NotNull] this FrameworkElement element,
             float? startOp, float endOp,
             float? startScale, float endScale,
-            int msOp, int? msScale, int? msDelay, EasingFunctionNames easingFunction)
+            int msOp, int? msScale, int? msDelay, EasingFunctionNames easingFunction, bool useFixedSize = false)
         {
             Visual visual = element.GetVisual();
             CompositionEasingFunction ease = visual.GetEasingFunction(easingFunction);
-            return ManageCompositionFadeScaleAnimationAsync(element, visual, startOp, endOp, startScale, endScale, msOp, msScale, msDelay, ease);
+            return ManageCompositionFadeScaleAnimationAsync(element, visual, startOp, endOp, startScale, endScale, msOp, msScale, msDelay, ease, useFixedSize);
         }
 
         /// <summary>
@@ -613,24 +632,27 @@ namespace UICompositionAnimations
         /// <param name="y1">The Y coordinate of the first control point of the cubic beizer easing function</param>
         /// <param name="x2">The X coordinate of the second control point of the cubic beizer easing function</param>
         /// <param name="y2">The Y coordinate of the second control point of the cubic beizer easing function</param>
+        /// <param name="useFixedSize">If true, the fixed <see cref="FrameworkElement.Height"/> and <see cref="FrameworkElement.Width"/> properties
+        /// will be used, otherwise the center point will be calculated using the <see cref="FrameworkElement.ActualHeight"/> and width</param>
         public static Task StartCompositionFadeScaleAnimationAsync([NotNull] this FrameworkElement element,
             float? startOp, float endOp,
             float? startScale, float endScale,
-            int msOp, int? msScale, int? msDelay, float x1, float y1, float x2, float y2)
+            int msOp, int? msScale, int? msDelay, float x1, float y1, float x2, float y2, bool useFixedSize = false)
         {
             Visual visual = element.GetVisual();
             CompositionEasingFunction ease = visual.GetEasingFunction(x1, y1, x2, y2);
-            return ManageCompositionFadeScaleAnimationAsync(element, visual, startOp, endOp, startScale, endScale, msOp, msScale, msDelay, ease);
+            return ManageCompositionFadeScaleAnimationAsync(element, visual, startOp, endOp, startScale, endScale, msOp, msScale, msDelay, ease, useFixedSize);
         }
 
         // Sets an implicit fade and scale animation on the target element
         private static async Task SetCompositionFadeScaleImplicitAnimationAsync([NotNull] FrameworkElement element, [NotNull] Visual visual, ImplicitAnimationType type,
             float startOp, float endOp,
             float startScale, float endScale,
-            int msOp, int? msScale, int? msDelay, [NotNull] CompositionEasingFunction easingFunction)
+            int msOp, int? msScale, int? msDelay, [NotNull] CompositionEasingFunction easingFunction, bool useFixedSize)
         {
             // Get the default values and set the CenterPoint
-            await element.SetCenterPoint(visual);
+            if (useFixedSize) element.SetFixedCenterPoint(visual);
+            else await element.SetCenterPointAsync(visual);
 
             // Get the easing function, the duration and delay
             TimeSpan durationOp = TimeSpan.FromMilliseconds(msOp);
@@ -670,14 +692,16 @@ namespace UICompositionAnimations
         /// <param name="msScale">The duration of the scale animation, in milliseconds</param>
         /// <param name="msDelay">The delay before the animation starts, in milliseconds. If null, there will be no delay</param>
         /// <param name="easingFunction">The easing function to use with the new animations</param>
+        /// <param name="useFixedSize">If true, the fixed <see cref="FrameworkElement.Height"/> and <see cref="FrameworkElement.Width"/> properties
+        /// will be used, otherwise the center point will be calculated using the <see cref="FrameworkElement.ActualHeight"/> and width</param>
         public static Task SetCompositionFadeScaleImplicitAnimationAsync([NotNull] this FrameworkElement element, ImplicitAnimationType type,
             float startOp, float endOp,
             float startScale, float endScale,
-            int msOp, int? msScale, int? msDelay, EasingFunctionNames easingFunction)
+            int msOp, int? msScale, int? msDelay, EasingFunctionNames easingFunction, bool useFixedSize = false)
         {
             Visual visual = element.GetVisual();
             CompositionEasingFunction ease = visual.GetEasingFunction(easingFunction);
-            return SetCompositionFadeScaleImplicitAnimationAsync(element, visual, type, startOp, endOp, startScale, endScale, msOp, msScale, msDelay, ease);
+            return SetCompositionFadeScaleImplicitAnimationAsync(element, visual, type, startOp, endOp, startScale, endScale, msOp, msScale, msDelay, ease, useFixedSize);
         }
 
         /// <summary>
@@ -696,14 +720,16 @@ namespace UICompositionAnimations
         /// <param name="y1">The Y coordinate of the first control point of the cubic beizer easing function</param>
         /// <param name="x2">The X coordinate of the second control point of the cubic beizer easing function</param>
         /// <param name="y2">The Y coordinate of the second control point of the cubic beizer easing function</param>
+        /// <param name="useFixedSize">If true, the fixed <see cref="FrameworkElement.Height"/> and <see cref="FrameworkElement.Width"/> properties
+        /// will be used, otherwise the center point will be calculated using the <see cref="FrameworkElement.ActualHeight"/> and width</param>
         public static Task SetCompositionFadeScaleImplicitAnimationAsync([NotNull] this FrameworkElement element, ImplicitAnimationType type,
             float startOp, float endOp,
             float startScale, float endScale,
-            int msOp, int? msScale, int? msDelay, float x1, float y1, float x2, float y2)
+            int msOp, int? msScale, int? msDelay, float x1, float y1, float x2, float y2, bool useFixedSize = false)
         {
             Visual visual = element.GetVisual();
             CompositionEasingFunction ease = visual.GetEasingFunction(x1, y1, x2, y2);
-            return SetCompositionFadeScaleImplicitAnimationAsync(element, visual, type, startOp, endOp, startScale, endScale, msOp, msScale, msDelay, ease);
+            return SetCompositionFadeScaleImplicitAnimationAsync(element, visual, type, startOp, endOp, startScale, endScale, msOp, msScale, msDelay, ease, useFixedSize);
         }
 
         #endregion
@@ -713,11 +739,12 @@ namespace UICompositionAnimations
         // Manages the scale animation
         private static async Task<float> ManageCompositionScaleAnimationAsync([NotNull] FrameworkElement element, [NotNull] Visual visual,
             float? startXY, float endXY,
-            int ms, int? msDelay, [NotNull] CompositionEasingFunction easingFunction)
+            int ms, int? msDelay, [NotNull] CompositionEasingFunction easingFunction, bool useFixedSize)
         {
             // Get the default values and set the CenterPoint
             visual.StopAnimation("Scale");
-            await element.SetCenterPoint(visual);
+            if (useFixedSize) element.SetFixedCenterPoint(visual);
+            else await element.SetCenterPointAsync(visual);
 
             // Get the easing function, the duration and delay
             TimeSpan duration = TimeSpan.FromMilliseconds(ms);
@@ -763,9 +790,12 @@ namespace UICompositionAnimations
         /// <param name="easingFunction">The easing function to use with the new animations</param>
         /// <param name="reverse">If true, the animation will be played in reverse mode when it finishes for the first time</param>
         /// <param name="callback">An <see cref="Action"/> to execute when the new animations end</param>
+        /// <param name="useFixedSize">If true, the fixed <see cref="FrameworkElement.Height"/> and <see cref="FrameworkElement.Width"/> properties
+        /// will be used, otherwise the center point will be calculated using the <see cref="FrameworkElement.ActualHeight"/> and width</param>
         public static async void StartCompositionScaleAnimation([NotNull] this FrameworkElement element,
             float? startScale, float endScale,
-            int ms, int? msDelay, EasingFunctionNames easingFunction, bool reverse = false, Action callback = null)
+            int ms, int? msDelay, EasingFunctionNames easingFunction, 
+            bool reverse = false, Action callback = null, bool useFixedSize = false)
         {
             await element.StartCompositionScaleAnimationAsync(startScale, endScale, ms, msDelay, easingFunction, reverse);
             callback?.Invoke();
@@ -785,9 +815,11 @@ namespace UICompositionAnimations
         /// <param name="y2">The Y coordinate of the second control point of the cubic beizer easing function</param>
         /// <param name="reverse">If true, the animation will be played in reverse mode when it finishes for the first time</param>
         /// <param name="callback">An <see cref="Action"/> to execute when the new animations end</param>
+        /// <param name="useFixedSize">If true, the fixed <see cref="FrameworkElement.Height"/> and <see cref="FrameworkElement.Width"/> properties
+        /// will be used, otherwise the center point will be calculated using the <see cref="FrameworkElement.ActualHeight"/> and width</param>
         public static async void StartCompositionScaleAnimation([NotNull] this FrameworkElement element,
             float? startScale, float endScale,
-            int ms, int? msDelay, float x1, float y1, float x2, float y2, bool reverse = false, Action callback = null)
+            int ms, int? msDelay, float x1, float y1, float x2, float y2, bool reverse = false, Action callback = null, bool useFixedSize = false)
         {
             await element.StartCompositionScaleAnimationAsync(startScale, endScale, ms, msDelay, x1, y1, x2, y2, reverse);
             callback?.Invoke();
@@ -803,14 +835,16 @@ namespace UICompositionAnimations
         /// <param name="msDelay">The delay before the animation starts, in milliseconds. If null, there will be no delay</param>
         /// <param name="easingFunction">The easing function to use with the new animations</param>
         /// <param name="reverse">If true, the animation will be played in reverse mode when it finishes for the first time</param>
+        /// <param name="useFixedSize">If true, the fixed <see cref="FrameworkElement.Height"/> and <see cref="FrameworkElement.Width"/> properties
+        /// will be used, otherwise the center point will be calculated using the <see cref="FrameworkElement.ActualHeight"/> and width</param>
         public static async Task StartCompositionScaleAnimationAsync([NotNull] this FrameworkElement element,
             float? startScale, float endScale,
-            int ms, int? msDelay, EasingFunctionNames easingFunction, bool reverse = false)
+            int ms, int? msDelay, EasingFunctionNames easingFunction, bool reverse = false, bool useFixedSize = false)
         {
             Visual visual = element.GetVisual();
             CompositionEasingFunction ease = visual.GetEasingFunction(easingFunction);
-            startScale = await ManageCompositionScaleAnimationAsync(element, visual, startScale, endScale, ms, msDelay, ease);
-            if (reverse) await ManageCompositionScaleAnimationAsync(element, visual, endScale, startScale.Value, ms, null, ease);
+            startScale = await ManageCompositionScaleAnimationAsync(element, visual, startScale, endScale, ms, msDelay, ease, useFixedSize);
+            if (reverse) await ManageCompositionScaleAnimationAsync(element, visual, endScale, startScale.Value, ms, null, ease, useFixedSize);
         }
 
         /// <summary>
@@ -826,14 +860,16 @@ namespace UICompositionAnimations
         /// <param name="x2">The X coordinate of the second control point of the cubic beizer easing function</param>
         /// <param name="y2">The Y coordinate of the second control point of the cubic beizer easing function</param>
         /// <param name="reverse">If true, the animation will be played in reverse mode when it finishes for the first time</param>
+        /// <param name="useFixedSize">If true, the fixed <see cref="FrameworkElement.Height"/> and <see cref="FrameworkElement.Width"/> properties
+        /// will be used, otherwise the center point will be calculated using the <see cref="FrameworkElement.ActualHeight"/> and width</param>
         public static async Task StartCompositionScaleAnimationAsync([NotNull] this FrameworkElement element,
             float? startScale, float endScale,
-            int ms, int? msDelay, float x1, float y1, float x2, float y2, bool reverse = false)
+            int ms, int? msDelay, float x1, float y1, float x2, float y2, bool reverse = false, bool useFixedSize = false)
         {
             Visual visual = element.GetVisual();
             CompositionEasingFunction ease = visual.GetEasingFunction(x1, y1, x2, y2);
-            startScale = await ManageCompositionScaleAnimationAsync(element, visual, startScale, endScale, ms, msDelay, ease);
-            if (reverse) await ManageCompositionScaleAnimationAsync(element, visual, endScale, startScale.Value, ms, null, ease);
+            startScale = await ManageCompositionScaleAnimationAsync(element, visual, startScale, endScale, ms, msDelay, ease, useFixedSize);
+            if (reverse) await ManageCompositionScaleAnimationAsync(element, visual, endScale, startScale.Value, ms, null, ease, useFixedSize);
         }
 
         // Sets an implicit scale animation on the target element
@@ -842,7 +878,7 @@ namespace UICompositionAnimations
             int ms, int? msDelay, [NotNull] CompositionEasingFunction easingFunction)
         {
             // Get the default values and set the CenterPoint
-            await element.SetCenterPoint(visual);
+            await element.SetCenterPointAsync(visual);
 
             // Get the easing function, the duration and delay
             TimeSpan duration = TimeSpan.FromMilliseconds(ms);
@@ -1127,14 +1163,15 @@ namespace UICompositionAnimations
             float? startOp, float endOp,
             TranslationAxis axis, float? startXY, float endXY,
             float? startDegrees, float endDegrees,
-            int ms, int? msDelay, EasingFunctionNames easingFunction)
+            int ms, int? msDelay, EasingFunctionNames easingFunction, bool useFixedSize)
         {
             // Get the default values
             Visual visual = element.GetVisual();
             visual.StopAnimation("Opacity");
             visual.StopAnimation("Offset");
             visual.StopAnimation("RotationAngle");
-            await element.SetCenterPoint(visual);
+            if (useFixedSize) element.SetFixedCenterPoint(visual);
+            else await element.SetCenterPointAsync(visual);
 
             // Get the current opacity
             if (!startOp.HasValue) startOp = visual.Opacity;
@@ -1200,13 +1237,15 @@ namespace UICompositionAnimations
         /// <param name="easingFunction">The easing function to use with the new animations</param>
         /// <param name="reverse">If true, the animation will be played in reverse mode when it finishes for the first time</param>
         /// <param name="callback">An <see cref="Action"/> to execute when the new animations end</param>
+        /// <param name="useFixedSize">If true, the fixed <see cref="FrameworkElement.Height"/> and <see cref="FrameworkElement.Width"/> properties
+        /// will be used, otherwise the center point will be calculated using the <see cref="FrameworkElement.ActualHeight"/> and width</param>
         public static async void StartCompositionRollAnimation([NotNull] this FrameworkElement element,
             float? startOp, float endOp,
             TranslationAxis axis, float? startXY, float endXY,
             float? startDegrees, float endDegrees,
-            int ms, int? msDelay, EasingFunctionNames easingFunction, bool reverse = false, Action callback = null)
+            int ms, int? msDelay, EasingFunctionNames easingFunction, bool reverse = false, Action callback = null, bool useFixedSize = false)
         {
-            await element.ManageCompositionRollAnimationAsync(startOp, endOp, axis, startXY, endXY, startDegrees, endDegrees, ms, msDelay, easingFunction);
+            await element.ManageCompositionRollAnimationAsync(startOp, endOp, axis, startXY, endXY, startDegrees, endDegrees, ms, msDelay, easingFunction, useFixedSize);
             callback?.Invoke();
         }
 
@@ -1224,15 +1263,17 @@ namespace UICompositionAnimations
         /// <param name="ms">The duration of the animation, in milliseconds</param>
         /// <param name="msDelay">The delay before the animation starts, in milliseconds. If null, there will be no delay</param>
         /// <param name="easingFunction">The easing function to use with the new animations</param>
-        /// <param name="reverse">If true, the animation will be played in reverse mode when it finishes for the first time</param>>
+        /// <param name="reverse">If true, the animation will be played in reverse mode when it finishes for the first time</param>
+        /// <param name="useFixedSize">If true, the fixed <see cref="FrameworkElement.Height"/> and <see cref="FrameworkElement.Width"/> properties
+        /// will be used, otherwise the center point will be calculated using the <see cref="FrameworkElement.ActualHeight"/> and width</param>
         public static async Task StartCompositionRollAnimationAsync([NotNull] this FrameworkElement element,
             float? startOp, float endOp,
             TranslationAxis axis, float? startXY, float endXY,
             float? startDegrees, float endDegrees,
-            int ms, int? msDelay, EasingFunctionNames easingFunction, bool reverse = false)
+            int ms, int? msDelay, EasingFunctionNames easingFunction, bool reverse = false, bool useFixedSize = false)
         {
-            (float opacity, float offset, float degrees) = await element.ManageCompositionRollAnimationAsync(startOp, endOp, axis, startXY, endXY, startDegrees, endDegrees, ms, msDelay, easingFunction);
-            if (reverse) await element.ManageCompositionRollAnimationAsync(endOp, opacity, axis, endXY, offset, endDegrees, degrees, ms, msDelay, easingFunction);
+            (float opacity, float offset, float degrees) = await element.ManageCompositionRollAnimationAsync(startOp, endOp, axis, startXY, endXY, startDegrees, endDegrees, ms, msDelay, easingFunction, useFixedSize);
+            if (reverse) await element.ManageCompositionRollAnimationAsync(endOp, opacity, axis, endXY, offset, endDegrees, degrees, ms, msDelay, easingFunction, useFixedSize);
         }
 
         #endregion
@@ -1244,14 +1285,15 @@ namespace UICompositionAnimations
             float? startOp, float endOp,
             float? startXY, float endXY,
             float? startDegrees, float endDegrees,
-            int ms, int? msDelay, EasingFunctionNames easingFunction)
+            int ms, int? msDelay, EasingFunctionNames easingFunction, bool useFixedSize)
         {
             // Get the default values
             Visual visual = element.GetVisual();
             visual.StopAnimation("Opacity");
             visual.StopAnimation("Scale");
             visual.StopAnimation("RotationAngle");
-            await element.SetCenterPoint(visual);
+            if (useFixedSize) element.SetFixedCenterPoint(visual);
+            else await element.SetCenterPointAsync(visual);
 
             // Get the current opacity
             if (!startOp.HasValue) startOp = visual.Opacity;
@@ -1316,13 +1358,15 @@ namespace UICompositionAnimations
         /// <param name="easingFunction">The easing function to use with the new animations</param>
         /// <param name="reverse">If true, the animation will be played in reverse mode when it finishes for the first time</param>
         /// <param name="callback">An <see cref="Action"/> to execute when the new animations end</param>
+        /// <param name="useFixedSize">If true, the fixed <see cref="FrameworkElement.Height"/> and <see cref="FrameworkElement.Width"/> properties
+        /// will be used, otherwise the center point will be calculated using the <see cref="FrameworkElement.ActualHeight"/> and width</param>
         public static async void StartCompositionRotationFadeSlideAnimation([NotNull] this FrameworkElement element,
             float? startOp, float endOp,
             float? startXY, float endXY,
             float? startDegrees, float endDegrees,
-            int ms, int? msDelay, EasingFunctionNames easingFunction, bool reverse = false, Action callback = null)
+            int ms, int? msDelay, EasingFunctionNames easingFunction, bool reverse = false, Action callback = null, bool useFixedSize = false)
         {
-            await element.ManageCompositionRotationFadeSlideAnimationAsync(startOp, endOp, startXY, endXY, startDegrees, endDegrees, ms, msDelay, easingFunction);
+            await element.ManageCompositionRotationFadeSlideAnimationAsync(startOp, endOp, startXY, endXY, startDegrees, endDegrees, ms, msDelay, easingFunction, useFixedSize);
             callback?.Invoke();
         }
 
@@ -1339,15 +1383,17 @@ namespace UICompositionAnimations
         /// <param name="ms">The duration of the animation, in milliseconds</param>
         /// <param name="msDelay">The delay before the animation starts, in milliseconds. If null, there will be no delay</param>
         /// <param name="easingFunction">The easing function to use with the new animations</param>
-        /// <param name="reverse">If true, the animation will be played in reverse mode when it finishes for the first time</param>>
+        /// <param name="reverse">If true, the animation will be played in reverse mode when it finishes for the first time</param>
+        /// <param name="useFixedSize">If true, the fixed <see cref="FrameworkElement.Height"/> and <see cref="FrameworkElement.Width"/> properties
+        /// will be used, otherwise the center point will be calculated using the <see cref="FrameworkElement.ActualHeight"/> and width</param>
         public static async Task StartCompositionRotationFadeSlideAnimationAsync([NotNull] this FrameworkElement element,
             float? startOp, float endOp,
             float? startXY, float endXY,
             float? startDegrees, float endDegrees,
-            int ms, int? msDelay, EasingFunctionNames easingFunction, bool reverse = false)
+            int ms, int? msDelay, EasingFunctionNames easingFunction, bool reverse = false, bool useFixedSize = false)
         {
-            (float opacity, float degrees, float scale) = await element.ManageCompositionRotationFadeSlideAnimationAsync(startOp, endOp, startXY, endXY, startDegrees, endDegrees, ms, msDelay, easingFunction);
-            if (reverse) await element.ManageCompositionRotationFadeSlideAnimationAsync(endOp, opacity, endXY, scale, endDegrees, degrees, ms, msDelay, easingFunction);
+            (float opacity, float degrees, float scale) = await element.ManageCompositionRotationFadeSlideAnimationAsync(startOp, endOp, startXY, endXY, startDegrees, endDegrees, ms, msDelay, easingFunction, useFixedSize);
+            if (reverse) await element.ManageCompositionRotationFadeSlideAnimationAsync(endOp, opacity, endXY, scale, endDegrees, degrees, ms, msDelay, easingFunction, useFixedSize);
         }
 
         #endregion
@@ -1548,7 +1594,7 @@ namespace UICompositionAnimations
         {
             // Get the default values and set the CenterPoint
             Visual visual = element.GetVisual();
-            await element.SetCenterPoint(visual);
+            await element.SetCenterPointAsync(visual);
 
             // Set the scale property
             if (x == null && y == null && z == null) return;
@@ -1614,7 +1660,7 @@ namespace UICompositionAnimations
             visual.StopAnimation("Scale");
             visual.StopAnimation("Offset");
             visual.StopAnimation("Opacity");
-            await element.SetCenterPoint(visual);
+            await element.SetCenterPointAsync(visual);
 
             // Reset the visual properties
             visual.Scale = Vector3.One;
