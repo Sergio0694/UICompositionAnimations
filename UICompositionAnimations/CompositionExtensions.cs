@@ -1626,6 +1626,22 @@ namespace UICompositionAnimations
         }
 
         /// <summary>
+        /// Sets the offset property of the visual object for a given <see cref="UIElement"/> object
+        /// </summary>
+        /// <param name="element">The target element</param>
+        /// <param name="x">The x offset</param>
+        /// <param name="y">The y offset</param>
+        public static void SetVisualOffset(this UIElement element, float x, float y)
+        {
+            // Get the element visual and stop the animation
+            Visual visual = element.GetVisual();
+
+            // Set the desired offset
+            Vector3 offset = new Vector3(x, y, visual.Offset.Z);
+            visual.Offset = offset;
+        }
+
+        /// <summary>
         /// Sets the offset value of a given <see cref="UIElement"/> object
         /// </summary>
         /// <param name="element">The <see cref="UIElement"/> to edit</param>
@@ -1644,10 +1660,69 @@ namespace UICompositionAnimations
         }
 
         /// <summary>
+        /// Sets the offset value of a given <see cref="UIElement"/> object
+        /// </summary>
+        /// <param name="element">The <see cref="UIElement"/> to edit</param>
+        /// <param name="x">The x offset</param>
+        /// <param name="y">The y offset</param>
+        public static Task SetVisualOffsetAsync(this UIElement element, float x, float y)
+        {
+            Visual visual = element.GetVisual();
+            return Task.Run(() =>
+            {
+                Vector3 offset = new Vector3(x, y, visual.Offset.Z);
+                visual.Offset = offset;
+            });
+        }
+
+        /// <summary>
         /// Returns the visual offset for a target <see cref="UIElement"/>
         /// </summary>
         /// <param name="element">The input element</param>
         public static Vector3 GetVisualOffset(this UIElement element) => element.GetVisual().Offset;
+
+        /// <summary>
+        /// Sets the translation property of the visual object for a given <see cref="UIElement"/> object
+        /// </summary>
+        /// <param name="element">The target element</param>
+        /// <param name="axis">The translation axis to edit</param>
+        /// <param name="translation">The final translation value to set for that axis</param>
+        public static void SetVisualTranslation(this UIElement element, TranslationAxis axis, float translation)
+        {
+            // Get the element visual and stop the animation
+            Visual visual = element.GetVisual();
+
+            // Set the desired translation
+            /* [1.0, 0.0, 0.0, 0.0,
+                0.0, 1.0, 0.0, 0.0,
+                0.0, 0.0, 1.0, 0.0,
+                translation.X, translation.Y, translation.Z, 1.0] */
+            if (axis == TranslationAxis.X)
+            {
+                float y = visual.TransformMatrix.M42;
+                visual.TransformMatrix = Matrix4x4.CreateTranslation(translation, y, 0);
+            }
+            else
+            {
+                float x = visual.TransformMatrix.M41;
+                visual.TransformMatrix = Matrix4x4.CreateTranslation(x, translation, 0);
+            }
+        }
+
+        /// <summary>
+        /// Sets the translation property of the visual object for a given <see cref="UIElement"/> object
+        /// </summary>
+        /// <param name="element">The target element</param>
+        /// <param name="x">The x translation</param>
+        /// <param name="y">The y translation</param>
+        public static void SetVisualTranslation(this UIElement element, float x, float y)
+        {
+            // Get the element visual and stop the animation
+            Visual visual = element.GetVisual();
+
+            // Set the desired offset
+            visual.TransformMatrix = Matrix4x4.CreateTranslation(x, y, 0);
+        }
 
         /// <summary>
         /// Resets the scale, offset and opacity properties for a framework element
@@ -1690,3 +1765,4 @@ namespace UICompositionAnimations
         #endregion
     }
 }
+ 
