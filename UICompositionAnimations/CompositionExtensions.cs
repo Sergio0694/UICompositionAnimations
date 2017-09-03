@@ -952,7 +952,7 @@ namespace UICompositionAnimations
             int ms, int? msDelay, [NotNull] CompositionEasingFunction easingFunction, SlideAnimationType type)
         {
             // Get the default values
-            visual.StopAnimation(type == SlideAnimationType.Offset ? "Offset" : "MatrixTransform");
+            visual.StopAnimation(type == SlideAnimationType.Offset ? "Offset" : "MatrixTransform.Translation");
 
             // Get the easing function, the duration and delay
             TimeSpan duration = TimeSpan.FromMilliseconds(ms);
@@ -960,55 +960,40 @@ namespace UICompositionAnimations
             if (msDelay.HasValue) delay = TimeSpan.FromMilliseconds(msDelay.Value);
             else delay = null;
 
-            // Setup the animation
-            CompositionAnimation animation;
+            // Setup the animation start and end positions
+            Vector3 initialOffset, endOffset;
             if (type == SlideAnimationType.Offset)
             {
-                // Calculate the initial and final offset values
-                Vector3 
-                    initialOffset = visual.Offset,
-                    endOffset = visual.Offset;
-                if (axis == TranslationAxis.X)
-                {
-                    if (startXY.HasValue) initialOffset.X = startXY.Value;
-                    endOffset.X = endXY;
-                }
-                else
-                {
-                    if (startXY.HasValue) initialOffset.Y = startXY.Value;
-                    endOffset.Y = endXY;
-                }
-
-                // Offset animation
-                animation = visual.Compositor.CreateVector3KeyFrameAnimation(initialOffset, endOffset, duration, delay, easingFunction);
+                initialOffset = visual.Offset;
+                endOffset = visual.Offset;
             }
             else
             {
-                // Calculate the control points
-                Matrix4x4
-                    initialTransform = visual.TransformMatrix,
-                    endTransform = visual.TransformMatrix;
-                if (axis == TranslationAxis.X)
-                {
-                    if (startXY.HasValue) initialTransform.M41 = startXY.Value;
-                    endTransform.M41 = endXY;
-                }
-                else
-                {
-                    if (startXY.HasValue) initialTransform.M42 = startXY.Value;
-                    endTransform.M42 = endXY;
-                }
-                animation = visual.Compositor.CreateMatrix4x4KeyFrameAnimation(initialTransform, endTransform, duration, delay, easingFunction);
+                initialOffset = visual.TransformMatrix.Translation;
+                endOffset = visual.TransformMatrix.Translation;
             }
+
+            // Create the animation
+            if (axis == TranslationAxis.X)
+            {
+                if (startXY.HasValue) initialOffset.X = startXY.Value;
+                endOffset.X = endXY;
+            }
+            else
+            {
+                if (startXY.HasValue) initialOffset.Y = startXY.Value;
+                endOffset.Y = endXY;
+            }
+            Vector3KeyFrameAnimation animation = visual.Compositor.CreateVector3KeyFrameAnimation(initialOffset, endOffset, duration, delay, easingFunction);
 
             // Get the batch and start the animations
             CompositionScopedBatch batch = visual.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             TaskCompletionSource<object> tcs = new TaskCompletionSource<object>();
             batch.Completed += (s, e) => tcs.SetResult(null);
-            visual.StartAnimation(type == SlideAnimationType.Offset ? "Offset" : "MatrixTransform", animation);
+            visual.StartAnimation(type == SlideAnimationType.Offset ? "Offset" : "MatrixTransform.Translation", animation);
             batch.End();
             await tcs.Task;
-            return 0; // TODO: return starting values
+            return axis == TranslationAxis.X ? initialOffset.X : initialOffset.Y;
         }
 
         /// <summary>
@@ -1115,8 +1100,19 @@ namespace UICompositionAnimations
             else delay = null;
 
             // Calculate the initial and final offset values
-            Vector3 initialOffset = visual.Offset;
-            Vector3 endOffset = visual.Offset;
+            Vector3 initialOffset, endOffset;
+            if (animationType == SlideAnimationType.Offset)
+            {
+                initialOffset = visual.Offset;
+                endOffset = visual.Offset;
+            }
+            else
+            {
+                initialOffset = visual.TransformMatrix.Translation;
+                endOffset = visual.TransformMatrix.Translation;
+            }
+
+            // Setup the target values
             if (axis == TranslationAxis.X)
             {
                 initialOffset.X = start;
@@ -1131,7 +1127,7 @@ namespace UICompositionAnimations
             // Get the animations
             CompositionAnimationGroup group = visual.Compositor.CreateAnimationGroup();
             Vector3KeyFrameAnimation offsetAnimation = visual.Compositor.CreateVector3KeyFrameAnimation(initialOffset, endOffset, duration, delay, easingFunction);
-            offsetAnimation.Target = "Offset"; // TODO: implement translation option
+            offsetAnimation.Target = animationType == SlideAnimationType.Offset ? "Offset" : "MatrixTransform.Translation";
             group.Add(offsetAnimation);
 
             // Set the implicit animation
