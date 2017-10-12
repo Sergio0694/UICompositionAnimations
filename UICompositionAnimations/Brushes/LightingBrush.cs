@@ -79,11 +79,8 @@ namespace UICompositionAnimations.Brushes
         // The factory to create the brush
         CompositionEffectFactory _Factory;
 
-        // The invert effect for the opacity mask
-        InvertEffect _InverseEffect;
-
-        // The luminance effect to generate the opacity mask
-        LuminanceToAlphaEffect _LuminanceEffect;
+        // The color transformation effect to convert luminance to opacity
+        ColorMatrixEffect _ColorMatrixEffect;
 
         /// <inheritdoc cref="XamlCompositionBrushBase"/>
         protected override void OnConnected()
@@ -99,9 +96,20 @@ namespace UICompositionAnimations.Brushes
                     DiffuseAmount = (float)DiffuseAmount,
                     AmbientAmount = 0
                 };
-                _LuminanceEffect = new LuminanceToAlphaEffect { Source = sceneLightingEffect }; // Map the bright areas of the light to an opacity mask
-                _InverseEffect = new InvertEffect { Source = _LuminanceEffect }; // Invert the colors to make the brighter areas white
-                _Factory = Window.Current.Compositor.CreateEffectFactory(_InverseEffect, new[] { "Light.DiffuseAmount", "Light.SpecularShine", "Light.SpecularAmount" });
+
+                _ColorMatrixEffect = new ColorMatrixEffect()
+                {
+                    Source = sceneLightingEffect,
+                    ColorMatrix = new Matrix5x4()
+                    {
+                        M11 = 0, M21 = 0, M31 = 0, M41 = 0, M51 = 1,
+                        M12 = 0, M22 = 0, M32 = 0, M42 = 0, M52 = 1,
+                        M13 = 0, M23 = 0, M33 = 0, M43 = 0, M53 = 1,
+                        M14 = 0.2125f, M24 = 0.7154f, M34 = 0.0721f, M44 = 0, M54 = 0
+                    }
+                };
+
+                _Factory = Window.Current.Compositor.CreateEffectFactory(_ColorMatrixEffect, new[] { "Light.DiffuseAmount", "Light.SpecularShine", "Light.SpecularAmount" });
 
                 // Create and store the brush
                 _Brush = _Factory.CreateBrush();
@@ -117,8 +125,7 @@ namespace UICompositionAnimations.Brushes
             {
                 _Brush?.Dispose();
                 _Factory?.Dispose();
-                _LuminanceEffect?.Dispose();
-                _InverseEffect?.Dispose();
+                _ColorMatrixEffect?.Dispose();
                 CompositionBrush = null;
             }
             base.OnDisconnected();
