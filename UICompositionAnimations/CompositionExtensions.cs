@@ -949,10 +949,10 @@ namespace UICompositionAnimations
         // Manages the scale animation
         private static async Task<float> ManageCompositionSlideAnimationAsync([NotNull] Visual visual,
             TranslationAxis axis, float? startXY, float endXY,
-            int ms, int? msDelay, [NotNull] CompositionEasingFunction easingFunction)
+            int ms, int? msDelay, [NotNull] CompositionEasingFunction easingFunction, SlideAnimationType type)
         {
             // Get the default values
-            visual.StopAnimation("Offset");
+            visual.StopAnimation(type == SlideAnimationType.Offset ? "Offset" : "MatrixTransform.Translation");
 
             // Get the easing function, the duration and delay
             TimeSpan duration = TimeSpan.FromMilliseconds(ms);
@@ -960,9 +960,20 @@ namespace UICompositionAnimations
             if (msDelay.HasValue) delay = TimeSpan.FromMilliseconds(msDelay.Value);
             else delay = null;
 
-            // Calculate the initial and final offset values
-            Vector3 initialOffset = visual.Offset;
-            Vector3 endOffset = visual.Offset;
+            // Setup the animation start and end positions
+            Vector3 initialOffset, endOffset;
+            if (type == SlideAnimationType.Offset)
+            {
+                initialOffset = visual.Offset;
+                endOffset = visual.Offset;
+            }
+            else
+            {
+                initialOffset = visual.TransformMatrix.Translation;
+                endOffset = visual.TransformMatrix.Translation;
+            }
+
+            // Create the animation
             if (axis == TranslationAxis.X)
             {
                 if (startXY.HasValue) initialOffset.X = startXY.Value;
@@ -973,18 +984,16 @@ namespace UICompositionAnimations
                 if (startXY.HasValue) initialOffset.Y = startXY.Value;
                 endOffset.Y = endXY;
             }
-
-            // Scale animation
-            Vector3KeyFrameAnimation offsetAnimation = visual.Compositor.CreateVector3KeyFrameAnimation(initialOffset, endOffset, duration, delay, easingFunction);
+            Vector3KeyFrameAnimation animation = visual.Compositor.CreateVector3KeyFrameAnimation(initialOffset, endOffset, duration, delay, easingFunction);
 
             // Get the batch and start the animations
             CompositionScopedBatch batch = visual.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             TaskCompletionSource<object> tcs = new TaskCompletionSource<object>();
             batch.Completed += (s, e) => tcs.SetResult(null);
-            visual.StartAnimation("Offset", offsetAnimation);
+            visual.StartAnimation(type == SlideAnimationType.Offset ? "Offset" : "MatrixTransform.Translation", animation);
             batch.End();
             await tcs.Task;
-            return initialOffset.X;
+            return axis == TranslationAxis.X ? initialOffset.X : initialOffset.Y;
         }
 
         /// <summary>
@@ -999,9 +1008,10 @@ namespace UICompositionAnimations
         /// <param name="easingFunction">The easing function to use with the new animations</param>
         /// <param name="reverse">If true, the animation will be played in reverse mode when it finishes for the first time</param>
         /// <param name="callback">An <see cref="Action"/> to execute when the new animations end</param>
+        /// <param name="type">The type of animation to apply</param>
         public static async void StartCompositionSlideAnimation([NotNull] this UIElement element,
             TranslationAxis axis, float? startOffset, float endOffset,
-            int ms, int? msDelay, EasingFunctionNames easingFunction, bool reverse = false, Action callback = null)
+            int ms, int? msDelay, EasingFunctionNames easingFunction, bool reverse = false, Action callback = null, SlideAnimationType type = SlideAnimationType.Offset)
         {
             await element.StartCompositionSlideAnimationAsync(axis, startOffset, endOffset, ms, msDelay, easingFunction, reverse);
             callback?.Invoke();
@@ -1022,9 +1032,10 @@ namespace UICompositionAnimations
         /// <param name="y2">The Y coordinate of the second control point of the cubic beizer easing function</param>
         /// <param name="reverse">If true, the animation will be played in reverse mode when it finishes for the first time</param>
         /// <param name="callback">An <see cref="Action"/> to execute when the new animations end</param>
+        /// <param name="type">The type of animation to apply</param>
         public static async void StartCompositionSlideAnimation([NotNull] this UIElement element,
             TranslationAxis axis, float? startOffset, float endOffset,
-            int ms, int? msDelay, float x1, float y1, float x2, float y2, bool reverse = false, Action callback = null)
+            int ms, int? msDelay, float x1, float y1, float x2, float y2, bool reverse = false, Action callback = null, SlideAnimationType type = SlideAnimationType.Offset)
         {
             await element.StartCompositionSlideAnimationAsync(axis, startOffset, endOffset, ms, msDelay, x1, y1, x2, y2, reverse);
             callback?.Invoke();
@@ -1041,14 +1052,15 @@ namespace UICompositionAnimations
         /// <param name="msDelay">The delay before the animation starts, in milliseconds. If null, there will be no delay</param>
         /// <param name="easingFunction">The easing function to use with the new animations</param>
         /// <param name="reverse">If true, the animation will be played in reverse mode when it finishes for the first time</param>
+        /// <param name="type">The type of animation to apply</param>
         public static async Task StartCompositionSlideAnimationAsync([NotNull] this UIElement element,
             TranslationAxis axis, float? startOffset, float endOffset,
-            int ms, int? msDelay, EasingFunctionNames easingFunction, bool reverse = false)
+            int ms, int? msDelay, EasingFunctionNames easingFunction, bool reverse = false, SlideAnimationType type = SlideAnimationType.Offset)
         {
             Visual visual = element.GetVisual();
             CompositionEasingFunction ease = visual.GetEasingFunction(easingFunction);
-            startOffset = await ManageCompositionSlideAnimationAsync(visual, axis, startOffset, endOffset, ms, msDelay, ease);
-            if (reverse) await ManageCompositionSlideAnimationAsync(visual, axis, endOffset, startOffset.Value, ms, msDelay, ease);
+            startOffset = await ManageCompositionSlideAnimationAsync(visual, axis, startOffset, endOffset, ms, msDelay, ease, type);
+            if (reverse) await ManageCompositionSlideAnimationAsync(visual, axis, endOffset, startOffset.Value, ms, msDelay, ease, type);
         }
 
         /// <summary>
@@ -1065,20 +1077,21 @@ namespace UICompositionAnimations
         /// <param name="x2">The X coordinate of the second control point of the cubic beizer easing function</param>
         /// <param name="y2">The Y coordinate of the second control point of the cubic beizer easing function</param>
         /// <param name="reverse">If true, the animation will be played in reverse mode when it finishes for the first time</param>
+        /// <param name="type">The type of animation to apply</param>
         public static async Task StartCompositionSlideAnimationAsync([NotNull] this UIElement element,
             TranslationAxis axis, float? startOffset, float endOffset,
-            int ms, int? msDelay, float x1, float y1, float x2, float y2, bool reverse = false)
+            int ms, int? msDelay, float x1, float y1, float x2, float y2, bool reverse = false, SlideAnimationType type = SlideAnimationType.Offset)
         {
             Visual visual = element.GetVisual();
             CompositionEasingFunction ease = visual.GetEasingFunction(x1, y1, x2, y2);
-            startOffset = await ManageCompositionSlideAnimationAsync(visual, axis, startOffset, endOffset, ms, msDelay, ease);
-            if (reverse) await ManageCompositionSlideAnimationAsync(visual, axis, endOffset, startOffset.Value, ms, msDelay, ease);
+            startOffset = await ManageCompositionSlideAnimationAsync(visual, axis, startOffset, endOffset, ms, msDelay, ease, type);
+            if (reverse) await ManageCompositionSlideAnimationAsync(visual, axis, endOffset, startOffset.Value, ms, msDelay, ease, type);
         }
 
         // Sets an implicit slide animation on the target element
         private static void SetCompositionSlideImplicitAnimation([NotNull] UIElement element, [NotNull] Visual visual, ImplicitAnimationType type,
             TranslationAxis axis, float start, float end,
-            int ms, int? msDelay, [NotNull] CompositionEasingFunction easingFunction)
+            int ms, int? msDelay, [NotNull] CompositionEasingFunction easingFunction, SlideAnimationType animationType)
         {
             // Get the easing function, the duration and delay
             TimeSpan duration = TimeSpan.FromMilliseconds(ms);
@@ -1087,8 +1100,19 @@ namespace UICompositionAnimations
             else delay = null;
 
             // Calculate the initial and final offset values
-            Vector3 initialOffset = visual.Offset;
-            Vector3 endOffset = visual.Offset;
+            Vector3 initialOffset, endOffset;
+            if (animationType == SlideAnimationType.Offset)
+            {
+                initialOffset = visual.Offset;
+                endOffset = visual.Offset;
+            }
+            else
+            {
+                initialOffset = visual.TransformMatrix.Translation;
+                endOffset = visual.TransformMatrix.Translation;
+            }
+
+            // Setup the target values
             if (axis == TranslationAxis.X)
             {
                 initialOffset.X = start;
@@ -1103,7 +1127,7 @@ namespace UICompositionAnimations
             // Get the animations
             CompositionAnimationGroup group = visual.Compositor.CreateAnimationGroup();
             Vector3KeyFrameAnimation offsetAnimation = visual.Compositor.CreateVector3KeyFrameAnimation(initialOffset, endOffset, duration, delay, easingFunction);
-            offsetAnimation.Target = "Offset";
+            offsetAnimation.Target = animationType == SlideAnimationType.Offset ? "Offset" : "MatrixTransform.Translation";
             group.Add(offsetAnimation);
 
             // Set the implicit animation
@@ -1122,13 +1146,14 @@ namespace UICompositionAnimations
         /// <param name="ms">The duration of the scale animation, in milliseconds</param>
         /// <param name="msDelay">The delay before the animation starts, in milliseconds. If null, there will be no delay</param>
         /// <param name="easingFunction">The easing function to use with the new animations</param>
+        /// <param name="animationType">The type of animation to apply</param>
         public static void SetCompositionSlideImplicitAnimation([NotNull] this UIElement element, ImplicitAnimationType type,
             TranslationAxis axis, float start, float end,
-            int ms, int? msDelay, EasingFunctionNames easingFunction)
+            int ms, int? msDelay, EasingFunctionNames easingFunction, SlideAnimationType animationType = SlideAnimationType.Offset)
         {
             Visual visual = element.GetVisual();
             CompositionEasingFunction ease = visual.GetEasingFunction(easingFunction);
-            SetCompositionSlideImplicitAnimation(element, visual, type, axis, start, end, ms, msDelay, ease);
+            SetCompositionSlideImplicitAnimation(element, visual, type, axis, start, end, ms, msDelay, ease, animationType);
         }
 
         /// <summary>
@@ -1145,13 +1170,14 @@ namespace UICompositionAnimations
         /// <param name="y1">The Y coordinate of the first control point of the cubic beizer easing function</param>
         /// <param name="x2">The X coordinate of the second control point of the cubic beizer easing function</param>
         /// <param name="y2">The Y coordinate of the second control point of the cubic beizer easing function</param>
+        /// <param name="animationType">The type of animation to apply</param>
         public static void SetCompositionSlideImplicitAnimation([NotNull] this UIElement element, ImplicitAnimationType type,
             TranslationAxis axis, float start, float end,
-            int ms, int? msDelay, float x1, float y1, float x2, float y2)
+            int ms, int? msDelay, float x1, float y1, float x2, float y2, SlideAnimationType animationType = SlideAnimationType.Offset)
         {
             Visual visual = element.GetVisual();
             CompositionEasingFunction ease = visual.GetEasingFunction(x1, y1, x2, y2);
-            SetCompositionSlideImplicitAnimation(element, visual, type, axis, start, end, ms, msDelay, ease);
+            SetCompositionSlideImplicitAnimation(element, visual, type, axis, start, end, ms, msDelay, ease, animationType);
         }
 
         #endregion

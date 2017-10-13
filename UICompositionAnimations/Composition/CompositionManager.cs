@@ -268,6 +268,23 @@ namespace UICompositionAnimations.Composition
             return ani;
         }
 
+        /// <summary>
+        /// Creates a <see cref="CompositionAnimation"/> instance with the given parameters to on a target element, using an expression animation
+        /// </summary>
+        /// <param name="compositor">The current <see cref="Compositor"/> instance used to create the animation</param>
+        /// <param name="from">The optional starting value for the animation</param>
+        /// <param name="to">The final value for the animation</param>
+        /// <param name="duration">The animation duration</param>
+        /// <param name="delay">The optional initial delay for the animation</param>
+        /// <param name="ease">The optional easing function for the animation</param>
+        [PublicAPI]
+        [Pure, NotNull]
+        public static CompositionAnimation CreateMatrix4x4KeyFrameAnimation([NotNull] this Compositor compositor,
+            Matrix4x4? from, Matrix4x4 to, TimeSpan duration, TimeSpan? delay, [CanBeNull] CompositionEasingFunction ease = null)
+        {
+            throw new NotImplementedException(); // TODO
+        }
+
         #endregion
     }
 }
