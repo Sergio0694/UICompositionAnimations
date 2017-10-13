@@ -97,10 +97,11 @@ namespace UICompositionAnimations.Brushes
                     AmbientAmount = 0
                 };
 
-                _ColorMatrixEffect = new ColorMatrixEffect()
+                // Setup the color matrix effect to map the luminosity
+                _ColorMatrixEffect = new ColorMatrixEffect
                 {
                     Source = sceneLightingEffect,
-                    ColorMatrix = new Matrix5x4()
+                    ColorMatrix = new Matrix5x4
                     {
                         M11 = 0, M21 = 0, M31 = 0, M41 = 0, M51 = 1,
                         M12 = 0, M22 = 0, M32 = 0, M42 = 0, M52 = 1,
@@ -109,6 +110,7 @@ namespace UICompositionAnimations.Brushes
                     }
                 };
 
+                // Initialize the factory
                 _Factory = Window.Current.Compositor.CreateEffectFactory(_ColorMatrixEffect, new[] { "Light.DiffuseAmount", "Light.SpecularShine", "Light.SpecularAmount" });
 
                 // Create and store the brush
