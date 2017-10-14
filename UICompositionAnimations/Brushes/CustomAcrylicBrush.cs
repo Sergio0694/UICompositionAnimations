@@ -57,7 +57,7 @@ namespace UICompositionAnimations.Brushes
         /// Gets the <see cref="DependencyProperty"/> for the <see cref="Mode"/> property
         /// </summary>
         public static readonly DependencyProperty ModeProperty =
-            DependencyProperty.Register(nameof(Mode), typeof(AcrylicEffectMode), typeof(LightingBrush), new PropertyMetadata(AcrylicEffectMode.InAppBlur, OnModePropertyChanged));
+            DependencyProperty.Register(nameof(Mode), typeof(AcrylicEffectMode), typeof(CustomAcrylicBrush), new PropertyMetadata(AcrylicEffectMode.InAppBlur, OnModePropertyChanged));
 
         private static async void OnModePropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -88,7 +88,7 @@ namespace UICompositionAnimations.Brushes
         /// Gets the <see cref="DependencyProperty"/> for the <see cref="BlurAmount"/> property
         /// </summary>
         public static readonly DependencyProperty BlurAmountProperty =
-            DependencyProperty.Register(nameof(BlurAmount), typeof(double), typeof(LightingBrush), new PropertyMetadata(8d, OnBlurAmountPropertyChanged));
+            DependencyProperty.Register(nameof(BlurAmount), typeof(double), typeof(CustomAcrylicBrush), new PropertyMetadata(8d, OnBlurAmountPropertyChanged));
 
         private static async void OnBlurAmountPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -120,7 +120,7 @@ namespace UICompositionAnimations.Brushes
         /// Gets the <see cref="DependencyProperty"/> for the <see cref="BlurAnimationDuration"/> property
         /// </summary>
         public static readonly DependencyProperty BlurAnimationDurationProperty =
-            DependencyProperty.Register(nameof(BlurAnimationDuration), typeof(int), typeof(LightingBrush), new PropertyMetadata(0));
+            DependencyProperty.Register(nameof(BlurAnimationDuration), typeof(int), typeof(CustomAcrylicBrush), new PropertyMetadata(0));
 
         /// <summary>
         /// Gets or sets the color for the tint effect
@@ -135,7 +135,7 @@ namespace UICompositionAnimations.Brushes
         /// Gets the <see cref="DependencyProperty"/> for the <see cref="Tint"/> property
         /// </summary>
         public static readonly DependencyProperty TintProperty =
-            DependencyProperty.Register(nameof(Tint), typeof(Color), typeof(LightingBrush), new PropertyMetadata(Colors.Transparent, OnTintPropertyChanged));
+            DependencyProperty.Register(nameof(Tint), typeof(Color), typeof(CustomAcrylicBrush), new PropertyMetadata(Colors.Transparent, OnTintPropertyChanged));
 
         private static async void OnTintPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -161,7 +161,7 @@ namespace UICompositionAnimations.Brushes
         /// Gets the <see cref="DependencyProperty"/> for the <see cref="TintMix"/> property
         /// </summary>
         public static readonly DependencyProperty TintMixProperty =
-            DependencyProperty.Register(nameof(Tint), typeof(double), typeof(LightingBrush), new PropertyMetadata(0d, OnTintMixPropertyChanged));
+            DependencyProperty.Register(nameof(TintMix), typeof(double), typeof(CustomAcrylicBrush), new PropertyMetadata(0d, OnTintMixPropertyChanged));
 
         private static async void OnTintMixPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -191,7 +191,7 @@ namespace UICompositionAnimations.Brushes
         /// Gets the <see cref="DependencyProperty"/> for the <see cref="UnsupportedEffectFallbackColor"/> property
         /// </summary>
         public static readonly DependencyProperty UnsupportedEffectFallbackColorProperty =
-            DependencyProperty.Register(nameof(UnsupportedEffectFallbackColor), typeof(Color), typeof(LightingBrush), 
+            DependencyProperty.Register(nameof(UnsupportedEffectFallbackColor), typeof(Color), typeof(CustomAcrylicBrush), 
                 new PropertyMetadata(Colors.Transparent, OnUnsupportedEffectFallbackColorPropertyChanged));
 
         private static async void OnUnsupportedEffectFallbackColorPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
