@@ -17,16 +17,20 @@ namespace UICompositionAnimations.Helpers
     {
         #region OS build
 
-        static Version osversion;
+        static Version _OSVersion;
 
         /// <summary>
         /// Gets the current OS version for the device in use
         /// </summary>
+        /// <remarks>It is better to check the available APIs directly with the other properties exposed by the class
+        /// instead of just checking the OS version and use it to make further decisions.
+        /// In particular, users on a Windows Insider ring could already have a given set of APIs even though their OS
+        /// build doesn't exactly match the official Windows 10 version that supports a requested API contract.</remarks>
         public static Version OSVersion
         {
             get
             {
-                if (osversion == null)
+                if (_OSVersion == null)
                 {
                     string deviceFamilyVersion = AnalyticsInfo.VersionInfo.DeviceFamilyVersion;
                     ulong version = ulong.Parse(deviceFamilyVersion);
@@ -34,9 +38,9 @@ namespace UICompositionAnimations.Helpers
                     ulong minor = (version & 0x0000FFFF00000000L) >> 32;
                     ulong build = (version & 0x00000000FFFF0000L) >> 16;
                     ulong revision = version & 0x000000000000FFFFL;
-                    osversion = new Version((int)major, (int)minor, (int)build, (int)revision);
+                    _OSVersion = new Version((int)major, (int)minor, (int)build, (int)revision);
                 }
-                return osversion;
+                return _OSVersion;
             }
         }
 
@@ -44,19 +48,19 @@ namespace UICompositionAnimations.Helpers
         /// Gets whether or not the current OS version is at least the Anniversary Update (14393)
         /// </summary>
         /// <returns></returns>
-        public static bool IsAnniversaryUpdateOrLater => OSVersion.Build > 14000;
+        public static bool IsAnniversaryUpdateOrLater => OSVersion.Build > 14393;
 
         /// <summary>
         /// Gets whether or not the current OS version is at least the Creator's Update (15063)
         /// </summary>
         /// <returns></returns>
-        public static bool IsCreatorsUpdateOrLater => OSVersion.Build > 15000;
+        public static bool IsCreatorsUpdateOrLater => OSVersion.Build > 15063;
 
         /// <summary>
         /// Gets whether or not the current OS version is at least the Fall Creator's Update (16xxx)
         /// </summary>
         /// <returns></returns>
-        public static bool IsFallCreatorsUpdateOrLater => OSVersion.Build > 16000;
+        public static bool IsFallCreatorsUpdateOrLater => OSVersion.Build > 16299;
 
         #endregion
 
@@ -65,69 +69,33 @@ namespace UICompositionAnimations.Helpers
         /// <summary>
         /// Gets whether or not the connected animations APIs are available
         /// </summary>
-        public static bool AreConnectedAnimationsAvailable
-        {
-            get
-            {
-                return ApiInformation.IsTypePresent("Windows.UI.Xaml.Media.Animation.ConnectedAnimationService");
-            }
-        }
+        public static bool AreConnectedAnimationsAvailable => ApiInformation.IsTypePresent("Windows.UI.Xaml.Media.Animation.ConnectedAnimationService");
 
         /// <summary>
         /// Gets whether or not the APIs to find the focusable elements are available
         /// </summary>
-        public static bool IsFindFirstFocusableElementAvailable
-        {
-            get
-            {
-                return ApiInformation.IsMethodPresent("Windows.UI.Xaml.Input.FocusManager", nameof(FocusManager.FindFirstFocusableElement));
-            }
-        }
+        public static bool IsFindFirstFocusableElementAvailable => ApiInformation.IsMethodPresent("Windows.UI.Xaml.Input.FocusManager", nameof(FocusManager.FindFirstFocusableElement));
 
         /// <summary>
         /// Gets or sets whether the Target property of the composition animation APIs is available
         /// </summary>
-        public static bool SupportsCompositionAnimationTarget
-        {
-            get
-            {
-                return ApiInformation.IsPropertyPresent("Windows.UI.Composition.CompositionAnimation", nameof(CompositionAnimation.Target));
-            }
-        }
+        public static bool SupportsCompositionAnimationTarget => ApiInformation.IsPropertyPresent("Windows.UI.Composition.CompositionAnimation", nameof(CompositionAnimation.Target));
 
         /// <summary>
         /// Gets whether or not the composition animation group type is present
         /// </summary>
-        public static bool IsCompositionAnimationGroupAvailable
-        {
-            get
-            {
-                return ApiInformation.IsTypePresent("Windows.UI.Composition.CompositionAnimationGroup");
-            }
-        }
+        public static bool IsCompositionAnimationGroupAvailable => ApiInformation.IsTypePresent("Windows.UI.Composition.CompositionAnimationGroup");
 
         /// <summary>
         /// Gets whether or not the implicit animations APIs are available
         /// </summary>
         /// <returns></returns>
-        public static bool AreImplicitAnimationsAvailable
-        {
-            get
-            {
-                return ApiInformation.IsMethodPresent("Windows.UI.Composition.Compositor", nameof(Compositor.CreateImplicitAnimationCollection));
-            }
-        }
+        public static bool AreImplicitAnimationsAvailable => ApiInformation.IsMethodPresent("Windows.UI.Composition.Compositor", nameof(Compositor.CreateImplicitAnimationCollection));
 
         /// <summary>
         /// Gets whether or not the implicit show/hide animation APIs are available
         /// </summary>
-        public static bool AreImplicitShowHideAnimationsAvailable
-        {
-            get
-            {
-                return ApiInformation.IsMethodPresent("Windows.UI.Xaml.Hosting.ElementCompositionPreview", nameof(ElementCompositionPreview.SetImplicitShowAnimation));
-            }
-        }
+        public static bool AreImplicitShowHideAnimationsAvailable => ApiInformation.IsMethodPresent("Windows.UI.Xaml.Hosting.ElementCompositionPreview", nameof(ElementCompositionPreview.SetImplicitShowAnimation));
 
         /// <summary>
         /// Gets whether or not the XAML lights APIs are available
@@ -149,25 +117,15 @@ namespace UICompositionAnimations.Helpers
         /// Gets whether or not the host backdrop effects are available
         /// </summary>
         /// <returns></returns>
-        public static bool AreHostBackdropEffectsAvailable
-        {
-            get
-            {
-                return ApiInformation.IsTypePresent("Microsoft.Graphics.Canvas.Effects.GaussianBlurEffect") && ApiInformation.IsMethodPresent("Windows.UI.Composition.Compositor", nameof(Compositor.CreateHostBackdropBrush));
-            }
-        }
+        public static bool AreHostBackdropEffectsAvailable => ApiInformation.IsTypePresent("Microsoft.Graphics.Canvas.Effects.GaussianBlurEffect") &&
+                                                              ApiInformation.IsMethodPresent("Windows.UI.Composition.Compositor", nameof(Compositor.CreateHostBackdropBrush));
 
         /// <summary>
         /// Gets whether or not the backdrop effects APIs are available
         /// </summary>
         /// <returns></returns>
-        public static bool AreBackdropEffectsAvailable
-        {
-            get
-            {
-                return ApiInformation.IsTypePresent("Microsoft.Graphics.Canvas.Effects.GaussianBlurEffect") && ApiInformation.IsMethodPresent("Windows.UI.Composition.Compositor", nameof(Compositor.CreateBackdropBrush));
-            }
-        }
+        public static bool AreBackdropEffectsAvailable => ApiInformation.IsTypePresent("Microsoft.Graphics.Canvas.Effects.GaussianBlurEffect") &&
+                                                          ApiInformation.IsMethodPresent("Windows.UI.Composition.Compositor", nameof(Compositor.CreateBackdropBrush));
 
         /// <summary>
         /// Gets whether or not the drop shadows APIs are available
@@ -178,7 +136,7 @@ namespace UICompositionAnimations.Helpers
         /// Gets whether or not the staggering method is available
         /// </summary>
         /// <returns></returns>
-        public static bool IsRepositionStaggerringAvailable() => ApiInformation.IsMethodPresent("Windows.UI.Xaml.Media.Animation.RepositionThemeTransition", "IsStaggeringEnabled");
+        public static bool IsRepositionStaggerringAvailable => ApiInformation.IsMethodPresent("Windows.UI.Xaml.Media.Animation.RepositionThemeTransition", "IsStaggeringEnabled");
 
         /// <summary>
         /// Gets whether or not the RequiresPointer property is available
