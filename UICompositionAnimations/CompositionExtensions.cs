@@ -9,6 +9,7 @@ using Windows.UI.Composition;
 using Windows.UI.Xaml.Controls;
 using JetBrains.Annotations;
 using UICompositionAnimations.Composition;
+using UICompositionAnimations.Composition.Misc;
 using UICompositionAnimations.Enums;
 using UICompositionAnimations.Helpers;
 
@@ -1185,7 +1186,7 @@ namespace UICompositionAnimations
         #region Roll
 
         // Manages the roll animation
-        private static async Task<(float, float, float)> ManageCompositionRollAnimationAsync([NotNull] this FrameworkElement element,
+        private static async Task<CompositeRotationAnimationStartInfo> ManageCompositionRollAnimationAsync([NotNull] this FrameworkElement element,
             float? startOp, float endOp,
             TranslationAxis axis, float? startXY, float endXY,
             float? startDegrees, float endDegrees,
@@ -1244,7 +1245,7 @@ namespace UICompositionAnimations
             visual.StartAnimation("RotationAngle", rotateAnimation);
             batch.End();
             await tcs.Task;
-            return (startOp.Value, initialOffset.X, startDegrees.Value);
+            return new CompositeRotationAnimationStartInfo(startOp.Value, initialOffset.X, startDegrees.Value);
         }
 
         /// <summary>
@@ -1298,8 +1299,8 @@ namespace UICompositionAnimations
             float? startDegrees, float endDegrees,
             int ms, int? msDelay, EasingFunctionNames easingFunction, bool reverse = false, bool useFixedSize = false)
         {
-            (float opacity, float offset, float degrees) = await element.ManageCompositionRollAnimationAsync(startOp, endOp, axis, startXY, endXY, startDegrees, endDegrees, ms, msDelay, easingFunction, useFixedSize);
-            if (reverse) await element.ManageCompositionRollAnimationAsync(endOp, opacity, axis, endXY, offset, endDegrees, degrees, ms, msDelay, easingFunction, useFixedSize);
+            CompositeRotationAnimationStartInfo startInfo = await element.ManageCompositionRollAnimationAsync(startOp, endOp, axis, startXY, endXY, startDegrees, endDegrees, ms, msDelay, easingFunction, useFixedSize);
+            if (reverse) await element.ManageCompositionRollAnimationAsync(endOp, startInfo.Opacity, axis, endXY, startInfo.SecondaryProperty, endDegrees, startInfo.Degrees, ms, msDelay, easingFunction, useFixedSize);
         }
 
         #endregion
@@ -1307,7 +1308,7 @@ namespace UICompositionAnimations
         #region Rotation + fade + slide
 
         // Manages the composite animation
-        private static async Task<(float, float, float)> ManageCompositionRotationFadeSlideAnimationAsync([NotNull] this FrameworkElement element,
+        private static async Task<CompositeRotationAnimationStartInfo> ManageCompositionRotationFadeSlideAnimationAsync([NotNull] this FrameworkElement element,
             float? startOp, float endOp,
             float? startXY, float endXY,
             float? startDegrees, float endDegrees,
@@ -1366,7 +1367,7 @@ namespace UICompositionAnimations
             visual.StartAnimation("RotationAngle", rotateAnimation);
             batch.End();
             await tcs.Task;
-            return (startOp.Value, initialScale.X, startDegrees.Value);
+            return new CompositeRotationAnimationStartInfo(startOp.Value, initialScale.X, startDegrees.Value);
         }
 
         /// <summary>
@@ -1418,8 +1419,8 @@ namespace UICompositionAnimations
             float? startDegrees, float endDegrees,
             int ms, int? msDelay, EasingFunctionNames easingFunction, bool reverse = false, bool useFixedSize = false)
         {
-            (float opacity, float degrees, float scale) = await element.ManageCompositionRotationFadeSlideAnimationAsync(startOp, endOp, startXY, endXY, startDegrees, endDegrees, ms, msDelay, easingFunction, useFixedSize);
-            if (reverse) await element.ManageCompositionRotationFadeSlideAnimationAsync(endOp, opacity, endXY, scale, endDegrees, degrees, ms, msDelay, easingFunction, useFixedSize);
+            CompositeRotationAnimationStartInfo startInfo = await element.ManageCompositionRotationFadeSlideAnimationAsync(startOp, endOp, startXY, endXY, startDegrees, endDegrees, ms, msDelay, easingFunction, useFixedSize);
+            if (reverse) await element.ManageCompositionRotationFadeSlideAnimationAsync(endOp, startInfo.Opacity, endXY, startInfo.SecondaryProperty, endDegrees, startInfo.Degrees, ms, msDelay, easingFunction, useFixedSize);
         }
 
         #endregion
