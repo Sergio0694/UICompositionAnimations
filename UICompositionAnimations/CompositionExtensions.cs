@@ -1014,7 +1014,7 @@ namespace UICompositionAnimations
             TranslationAxis axis, float? startOffset, float endOffset,
             int ms, int? msDelay, EasingFunctionNames easingFunction, bool reverse = false, Action callback = null, SlideAnimationType type = SlideAnimationType.Offset)
         {
-            await element.StartCompositionSlideAnimationAsync(axis, startOffset, endOffset, ms, msDelay, easingFunction, reverse);
+            await element.StartCompositionSlideAnimationAsync(axis, startOffset, endOffset, ms, msDelay, easingFunction, reverse, type);
             callback?.Invoke();
         }
 
@@ -1038,7 +1038,7 @@ namespace UICompositionAnimations
             TranslationAxis axis, float? startOffset, float endOffset,
             int ms, int? msDelay, float x1, float y1, float x2, float y2, bool reverse = false, Action callback = null, SlideAnimationType type = SlideAnimationType.Offset)
         {
-            await element.StartCompositionSlideAnimationAsync(axis, startOffset, endOffset, ms, msDelay, x1, y1, x2, y2, reverse);
+            await element.StartCompositionSlideAnimationAsync(axis, startOffset, endOffset, ms, msDelay, x1, y1, x2, y2, reverse, type);
             callback?.Invoke();
         }
 
@@ -1513,9 +1513,9 @@ namespace UICompositionAnimations
             DropShadow shadow = compositor.CreateDropShadow();
             shadow.Color = color;
             shadow.Opacity = opacity;
+            shadow.Offset = new Vector3(offsetX, offsetY, 0);
             sprite.Shadow = shadow;
             sprite.Size = new Vector2(width ?? (float)element.Width, height ?? (float)element.Height);
-            sprite.Offset = new Vector3(offsetX, offsetY, 0);
 
             // Clip it and add it to the visual tree
             InsetClip clip = compositor.CreateInsetClip(
