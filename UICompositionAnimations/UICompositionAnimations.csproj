@@ -135,6 +135,7 @@
     <Compile Include="Enums\BitmapCacheMode.cs" />
     <Compile Include="Enums\EasingFunctionNames.cs" />
     <Compile Include="Enums\ImplicitAnimationType.cs" />
+    <Compile Include="Enums\MarginSide.cs" />
     <Compile Include="Enums\SlideAnimationType.cs" />
     <Compile Include="Helpers\ApiInformationHelper.cs" />
     <Compile Include="Helpers\ColorConverter.cs" />

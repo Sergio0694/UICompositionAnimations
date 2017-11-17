@@ -71,16 +71,15 @@ namespace UICompositionAnimations.XAMLTransform
             TaskCompletionSource<object> tcs = new TaskCompletionSource<object>();
 
             // Prepare the handler
-            EventHandler<object> handler = null;
-            handler = delegate
+            void Handler(object sender, object e)
             {
                 action();
-                target.Completed -= handler;
+                target.Completed -= Handler;
                 tcs.SetResult(null);
-            };
+            }
 
             // Assign the handler, start the animation and return the Task to wait for
-            target.Completed += handler;
+            target.Completed += Handler;
             target.Begin();
             return tcs.Task;
         }
