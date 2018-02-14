@@ -1425,6 +1425,98 @@ namespace UICompositionAnimations
 
         #endregion
 
+        #region Clip
+
+        // Manages the clip animation
+        private static Task ManageCompositionClipAnimationAsync([NotNull] Visual visual,
+            float? start, float end, MarginSide side,
+            int ms, int? msDelay, [NotNull] CompositionEasingFunction easingFunction)
+        {
+            // Setup
+            InsetClip clip = visual.Clip as InsetClip ?? ((InsetClip)(visual.Clip = visual.Compositor.CreateInsetClip()));
+            String property;
+            switch (side)
+            {
+                case MarginSide.Top: 
+                    property = nameof(InsetClip.TopInset); 
+                    if (!start.HasValue) start = clip.TopInset;
+                    break;
+                case MarginSide.Bottom: 
+                    property = nameof(InsetClip.BottomInset); 
+                    if (!start.HasValue) start = clip.BottomInset;
+                    break;
+                case MarginSide.Right: 
+                    property = nameof(InsetClip.RightInset); 
+                    if (!start.HasValue) start = clip.RightInset;
+                    break;
+                case MarginSide.Left: 
+                    property = nameof(InsetClip.LeftInset); 
+                    if (!start.HasValue) start = clip.LeftInset;
+                    break;
+                default: throw new ArgumentException("Invalid side", nameof(side));
+            }
+
+            // Get the default values
+            visual.StopAnimation(property);            
+
+            // Get the easing function, the duration and delay
+            TimeSpan duration = TimeSpan.FromMilliseconds(ms);
+            TimeSpan? delay;
+            if (msDelay.HasValue) delay = TimeSpan.FromMilliseconds(msDelay.Value);
+            else delay = null;
+
+            // Get the opacity animation
+            ScalarKeyFrameAnimation animation = visual.Compositor.CreateScalarKeyFrameAnimation(start, end, duration, delay, easingFunction);
+
+            // Close the batch and manage its event
+            CompositionScopedBatch batch = visual.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            TaskCompletionSource<object> tcs = new TaskCompletionSource<object>();
+            batch.Completed += (s, e) => tcs.SetResult(null);
+            visual.StartAnimation(property, animation);
+            batch.End();
+            return tcs.Task;
+        }
+
+        /// <summary>
+        /// Starts a clip animation on the target <see cref="UIElement"/> and optionally runs a callback <see cref="Action"/> when the animation finishes
+        /// </summary>
+        /// <param name="element">The <see cref="UIElement"/> to animate</param>
+        /// <param name="start">The initial clip value. If null, the current clip value will be used</param>
+        /// <param name="end">The final clip value</param>
+        /// <param name="side">The clip side to animate</param>
+        /// <param name="ms">The duration of the animation, in milliseconds</param>
+        /// <param name="msDelay">The delay before the animation starts, in milliseconds. If null, there will be no delay</param>
+        /// <param name="easingFunction">The easing function to use with the new animations</param>
+        /// <param name="callback">An <see cref="Action"/> to execute when the new animations end</param>
+        public static async void StartCompositionClipAnimation([NotNull] this UIElement element,
+            float? start, float end, MarginSide side,
+            int ms, int? msDelay, EasingFunctionNames easingFunction, Action callback = null)
+        {
+            await StartCompositionFadeAnimationAsync(element, start, end, ms, msDelay, easingFunction);
+            callback?.Invoke();
+        }
+
+        /// <summary>
+        /// Starts a clip animation on the target <see cref="UIElement"/> and returns a <see cref="Task"/> that completes when the animation ends
+        /// </summary>
+        /// <param name="element">The <see cref="UIElement"/> to animate</param>
+        /// <param name="start">The initial clip value. If null, the current clip value will be used</param>
+        /// <param name="end">The final clip value</param>
+        /// <param name="side">The clip side to animate</param>
+        /// <param name="ms">The duration of the animation, in milliseconds</param>
+        /// <param name="msDelay">The delay before the animation starts, in milliseconds. If null, there will be no delay</param>
+        /// <param name="easingFunction">The easing function to use with the new animations</param>
+        public static Task StartCompositionClipAnimationAsync([NotNull] this UIElement element,
+            float? start, float end, MarginSide side,
+            int ms, int? msDelay, EasingFunctionNames easingFunction)
+        {
+            Visual visual = element.GetVisual();
+            CompositionEasingFunction ease = visual.GetEasingFunction(easingFunction);
+            return ManageCompositionFadeAnimationAsync(visual, start, end, ms, msDelay, ease);
+        }
+
+        #endregion
+
         #region Expression animations
 
         /// <summary>
