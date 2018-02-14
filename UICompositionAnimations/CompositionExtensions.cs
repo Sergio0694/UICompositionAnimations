@@ -1457,7 +1457,7 @@ namespace UICompositionAnimations
             }
 
             // Get the default values
-            visual.StopAnimation(property);            
+            clip.StopAnimation(property);            
 
             // Get the easing function, the duration and delay
             TimeSpan duration = TimeSpan.FromMilliseconds(ms);
@@ -1466,13 +1466,13 @@ namespace UICompositionAnimations
             else delay = null;
 
             // Get the opacity animation
-            ScalarKeyFrameAnimation animation = visual.Compositor.CreateScalarKeyFrameAnimation(start, end, duration, delay, easingFunction);
+            ScalarKeyFrameAnimation animation = clip.Compositor.CreateScalarKeyFrameAnimation(start, end, duration, delay, easingFunction);
 
             // Close the batch and manage its event
-            CompositionScopedBatch batch = visual.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            CompositionScopedBatch batch = clip.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             TaskCompletionSource<object> tcs = new TaskCompletionSource<object>();
             batch.Completed += (s, e) => tcs.SetResult(null);
-            visual.StartAnimation(property, animation);
+            clip.StartAnimation(property, animation);
             batch.End();
             return tcs.Task;
         }
@@ -1492,7 +1492,7 @@ namespace UICompositionAnimations
             float? start, float end, MarginSide side,
             int ms, int? msDelay, EasingFunctionNames easingFunction, Action callback = null)
         {
-            await StartCompositionFadeAnimationAsync(element, start, end, ms, msDelay, easingFunction);
+            await StartCompositionClipAnimationAsync(element, start, end, side, ms, msDelay, easingFunction);
             callback?.Invoke();
         }
 
@@ -1512,7 +1512,7 @@ namespace UICompositionAnimations
         {
             Visual visual = element.GetVisual();
             CompositionEasingFunction ease = visual.GetEasingFunction(easingFunction);
-            return ManageCompositionFadeAnimationAsync(visual, start, end, ms, msDelay, ease);
+            return ManageCompositionClipAnimationAsync(visual, start, end, side, ms, msDelay, ease);
         }
 
         #endregion
