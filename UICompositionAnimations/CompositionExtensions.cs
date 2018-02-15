@@ -12,6 +12,7 @@ using UICompositionAnimations.Composition;
 using UICompositionAnimations.Composition.Misc;
 using UICompositionAnimations.Enums;
 using UICompositionAnimations.Helpers;
+using Windows.UI.Xaml.Shapes;
 
 namespace UICompositionAnimations
 {
@@ -1590,13 +1591,16 @@ namespace UICompositionAnimations
         /// <param name="clipMargin">The optional margin of the clip area of the shadow</param>
         /// <param name="clipOffsetX">The optional horizontal offset of the clip area of the shadow</param>
         /// <param name="clipOffsetY">The optional vertical offset of the clip area of the shadow</param>
+        /// <param name="blurRadius">The optional explicit shadow blur radius</param>
+        /// <param name="maskElement">The optional <see cref="UIElement"/> to use to create an alpha mask for the shadow</param>
         /// <returns>The <see cref="SpriteVisual"/> object that hosts the shadow</returns>
         public static SpriteVisual AttachVisualShadow(
             [NotNull] this FrameworkElement element, [NotNull] UIElement target, bool apply,
             float? width, float? height,
             Color color, float opacity,
             float offsetX = 0, float offsetY = 0, 
-            Thickness? clipMargin = null, float clipOffsetX = 0, float clipOffsetY = 0)
+            Thickness? clipMargin = null, float clipOffsetX = 0, float clipOffsetY = 0,
+            float? blurRadius = null, [CanBeNull] UIElement maskElement = null)
         {
             // Setup the shadow
             Visual elementVisual = ElementCompositionPreview.GetElementVisual(element);
@@ -1606,6 +1610,7 @@ namespace UICompositionAnimations
             shadow.Color = color;
             shadow.Opacity = opacity;
             shadow.Offset = new Vector3(offsetX, offsetY, 0);
+            if (blurRadius != null) shadow.BlurRadius = blurRadius.Value;
             sprite.Shadow = shadow;
             sprite.Size = new Vector2(width ?? (float)element.Width, height ?? (float)element.Height);
 
@@ -1617,6 +1622,16 @@ namespace UICompositionAnimations
                 (float)(clipMargin?.Right ?? 0), (float)(clipMargin?.Bottom ?? 0));
                 clip.Offset = new Vector2(clipOffsetX, clipOffsetY);
                 sprite.Clip = clip;
+            }
+
+            // Alpha mask
+            switch (maskElement)
+            {
+                case null: break;
+                case Shape shape: shadow.Mask = shape.GetAlphaMask(); break;
+                case Image image: shadow.Mask = image.GetAlphaMask(); break;
+                case TextBlock textBlock: shadow.Mask = textBlock.GetAlphaMask(); break;
+                default: break;
             }
             if (apply) ElementCompositionPreview.SetElementChildVisual(target, sprite);
             return sprite;
