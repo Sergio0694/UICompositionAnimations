@@ -1,7 +1,8 @@
 <?xml version="1.0"?>
 <package>
   <metadata>
-    <id>Sergio0694.UWP.UICompositionAnimations</id>
+    <id>UICompositionAnimations</id>
+    <version>$version$</version>
     <title>UICompositionAnimations</title>
     <description>A wrapper UWP PCL to work with Windows.UI.Composition and XAML animations, and Win2D effects</description>
     <authors>Sergio Pedri</authors>
