@@ -1847,6 +1847,48 @@ namespace UICompositionAnimations
         }
 
         /// <summary>
+        /// Sets the clip property of the visual object for a given <see cref="UIElement"/> object
+        /// </summary>
+        /// <param name="element">The target element</param>
+        /// <param name="clip">The desired clip margins to set</param>
+        public static void SetVisualClip(this UIElement element, Thickness clip)
+        {
+            // Get the element visual
+            Visual visual = element.GetVisual();
+
+            // Set the desired clip
+            InsetClip inset = visual.Clip as InsetClip ?? (InsetClip)(visual.Clip = visual.Compositor.CreateInsetClip());
+            inset.TopInset = (float)clip.Top;
+            inset.BottomInset = (float)clip.Bottom;
+            inset.LeftInset = (float)clip.Left;
+            inset.RightInset = (float)clip.Right;
+            visual.Clip = inset;
+        }
+
+        /// <summary>
+        /// Sets the clip property of the visual object for a given <see cref="UIElement"/> object
+        /// </summary>
+        /// <param name="element">The target element</param>
+        /// <param name="clip">The desired clip value to set</param>
+        /// <param name="side">The target clip side to update</param>
+        public static void SetVisualClip(this UIElement element, float clip, MarginSide side)
+        {
+            // Get the element visual
+            Visual visual = element.GetVisual();
+
+            // Set the desired clip
+            InsetClip inset = visual.Clip as InsetClip ?? (InsetClip)(visual.Clip = visual.Compositor.CreateInsetClip());
+            switch (side)
+            {
+                case MarginSide.Top: inset.TopInset = clip; break;
+                case MarginSide.Bottom: inset.BottomInset = clip; break;
+                case MarginSide.Right: inset.RightInset = clip; break;
+                case MarginSide.Left: inset.LeftInset = clip; break;
+                default: throw new ArgumentException("Invalid side", nameof(side));
+            }
+        }
+
+        /// <summary>
         /// Resets the scale, offset and opacity properties for a framework element
         /// </summary>
         /// <param name="element">The element to edit</param>
