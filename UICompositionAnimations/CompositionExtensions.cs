@@ -1609,12 +1609,15 @@ namespace UICompositionAnimations
             sprite.Shadow = shadow;
             sprite.Size = new Vector2(width ?? (float)element.Width, height ?? (float)element.Height);
 
-            // Clip it and add it to the visual tree
-            InsetClip clip = compositor.CreateInsetClip(
+            // Clip it (if needed) and add it to the visual tree
+            if (clipMargin != null || clipOffsetX > 0 || clipOffsetY > 0)
+            {
+                InsetClip clip = compositor.CreateInsetClip(
                 (float)(clipMargin?.Left ?? 0), (float)(clipMargin?.Top ?? 0),
                 (float)(clipMargin?.Right ?? 0), (float)(clipMargin?.Bottom ?? 0));
-            clip.Offset = new Vector2(clipOffsetX, clipOffsetY);
-            sprite.Clip = clip;
+                clip.Offset = new Vector2(clipOffsetX, clipOffsetY);
+                sprite.Clip = clip;
+            }
             if (apply) ElementCompositionPreview.SetElementChildVisual(target, sprite);
             return sprite;
         }
