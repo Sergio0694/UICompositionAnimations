@@ -1,4 +1,5 @@
 ﻿using System;
+using Windows.ApplicationModel;
 using Windows.ApplicationModel.Resources.Core;
 using Windows.Foundation.Collections;
 using Windows.Foundation.Metadata;
@@ -61,6 +62,13 @@ namespace UICompositionAnimations.Helpers
         /// </summary>
         /// <returns></returns>
         public static bool IsFallCreatorsUpdateOrLater => OSVersion.Build > 16299;
+
+        /// <summary>
+        /// Gets whether or not the design mode is currently enabled (regardless of the target SDK)
+        /// </summary>
+        public static bool IsDesignModeActive => ApiInformation.IsMethodPresent("Windows.ApplicationModel.DesignMode", nameof(DesignMode.DesignMode2Enabled))
+            ? DesignMode.DesignMode2Enabled
+            : DesignMode.DesignModeEnabled;
 
         #endregion
 
