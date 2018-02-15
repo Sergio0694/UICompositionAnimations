@@ -120,7 +120,7 @@
     <Compile Include="Behaviours\Misc\CompositionAnimationParameters.cs" />
     <Compile Include="Behaviours\Misc\FixedAnimationType.cs" />
     <Compile Include="Brushes\Cache\HostBackdropInstanceWrapper.cs" />
-    <Compile Include="Brushes\TextureBrush.cs" />
+    <Compile Include="Brushes\NoiseTextureBrush.cs" />
     <Compile Include="Brushes\CustomAcrylicBrush.cs" />
     <Compile Include="Brushes\LightingBrush.cs" />
     <Compile Include="CompositionExtensions.cs" />
