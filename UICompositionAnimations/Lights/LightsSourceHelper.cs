@@ -62,7 +62,7 @@ namespace UICompositionAnimations.Lights
         private static void OnIsLightsContainerPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             // Designer test
-            if (ApiInformationHelper.IsDesignModeActive) return;
+            if (DesignMode.DesignModeEnabled) return;
 
             // Platform test
             if (ApiInformationHelper.IsMobileDevice) return;

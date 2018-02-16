@@ -11,6 +11,7 @@ using Windows.UI.Xaml.Media;
 using UICompositionAnimations.Behaviours;
 using UICompositionAnimations.Enums;
 using UICompositionAnimations.Helpers;
+using Windows.ApplicationModel;
 
 namespace UICompositionAnimations.Brushes
 {
@@ -106,7 +107,7 @@ namespace UICompositionAnimations.Brushes
         private async Task SetupEffectAsync()
         {
             // Designer check
-            if (ApiInformationHelper.IsDesignModeActive) return;
+            if (DesignMode.DesignModeEnabled) return;
 
             // Dictionary to track the reference and animatable parameters
             IDictionary<String, CompositionBrush> sourceParameters = new Dictionary<String, CompositionBrush>();

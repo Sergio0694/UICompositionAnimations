@@ -14,6 +14,7 @@ using UICompositionAnimations.Behaviours.Effects;
 using UICompositionAnimations.Brushes.Cache;
 using UICompositionAnimations.Enums;
 using UICompositionAnimations.Helpers;
+using Windows.ApplicationModel;
 
 namespace UICompositionAnimations.Brushes
 {
@@ -343,7 +344,7 @@ namespace UICompositionAnimations.Brushes
         private async Task SetupEffectAsync()
         {
             // Designer check
-            if (ApiInformationHelper.IsDesignModeActive) return;
+            if (DesignMode.DesignModeEnabled) return;
 
             // Platform check
             if (ApiInformationHelper.IsMobileDevice && Mode == AcrylicEffectMode.HostBackdrop)
