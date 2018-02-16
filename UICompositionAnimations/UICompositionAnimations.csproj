@@ -11,7 +11,7 @@
     <AssemblyName>UICompositionAnimations</AssemblyName>
     <DefaultLanguage>it-IT</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
-    <TargetPlatformVersion>10.0.15063.0</TargetPlatformVersion>
+    <TargetPlatformVersion>10.0.16299.0</TargetPlatformVersion>
     <TargetPlatformMinVersion>10.0.10586.0</TargetPlatformMinVersion>
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
@@ -123,6 +123,7 @@
     <Compile Include="Behaviours\Misc\CompositionAnimationParameters.cs" />
     <Compile Include="Behaviours\Misc\FixedAnimationType.cs" />
     <Compile Include="Brushes\Cache\HostBackdropInstanceWrapper.cs" />
+    <Compile Include="Brushes\NoiseTextureBrush.cs" />
     <Compile Include="Brushes\CustomAcrylicBrush.cs" />
     <Compile Include="Brushes\LightingBrush.cs" />
     <Compile Include="CompositionExtensions.cs" />
@@ -155,7 +156,6 @@
     <Compile Include="XAMLTransform\XAMLTransformToolkit.cs" />
     <EmbeddedResource Include="Properties\UICompositionAnimations.rd.xml" />
   </ItemGroup>
-  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

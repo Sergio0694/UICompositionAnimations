@@ -74,5 +74,42 @@ namespace UICompositionAnimations.Behaviours
             }
             return tint;
         }
+
+        /// <summary>
+        /// Overlays a texture on a tint effect
+        /// </summary>
+        /// <param name="compositor">The current <see cref="Compositor"/> object to use</param>
+        /// <param name="parameters">A dictionary to use to keep track of reference parameters to add when creating a <see cref="CompositionEffectFactory"/></param>
+        /// <param name="color">The tint color</param>
+        /// <param name="uri">The path to the source image to use for the <see cref="BorderEffect"/></param>
+        /// <param name="options">Indicates whether or not to force the reload of the Win2D image</param>
+        /// <returns>The resulting effect through the pipeline</returns>
+        /// <remarks>The method does side effect on the <paramref name="parameters"/> variable</remarks>
+        [MustUseReturnValue, ItemNotNull]
+        public static async Task<IGraphicsEffect> LoadTextureEffectWithTintAsync(
+            [NotNull] Compositor compositor, [NotNull] IDictionary<String, CompositionBrush> parameters,
+            Color color, [NotNull] Uri uri, BitmapCacheMode options)
+        {
+            // Initial setup
+            ColorSourceEffect colorEffect = new ColorSourceEffect { Color = color };
+            CompositionSurfaceBrush noiseBitmap = await Win2DImageHelper.LoadImageAsync(compositor, uri, options, BitmapDPIMode.CopyDisplayDPISettingsWith96AsLowerBound);
+            if (noiseBitmap == null) return colorEffect;
+
+            // Blend the effects
+            BorderEffect borderEffect = new BorderEffect
+            {
+                ExtendX = CanvasEdgeBehavior.Wrap,
+                ExtendY = CanvasEdgeBehavior.Wrap,
+                Source = new CompositionEffectSourceParameter(nameof(noiseBitmap))
+            };
+            BlendEffect blendEffect = new BlendEffect
+            {
+                Background = colorEffect,
+                Foreground = borderEffect,
+                Mode = BlendEffectMode.Overlay
+            };
+            parameters.Add(nameof(noiseBitmap), noiseBitmap);
+            return blendEffect;
+        }
     }
 }

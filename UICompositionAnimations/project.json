@@ -1,7 +1,7 @@
 ﻿{
   "dependencies": {
     "JetBrains.Annotations": "11.1.0",
-    "Microsoft.NETCore.UniversalWindowsPlatform": "6.0.6",
+    "Microsoft.NETCore.UniversalWindowsPlatform": "6.0.7",
     "System.Threading.Tasks.Extensions": "4.4.0",
     "Win2D.uwp": "1.21.0"
   },
