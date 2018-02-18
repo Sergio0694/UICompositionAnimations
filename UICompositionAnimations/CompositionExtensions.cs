@@ -1162,6 +1162,116 @@ namespace UICompositionAnimations
 
         #endregion
 
+        #region Translation only
+
+        // Manages the scale animation
+        private static Task ManageCompositionTranslationAnimationAsync([NotNull] UIElement element, [NotNull] Visual visual,
+            float endX, float endY,
+            int ms, int? msDelay, [NotNull] CompositionEasingFunction easingFunction)
+        {
+            // Get the default values
+            ElementCompositionPreview.SetIsTranslationEnabled(element, true);
+            visual.StopAnimation("Translation");
+
+            // Get the easing function, the duration and delay
+            TimeSpan duration = TimeSpan.FromMilliseconds(ms);
+            TimeSpan? delay;
+            if (msDelay.HasValue) delay = TimeSpan.FromMilliseconds(msDelay.Value);
+            else delay = null;
+
+            // Setup the animation start and end positions
+            Vector3 vector = new Vector3(endX, endY, 0);
+            Vector3KeyFrameAnimation animation = visual.Compositor.CreateVector3KeyFrameAnimation(null, vector, duration, delay, easingFunction);
+
+            // Get the batch and start the animations
+            CompositionScopedBatch batch = visual.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            TaskCompletionSource<object> tcs = new TaskCompletionSource<object>();
+            batch.Completed += (s, e) => tcs.SetResult(null);
+            visual.StartAnimation("Translation", animation);
+            batch.End();
+            return tcs.Task;
+        }
+
+        /// <summary>
+        /// Starts an offset animation on the target <see cref="UIElement"/> and optionally runs a callback <see cref="Action"/> when the animation finishes
+        /// </summary>
+        /// <param name="element">The <see cref="UIElement"/> to animate</param>
+        /// <param name="endX">The final offset X value</param>
+        /// <param name="endY">The final offset Y value</param>
+        /// <param name="ms">The duration of the animation, in milliseconds</param>
+        /// <param name="msDelay">The delay before the animation starts, in milliseconds. If null, there will be no delay</param>
+        /// <param name="easingFunction">The easing function to use with the new animations</param>
+        /// <param name="callback">An <see cref="Action"/> to execute when the new animations end</param>
+        public static async void StartCompositionTranslationAnimation([NotNull] this UIElement element,
+            float endX, float endY,
+            int ms, int? msDelay, EasingFunctionNames easingFunction, Action callback = null)
+        {
+            await element.StartCompositionTranslationAnimationAsync(endX, endY, ms, msDelay, easingFunction);
+            callback?.Invoke();
+        }
+
+        /// <summary>
+        /// Starts an offset animation on the target <see cref="UIElement"/> and optionally runs a callback <see cref="Action"/> when the animation finishes
+        /// </summary>
+        /// <param name="element">The <see cref="UIElement"/> to animate</param>
+        /// <param name="endX">The final offset X value</param>
+        /// <param name="endY">The final offset Y value</param>
+        /// <param name="ms">The duration of the animation, in milliseconds</param>
+        /// <param name="msDelay">The delay before the animation starts, in milliseconds. If null, there will be no delay</param>
+        /// <param name="x1">The X coordinate of the first control point of the cubic beizer easing function</param>
+        /// <param name="y1">The Y coordinate of the first control point of the cubic beizer easing function</param>
+        /// <param name="x2">The X coordinate of the second control point of the cubic beizer easing function</param>
+        /// <param name="y2">The Y coordinate of the second control point of the cubic beizer easing function</param>
+        /// <param name="callback">An <see cref="Action"/> to execute when the new animations end</param>
+        public static async void StartCompositionTranslationAnimation([NotNull] this UIElement element,
+            float endX, float endY,
+            int ms, int? msDelay, float x1, float y1, float x2, float y2, Action callback = null)
+        {
+            await element.StartCompositionTranslationAnimationAsync(endX, endY, ms, msDelay, x1, y1, x2, y2);
+            callback?.Invoke();
+        }
+
+        /// <summary>
+        /// Starts an offset animation on the target <see cref="UIElement"/> and returns a <see cref="Task"/> that completes when the animation ends
+        /// </summary>
+        /// <param name="element">The UIEl<see cref="UIElement"/>ement to animate</param>
+        /// <param name="endX">The final offset X value</param>
+        /// <param name="endY">The final offset Y value</param>
+        /// <param name="ms">The duration of the animation, in milliseconds</param>
+        /// <param name="msDelay">The delay before the animation starts, in milliseconds. If null, there will be no delay</param>
+        /// <param name="easingFunction">The easing function to use with the new animations</param>
+        public static Task StartCompositionTranslationAnimationAsync([NotNull] this UIElement element,
+            float endX, float endY,
+            int ms, int? msDelay, EasingFunctionNames easingFunction)
+        {
+            Visual visual = element.GetVisual();
+            CompositionEasingFunction ease = visual.GetEasingFunction(easingFunction);
+            return ManageCompositionTranslationAnimationAsync(element, visual, endX, endY, ms, msDelay, ease);
+        }
+
+        /// <summary>
+        /// Starts an offset animation on the target <see cref="UIElement"/> and returns a <see cref="Task"/> that completes when the animation ends
+        /// </summary>
+        /// <param name="element">The <see cref="UIElement"/> to animate</param>
+        /// <param name="endX">The final offset X value</param>
+        /// <param name="endY">The final offset Y value</param>
+        /// <param name="ms">The duration of the animation, in milliseconds</param>
+        /// <param name="msDelay">The delay before the animation starts, in milliseconds. If null, there will be no delay</param>
+        /// <param name="x1">The X coordinate of the first control point of the cubic beizer easing function</param>
+        /// <param name="y1">The Y coordinate of the first control point of the cubic beizer easing function</param>
+        /// <param name="x2">The X coordinate of the second control point of the cubic beizer easing function</param>
+        /// <param name="y2">The Y coordinate of the second control point of the cubic beizer easing function</param>
+        public static Task StartCompositionTranslationAnimationAsync([NotNull] this UIElement element,
+            float endX, float endY,
+            int ms, int? msDelay, float x1, float y1, float x2, float y2)
+        {
+            Visual visual = element.GetVisual();
+            CompositionEasingFunction ease = visual.GetEasingFunction(x1, y1, x2, y2);
+            return ManageCompositionTranslationAnimationAsync(element, visual, endX, endY, ms, msDelay, ease);
+        }
+
+        #endregion
+
         #region Roll
 
         // Manages the roll animation
