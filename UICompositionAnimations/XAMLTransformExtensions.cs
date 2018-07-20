@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Windows.UI;
 using Windows.UI.Xaml;
@@ -14,6 +15,7 @@ namespace UICompositionAnimations
     /// <summary>
     /// A static class that wraps the animation methods in the Windows.UI.Xaml.Media.Animation namespace
     /// </summary>
+    [PublicAPI]
     public static class XAMLTransformExtensions
     {
         #region Fade
@@ -423,6 +425,7 @@ namespace UICompositionAnimations
         /// <param name="side">The margin side to animate</param>
         /// <param name="duration">The duration of the animation to create</param>
         /// <param name="delay">The optional initial delay for the animation</param>
+        [SuppressMessage("ReSharper", "AccessToModifiedClosure")] // Margin updates at each animation timestep
         public static async Task StartXAMLMarginAnimation([NotNull] this FrameworkElement element, double? start, double end, MarginSide side, int duration, int? delay = null)
         {
             // Delay if needed, and calculate the start offset
@@ -460,6 +463,7 @@ namespace UICompositionAnimations
             DispatcherTimer timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(25) }; // 40fps
             timer.Tick += TickHandler;
             Thickness margin = element.Margin;
+
             void TickHandler(object sender, object e)
             {
                 elapsed++;

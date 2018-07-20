@@ -13,6 +13,7 @@ namespace UICompositionAnimations.XAMLTransform
     /// <summary>
     /// A toolkit with some extensions for XAML animations and some useful methods
     /// </summary>
+    [PublicAPI]
     public static class XAMLTransformToolkit
     {
         #region Extensions
