@@ -12,6 +12,7 @@ namespace UICompositionAnimations.Lights
     /// <summary>
     /// An attached XAML property to enable the <see cref="Brushes.LightingBrush"/> XAML brush
     /// </summary>
+    [PublicAPI]
     public class PointerPositionSpotLight : XamlLight
     {
         #region Properties
@@ -21,8 +22,8 @@ namespace UICompositionAnimations.Lights
         /// </summary>
         public byte Shade
         {
-            get { return GetValue(ShadeProperty).To<byte>(); }
-            set { SetValue(ShadeProperty, value); }
+            get => GetValue(ShadeProperty).To<byte>();
+            set => SetValue(ShadeProperty, value);
         }
 
         /// <summary>
@@ -73,8 +74,8 @@ namespace UICompositionAnimations.Lights
         /// </summary>
         public float OuterConeAngle
         {
-            get { return (float)GetValue(OuterConeAngleProperty); }
-            set { SetValue(OuterConeAngleProperty, value); }
+            get => (float)GetValue(OuterConeAngleProperty);
+            set => SetValue(OuterConeAngleProperty, value);
         }
 
         /// <summary>
@@ -100,8 +101,8 @@ namespace UICompositionAnimations.Lights
         /// </summary>
         public bool Active
         {
-            get { return GetValue(ActiveProperty).To<bool>(); }
-            set { SetValue(ActiveProperty, value); }
+            get => GetValue(ActiveProperty).To<bool>();
+            set => SetValue(ActiveProperty, value);
         }
 
         /// <summary>
@@ -139,9 +140,6 @@ namespace UICompositionAnimations.Lights
 
         private static void OnIsTargetChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            // API test
-            if (!ApiInformationHelper.AreXamlLightsSupported) return;
-
             // Apply the changes
             if ((bool)e.NewValue)
             {
@@ -170,16 +168,16 @@ namespace UICompositionAnimations.Lights
         }
 
         // The light to use
-        SpotLight _Light;
+        private SpotLight _Light;
 
         // The source compositor
-        Compositor _Compositor;
+        private Compositor _Compositor;
 
         // The expression animation for the light position
-        ExpressionAnimation _Animation;
+        private ExpressionAnimation _Animation;
 
         // The properties for the animation
-        CompositionPropertySet _Properties;
+        private CompositionPropertySet _Properties;
 
         /// <inheritdoc cref="XamlLight"/>
         protected override void OnConnected(UIElement newElement)

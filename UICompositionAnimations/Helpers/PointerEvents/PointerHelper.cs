@@ -24,15 +24,14 @@ namespace UICompositionAnimations.Helpers.PointerEvents
             // Nested functions that adds the actual handlers
             PointerHandlerInfo AddHandler(RoutedEvent @event, bool state, Func<PointerDeviceType, bool> predicate)
             {
-                PointerEventHandler handler = (_, e) =>
+                void Handler(object _, PointerRoutedEventArgs e)
                 {
                     if (predicate == null || predicate(e.Pointer.PointerDeviceType))
-                    {
                         action(e.Pointer.PointerDeviceType, state);
-                    }
-                };
-                control.AddHandler(@event, handler, true);
-                return new PointerHandlerInfo(@event, handler);
+                }
+
+                control.AddHandler(@event, (PointerEventHandler) Handler, true);
+                return new PointerHandlerInfo(@event, Handler);
             }
 
             // Add handlers
@@ -83,9 +82,6 @@ namespace UICompositionAnimations.Helpers.PointerEvents
         [CanBeNull]
         public static ControlAttachedHandlersInfo ManageLightsPointerStates(this UIElement element, Action<bool> action)
         {
-            // Platform check
-            if (ApiInformationHelper.IsMobileDevice) return null;
-
             // Nested functions that adds the actual handlers
             return element.ManageHostPointerStates((pointer, value) =>
             {

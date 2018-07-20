@@ -49,8 +49,8 @@ namespace UICompositionAnimations.Brushes
         /// </summary>
         public AcrylicEffectMode Mode
         {
-            get { return GetValue(ModeProperty).To<AcrylicEffectMode>(); }
-            set { SetValue(ModeProperty, value); }
+            get => GetValue(ModeProperty).To<AcrylicEffectMode>();
+            set => SetValue(ModeProperty, value);
         }
 
         /// <summary>
@@ -80,8 +80,8 @@ namespace UICompositionAnimations.Brushes
         /// <remarks>This property is ignored when the active mode is <see cref="AcrylicEffectMode.HostBackdrop"/></remarks>
         public double BlurAmount
         {
-            get { return GetValue(BlurAmountProperty).To<double>(); }
-            set { SetValue(BlurAmountProperty, value); }
+            get => GetValue(BlurAmountProperty).To<double>();
+            set => SetValue(BlurAmountProperty, value);
         }
 
         /// <summary>
@@ -112,8 +112,8 @@ namespace UICompositionAnimations.Brushes
         /// <remarks>This property is ignored when the active mode is <see cref="AcrylicEffectMode.HostBackdrop"/></remarks>
         public int BlurAnimationDuration
         {
-            get { return GetValue(BlurAnimationDurationProperty).To<int>(); }
-            set { SetValue(BlurAnimationDurationProperty, value); }
+            get => GetValue(BlurAnimationDurationProperty).To<int>();
+            set => SetValue(BlurAnimationDurationProperty, value);
         }
 
         /// <summary>
@@ -127,8 +127,8 @@ namespace UICompositionAnimations.Brushes
         /// </summary>
         public Color Tint
         {
-            get { return GetValue(TintProperty).To<Color>(); }
-            set { SetValue(TintProperty, value); }
+            get => GetValue(TintProperty).To<Color>();
+            set => SetValue(TintProperty, value);
         }
 
         /// <summary>
@@ -153,8 +153,8 @@ namespace UICompositionAnimations.Brushes
         /// </summary>
         public double TintMix
         {
-            get { return GetValue(TintMixProperty).To<double>(); }
-            set { SetValue(TintMixProperty, value); }
+            get => GetValue(TintMixProperty).To<double>();
+            set => SetValue(TintMixProperty, value);
         }
 
         /// <summary>
@@ -167,7 +167,7 @@ namespace UICompositionAnimations.Brushes
         {
             double value = e.NewValue.To<double>();
             float fvalue = (float)value;
-            if (value < 0 || value >= 1) throw new ArgumentOutOfRangeException("The tint mix must be in the [0..1) range");
+            if (value < 0 || value >= 1) throw new ArgumentOutOfRangeException(nameof(value), "The tint mix must be in the [0..1) range");
             CustomAcrylicBrush @this = d.To<CustomAcrylicBrush>();
             await @this.ConnectedSemaphore.WaitAsync();
             if (@this.CompositionBrush != null && @this._State != AcrylicBrushEffectState.FallbackMode)
@@ -183,8 +183,8 @@ namespace UICompositionAnimations.Brushes
         /// </summary>
         public Color UnsupportedEffectFallbackColor
         {
-            get { return GetValue(UnsupportedEffectFallbackColorProperty).To<Color>(); }
-            set { SetValue(UnsupportedEffectFallbackColorProperty, value); }
+            get => GetValue(UnsupportedEffectFallbackColorProperty).To<Color>();
+            set => SetValue(UnsupportedEffectFallbackColorProperty, value);
         }
 
         /// <summary>
@@ -216,13 +216,6 @@ namespace UICompositionAnimations.Brushes
                     // Otherwise, update the fallback color effect
                     @this._EffectBrush?.Properties.InsertColor(FallbackColorParameterName, value);
                 }
-            }
-            else if (@this._State == AcrylicBrushEffectState.Default && // The effect is currently disabled
-                     @this.Mode == AcrylicEffectMode.HostBackdrop &&    // The current settings are not valid
-                     ApiInformationHelper.IsMobileDevice &&
-                     !value.Equals(Colors.Transparent))                 // The new value allows the fallback mode to be enabled
-            {
-                await @this.SetupEffectAsync();
             }
             @this.ConnectedSemaphore.Release();
         }
@@ -346,25 +339,6 @@ namespace UICompositionAnimations.Brushes
             // Designer check
             if (DesignMode.DesignModeEnabled) return;
 
-            // Platform check
-            if (ApiInformationHelper.IsMobileDevice && Mode == AcrylicEffectMode.HostBackdrop)
-            {
-                // Create the fallback brush effect when needed
-                if (!UnsupportedEffectFallbackColor.Equals(Colors.Transparent))
-                {
-                    ColorSourceEffect fallback = new ColorSourceEffect
-                    {
-                        Name = "FallbackColor",
-                        Color = UnsupportedEffectFallbackColor
-                    };
-                    CompositionEffectFactory fallbackFactory = Window.Current.Compositor.CreateEffectFactory(fallback);
-                    _EffectBrush = fallbackFactory.CreateBrush();
-                    CompositionBrush = _EffectBrush;
-                    _State = AcrylicBrushEffectState.FallbackMode;
-                }
-                return;
-            }
-
             // Dictionary to track the reference and animatable parameters
             IDictionary<String, CompositionBrush> sourceParameters = new Dictionary<String, CompositionBrush>();
             List<String> animatableParameters = new List<String>
@@ -450,8 +424,7 @@ namespace UICompositionAnimations.Brushes
             ArithmeticCompositeEffect tint = source as ArithmeticCompositeEffect ?? source.To<BlendEffect>().Background as ArithmeticCompositeEffect;
             if (tint == null) throw new InvalidOperationException("Error while retrieving the tint effect");
             tint.Name = "Tint";
-            ColorSourceEffect color = tint.Source2 as ColorSourceEffect;
-            if (color == null) throw new InvalidOperationException("Error while retrieving the color effect");
+            if (!(tint.Source2 is ColorSourceEffect color)) throw new InvalidOperationException("Error while retrieving the color effect");
             color.Name = "ColorSource";
 
             // Make sure the Win2D brush was loaded correctly
