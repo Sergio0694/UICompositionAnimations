@@ -159,9 +159,6 @@
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.1.5</Version>
     </PackageReference>
-    <PackageReference Include="System.Threading.Tasks.Extensions">
-      <Version>4.5.1</Version>
-    </PackageReference>
     <PackageReference Include="Win2D.uwp">
       <Version>1.23.0</Version>
     </PackageReference>

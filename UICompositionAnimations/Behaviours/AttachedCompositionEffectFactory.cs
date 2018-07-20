@@ -21,7 +21,7 @@ namespace UICompositionAnimations.Behaviours
     /// <summary>
     /// A static class that manages the creation of attached composition effects
     /// </summary>
-
+    [PublicAPI]
     public static class AttachedCompositionEffectsFactory
     {
         #region Static effects
@@ -34,9 +34,9 @@ namespace UICompositionAnimations.Behaviours
         /// <param name="blur">The amount of blur to apply to the element</param>
         /// <param name="ms">The duration of the initial blur animation, in milliseconds</param>
         /// <param name="disposeOnUnload">Indicates whether or not to automatically dispose and remove the effect when the target element is unloaded</param>
-        /// <remarks>This method returns a <see cref="ValueTask{TResult}"/> instance and runs synchronously if called on the UI thread</remarks>
+        /// <remarks>This method returns a <see cref="Task{TResult}"/> instance and attempts to run synchronously if called on the UI thread</remarks>
         [ItemNotNull]
-        public static async ValueTask<AttachedStaticCompositionEffect<T>> AttachCompositionBlurEffect<T>(
+        public static async Task<AttachedStaticCompositionEffect<T>> AttachCompositionBlurEffect<T>(
             [NotNull] this T element, float blur, int ms, bool disposeOnUnload = false) where T : FrameworkElement
         {
             // Get the visual and the compositor
@@ -99,8 +99,8 @@ namespace UICompositionAnimations.Behaviours
             where T : FrameworkElement
         {
             // Percentage check
-            if (saturation < 0 || saturation > 1) throw new ArgumentOutOfRangeException("The input saturation value must be in the [0,1] range");
-            if (colorMix <= 0 || colorMix >= 1) throw new ArgumentOutOfRangeException("The mix factors must be in the [0,1] range");
+            if (saturation < 0 || saturation > 1) throw new ArgumentOutOfRangeException(nameof(saturation), "The input saturation value must be in the [0,1] range");
+            if (colorMix <= 0 || colorMix >= 1) throw new ArgumentOutOfRangeException(nameof(colorMix), "The mix factors must be in the [0,1] range");
 
             // Setup the compositor
             Visual visual = ElementCompositionPreview.GetElementVisual(element);
@@ -181,9 +181,9 @@ namespace UICompositionAnimations.Behaviours
         /// <typeparam name="T">The type of element to use to host the effect</typeparam>
         /// <param name="element">The target element</param>
         /// <param name="disposeOnUnload">Indicates whether or not to automatically dispose and remove the effect when the target element is unloaded</param>
-        /// <remarks>This method returns a <see cref="ValueTask{TResult}"/> instance and runs synchronously if called on the UI thread</remarks>
+        /// <remarks>This method returns a <see cref="Task{TResult}"/> instance and attempts to run synchronously if called on the UI thread</remarks>
         [ItemNotNull]
-        public static async ValueTask<AttachedStaticCompositionEffect<T>> AttachCompositionHostBackdropBlurEffect<T>(
+        public static async Task<AttachedStaticCompositionEffect<T>> AttachCompositionHostBackdropBlurEffect<T>(
             [NotNull] this T element, bool disposeOnUnload = false) where T : FrameworkElement
         {
             // Setup the host backdrop effect
@@ -217,7 +217,7 @@ namespace UICompositionAnimations.Behaviours
             where T : FrameworkElement
         {
             // Percentage check
-            if (colorMix <= 0 || colorMix >= 1) throw new ArgumentOutOfRangeException("The mix factors must be in the [0,1] range");
+            if (colorMix <= 0 || colorMix >= 1) throw new ArgumentOutOfRangeException(nameof(colorMix), "The mix factors must be in the [0,1] range");
 
             // Setup the compositor
             Visual visual = ElementCompositionPreview.GetElementVisual(element);
@@ -294,7 +294,7 @@ namespace UICompositionAnimations.Behaviours
         {
             // Percentage check
             if (hostColorMix <= 0 || hostColorMix >= 1 ||
-                inAppColorMix <= 0 || inAppColorMix >= 1) throw new ArgumentOutOfRangeException("The mix factors must be in the [0,1] range");
+                inAppColorMix <= 0 || inAppColorMix >= 1) throw new ArgumentOutOfRangeException(nameof(hostColorMix), "The mix factors must be in the [0,1] range");
 
             // Setup the compositor
             Visual visual = ElementCompositionPreview.GetElementVisual(element);
