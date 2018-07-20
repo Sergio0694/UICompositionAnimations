@@ -1,12 +1,5 @@
 ﻿using System;
-using Windows.ApplicationModel.Resources.Core;
-using Windows.Foundation.Collections;
-using Windows.Foundation.Metadata;
 using Windows.System.Profile;
-using Windows.UI.Composition;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Input;
 using JetBrains.Annotations;
 
 namespace UICompositionAnimations.Helpers
@@ -14,6 +7,7 @@ namespace UICompositionAnimations.Helpers
     /// <summary>
     /// A static class that provides useful information on the available APIs
     /// </summary>
+    [PublicAPI]
     public static class ApiInformationHelper
     {
         private static Version _OSVersion;
@@ -25,7 +19,6 @@ namespace UICompositionAnimations.Helpers
         /// instead of just checking the OS version and use it to make further decisions.
         /// In particular, users on a Windows Insider ring could already have a given set of APIs even though their OS
         /// build doesn't exactly match the official Windows 10 version that supports a requested API contract.</remarks>
-        [PublicAPI]
         [NotNull]
         public static Version OSVersion
         {

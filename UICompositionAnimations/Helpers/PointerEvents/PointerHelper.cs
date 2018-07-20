@@ -9,6 +9,7 @@ namespace UICompositionAnimations.Helpers.PointerEvents
     /// <summary>
     /// A static class with some extension methods to manage different pointer states
     /// </summary>
+    [PublicAPI]
     public static class PointerHelper
     {
         /// <summary>
@@ -17,7 +18,6 @@ namespace UICompositionAnimations.Helpers.PointerEvents
         /// <param name="control">The control to monitor</param>
         /// <param name="action">An action to call every time a pointer event is raised. The bool parameter
         /// indicates whether the pointer is moving to or from the control</param>
-        [PublicAPI]
         [NotNull]
         public static ControlAttachedHandlersInfo ManageControlPointerStates(this UIElement control, Action<PointerDeviceType, bool> action)
         {
@@ -49,22 +49,20 @@ namespace UICompositionAnimations.Helpers.PointerEvents
         /// <param name="host">The element to monitor</param>
         /// <param name="action">An action to call every time a pointer event is raised. The bool parameter
         /// indicates whether the pointer is moving to or from the control</param>
-        [PublicAPI]
         [NotNull]
         public static ControlAttachedHandlersInfo ManageHostPointerStates(this UIElement host, Action<PointerDeviceType, bool> action)
         {
             // Nested functions that adds the actual handlers
             PointerHandlerInfo AddHandler(RoutedEvent @event, bool state, Func<PointerDeviceType, bool> predicate)
             {
-                PointerEventHandler handler = (_, e) =>
+                void Handler(object _, PointerRoutedEventArgs e)
                 {
                     if (predicate == null || predicate(e.Pointer.PointerDeviceType))
-                    {
                         action(e.Pointer.PointerDeviceType, state);
-                    }
-                };
-                host.AddHandler(@event, handler, true);
-                return new PointerHandlerInfo(@event, handler);
+                }
+
+                host.AddHandler(@event, (PointerEventHandler) Handler, true);
+                return new PointerHandlerInfo(@event, Handler);
             }
 
             // Add handlers
@@ -78,7 +76,6 @@ namespace UICompositionAnimations.Helpers.PointerEvents
         /// </summary>
         /// <param name="element">The element to monitor</param>
         /// <param name="action">An action to call every time the light effects state should be changed</param>
-        [PublicAPI]
         [CanBeNull]
         public static ControlAttachedHandlersInfo ManageLightsPointerStates(this UIElement element, Action<bool> action)
         {
