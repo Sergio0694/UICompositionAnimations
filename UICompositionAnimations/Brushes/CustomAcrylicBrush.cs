@@ -337,7 +337,7 @@ namespace UICompositionAnimations.Brushes
         private async Task SetupEffectAsync()
         {
             // Designer check
-            if (DesignMode.DesignModeEnabled) return;
+            if (DesignMode.DesignMode2Enabled) return;
 
             // Dictionary to track the reference and animatable parameters
             IDictionary<String, CompositionBrush> sourceParameters = new Dictionary<String, CompositionBrush>();

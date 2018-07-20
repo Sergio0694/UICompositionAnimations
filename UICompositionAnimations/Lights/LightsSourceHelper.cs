@@ -63,7 +63,7 @@ namespace UICompositionAnimations.Lights
         private static void OnIsLightsContainerPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             // Designer test
-            if (DesignMode.DesignModeEnabled) return;
+            if (DesignMode.DesignMode2Enabled) return;
 
             // Unpack
             if (LightGenerators == null) throw new NullReferenceException($"The {nameof(LightsSourceHelper)} class hasn't been initialized");
