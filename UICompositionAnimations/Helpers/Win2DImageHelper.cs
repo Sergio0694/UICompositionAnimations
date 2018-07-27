@@ -120,7 +120,7 @@ namespace UICompositionAnimations.Helpers
                         bitmap = await CanvasBitmap.LoadAsync(creator, uri, dpi >= 96 ? dpi : 96);
                         break;
                     default:
-                        throw new ArgumentOutOfRangeException("Unsupported DPI mode");
+                        throw new ArgumentOutOfRangeException(nameof(dpiMode), "Unsupported DPI mode");
                 }
 
                 // Get the device and the target surface
