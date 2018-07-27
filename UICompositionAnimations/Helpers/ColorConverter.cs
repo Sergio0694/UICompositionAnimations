@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using Windows.UI;
 
 namespace UICompositionAnimations.Helpers
@@ -10,15 +9,15 @@ namespace UICompositionAnimations.Helpers
     internal static class ColorConverter
     {
         /// <summary>
-        /// Returns the Color represented by the hex String
+        /// Returns the Color represented by the hex string
         /// </summary>
         /// <param name="color">If it contains just the RGB values {RRBBGG} the Alpha channel is automatically set to FF</param>
-        public static Color String2Color(String color)
+        public static Color String2Color(string color)
         {
-            //Cancels the # symbol from the String, if present
+            //Cancels the # symbol from the string, if present
             if (color.Contains('#')) color = color.Substring(1);
             byte alpha;
-            String RGB;
+            string RGB;
             if (color.Length == 6)
             {
                 alpha = 255;

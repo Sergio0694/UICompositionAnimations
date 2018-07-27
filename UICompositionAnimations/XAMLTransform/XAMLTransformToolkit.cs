@@ -110,7 +110,7 @@ namespace UICompositionAnimations.XAMLTransform
         /// <param name="ms">The duration of the animation</param>
         /// <param name="easing">The easing function to use inside the animation</param>
         /// <param name="enableDependecyAnimations">Indicates whether or not to apply this animation to elements that need the visual tree to be rearranged</param>
-        public static DoubleAnimation CreateDoubleAnimation(DependencyObject target, String property,
+        public static DoubleAnimation CreateDoubleAnimation(DependencyObject target, string property,
             double? from, double? to, int ms, EasingFunctionNames easing = EasingFunctionNames.Linear, bool enableDependecyAnimations = false)
         {
             DoubleAnimation animation = new DoubleAnimation
@@ -141,10 +141,10 @@ namespace UICompositionAnimations.XAMLTransform
         }
 
         /// <summary>
-        /// Converts the given TranslationAxis enum into its String representation
+        /// Converts the given TranslationAxis enum into its string representation
         /// </summary>
         /// <param name="axis">The enum to convert</param>
-        public static String ToPropertyString(this TranslationAxis axis) => axis == TranslationAxis.X ? "X" : "Y";
+        public static string ToPropertyString(this TranslationAxis axis) => axis == TranslationAxis.X ? "X" : "Y";
 
         #endregion
     }

@@ -152,7 +152,7 @@ namespace UICompositionAnimations
         /// <param name="element">The element to animate</param>
         /// <param name="startOp">The initial opacity</param>
         /// <param name="endOp">The end opacity</param>
-        /// <param name="axis">A String that indicates which axis to use with the TranslateTransform animation</param>
+        /// <param name="axis">A string that indicates which axis to use with the TranslateTransform animation</param>
         /// <param name="startXY">The initial axis value</param>
         /// <param name="endXY">The final axis value</param>
         /// <param name="ms">The duration of the animation in milliseconds</param>
@@ -387,7 +387,7 @@ namespace UICompositionAnimations
         /// Slides a target element over a given axis
         /// </summary>
         /// <param name="element">The element to animate</param>
-        /// <param name="axis">A String that indicates which axis to use with the TranslateTransform animation</param>
+        /// <param name="axis">A string that indicates which axis to use with the TranslateTransform animation</param>
         /// <param name="startXY">The initial axis value</param>
         /// <param name="endXY">The final axis value</param>
         /// <param name="ms">The duration of the animation in milliseconds</param>
@@ -525,7 +525,7 @@ namespace UICompositionAnimations
         /// <param name="toColor">The target color to set</param>
         /// <param name="ms">The duration of the animation</param>
         /// <param name="easing">The easing function to use</param>
-        public static void AnimateColor(this SolidColorBrush solidColorBrush, String toColor, int ms, EasingFunctionNames easing)
+        public static void AnimateColor(this SolidColorBrush solidColorBrush, string toColor, int ms, EasingFunctionNames easing)
         {
             // Get the target color
             Color targetColor = ColorConverter.String2Color(toColor);

@@ -27,19 +27,19 @@ namespace UICompositionAnimations.Brushes
         #region Constants
 
         // The name of the animatable blur amount property
-        private const String BlurAmountParameterName = "Blur.BlurAmount";
+        private const string BlurAmountParameterName = "Blur.BlurAmount";
 
         // The name of the animatable source 1 property (the brush) of the tint effect
-        private const String TintColor1ParameterName = "Tint.Source1Amount";
+        private const string TintColor1ParameterName = "Tint.Source1Amount";
 
         // The name of the animatable source 2 property (the tint color) of the tint effect
-        private const String TintColor2ParameterName = "Tint.Source2Amount";
+        private const string TintColor2ParameterName = "Tint.Source2Amount";
 
         // The name of the animatable color property of the color effect
-        private const String ColorSourceParameterName = "ColorSource.Color";
+        private const string ColorSourceParameterName = "ColorSource.Color";
 
         // The name of the animatable color property of the fallback color effect
-        private const String FallbackColorParameterName = "FallbackColor.Color";
+        private const string FallbackColorParameterName = "FallbackColor.Color";
 
         #endregion
 
@@ -296,7 +296,7 @@ namespace UICompositionAnimations.Brushes
         private static CompositionBackdropBrush _BackdropInstance;
 
         // The name to use for the in-app backdrop reference parameter
-        private const String BackdropReferenceParameterName = "BackdropBrush";
+        private const string BackdropReferenceParameterName = "BackdropBrush";
 
         // The synchronization semaphore for the host backdrop brush
         private static readonly SemaphoreSlim HostBackdropSemaphore = new SemaphoreSlim(1);
@@ -305,7 +305,7 @@ namespace UICompositionAnimations.Brushes
         private static HostBackdropInstanceWrapper _HostBackdropCache;
 
         // The name to use for the host backdrop reference parameter
-        private const String HostBackdropReferenceParameterName = "HostBackdropBrush";
+        private const string HostBackdropReferenceParameterName = "HostBackdropBrush";
 
         /// <summary>
         /// Clears the internal cache of <see cref="CompositionBackdropBrush"/> instances
@@ -340,8 +340,8 @@ namespace UICompositionAnimations.Brushes
             if (DesignMode.DesignMode2Enabled) return;
 
             // Dictionary to track the reference and animatable parameters
-            IDictionary<String, CompositionBrush> sourceParameters = new Dictionary<String, CompositionBrush>();
-            List<String> animatableParameters = new List<String>
+            IDictionary<string, CompositionBrush> sourceParameters = new Dictionary<string, CompositionBrush>();
+            List<string> animatableParameters = new List<string>
             {
                 TintColor1ParameterName,
                 TintColor2ParameterName,
@@ -432,7 +432,7 @@ namespace UICompositionAnimations.Brushes
 
             // Create the effect factory and apply the final effect
             _EffectBrush = factory.CreateBrush();
-            foreach (KeyValuePair<String, CompositionBrush> pair in sourceParameters)
+            foreach (KeyValuePair<string, CompositionBrush> pair in sourceParameters)
             {
                 _EffectBrush.SetSourceParameter(pair.Key, pair.Value);
             }

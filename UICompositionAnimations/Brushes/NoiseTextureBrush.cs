@@ -21,7 +21,7 @@ namespace UICompositionAnimations.Brushes
     public sealed class NoiseTextureBrush : XamlCompositionBrushBase
     {
         // The name of the animatable color property of the color effect
-        private const String ColorSourceParameterName = "ColorSource.Color";
+        private const string ColorSourceParameterName = "ColorSource.Color";
 
         #region Properties
 
@@ -110,8 +110,8 @@ namespace UICompositionAnimations.Brushes
             if (DesignMode.DesignMode2Enabled) return;
 
             // Dictionary to track the reference and animatable parameters
-            IDictionary<String, CompositionBrush> sourceParameters = new Dictionary<String, CompositionBrush>();
-            List<String> animatableParameters = new List<String> { ColorSourceParameterName };
+            IDictionary<string, CompositionBrush> sourceParameters = new Dictionary<string, CompositionBrush>();
+            List<string> animatableParameters = new List<string> { ColorSourceParameterName };
 
             // Get the noise brush using Win2D
             IGraphicsEffect source = await AcrylicEffectHelper.LoadTextureEffectWithTintAsync(Window.Current.Compositor, sourceParameters, Tint, TextureUri, CacheMode);
@@ -126,7 +126,7 @@ namespace UICompositionAnimations.Brushes
 
             // Create the effect factory and apply the final effect
             _EffectBrush = factory.CreateBrush();
-            foreach (KeyValuePair<String, CompositionBrush> pair in sourceParameters)
+            foreach (KeyValuePair<string, CompositionBrush> pair in sourceParameters)
             {
                 _EffectBrush.SetSourceParameter(pair.Key, pair.Value);
             }

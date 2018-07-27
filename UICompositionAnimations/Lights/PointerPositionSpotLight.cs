@@ -209,14 +209,14 @@ namespace UICompositionAnimations.Lights
         /// Gets or sets a custom appendage for the <see cref="GetIdStatic"/> method
         /// </summary>
         [NotNull]
-        public String IdAppendage { get; set; } = String.Empty;
+        public string IdAppendage { get; set; } = string.Empty;
 
         /// <inheritdoc cref="XamlLight"/>
-        protected override String GetId() => GetIdStatic() + IdAppendage;
+        protected override string GetId() => GetIdStatic() + IdAppendage;
 
         /// <summary>
         /// Gets a static Id for the class
         /// </summary>
-        public static String GetIdStatic() => typeof(PointerPositionSpotLight).FullName;
+        public static string GetIdStatic() => typeof(PointerPositionSpotLight).FullName;
     }
 }

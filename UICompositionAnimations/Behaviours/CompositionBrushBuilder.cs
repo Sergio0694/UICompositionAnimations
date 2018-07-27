@@ -31,13 +31,13 @@ namespace UICompositionAnimations.Behaviours
         /// The collection of info on the parameters that need to be initialized after creating the final <see cref="CompositionBrush"/>
         /// </summary>
         [NotNull]
-        private readonly IReadOnlyDictionary<String, Func<Task<CompositionBrush>>> LazyParameters;
+        private readonly IReadOnlyDictionary<string, Func<Task<CompositionBrush>>> LazyParameters;
 
         /// <summary>
         /// The collection of animation parameters present in the current pipeline
         /// </summary>
         [NotNull, ItemNotNull]
-        private readonly IReadOnlyCollection<String> AnimationParameters;
+        private readonly IReadOnlyCollection<string> AnimationParameters;
 
         #region Constructors
 
@@ -47,12 +47,12 @@ namespace UICompositionAnimations.Behaviours
         /// <param name="factory">A <see cref="Func{TResult}"/> instance that will return the initial <see cref="CompositionBrush"/></param>
         private CompositionBrushBuilder([NotNull] Func<Task<CompositionBrush>> factory)
         {
-            String
+            string
                 guid = Guid.NewGuid().ToString("N"),
                 replaced = Regex.Replace(guid, "[0-9]", "_"),
-                id = new String(replaced.ToCharArray().Select((c, i) => c == '_' ? char.ToUpper((char)('a' + i % 26)) : c).ToArray());
+                id = new string(replaced.ToCharArray().Select((c, i) => c == '_' ? char.ToUpper((char)('a' + i % 26)) : c).ToArray());
             SourceProducer = () => Task.FromResult(new CompositionEffectSourceParameter(id).To<IGraphicsEffectSource>());
-            LazyParameters = new Dictionary<String, Func<Task<CompositionBrush>>> { { id, factory } };
+            LazyParameters = new Dictionary<string, Func<Task<CompositionBrush>>> { { id, factory } };
             AnimationParameters = new string[0];
         }
 
@@ -62,7 +62,7 @@ namespace UICompositionAnimations.Behaviours
         /// <param name="factory">A <see cref="Func{TResult}"/> instance that will produce the new <see cref="IGraphicsEffectSource"/> to add to the pipeline</param>
         /// <param name="lazy">The collection of <see cref="CompositionBrush"/> instances that needs to be initialized for the new effect</param>
         /// <param name="animations">The collection of animation properties for the new effect</param>
-        private CompositionBrushBuilder([NotNull] Func<Task<IGraphicsEffectSource>> factory, [NotNull] IReadOnlyDictionary<String, Func<Task<CompositionBrush>>> lazy, [NotNull, ItemNotNull] IReadOnlyCollection<String> animations)
+        private CompositionBrushBuilder([NotNull] Func<Task<IGraphicsEffectSource>> factory, [NotNull] IReadOnlyDictionary<string, Func<Task<CompositionBrush>>> lazy, [NotNull, ItemNotNull] IReadOnlyCollection<string> animations)
         {
             SourceProducer = factory;
             LazyParameters = lazy;
@@ -74,7 +74,7 @@ namespace UICompositionAnimations.Behaviours
         /// </summary>
         /// <param name="factory">A <see cref="Func{TResult}"/> instance that will return the initial <see cref="IGraphicsEffectSource"/></param>
         private CompositionBrushBuilder([NotNull] Func<Task<IGraphicsEffectSource>> factory)
-            : this(factory, new Dictionary<String, Func<Task<CompositionBrush>>>(), new string[0])
+            : this(factory, new Dictionary<string, Func<Task<CompositionBrush>>>(), new string[0])
         { }
 
         /// <summary>
@@ -95,7 +95,7 @@ namespace UICompositionAnimations.Behaviours
         /// <param name="animations">The collection of animation properties for the new effect</param>
         private CompositionBrushBuilder(
             [NotNull] CompositionBrushBuilder source, 
-            [NotNull] Func<Task<IGraphicsEffectSource>> factory, [NotNull] IReadOnlyDictionary<String, Func<Task<CompositionBrush>>> lazy, [NotNull, ItemNotNull] IReadOnlyCollection<String> animations)
+            [NotNull] Func<Task<IGraphicsEffectSource>> factory, [NotNull] IReadOnlyDictionary<string, Func<Task<CompositionBrush>>> lazy, [NotNull, ItemNotNull] IReadOnlyCollection<string> animations)
             : this(factory, source.LazyParameters.Merge(lazy), source.AnimationParameters.Merge(animations))
         { }
 
@@ -398,7 +398,7 @@ namespace UICompositionAnimations.Behaviours
 
             // Create the effect factory and apply the final effect
             CompositionEffectBrush effectBrush = factory.CreateBrush();
-            foreach (KeyValuePair<String, Func<Task<CompositionBrush>>> pair in LazyParameters)
+            foreach (KeyValuePair<string, Func<Task<CompositionBrush>>> pair in LazyParameters)
                 effectBrush.SetSourceParameter(pair.Key, await pair.Value());
             return effectBrush;
         }

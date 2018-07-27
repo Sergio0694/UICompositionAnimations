@@ -1524,7 +1524,7 @@ namespace UICompositionAnimations
         {
             // Setup
             InsetClip clip = visual.Clip as InsetClip ?? ((InsetClip)(visual.Clip = visual.Compositor.CreateInsetClip()));
-            String property;
+            string property;
             switch (side)
             {
                 case MarginSide.Top: 
@@ -1623,7 +1623,7 @@ namespace UICompositionAnimations
             TranslationAxis sourceXY, TranslationAxis? targetXY = null, bool invertSourceAxis = false)
         {
             CompositionPropertySet scrollSet = ElementCompositionPreview.GetScrollViewerManipulationPropertySet(scroller);
-            String sign = invertSourceAxis ? "-" : String.Empty;
+            string sign = invertSourceAxis ? "-" : string.Empty;
             ExpressionAnimation animation = scrollSet.Compositor.CreateExpressionAnimation($"{sign}scroll.Translation.{sourceXY}");
             animation.SetReferenceParameter("scroll", scrollSet);
             element.GetVisual().StartAnimation($"Offset.{targetXY ?? sourceXY}", animation);
@@ -1647,7 +1647,7 @@ namespace UICompositionAnimations
         {
             // Get the property set and setup the scroller offset sign
             CompositionPropertySet scrollSet = ElementCompositionPreview.GetScrollViewerManipulationPropertySet(scroller);
-            String sign = invertSourceAxis ? "-" : "+";
+            string sign = invertSourceAxis ? "-" : "+";
 
             // Prepare the second property set to insert the additional parameter
             CompositionPropertySet properties = scroller.GetVisual().Compositor.CreatePropertySet();
@@ -1735,7 +1735,7 @@ namespace UICompositionAnimations
         /// <param name="compObject">The target object</param>
         /// <param name="property">The name of the property to animate</param>
         /// <param name="value">The final value of the property</param>
-        public static void SetInstantValue(this CompositionObject compObject, String property, float value)
+        public static void SetInstantValue(this CompositionObject compObject, string property, float value)
         {
             // Stop previous animations
             compObject.StopAnimation(property);
@@ -1754,7 +1754,7 @@ namespace UICompositionAnimations
         /// <param name="property">The name of the property to animate</param>
         /// <param name="value">The final value of the property</param>
         /// <param name="duration">The animation duration</param>
-        public static Task StartAnimationAsync(this CompositionObject compObject, String property, float value, TimeSpan duration)
+        public static Task StartAnimationAsync(this CompositionObject compObject, string property, float value, TimeSpan duration)
         {
             // Stop previous animations
             compObject.StopAnimation(property);
@@ -1778,11 +1778,11 @@ namespace UICompositionAnimations
         /// </summary>
         /// <param name="element">The target element</param>
         /// <param name="properties">The names of the animations to stop</param>
-        public static void StopAnimations(this UIElement element, params String[] properties)
+        public static void StopAnimations(this UIElement element, params string[] properties)
         {
             if (properties == null || properties.Length == 0) return;
             Visual visual = element.GetVisual();
-            foreach (String property in properties) visual.StopAnimation(property);
+            foreach (string property in properties) visual.StopAnimation(property);
         }
 
         /// <summary>

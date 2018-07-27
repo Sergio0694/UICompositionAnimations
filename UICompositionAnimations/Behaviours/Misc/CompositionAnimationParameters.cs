@@ -1,5 +1,4 @@
-﻿using System;
-using JetBrains.Annotations;
+﻿using JetBrains.Annotations;
 
 namespace UICompositionAnimations.Behaviours.Misc
 {
@@ -39,7 +38,7 @@ namespace UICompositionAnimations.Behaviours.Misc
         /// Gets the property to animate
         /// </summary>
         [NotNull]
-        public String Property { get; }
+        public string Property { get; }
 
         /// <summary>
         /// Creates a new instance for the target property and states
@@ -47,7 +46,7 @@ namespace UICompositionAnimations.Behaviours.Misc
         /// <param name="property">The target property to animate</param>
         /// <param name="on">The on parameter</param>
         /// <param name="off">The off parameter</param>
-        public CompositionAnimationParameters([NotNull] String property, float on, float off) : base(on, off)
+        public CompositionAnimationParameters([NotNull] string property, float on, float off) : base(on, off)
         {
             Property = property;
         }

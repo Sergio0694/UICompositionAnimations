@@ -18,12 +18,12 @@ namespace UICompositionAnimations.Behaviours.Effects
     {
         // Private animations parameters
         [NotNull]
-        private readonly IDictionary<String, CompositionAnimationValueParameters> PropertiesAnimationValues;
+        private readonly IDictionary<string, CompositionAnimationValueParameters> PropertiesAnimationValues;
 
         // Internal constructor
         internal AttachedCompositeAnimatableCompositionEffect(
             [NotNull] T element, [NotNull] SpriteVisual sprite,
-            [NotNull] IDictionary<String, CompositionAnimationValueParameters> propertyValues, bool disposeOnUnload) : base(element, sprite, disposeOnUnload)
+            [NotNull] IDictionary<string, CompositionAnimationValueParameters> propertyValues, bool disposeOnUnload) : base(element, sprite, disposeOnUnload)
         {
             PropertiesAnimationValues = propertyValues;
         }
@@ -31,7 +31,7 @@ namespace UICompositionAnimations.Behaviours.Effects
         /// <inheritdoc/>
         protected override void DisposeCore()
         {
-            foreach (String key in PropertiesAnimationValues.Keys) EffectBrush.StopAnimation(key);
+            foreach (string key in PropertiesAnimationValues.Keys) EffectBrush.StopAnimation(key);
             base.DisposeCore();
         }
 

@@ -34,7 +34,7 @@ namespace UICompositionAnimations.Behaviours
         [MustUseReturnValue, ItemNotNull]
         public static async Task<IGraphicsEffect> ConcatenateEffectWithTintAndBorderAsync(
             [NotNull] Compositor compositor,
-            [NotNull] IGraphicsEffectSource source, [NotNull] IDictionary<String, CompositionBrush> parameters,
+            [NotNull] IGraphicsEffectSource source, [NotNull] IDictionary<string, CompositionBrush> parameters,
             Color color, float colorMix,
             [CanBeNull] CanvasControl canvas, [NotNull] Uri uri, BitmapCacheMode options)
         {
@@ -87,7 +87,7 @@ namespace UICompositionAnimations.Behaviours
         /// <remarks>The method does side effect on the <paramref name="parameters"/> variable</remarks>
         [MustUseReturnValue, ItemNotNull]
         public static async Task<IGraphicsEffect> LoadTextureEffectWithTintAsync(
-            [NotNull] Compositor compositor, [NotNull] IDictionary<String, CompositionBrush> parameters,
+            [NotNull] Compositor compositor, [NotNull] IDictionary<string, CompositionBrush> parameters,
             Color color, [NotNull] Uri uri, BitmapCacheMode options)
         {
             // Initial setup

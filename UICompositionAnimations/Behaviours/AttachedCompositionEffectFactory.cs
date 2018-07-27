@@ -108,7 +108,7 @@ namespace UICompositionAnimations.Behaviours
 
             // Prepare a luminosity to alpha effect to adjust the background contrast
             CompositionBackdropBrush backdropBrush = compositor.CreateBackdropBrush();
-            const String
+            const string
                 blurName = "Blur",
                 blurParameterName = "Blur.BlurAmount";
             GaussianBlurEffect blurEffect = new GaussianBlurEffect
@@ -121,7 +121,7 @@ namespace UICompositionAnimations.Behaviours
             };
 
             // Background with blur and tint overlay
-            IDictionary<String, CompositionBrush> sourceParameters = new Dictionary<String, CompositionBrush>
+            IDictionary<string, CompositionBrush> sourceParameters = new Dictionary<string, CompositionBrush>
             {
                 { nameof(backdropBrush), backdropBrush }
             };
@@ -146,7 +146,7 @@ namespace UICompositionAnimations.Behaviours
 
             // Create the effect factory and apply the final effect
             CompositionEffectBrush effectBrush = factory.CreateBrush();
-            foreach (KeyValuePair<String, CompositionBrush> pair in sourceParameters)
+            foreach (KeyValuePair<string, CompositionBrush> pair in sourceParameters)
             {
                 effectBrush.SetSourceParameter(pair.Key, pair.Value);
             }
@@ -240,7 +240,7 @@ namespace UICompositionAnimations.Behaviours
                 Foreground = opacityEffect,
                 Mode = BlendEffectMode.Overlay
             };
-            IDictionary<String, CompositionBrush> sourceParameters = new Dictionary<String, CompositionBrush>
+            IDictionary<string, CompositionBrush> sourceParameters = new Dictionary<string, CompositionBrush>
             {
                 { nameof(hostBackdropBrush), hostBackdropBrush }
             };
@@ -254,7 +254,7 @@ namespace UICompositionAnimations.Behaviours
 
             // Create the effect factory and apply the final effect
             CompositionEffectBrush effectBrush = factory.CreateBrush();
-            foreach (KeyValuePair<String, CompositionBrush> pair in sourceParameters)
+            foreach (KeyValuePair<string, CompositionBrush> pair in sourceParameters)
             {
                 effectBrush.SetSourceParameter(pair.Key, pair.Value);
             }
@@ -320,7 +320,7 @@ namespace UICompositionAnimations.Behaviours
 
             // In-app backdrop effect
             CompositionBackdropBrush backdropBrush = compositor.CreateBackdropBrush();
-            const String
+            const string
                 blurName = "Blur",
                 blurParameterName = "Blur.BlurAmount";
             GaussianBlurEffect blurEffect = new GaussianBlurEffect
@@ -344,7 +344,7 @@ namespace UICompositionAnimations.Behaviours
             };
 
             // Get the tint and noise brushes using Win2D
-            IDictionary<String, CompositionBrush> sourceParameters = new Dictionary<String, CompositionBrush>
+            IDictionary<string, CompositionBrush> sourceParameters = new Dictionary<string, CompositionBrush>
             {
                 { nameof(hostBackdropBrush), hostBackdropBrush },
                 { nameof(backdropBrush), backdropBrush }
@@ -356,12 +356,12 @@ namespace UICompositionAnimations.Behaviours
             ArithmeticCompositeEffect tint = source as ArithmeticCompositeEffect ?? source.To<BlendEffect>().Background as ArithmeticCompositeEffect;
             if (tint == null) throw new InvalidOperationException("Error while retrieving the tint effect");
             tint.Name = "Tint";
-            const String
+            const string
                 tint1Name = "Tint.Source1Amount",
                 tint2Name = "Tint.Source2Amount";
 
             // Make sure the Win2D brush was loaded correctly
-            const String
+            const string
                 source1Name = "Switch.Source1Amount",
                 source2Name = "Switch.Source2Amount";
             CompositionEffectFactory factory = compositor.CreateEffectFactory(source, new[]
@@ -375,7 +375,7 @@ namespace UICompositionAnimations.Behaviours
 
             // Create the effect factory and apply the final effect
             CompositionEffectBrush effectBrush = factory.CreateBrush();
-            foreach (KeyValuePair<String, CompositionBrush> pair in sourceParameters)
+            foreach (KeyValuePair<string, CompositionBrush> pair in sourceParameters)
             {
                 effectBrush.SetSourceParameter(pair.Key, pair.Value);
             }
@@ -434,7 +434,7 @@ namespace UICompositionAnimations.Behaviours
                 Saturation = initiallyVisible ? off : on,
                 Source = new CompositionEffectSourceParameter("source")
             };
-            const String animationPropertyName = "SEffect.Saturation";
+            const string animationPropertyName = "SEffect.Saturation";
             CompositionEffectFactory effectFactory = compositor.CreateEffectFactory(saturationEffect, new[] { animationPropertyName });
 
             // Setup the rest of the effect
@@ -475,7 +475,7 @@ namespace UICompositionAnimations.Behaviours
                 Optimization = EffectOptimization.Balanced,
                 Source = new CompositionEffectSourceParameter("source")
             };
-            const String animationPropertyName = "Blur.BlurAmount";
+            const string animationPropertyName = "Blur.BlurAmount";
             CompositionEffectFactory effectFactory = compositor.CreateEffectFactory(blurEffect, new[] { animationPropertyName });
 
             // Setup the rest of the effect
@@ -529,10 +529,10 @@ namespace UICompositionAnimations.Behaviours
                 Optimization = EffectOptimization.Balanced,
                 Source = new CompositionEffectSourceParameter(nameof(backdropBrush))
             };
-            const String animationPropertyName = "Blur.BlurAmount";
+            const string animationPropertyName = "Blur.BlurAmount";
 
             // Prepare the dictionary with the parameters to add
-            IDictionary<String, CompositionBrush> sourceParameters = new Dictionary<String, CompositionBrush>
+            IDictionary<string, CompositionBrush> sourceParameters = new Dictionary<string, CompositionBrush>
             {
                 { nameof(backdropBrush), backdropBrush }
             };
@@ -546,7 +546,7 @@ namespace UICompositionAnimations.Behaviours
 
             // Create the effect factory and apply the final effect
             CompositionEffectBrush effectBrush = effectFactory.CreateBrush();
-            foreach (KeyValuePair<String, CompositionBrush> pair in sourceParameters)
+            foreach (KeyValuePair<string, CompositionBrush> pair in sourceParameters)
             {
                 effectBrush.SetSourceParameter(pair.Key, pair.Value);
             }
@@ -602,10 +602,10 @@ namespace UICompositionAnimations.Behaviours
                 Optimization = EffectOptimization.Balanced,
                 Source = new CompositionEffectSourceParameter(nameof(backdropBrush))
             };
-            const String animationPropertyName = "Blur.BlurAmount";
+            const string animationPropertyName = "Blur.BlurAmount";
 
             // Prepare the dictionary with the parameters to add
-            IDictionary<String, CompositionBrush> sourceParameters = new Dictionary<String, CompositionBrush>
+            IDictionary<string, CompositionBrush> sourceParameters = new Dictionary<string, CompositionBrush>
             {
                 { nameof(backdropBrush), backdropBrush }
             };
@@ -621,7 +621,7 @@ namespace UICompositionAnimations.Behaviours
                 Saturation = initiallyVisible ? offSaturation : onSaturation,
                 Source = source
             };
-            const String saturationParameter = "SEffect.Saturation";
+            const string saturationParameter = "SEffect.Saturation";
 
             // Make sure the Win2D brush was loaded correctly
             CompositionEffectFactory effectFactory = compositor.CreateEffectFactory(saturationEffect, new[]
@@ -632,7 +632,7 @@ namespace UICompositionAnimations.Behaviours
 
             // Create the effect factory and apply the final effect
             CompositionEffectBrush effectBrush = effectFactory.CreateBrush();
-            foreach (KeyValuePair<String, CompositionBrush> pair in sourceParameters)
+            foreach (KeyValuePair<string, CompositionBrush> pair in sourceParameters)
             {
                 effectBrush.SetSourceParameter(pair.Key, pair.Value);
             }
@@ -643,7 +643,7 @@ namespace UICompositionAnimations.Behaviours
             await AddToTreeAndBindSizeAsync(target.GetVisual(), target, sprite);
             if (initiallyVisible) await element.Dispatcher.RunAsync(() => element.Opacity = 1);
             return new AttachedCompositeAnimatableCompositionEffect<T>(target, sprite,
-                new Dictionary<String, CompositionAnimationValueParameters>
+                new Dictionary<string, CompositionAnimationValueParameters>
                 {
                     { animationPropertyName, new CompositionAnimationValueParameters(onBlur, offBlur) },
                     { saturationParameter, new CompositionAnimationValueParameters(onSaturation, offSaturation) }
@@ -686,7 +686,7 @@ namespace UICompositionAnimations.Behaviours
                 Saturation = initiallyVisible ? offSaturation : onSaturation,
                 Source = blurEffect
             };
-            const String blurParameter = "Blur.BlurAmount", saturationParameter = "SEffect.Saturation";
+            const string blurParameter = "Blur.BlurAmount", saturationParameter = "SEffect.Saturation";
             CompositionEffectFactory effectFactory = compositor.CreateEffectFactory(saturationEffect, new[]
             {
                 blurParameter,
@@ -705,7 +705,7 @@ namespace UICompositionAnimations.Behaviours
 
             // Prepare and return the wrapped effect
             return new AttachedCompositeAnimatableCompositionEffect<T>(element, sprite,
-                new Dictionary<String, CompositionAnimationValueParameters>
+                new Dictionary<string, CompositionAnimationValueParameters>
                 {
                     { blurParameter, new CompositionAnimationValueParameters(onBlur, offBlur) },
                     { saturationParameter, new CompositionAnimationValueParameters(onSaturation, offSaturation) }
