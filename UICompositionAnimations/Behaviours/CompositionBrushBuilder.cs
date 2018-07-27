@@ -199,8 +199,34 @@ namespace UICompositionAnimations.Behaviours
 
         #region Blends
 
-        public static CompositionBrushBuilder Blend([NotNull] CompositionBrushBuilder foreground, [NotNull] CompositionBrushBuilder background, BlendEffectMode mode)
+        /// <summary>
+        /// An <see langword="enum"/> used to modify the default sorting of the input <see cref="IGraphicsEffectSource"/> instances in a blend operation
+        /// </summary>
+        [PublicAPI]
+        public enum InputsSorting
         {
+            /// <summary>
+            /// The instance used to call the blend method is placed on top of the other
+            /// </summary>
+            ForegroundToBackground,
+
+            /// <summary>
+            /// The instance used to call the blend method is placed behind the other
+            /// </summary>
+            BackgroundToForeground
+        }
+
+        /// <summary>
+        /// Blends two pipelines using a <see cref="BlendEffect"/> instance with the specified mode
+        /// </summary>
+        /// <param name="pipeline">The second <see cref="CompositionBrushBuilder"/> instance to blend</param>
+        /// <param name="mode">The desired <see cref="BlendEffectMode"/> to use to blend the input pipelines</param>
+        /// <param name="sorting">The sorting mode to use with the two input pipelines</param>
+        [Pure, NotNull]
+        public CompositionBrushBuilder Blend([NotNull] CompositionBrushBuilder pipeline, BlendEffectMode mode, InputsSorting sorting = InputsSorting.ForegroundToBackground)
+        {
+            (var foreground, var background) = sorting == InputsSorting.ForegroundToBackground ? (this, pipeline) : (pipeline, this);
+
             async Task<IGraphicsEffectSource> Factory() => new BlendEffect
             {
                 Foreground = await foreground.SourceProducer(),
@@ -211,9 +237,18 @@ namespace UICompositionAnimations.Behaviours
             return new CompositionBrushBuilder(Factory, foreground, background);
         }
 
-        public static CompositionBrushBuilder Mix([NotNull] CompositionBrushBuilder foreground, [NotNull] CompositionBrushBuilder background, float mix)
+        /// <summary>
+        /// Blends two pipelines using an <see cref="ArithmeticCompositeEffect"/> instance
+        /// </summary>
+        /// <param name="pipeline">The second <see cref="CompositionBrushBuilder"/> instance to blend</param>
+        /// <param name="mix">The intensity of the foreground effect in the final pipeline</param>
+        /// <param name="sorting">The sorting mode to use with the two input pipelines</param>
+        [Pure, NotNull]
+        public CompositionBrushBuilder Mix([NotNull] CompositionBrushBuilder pipeline, float mix, InputsSorting sorting = InputsSorting.ForegroundToBackground)
         {
             if (mix <= 0 || mix >= 1) throw new ArgumentOutOfRangeException(nameof(mix), "The mix value must be in the (0,1) range");
+            (var foreground, var background) = sorting == InputsSorting.ForegroundToBackground ? (this, pipeline) : (pipeline, this);
+
             async Task<IGraphicsEffectSource> Factory() => new ArithmeticCompositeEffect
             {
                 MultiplyAmount = 0,
@@ -226,22 +261,34 @@ namespace UICompositionAnimations.Behaviours
             return new CompositionBrushBuilder(Factory, foreground, background);
         }
 
-        public static CompositionBrushBuilder Merge(
+        /// <summary>
+        /// Blends two pipelines using the provided <see cref="Func{T1, T2, TResult}"/> to do so
+        /// </summary>
+        /// <param name="factory">The blend function to use</param>
+        /// <param name="background">The background pipeline to blend with the current instance</param>
+        [Pure, NotNull]
+        public CompositionBrushBuilder Merge(
             [NotNull] Func<IGraphicsEffectSource, IGraphicsEffectSource, IGraphicsEffectSource> factory,
-            [NotNull] CompositionBrushBuilder foreground, [NotNull] CompositionBrushBuilder background)
+            [NotNull] CompositionBrushBuilder background)
         {
-            async Task<IGraphicsEffectSource> Factory() => factory(await foreground.SourceProducer(), await background.SourceProducer());
+            async Task<IGraphicsEffectSource> Factory() => factory(await SourceProducer(), await background.SourceProducer());
 
-            return new CompositionBrushBuilder(Factory, foreground, background);
+            return new CompositionBrushBuilder(Factory, this, background);
         }
 
-        public static CompositionBrushBuilder Merge(
+        /// <summary>
+        /// Blends two pipelines using the provided asynchronous <see cref="Func{T1, T2, TResult}"/> to do so
+        /// </summary>
+        /// <param name="factory">The asynchronous blend function to use</param>
+        /// <param name="background">The background pipeline to blend with the current instance</param>
+        [Pure, NotNull]
+        public CompositionBrushBuilder Merge(
             [NotNull] Func<IGraphicsEffectSource, IGraphicsEffectSource, Task<IGraphicsEffectSource>> factory,
-            [NotNull] CompositionBrushBuilder foreground, [NotNull] CompositionBrushBuilder background)
+            [NotNull] CompositionBrushBuilder background)
         {
-            async Task<IGraphicsEffectSource> Factory() => await factory(await foreground.SourceProducer(), await background.SourceProducer());
+            async Task<IGraphicsEffectSource> Factory() => await factory(await SourceProducer(), await background.SourceProducer());
 
-            return new CompositionBrushBuilder(Factory, foreground, background);
+            return new CompositionBrushBuilder(Factory, this, background);
         }
 
         #endregion
@@ -286,6 +333,11 @@ namespace UICompositionAnimations.Behaviours
             return new CompositionBrushBuilder(this, Factory);
         }
 
+        /// <summary>
+        /// Adds a new <see cref="OpacityEffect"/> to the current pipeline
+        /// </summary>
+        /// <param name="opacity">The opacity value to apply to the pipeline</param>
+        [Pure, NotNull]
         public CompositionBrushBuilder Opacity(float opacity)
         {
             if (opacity < 0 || opacity > 1) throw new ArgumentOutOfRangeException(nameof(opacity), "The opacity must be in the [0,1] range");
@@ -298,8 +350,19 @@ namespace UICompositionAnimations.Behaviours
             return new CompositionBrushBuilder(this, Factory);
         }
 
-        public CompositionBrushBuilder Tint(Color color, float mix) => Mix(FromColor(color), this, mix);
+        /// <summary>
+        /// Applies a tint color on the current pipeline
+        /// </summary>
+        /// <param name="color">The tint color to use</param>
+        /// <param name="mix">The amount of tint to apply over the current effect</param>
+        [Pure, NotNull]
+        public CompositionBrushBuilder Tint(Color color, float mix) => FromColor(color).Mix(this, mix);
 
+        /// <summary>
+        /// Applies a custom effect to the current pipeline
+        /// </summary>
+        /// <param name="factory">A <see cref="Func{T, TResult}"/> that takes the current <see cref="IGraphicsEffectSource"/> instance and produces a new effect to display</param>
+        [Pure, NotNull]
         public CompositionBrushBuilder Effect([NotNull] Func<IGraphicsEffectSource, IGraphicsEffectSource> factory)
         {
             async Task<IGraphicsEffectSource> Factory() => factory(await SourceProducer());
@@ -307,6 +370,11 @@ namespace UICompositionAnimations.Behaviours
             return new CompositionBrushBuilder(this, Factory);
         }
 
+        /// <summary>
+        /// Applies a custom effect to the current pipeline
+        /// </summary>
+        /// <param name="factory">An asynchronous <see cref="Func{T, TResult}"/> that takes the current <see cref="IGraphicsEffectSource"/> instance and produces a new effect to display</param>
+        [Pure, NotNull]
         public CompositionBrushBuilder Effect([NotNull] Func<IGraphicsEffectSource, Task<IGraphicsEffectSource>> factory)
         {
             async Task<IGraphicsEffectSource> Factory() => await factory(await SourceProducer());
