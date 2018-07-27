@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Numerics;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Windows.Graphics.Effects;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Hosting;
 using JetBrains.Annotations;
+using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
 using UICompositionAnimations.Enums;
 using UICompositionAnimations.Helpers;
@@ -47,9 +47,26 @@ namespace UICompositionAnimations.Behaviours
         /// <param name="factory">A <see cref="Func{TResult}"/> instance that will return the initial <see cref="CompositionBrush"/></param>
         private CompositionBrushBuilder([NotNull] Func<Task<CompositionBrush>> factory)
         {
-            SourceProducer = () => Task.FromResult(new CompositionEffectSourceParameter("source").To<IGraphicsEffectSource>());
-            LazyParameters = new Dictionary<String, Func<Task<CompositionBrush>>> { { "source", factory } };
+            String
+                guid = Guid.NewGuid().ToString("N"),
+                replaced = Regex.Replace(guid, "[0-9]", "_"),
+                id = new String(replaced.ToCharArray().Select((c, i) => c == '_' ? char.ToUpper((char)('a' + i % 26)) : c).ToArray());
+            SourceProducer = () => Task.FromResult(new CompositionEffectSourceParameter(id).To<IGraphicsEffectSource>());
+            LazyParameters = new Dictionary<String, Func<Task<CompositionBrush>>> { { id, factory } };
             AnimationParameters = new string[0];
+        }
+
+        /// <summary>
+        /// Base constructor used to create a new instance from scratch
+        /// </summary>
+        /// <param name="factory">A <see cref="Func{TResult}"/> instance that will produce the new <see cref="IGraphicsEffectSource"/> to add to the pipeline</param>
+        /// <param name="lazy">The collection of <see cref="CompositionBrush"/> instances that needs to be initialized for the new effect</param>
+        /// <param name="animations">The collection of animation properties for the new effect</param>
+        private CompositionBrushBuilder([NotNull] Func<Task<IGraphicsEffectSource>> factory, [NotNull] IReadOnlyDictionary<String, Func<Task<CompositionBrush>>> lazy, [NotNull, ItemNotNull] IReadOnlyCollection<String> animations)
+        {
+            SourceProducer = factory;
+            LazyParameters = lazy;
+            AnimationParameters = animations;
         }
 
         /// <summary>
@@ -57,11 +74,17 @@ namespace UICompositionAnimations.Behaviours
         /// </summary>
         /// <param name="factory">A <see cref="Func{TResult}"/> instance that will return the initial <see cref="IGraphicsEffectSource"/></param>
         private CompositionBrushBuilder([NotNull] Func<Task<IGraphicsEffectSource>> factory)
-        {
-            SourceProducer = factory;
-            LazyParameters = new Dictionary<String, Func<Task<CompositionBrush>>>();
-            AnimationParameters = new string[0];
-        }
+            : this(factory, new Dictionary<String, Func<Task<CompositionBrush>>>(), new string[0])
+        { }
+
+        /// <summary>
+        /// Constructor used to create a new instance obtained by concatenation between the current pipeline and the input effect info
+        /// </summary>
+        /// <param name="source">The source pipeline to attach the new effect to</param>
+        /// <param name="factory">A <see cref="Func{TResult}"/> instance that will produce the new <see cref="IGraphicsEffectSource"/> to add to the pipeline</param>
+        private CompositionBrushBuilder([NotNull] CompositionBrushBuilder source, [NotNull] Func<Task<IGraphicsEffectSource>> factory)
+            : this(factory, source.LazyParameters, source.AnimationParameters)
+        { }
 
         /// <summary>
         /// Constructor used to create a new instance obtained by concatenation between the current pipeline and the input effect info
@@ -73,19 +96,20 @@ namespace UICompositionAnimations.Behaviours
         private CompositionBrushBuilder(
             [NotNull] CompositionBrushBuilder source, 
             [NotNull] Func<Task<IGraphicsEffectSource>> factory, [NotNull] IReadOnlyDictionary<String, Func<Task<CompositionBrush>>> lazy, [NotNull, ItemNotNull] IReadOnlyCollection<String> animations)
-        {
-            SourceProducer = factory;
+            : this(factory, source.LazyParameters.Merge(lazy), source.AnimationParameters.Merge(animations))
+        { }
 
-            // Merge the lazy parameters dictionaries
-            if (source.LazyParameters.Keys.FirstOrDefault(lazy.ContainsKey) is String key)
-                throw new InvalidOperationException($"The key {key} already exists in the current pipeline");
-            LazyParameters = new Dictionary<String, Func<Task<CompositionBrush>>>(source.LazyParameters.Concat(lazy));
-
-            // Merge the animation parameters
-            if (source.AnimationParameters.FirstOrDefault(animations.Contains) is String animation)
-                throw new InvalidOperationException($"The animation {animation} already exists in the current pipeline");
-            AnimationParameters = source.AnimationParameters.Concat(animations).ToArray();
-        }
+        /// <summary>
+        /// Constructor used to create a new instance obtained by merging two separate pipelines
+        /// </summary>
+        /// <param name="factory">A <see cref="Func{TResult}"/> instance that will produce the new <see cref="IGraphicsEffectSource"/> to add to the pipeline</param>
+        /// <param name="a">The first pipeline to merge</param>
+        /// <param name="b">The second pipeline to merge</param>
+        private CompositionBrushBuilder(
+            [NotNull] Func<Task<IGraphicsEffectSource>> factory,
+            [NotNull] CompositionBrushBuilder a, [NotNull] CompositionBrushBuilder b)
+            : this(factory, a.LazyParameters.Merge(b.LazyParameters), a.AnimationParameters.Merge(b.AnimationParameters))
+        { }
 
         #endregion
 
@@ -145,71 +169,170 @@ namespace UICompositionAnimations.Behaviours
         /// <param name="options">Indicates whether or not to force the reload of the Win2D image</param>
         /// <param name="dpiMode">Indicates the desired DPI mode to use when loading the image</param>
         [Pure, NotNull]
-        public static CompositionBrushBuilder FromImage([NotNull] Uri uri, BitmapCacheMode options, BitmapDPIMode dpiMode)
+        public static CompositionBrushBuilder FromImage([NotNull] Uri uri, BitmapCacheMode options = BitmapCacheMode.EnableCaching, BitmapDPIMode dpiMode = BitmapDPIMode.CopyDisplayDPISettingsWith96AsLowerBound)
         {
             return new CompositionBrushBuilder(() => Win2DImageHelper.LoadImageAsync(Window.Current.Compositor, uri, options, dpiMode).ContinueWith(t => t.Result as CompositionBrush));
+        }
+
+        /// <summary>
+        /// Starts a new <see cref="CompositionBrushBuilder"/> pipeline from a Win2D image tiled to cover the available space
+        /// </summary>
+        /// <param name="uri">The path for the image to load</param>
+        /// <param name="options">Indicates whether or not to force the reload of the Win2D image</param>
+        /// <param name="dpiMode">Indicates the desired DPI mode to use when loading the image</param>
+        [Pure, NotNull]
+        public static CompositionBrushBuilder FromTiles([NotNull] Uri uri, BitmapCacheMode options = BitmapCacheMode.EnableCaching, BitmapDPIMode dpiMode = BitmapDPIMode.CopyDisplayDPISettingsWith96AsLowerBound)
+        {
+            CompositionBrushBuilder image = FromImage(uri, options, dpiMode);
+
+            async Task<IGraphicsEffectSource> Factory() => new BorderEffect
+            {
+                ExtendX = CanvasEdgeBehavior.Wrap,
+                ExtendY = CanvasEdgeBehavior.Wrap,
+                Source = await image.SourceProducer()
+            };
+
+            return new CompositionBrushBuilder(image, Factory);
+        }
+
+        #endregion
+
+        #region Blends
+
+        public static CompositionBrushBuilder Blend([NotNull] CompositionBrushBuilder foreground, [NotNull] CompositionBrushBuilder background, BlendEffectMode mode)
+        {
+            async Task<IGraphicsEffectSource> Factory() => new BlendEffect
+            {
+                Foreground = await foreground.SourceProducer(),
+                Background = await background.SourceProducer(),
+                Mode = mode
+            };
+
+            return new CompositionBrushBuilder(Factory, foreground, background);
+        }
+
+        public static CompositionBrushBuilder Mix([NotNull] CompositionBrushBuilder foreground, [NotNull] CompositionBrushBuilder background, float mix)
+        {
+            if (mix <= 0 || mix >= 1) throw new ArgumentOutOfRangeException(nameof(mix), "The mix value must be in the (0,1) range");
+            async Task<IGraphicsEffectSource> Factory() => new ArithmeticCompositeEffect
+            {
+                MultiplyAmount = 0,
+                Source1Amount = 1 - mix,
+                Source2Amount = mix,
+                Source1 = await background.SourceProducer(),
+                Source2 = await foreground.SourceProducer()
+            };
+
+            return new CompositionBrushBuilder(Factory, foreground, background);
+        }
+
+        public static CompositionBrushBuilder Merge(
+            [NotNull] Func<IGraphicsEffectSource, IGraphicsEffectSource, IGraphicsEffectSource> factory,
+            [NotNull] CompositionBrushBuilder foreground, [NotNull] CompositionBrushBuilder background)
+        {
+            async Task<IGraphicsEffectSource> Factory() => factory(await foreground.SourceProducer(), await background.SourceProducer());
+
+            return new CompositionBrushBuilder(Factory, foreground, background);
+        }
+
+        public static CompositionBrushBuilder Merge(
+            [NotNull] Func<IGraphicsEffectSource, IGraphicsEffectSource, Task<IGraphicsEffectSource>> factory,
+            [NotNull] CompositionBrushBuilder foreground, [NotNull] CompositionBrushBuilder background)
+        {
+            async Task<IGraphicsEffectSource> Factory() => await factory(await foreground.SourceProducer(), await background.SourceProducer());
+
+            return new CompositionBrushBuilder(Factory, foreground, background);
         }
 
         #endregion
 
         #region Effects
 
+        /// <summary>
+        /// Adds a new <see cref="GaussianBlurEffect"/> to the current pipeline
+        /// </summary>
+        /// <param name="blur">The blur amount to apply</param>
+        /// <param name="mode">The <see cref="EffectBorderMode"/> parameter for the effect, defaults to <see cref="EffectBorderMode.Hard"/></param>
+        /// <param name="optimization">The <see cref="EffectOptimization"/> parameter to use, defaults to <see cref="EffectOptimization.Balanced"/></param>
+        [Pure, NotNull]
         public CompositionBrushBuilder Blur(float blur, EffectBorderMode mode = EffectBorderMode.Hard, EffectOptimization optimization = EffectOptimization.Balanced)
         {
             // Blur effect
             async Task<IGraphicsEffectSource> Factory() => new GaussianBlurEffect
             {
-                Name = "Blur",
                 BlurAmount = blur,
                 BorderMode = mode,
                 Optimization = optimization,
                 Source = await SourceProducer()
             };
 
-            // Info
-            String[] parameters = { "Blur.BlurAmount" };
-            return new CompositionBrushBuilder(this, Factory, new Dictionary<String, Func<Task<CompositionBrush>>>(), parameters);
+            return new CompositionBrushBuilder(this, Factory);
+        }
+
+        /// <summary>
+        /// Adds a new <see cref="SaturationEffect"/> to the current pipeline
+        /// </summary>
+        /// <param name="saturation">The saturation amount for the new effect</param>
+        [Pure, NotNull]
+        public CompositionBrushBuilder Saturation(float saturation)
+        {
+            if (saturation < 0 || saturation > 1) throw new ArgumentOutOfRangeException(nameof(saturation), "The saturation must be in the [0,1] range");
+            async Task<IGraphicsEffectSource> Factory() => new SaturationEffect
+            {
+                Saturation = saturation,
+                Source = await SourceProducer()
+            };
+
+            return new CompositionBrushBuilder(this, Factory);
+        }
+
+        public CompositionBrushBuilder Opacity(float opacity)
+        {
+            if (opacity < 0 || opacity > 1) throw new ArgumentOutOfRangeException(nameof(opacity), "The opacity must be in the [0,1] range");
+            async Task<IGraphicsEffectSource> Factory() => new OpacityEffect
+            {
+                Opacity = opacity,
+                Source = await SourceProducer()
+            };
+
+            return new CompositionBrushBuilder(this, Factory);
+        }
+
+        public CompositionBrushBuilder Tint(Color color, float mix) => Mix(FromColor(color), this, mix);
+
+        public CompositionBrushBuilder Effect([NotNull] Func<IGraphicsEffectSource, IGraphicsEffectSource> factory)
+        {
+            async Task<IGraphicsEffectSource> Factory() => factory(await SourceProducer());
+
+            return new CompositionBrushBuilder(this, Factory);
+        }
+
+        public CompositionBrushBuilder Effect([NotNull] Func<IGraphicsEffectSource, Task<IGraphicsEffectSource>> factory)
+        {
+            async Task<IGraphicsEffectSource> Factory() => await factory(await SourceProducer());
+
+            return new CompositionBrushBuilder(this, Factory);
         }
 
         #endregion
 
+        /// <summary>
+        /// Builds a <see cref="CompositionBrush"/> instance from the current effects pipeline
+        /// </summary>
+        [Pure, NotNull, ItemNotNull]
         public async Task<CompositionBrush> BuildAsync()
         {
             // Validate the pipeline and build the effects factory
             if (!(await SourceProducer() is IGraphicsEffect effect)) throw new InvalidOperationException("The pipeline doesn't contain a valid effects sequence");
-            CompositionEffectFactory factory = Window.Current.Compositor.CreateEffectFactory(effect, AnimationParameters);
+            CompositionEffectFactory factory = AnimationParameters.Count > 0
+                ? Window.Current.Compositor.CreateEffectFactory(effect, AnimationParameters)
+                : Window.Current.Compositor.CreateEffectFactory(effect);
 
             // Create the effect factory and apply the final effect
             CompositionEffectBrush effectBrush = factory.CreateBrush();
             foreach (KeyValuePair<String, Func<Task<CompositionBrush>>> pair in LazyParameters)
                 effectBrush.SetSourceParameter(pair.Key, await pair.Value());
             return effectBrush;
-        }
-    }
-
-    public static class CompositionBrushExtensions
-    {
-        /// <summary>
-        /// Adds a <see cref="Visual"/> object on top of the target <see cref="UIElement"/> and binds the size of the two items with an expression animation
-        /// </summary>
-        /// <param name="host">The <see cref="Visual"/> object that will host the effect</param>
-        /// <param name="element">The target <see cref="UIElement"/> (bound to the given visual) that will host the effect</param>
-        /// <param name="visual">The source <see cref="Visual"/> object to display</param>
-        public static void AttachToElement([NotNull] this CompositionBrush brush, [NotNull] FrameworkElement target)
-        {
-            // Add the brush to a sprite and attach it to the target element
-            SpriteVisual sprite = Window.Current.Compositor.CreateSpriteVisual();
-            sprite.Brush = brush;
-            sprite.Size = new Vector2((float)target.ActualWidth, (float)target.ActualHeight);
-            ElementCompositionPreview.SetElementChildVisual(target, sprite);
-
-            // Keep the sprite size in sync
-            Visual visual = target.GetVisual();
-            ExpressionAnimation bindSizeAnimation = Window.Current.Compositor.CreateExpressionAnimation($"{nameof(visual)}.Size");
-            bindSizeAnimation.SetReferenceParameter(nameof(visual), visual);
-
-            // Start the animation
-            sprite.StartAnimation("Size", bindSizeAnimation);
         }
     }
 }

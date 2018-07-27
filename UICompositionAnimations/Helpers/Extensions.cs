@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Windows.Foundation;
+using JetBrains.Annotations;
 
 namespace UICompositionAnimations.Helpers
 {
@@ -49,5 +52,33 @@ namespace UICompositionAnimations.Helpers
         /// <param name="task">The task returned by the async call</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Forget(this Task task) { }
+
+        /// <summary>
+        /// Merges the two input <see cref="IReadOnlyDictionary{TKey,TValue}"/> instances and makes sure no duplicate keys are present
+        /// </summary>
+        /// <param name="a">The first <see cref="IReadOnlyDictionary{TKey,TValue}"/> to merge</param>
+        /// <param name="b">The second <see cref="IReadOnlyDictionary{TKey,TValue}"/> to merge</param>
+        [Pure, NotNull]
+        public static IReadOnlyDictionary<TKey, TValue> Merge<TKey, TValue>(
+            [NotNull] this IReadOnlyDictionary<TKey, TValue> a,
+            [NotNull] IReadOnlyDictionary<TKey, TValue> b)
+        {
+            if (a.Keys.FirstOrDefault(b.ContainsKey) is TKey key)
+                throw new InvalidOperationException($"The key {key} already exists in the current pipeline");
+            return new Dictionary<TKey, TValue>(a.Concat(b));
+        }
+
+        /// <summary>
+        /// Merges the two input <see cref="IReadOnlyCollection{T}"/> instances and makes sure no duplicate items are present
+        /// </summary>
+        /// <param name="a">The first <see cref="IReadOnlyCollection{T}"/> to merge</param>
+        /// <param name="b">The second <see cref="IReadOnlyCollection{T}"/> to merge</param>
+        [Pure, NotNull, ItemNotNull]
+        public static IReadOnlyCollection<T> Merge<T>([NotNull, ItemNotNull] this IReadOnlyCollection<T> a, [NotNull, ItemNotNull] IReadOnlyCollection<T> b)
+        {
+            if (a.FirstOrDefault(b.Contains) is T animation)
+                throw new InvalidOperationException($"The animation {animation} already exists in the current pipeline");
+            return a.Concat(b).ToArray();
+        }
     }
 }
