@@ -130,7 +130,7 @@ namespace UICompositionAnimations.Behaviours
         /// <summary>
         /// Starts a new <see cref="CompositionBrushBuilder"/> pipeline from a solid <see cref="CompositionBrush"/> with the specified color
         /// </summary>
-        /// <param name="color">The desired <see cref="Color"/> for the initial <see cref="CompositionBrush"/></param>
+        /// <param name="color">The desired color for the initial <see cref="CompositionBrush"/></param>
         [Pure, NotNull]
         public static CompositionBrushBuilder FromColor(Color color) => new CompositionBrushBuilder(() => Task.FromResult(new ColorSourceEffect { Color = color }.To<IGraphicsEffectSource>()));
 
