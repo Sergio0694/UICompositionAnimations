@@ -19,6 +19,7 @@ namespace UICompositionAnimations
     /// <summary>
     /// A static class that wraps the animation methods in the Windows.UI.Composition namespace
     /// </summary>
+    [PublicAPI]
     public static class CompositionExtensions
     {
         #region Internal tools
@@ -1719,7 +1720,6 @@ namespace UICompositionAnimations
                 case Shape shape: shadow.Mask = shape.GetAlphaMask(); break;
                 case Image image: shadow.Mask = image.GetAlphaMask(); break;
                 case TextBlock textBlock: shadow.Mask = textBlock.GetAlphaMask(); break;
-                default: break;
             }
             if (apply) ElementCompositionPreview.SetElementChildVisual(target, sprite);
             return sprite;
@@ -2028,6 +2028,28 @@ namespace UICompositionAnimations
         /// </summary>
         /// <param name="element">The source UIElement</param>
         public static Visual GetVisual(this UIElement element) => ElementCompositionPreview.GetElementVisual(element);
+
+        /// <summary>
+        /// Adds a <see cref="CompositionBrush"/> instance on top of the target <see cref="FrameworkElement"/> and binds the size of the two items with an expression animation
+        /// </summary>
+        /// <param name="brush">The <see cref="CompositionBrush"/> instance to display</param>
+        /// <param name="target">The target <see cref="FrameworkElement"/> that will host the effect</param>
+        public static void AttachToElement([NotNull] this CompositionBrush brush, [NotNull] FrameworkElement target)
+        {
+            // Add the brush to a sprite and attach it to the target element
+            SpriteVisual sprite = Window.Current.Compositor.CreateSpriteVisual();
+            sprite.Brush = brush;
+            sprite.Size = new Vector2((float)target.ActualWidth, (float)target.ActualHeight);
+            ElementCompositionPreview.SetElementChildVisual(target, sprite);
+
+            // Keep the sprite size in sync
+            Visual visual = target.GetVisual();
+            ExpressionAnimation bindSizeAnimation = Window.Current.Compositor.CreateExpressionAnimation($"{nameof(visual)}.Size");
+            bindSizeAnimation.SetReferenceParameter(nameof(visual), visual);
+
+            // Start the animation
+            sprite.StartAnimation("Size", bindSizeAnimation);
+        }
 
         #endregion
     }
