@@ -255,22 +255,20 @@ namespace UICompositionAnimations.Behaviours
         }
 
         /// <summary>
-        /// Blends two pipelines using an <see cref="ArithmeticCompositeEffect"/> instance
+        /// Blends two pipelines using an <see cref="CrossFadeEffect"/> instance
         /// </summary>
         /// <param name="pipeline">The second <see cref="CompositionBrushBuilder"/> instance to blend</param>
-        /// <param name="mix">The intensity of the foreground effect in the final pipeline</param>
+        /// <param name="factor">The cross fade factor to blend the input effects</param>
         /// <param name="sorting">The sorting mode to use with the two input pipelines</param>
         [Pure, NotNull]
-        public CompositionBrushBuilder Mix([NotNull] CompositionBrushBuilder pipeline, float mix, EffectPlacement sorting = EffectPlacement.Foreground)
+        public CompositionBrushBuilder Mix([NotNull] CompositionBrushBuilder pipeline, float factor = 0.5f, EffectPlacement sorting = EffectPlacement.Foreground)
         {
-            if (mix <= 0 || mix >= 1) throw new ArgumentOutOfRangeException(nameof(mix), "The mix value must be in the (0,1) range");
+            if (factor < 0 || factor > 1) throw new ArgumentOutOfRangeException(nameof(factor), "The factor must be in the [0,1] range");
             (var foreground, var background) = sorting == EffectPlacement.Foreground ? (this, pipeline) : (pipeline, this);
 
-            async Task<IGraphicsEffectSource> Factory() => new ArithmeticCompositeEffect
+            async Task<IGraphicsEffectSource> Factory() => new CrossFadeEffect
             {
-                MultiplyAmount = 0,
-                Source1Amount = mix,
-                Source2Amount = 1 - mix,
+                CrossFade = factor,
                 Source1 = await foreground.SourceProducer(),
                 Source2 = await background.SourceProducer()
             };
@@ -283,18 +281,27 @@ namespace UICompositionAnimations.Behaviours
         /// </summary>
         /// <param name="pipeline">The second <see cref="CompositionBrushBuilder"/> instance to blend</param>
         /// <param name="factor">The cross fade factor to blend the input effects</param>
+        /// <param name="animation">The optional blur animation for the effect</param>
         /// <param name="sorting">The sorting mode to use with the two input pipelines</param>
+        /// <remarks>Note that each pipeline can only contain a single instance of any of the built-in effects with animation support</remarks>
         [Pure, NotNull]
-        public CompositionBrushBuilder CrossFade([NotNull] CompositionBrushBuilder pipeline, float factor = 0.5f, EffectPlacement sorting = EffectPlacement.Foreground)
+        public CompositionBrushBuilder Mix([NotNull] CompositionBrushBuilder pipeline, float factor, out EffectAnimation animation, EffectPlacement sorting = EffectPlacement.Foreground)
         {
-            if (factor <= 0 || factor >= 1) throw new ArgumentOutOfRangeException(nameof(factor), "The mix value must be in the (0,1) range");
+            if (factor < 0 || factor > 1) throw new ArgumentOutOfRangeException(nameof(factor), "The factor must be in the [0,1] range");
             (var foreground, var background) = sorting == EffectPlacement.Foreground ? (this, pipeline) : (pipeline, this);
 
             async Task<IGraphicsEffectSource> Factory() => new CrossFadeEffect
             {
                 CrossFade = factor,
                 Source1 = await foreground.SourceProducer(),
-                Source2 = await background.SourceProducer()
+                Source2 = await background.SourceProducer(),
+                Name = "Fade"
+            };
+
+            animation = (brush, value, ms) =>
+            {
+                if (factor < 0 || factor > 1) throw new ArgumentOutOfRangeException(nameof(value), "The factor must be in the [0,1] range");
+                return brush.StartAnimationAsync("Fade.CrossFade", value, TimeSpan.FromMilliseconds(ms));
             };
 
             return new CompositionBrushBuilder(Factory, foreground, background);
