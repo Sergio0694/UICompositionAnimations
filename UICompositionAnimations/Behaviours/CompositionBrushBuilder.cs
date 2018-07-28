@@ -252,10 +252,32 @@ namespace UICompositionAnimations.Behaviours
             async Task<IGraphicsEffectSource> Factory() => new ArithmeticCompositeEffect
             {
                 MultiplyAmount = 0,
-                Source1Amount = 1 - mix,
-                Source2Amount = mix,
-                Source1 = await background.SourceProducer(),
-                Source2 = await foreground.SourceProducer()
+                Source1Amount = mix,
+                Source2Amount = 1 - mix,
+                Source1 = await foreground.SourceProducer(),
+                Source2 = await background.SourceProducer()
+            };
+
+            return new CompositionBrushBuilder(Factory, foreground, background);
+        }
+
+        /// <summary>
+        /// Blends two pipelines using an <see cref="CrossFadeEffect"/> instance
+        /// </summary>
+        /// <param name="pipeline">The second <see cref="CompositionBrushBuilder"/> instance to blend</param>
+        /// <param name="factor">The cross fade factor to blend the input effects</param>
+        /// <param name="sorting">The sorting mode to use with the two input pipelines</param>
+        [Pure, NotNull]
+        public CompositionBrushBuilder CrossFade([NotNull] CompositionBrushBuilder pipeline, float factor = 0.5f, EffectPlacement sorting = EffectPlacement.Foreground)
+        {
+            if (factor <= 0 || factor >= 1) throw new ArgumentOutOfRangeException(nameof(factor), "The mix value must be in the (0,1) range");
+            (var foreground, var background) = sorting == EffectPlacement.Foreground ? (this, pipeline) : (pipeline, this);
+
+            async Task<IGraphicsEffectSource> Factory() => new CrossFadeEffect
+            {
+                CrossFade = factor,
+                Source1 = await foreground.SourceProducer(),
+                Source2 = await background.SourceProducer()
             };
 
             return new CompositionBrushBuilder(Factory, foreground, background);
