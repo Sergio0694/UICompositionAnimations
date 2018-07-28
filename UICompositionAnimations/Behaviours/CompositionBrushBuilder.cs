@@ -17,6 +17,14 @@ using UICompositionAnimations.Helpers;
 namespace UICompositionAnimations.Behaviours
 {
     /// <summary>
+    /// A <see langword="delegate"/> that represents a custom effect animation that can be applied to a <see cref="CompositionBrush"/>
+    /// </summary>
+    /// <param name="brush">The target <see cref="CompositionBrush"/> instance to use to start the animation</param>
+    /// <param name="value">The animation target value</param>
+    /// <param name="ms">The animation duration, in milliseconds</param>
+    public delegate Task EffectAnimation([NotNull] CompositionBrush brush, float value, int ms);
+
+    /// <summary>
     /// A <see langword="class"/> that allows to build custom effects pipelines and create <see cref="CompositionBrush"/> instances from them
     /// </summary>
     [PublicAPI]
@@ -324,7 +332,7 @@ namespace UICompositionAnimations.Behaviours
 
         #endregion
 
-        #region Effects
+        #region Built-in effects
 
         /// <summary>
         /// Adds a new <see cref="GaussianBlurEffect"/> to the current pipeline
@@ -348,6 +356,32 @@ namespace UICompositionAnimations.Behaviours
         }
 
         /// <summary>
+        /// Adds a new <see cref="GaussianBlurEffect"/> to the current pipeline
+        /// </summary>
+        /// <param name="blur">The initial blur amount</param>
+        /// <param name="animation">The optional blur animation for the effect</param>
+        /// <param name="mode">The <see cref="EffectBorderMode"/> parameter for the effect, defaults to <see cref="EffectBorderMode.Hard"/></param>
+        /// <param name="optimization">The <see cref="EffectOptimization"/> parameter to use, defaults to <see cref="EffectOptimization.Balanced"/></param>
+        /// <remarks>Note that each pipeline can only contain a single instance of any of the built-in effects with animation support</remarks>
+        [Pure, NotNull]
+        public CompositionBrushBuilder Blur(float blur, out EffectAnimation animation, EffectBorderMode mode = EffectBorderMode.Hard, EffectOptimization optimization = EffectOptimization.Balanced)
+        {
+            // Blur effect
+            async Task<IGraphicsEffectSource> Factory() => new GaussianBlurEffect
+            {
+                BlurAmount = blur,
+                BorderMode = mode,
+                Optimization = optimization,
+                Source = await SourceProducer(),
+                Name = "Blur"
+            };
+
+            animation = (brush, value, ms) => brush.StartAnimationAsync("Blur.BlurAmount", value, TimeSpan.FromMilliseconds(ms));
+
+            return new CompositionBrushBuilder(this, Factory);
+        }
+
+        /// <summary>
         /// Adds a new <see cref="SaturationEffect"/> to the current pipeline
         /// </summary>
         /// <param name="saturation">The saturation amount for the new effect</param>
@@ -360,6 +394,28 @@ namespace UICompositionAnimations.Behaviours
                 Saturation = saturation,
                 Source = await SourceProducer()
             };
+
+            return new CompositionBrushBuilder(this, Factory);
+        }
+
+        /// <summary>
+        /// Adds a new <see cref="SaturationEffect"/> to the current pipeline
+        /// </summary>
+        /// <param name="saturation">The initial saturation amount for the new effect</param>
+        /// <param name="animation">The optional saturation animation for the effect</param>
+        /// <remarks>Note that each pipeline can only contain a single instance of any of the built-in effects with animation support</remarks>
+        [Pure, NotNull]
+        public CompositionBrushBuilder Saturation(float saturation, out EffectAnimation animation)
+        {
+            if (saturation < 0 || saturation > 1) throw new ArgumentOutOfRangeException(nameof(saturation), "The saturation must be in the [0,1] range");
+            async Task<IGraphicsEffectSource> Factory() => new SaturationEffect
+            {
+                Saturation = saturation,
+                Source = await SourceProducer(),
+                Name = "Saturation"
+            };
+
+            animation = (brush, value, ms) => brush.StartAnimationAsync("Saturation.Saturation", value, TimeSpan.FromMilliseconds(ms));
 
             return new CompositionBrushBuilder(this, Factory);
         }
@@ -382,12 +438,38 @@ namespace UICompositionAnimations.Behaviours
         }
 
         /// <summary>
+        /// Adds a new <see cref="OpacityEffect"/> to the current pipeline
+        /// </summary>
+        /// <param name="opacity">The opacity value to apply to the pipeline</param>
+        /// <param name="animation">The optional opacity animation for the effect</param>
+        /// <remarks>Note that each pipeline can only contain a single instance of any of the built-in effects with animation support</remarks>
+        [Pure, NotNull]
+        public CompositionBrushBuilder Opacity(float opacity, out EffectAnimation animation)
+        {
+            if (opacity < 0 || opacity > 1) throw new ArgumentOutOfRangeException(nameof(opacity), "The opacity must be in the [0,1] range");
+            async Task<IGraphicsEffectSource> Factory() => new OpacityEffect
+            {
+                Opacity = opacity,
+                Source = await SourceProducer(),
+                Name = "Opacity"
+            };
+
+            animation = (brush, value, ms) => brush.StartAnimationAsync("Opacity.Opacity", value, TimeSpan.FromMilliseconds(ms));
+
+            return new CompositionBrushBuilder(this, Factory);
+        }
+
+        /// <summary>
         /// Applies a tint color on the current pipeline
         /// </summary>
         /// <param name="color">The tint color to use</param>
         /// <param name="mix">The amount of tint to apply over the current effect</param>
         [Pure, NotNull]
         public CompositionBrushBuilder Tint(Color color, float mix) => FromColor(color).Mix(this, mix);
+
+        #endregion
+
+        #region Custom effects
 
         /// <summary>
         /// Applies a custom effect to the current pipeline
