@@ -200,20 +200,20 @@ namespace UICompositionAnimations.Behaviours
         #region Blends
 
         /// <summary>
-        /// An <see langword="enum"/> used to modify the default sorting of the input <see cref="IGraphicsEffectSource"/> instances in a blend operation
+        /// An <see langword="enum"/> used to modify the default placement of the input <see cref="IGraphicsEffectSource"/> instance in a blend operation
         /// </summary>
         [PublicAPI]
-        public enum InputsSorting
+        public enum EffectPlacement
         {
             /// <summary>
             /// The instance used to call the blend method is placed on top of the other
             /// </summary>
-            ForegroundToBackground,
+            Foreground,
 
             /// <summary>
             /// The instance used to call the blend method is placed behind the other
             /// </summary>
-            BackgroundToForeground
+            Background
         }
 
         /// <summary>
@@ -223,9 +223,9 @@ namespace UICompositionAnimations.Behaviours
         /// <param name="mode">The desired <see cref="BlendEffectMode"/> to use to blend the input pipelines</param>
         /// <param name="sorting">The sorting mode to use with the two input pipelines</param>
         [Pure, NotNull]
-        public CompositionBrushBuilder Blend([NotNull] CompositionBrushBuilder pipeline, BlendEffectMode mode, InputsSorting sorting = InputsSorting.ForegroundToBackground)
+        public CompositionBrushBuilder Blend([NotNull] CompositionBrushBuilder pipeline, BlendEffectMode mode, EffectPlacement sorting = EffectPlacement.Foreground)
         {
-            (var foreground, var background) = sorting == InputsSorting.ForegroundToBackground ? (this, pipeline) : (pipeline, this);
+            (var foreground, var background) = sorting == EffectPlacement.Foreground ? (this, pipeline) : (pipeline, this);
 
             async Task<IGraphicsEffectSource> Factory() => new BlendEffect
             {
@@ -244,10 +244,10 @@ namespace UICompositionAnimations.Behaviours
         /// <param name="mix">The intensity of the foreground effect in the final pipeline</param>
         /// <param name="sorting">The sorting mode to use with the two input pipelines</param>
         [Pure, NotNull]
-        public CompositionBrushBuilder Mix([NotNull] CompositionBrushBuilder pipeline, float mix, InputsSorting sorting = InputsSorting.ForegroundToBackground)
+        public CompositionBrushBuilder Mix([NotNull] CompositionBrushBuilder pipeline, float mix, EffectPlacement sorting = EffectPlacement.Foreground)
         {
             if (mix <= 0 || mix >= 1) throw new ArgumentOutOfRangeException(nameof(mix), "The mix value must be in the (0,1) range");
-            (var foreground, var background) = sorting == InputsSorting.ForegroundToBackground ? (this, pipeline) : (pipeline, this);
+            (var foreground, var background) = sorting == EffectPlacement.Foreground ? (this, pipeline) : (pipeline, this);
 
             async Task<IGraphicsEffectSource> Factory() => new ArithmeticCompositeEffect
             {
