@@ -124,21 +124,7 @@ namespace UICompositionAnimations.Behaviours
         /// Starts a new <see cref="CompositionBrushBuilder"/> pipeline from the <see cref="CompositionBrush"/> returned by <see cref="Compositor.CreateBackdropBrush"/>
         /// </summary>
         [Pure, NotNull]
-        public static CompositionBrushBuilder FromBackdropBrush()
-        {
-            CompositionBrush Factory()
-            {
-                CompositionBrush brush = BackdropBrushCache.TryGetInstance();
-                if (brush == null)
-                {
-                    brush = Window.Current.Compositor.CreateBackdropBrush();
-                    BackdropBrushCache.Add(brush);
-                }
-                return brush;
-            }
-
-            return new CompositionBrushBuilder(() => Task.FromResult(Factory()));
-        }
+        public static CompositionBrushBuilder FromBackdropBrush() => new CompositionBrushBuilder(() => BackdropBrushCache.TryGetInstanceAsync(Window.Current.Compositor.CreateBackdropBrush));
 
         // The cache manager for host backdrop brushes
         [NotNull]
@@ -148,21 +134,7 @@ namespace UICompositionAnimations.Behaviours
         /// Starts a new <see cref="CompositionBrushBuilder"/> pipeline from the <see cref="CompositionBrush"/> returned by <see cref="Compositor.CreateHostBackdropBrush"/>
         /// </summary>
         [Pure, NotNull]
-        public static CompositionBrushBuilder FromHostBackdropBrush()
-        {
-            CompositionBrush Factory()
-            {
-                CompositionBrush brush = HostBackdropBrushCache.TryGetInstance();
-                if (brush == null)
-                {
-                    brush = Window.Current.Compositor.CreateHostBackdropBrush();
-                    HostBackdropBrushCache.Add(brush);
-                }
-                return brush;
-            }
-
-            return new CompositionBrushBuilder(() => Task.FromResult(Factory()));
-        }
+        public static CompositionBrushBuilder FromHostBackdropBrush() => new CompositionBrushBuilder(() => HostBackdropBrushCache.TryGetInstanceAsync(Window.Current.Compositor.CreateHostBackdropBrush));
 
         /// <summary>
         /// Starts a new <see cref="CompositionBrushBuilder"/> pipeline from a solid <see cref="CompositionBrush"/> with the specified color
