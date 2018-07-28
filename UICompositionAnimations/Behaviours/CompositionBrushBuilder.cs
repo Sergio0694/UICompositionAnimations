@@ -10,6 +10,7 @@ using Windows.UI.Xaml;
 using JetBrains.Annotations;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
+using UICompositionAnimations.Brushes.Cache;
 using UICompositionAnimations.Enums;
 using UICompositionAnimations.Helpers;
 
@@ -115,17 +116,53 @@ namespace UICompositionAnimations.Behaviours
 
         #region Initialization
 
+        // The cache manager for backdrop brushes
+        [NotNull]
+        private static readonly ThreadSafeCompositionCache<CompositionBrush> BackdropBrushCache = new ThreadSafeCompositionCache<CompositionBrush>();
+
         /// <summary>
         /// Starts a new <see cref="CompositionBrushBuilder"/> pipeline from the <see cref="CompositionBrush"/> returned by <see cref="Compositor.CreateBackdropBrush"/>
         /// </summary>
         [Pure, NotNull]
-        public static CompositionBrushBuilder FromBackdropBrush() => new CompositionBrushBuilder(() => Task.FromResult<CompositionBrush>(Window.Current.Compositor.CreateBackdropBrush()));
+        public static CompositionBrushBuilder FromBackdropBrush()
+        {
+            CompositionBrush Factory()
+            {
+                CompositionBrush brush = BackdropBrushCache.TryGetInstance();
+                if (brush == null)
+                {
+                    brush = Window.Current.Compositor.CreateBackdropBrush();
+                    BackdropBrushCache.Add(brush);
+                }
+                return brush;
+            }
+
+            return new CompositionBrushBuilder(() => Task.FromResult(Factory()));
+        }
+
+        // The cache manager for host backdrop brushes
+        [NotNull]
+        private static readonly ThreadSafeCompositionCache<CompositionBrush> HostBackdropBrushCache = new ThreadSafeCompositionCache<CompositionBrush>();
 
         /// <summary>
         /// Starts a new <see cref="CompositionBrushBuilder"/> pipeline from the <see cref="CompositionBrush"/> returned by <see cref="Compositor.CreateHostBackdropBrush"/>
         /// </summary>
         [Pure, NotNull]
-        public static CompositionBrushBuilder FromHostBackdropBrush() => new CompositionBrushBuilder(() => Task.FromResult<CompositionBrush>(Window.Current.Compositor.CreateHostBackdropBrush()));
+        public static CompositionBrushBuilder FromHostBackdropBrush()
+        {
+            CompositionBrush Factory()
+            {
+                CompositionBrush brush = HostBackdropBrushCache.TryGetInstance();
+                if (brush == null)
+                {
+                    brush = Window.Current.Compositor.CreateHostBackdropBrush();
+                    HostBackdropBrushCache.Add(brush);
+                }
+                return brush;
+            }
+
+            return new CompositionBrushBuilder(() => Task.FromResult(Factory()));
+        }
 
         /// <summary>
         /// Starts a new <see cref="CompositionBrushBuilder"/> pipeline from a solid <see cref="CompositionBrush"/> with the specified color
@@ -422,6 +459,10 @@ namespace UICompositionAnimations.Behaviours
             CompositionEffectBrush effectBrush = factory.CreateBrush();
             foreach (KeyValuePair<string, Func<Task<CompositionBrush>>> pair in LazyParameters)
                 effectBrush.SetSourceParameter(pair.Key, await pair.Value());
+
+            // Cleanup
+            BackdropBrushCache.Cleanup();
+            HostBackdropBrushCache.Cleanup();
             return effectBrush;
         }
     }
