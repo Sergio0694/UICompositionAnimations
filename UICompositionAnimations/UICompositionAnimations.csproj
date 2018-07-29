@@ -27,6 +27,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Debug\UICompositionAnimations.XML</DocumentationFile>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -37,6 +38,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Release\UICompositionAnimations.XML</DocumentationFile>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <PlatformTarget>x86</PlatformTarget>
@@ -48,6 +50,7 @@
     <PlatformTarget>x86</PlatformTarget>
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <ErrorReport>prompt</ErrorReport>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <PlatformTarget>x86</PlatformTarget>
@@ -60,6 +63,7 @@
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <ErrorReport>prompt</ErrorReport>
     <DocumentationFile>bin\x86\Release\UICompositionAnimations.XML</DocumentationFile>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|ARM'">
     <PlatformTarget>ARM</PlatformTarget>
@@ -71,6 +75,7 @@
     <PlatformTarget>ARM</PlatformTarget>
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <ErrorReport>prompt</ErrorReport>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|ARM'">
     <PlatformTarget>ARM</PlatformTarget>
@@ -83,6 +88,7 @@
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <ErrorReport>prompt</ErrorReport>
     <DocumentationFile>bin\ARM\Release\UICompositionAnimations.XML</DocumentationFile>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <PlatformTarget>x64</PlatformTarget>
@@ -94,6 +100,7 @@
     <PlatformTarget>x64</PlatformTarget>
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <ErrorReport>prompt</ErrorReport>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <PlatformTarget>x64</PlatformTarget>
@@ -106,6 +113,7 @@
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <ErrorReport>prompt</ErrorReport>
     <DocumentationFile>bin\x64\Release\UICompositionAnimations.XML</DocumentationFile>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
@@ -114,6 +122,8 @@
   <ItemGroup>
     <Compile Include="Behaviours\AttachedCompositionEffectFactory.cs" />
     <Compile Include="Behaviours\AcrylicEffectHelper.cs" />
+    <Compile Include="Behaviours\CompositionBrushBuilder.cs" />
+    <Compile Include="Behaviours\CompositionSourceInitializer.cs" />
     <Compile Include="Behaviours\Effects\AcrylicEffectMode.cs" />
     <Compile Include="Behaviours\Effects\AttachedAnimatableCompositionEffect.cs" />
     <Compile Include="Behaviours\Effects\AttachedCompositeAnimatableCompositionEffect.cs" />
@@ -122,7 +132,9 @@
     <Compile Include="Behaviours\Effects\AttachedStaticCompositionEffect.cs" />
     <Compile Include="Behaviours\Misc\CompositionAnimationParameters.cs" />
     <Compile Include="Behaviours\Misc\FixedAnimationType.cs" />
+    <Compile Include="Brushes\Base\XamlCompositionEffectBrushBase.cs" />
     <Compile Include="Brushes\Cache\HostBackdropInstanceWrapper.cs" />
+    <Compile Include="Brushes\Cache\ThreadSafeCompositionCache.cs" />
     <Compile Include="Brushes\NoiseTextureBrush.cs" />
     <Compile Include="Brushes\CustomAcrylicBrush.cs" />
     <Compile Include="Brushes\LightingBrush.cs" />
@@ -138,6 +150,7 @@
     <Compile Include="Enums\ImplicitAnimationType.cs" />
     <Compile Include="Enums\MarginSide.cs" />
     <Compile Include="Helpers\ApiInformationHelper.cs" />
+    <Compile Include="Helpers\AsyncMutex.cs" />
     <Compile Include="Helpers\ColorConverter.cs" />
     <Compile Include="Helpers\DispatcherHelper.cs" />
     <Compile Include="Helpers\Extensions.cs" />
