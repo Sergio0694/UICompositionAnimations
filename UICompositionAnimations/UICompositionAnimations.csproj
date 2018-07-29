@@ -112,6 +112,7 @@
     <Compile Include="Behaviours\AttachedCompositionEffectFactory.cs" />
     <Compile Include="Behaviours\AcrylicEffectHelper.cs" />
     <Compile Include="Behaviours\CompositionBrushBuilder.cs" />
+    <Compile Include="Behaviours\CompositionSourceInitializer.cs" />
     <Compile Include="Behaviours\Effects\AcrylicEffectMode.cs" />
     <Compile Include="Behaviours\Effects\AttachedAnimatableCompositionEffect.cs" />
     <Compile Include="Behaviours\Effects\AttachedCompositeAnimatableCompositionEffect.cs" />
