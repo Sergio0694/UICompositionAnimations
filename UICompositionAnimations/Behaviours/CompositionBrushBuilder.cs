@@ -43,10 +43,10 @@ namespace UICompositionAnimations.Behaviours
         private readonly IReadOnlyDictionary<string, Func<Task<CompositionBrush>>> LazyParameters;
 
         /// <summary>
-        /// The collection of animation parameters present in the current pipeline
+        /// The collection of animation properties present in the current pipeline
         /// </summary>
         [NotNull, ItemNotNull]
-        private readonly IReadOnlyCollection<string> AnimationParameters;
+        private readonly IReadOnlyCollection<string> AnimationProperties;
 
         #region Constructors
 
@@ -62,7 +62,7 @@ namespace UICompositionAnimations.Behaviours
                 id = new string(replaced.ToCharArray().Select((c, i) => c == '_' ? char.ToUpper((char)('a' + i % 26)) : c).ToArray());
             SourceProducer = () => Task.FromResult(new CompositionEffectSourceParameter(id).To<IGraphicsEffectSource>());
             LazyParameters = new Dictionary<string, Func<Task<CompositionBrush>>> { { id, factory } };
-            AnimationParameters = new string[0];
+            AnimationProperties = new string[0];
         }
 
         /// <summary>
@@ -75,7 +75,7 @@ namespace UICompositionAnimations.Behaviours
         {
             SourceProducer = factory;
             LazyParameters = lazy;
-            AnimationParameters = animations;
+            AnimationProperties = animations;
         }
 
         /// <summary>
@@ -96,7 +96,7 @@ namespace UICompositionAnimations.Behaviours
         private CompositionBrushBuilder(
             [NotNull] CompositionBrushBuilder source, 
             [NotNull] Func<Task<IGraphicsEffectSource>> factory, [CanBeNull] IReadOnlyDictionary<string, Func<Task<CompositionBrush>>> lazy = null, [CanBeNull, ItemNotNull] IReadOnlyCollection<string> animations = null)
-            : this(factory, lazy?.Merge(source.LazyParameters) ?? source.LazyParameters, animations?.Merge(source.AnimationParameters) ?? source.AnimationParameters)
+            : this(factory, lazy?.Merge(source.LazyParameters) ?? source.LazyParameters, animations?.Merge(source.AnimationProperties) ?? source.AnimationProperties)
         { }
 
         /// <summary>
@@ -111,7 +111,7 @@ namespace UICompositionAnimations.Behaviours
             [NotNull] Func<Task<IGraphicsEffectSource>> factory,
             [NotNull] CompositionBrushBuilder a, [NotNull] CompositionBrushBuilder b,
             [CanBeNull] IReadOnlyDictionary<string, Func<Task<CompositionBrush>>> lazy = null, [CanBeNull, ItemNotNull] IReadOnlyCollection<string> animations = null)
-            : this(factory, lazy?.Merge(a.LazyParameters.Merge(b.LazyParameters)) ?? a.LazyParameters.Merge(b.LazyParameters), animations?.Merge(a.AnimationParameters.Merge(b.AnimationParameters)) ?? a.AnimationParameters.Merge(b.AnimationParameters))
+            : this(factory, lazy?.Merge(a.LazyParameters.Merge(b.LazyParameters)) ?? a.LazyParameters.Merge(b.LazyParameters), animations?.Merge(a.AnimationProperties.Merge(b.AnimationProperties)) ?? a.AnimationProperties.Merge(b.AnimationProperties))
         { }
 
         #endregion
@@ -506,8 +506,8 @@ namespace UICompositionAnimations.Behaviours
         {
             // Validate the pipeline and build the effects factory
             if (!(await SourceProducer() is IGraphicsEffect effect)) throw new InvalidOperationException("The pipeline doesn't contain a valid effects sequence");
-            CompositionEffectFactory factory = AnimationParameters.Count > 0
-                ? Window.Current.Compositor.CreateEffectFactory(effect, AnimationParameters)
+            CompositionEffectFactory factory = AnimationProperties.Count > 0
+                ? Window.Current.Compositor.CreateEffectFactory(effect, AnimationProperties)
                 : Window.Current.Compositor.CreateEffectFactory(effect);
 
             // Create the effect factory and apply the final effect
