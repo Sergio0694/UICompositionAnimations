@@ -138,7 +138,6 @@
     <Compile Include="Enums\EasingFunctionNames.cs" />
     <Compile Include="Enums\ImplicitAnimationType.cs" />
     <Compile Include="Enums\MarginSide.cs" />
-    <Compile Include="Helpers\ApiInformationHelper.cs" />
     <Compile Include="Helpers\AsyncMutex.cs" />
     <Compile Include="Helpers\ColorConverter.cs" />
     <Compile Include="Helpers\DispatcherHelper.cs" />
