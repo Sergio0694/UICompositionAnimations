@@ -475,6 +475,16 @@ namespace UICompositionAnimations.Behaviours
         [Pure, NotNull]
         public CompositionBrushBuilder Tint(Color color, float mix) => FromColor(color).Mix(this, mix);
 
+        /// <summary>
+        /// Applies a tint color on the current pipeline
+        /// </summary>
+        /// <param name="color">The tint color to use</param>
+        /// <param name="mix">The initial amount of tint to apply over the current effect</param>
+        /// <param name="animation">The optional tint animation for the effect</param>
+        /// <remarks>Note that each pipeline can only contain a single instance of any of the built-in effects with animation support</remarks>
+        [Pure, NotNull]
+        public CompositionBrushBuilder Tint(Color color, float mix, out EffectAnimation animation) => FromColor(color).Mix(this, mix, out animation);
+
         #endregion
 
         #region Custom effects
