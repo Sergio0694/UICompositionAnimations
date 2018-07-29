@@ -293,11 +293,11 @@ namespace UICompositionAnimations.Behaviours
 
             animation = (brush, value, ms) =>
             {
-                if (factor < 0 || factor > 1) throw new ArgumentOutOfRangeException(nameof(value), "The factor must be in the [0,1] range");
+                if (value < 0 || value > 1) throw new ArgumentOutOfRangeException(nameof(value), "The factor must be in the [0,1] range");
                 return brush.StartAnimationAsync("Fade.CrossFade", value, TimeSpan.FromMilliseconds(ms));
             };
 
-            return new CompositionBrushBuilder(Factory, foreground, background, new[] { "Fade.CrossFade" }, null);
+            return new CompositionBrushBuilder(Factory, foreground, background, new[] { "Fade.CrossFade" });
         }
 
         /// <summary>
@@ -415,7 +415,11 @@ namespace UICompositionAnimations.Behaviours
                 Name = "Saturation"
             };
 
-            animation = (brush, value, ms) => brush.StartAnimationAsync("Saturation.Saturation", value, TimeSpan.FromMilliseconds(ms));
+            animation = (brush, value, ms) =>
+            {
+                if (value < 0 || value > 1) throw new ArgumentOutOfRangeException(nameof(value), "The saturation must be in the [0,1] range");
+                return brush.StartAnimationAsync("Saturation.Saturation", value, TimeSpan.FromMilliseconds(ms));
+            };
 
             return new CompositionBrushBuilder(this, Factory, new[] { "Saturation.Saturation" });
         }
@@ -454,7 +458,11 @@ namespace UICompositionAnimations.Behaviours
                 Name = "Opacity"
             };
 
-            animation = (brush, value, ms) => brush.StartAnimationAsync("Opacity.Opacity", value, TimeSpan.FromMilliseconds(ms));
+            animation = (brush, value, ms) =>
+            {
+                if (value < 0 || value > 1) throw new ArgumentOutOfRangeException(nameof(value), "The opacity must be in the [0,1] range");
+                return brush.StartAnimationAsync("Opacity.Opacity", value, TimeSpan.FromMilliseconds(ms));
+            };
 
             return new CompositionBrushBuilder(this, Factory, new[] { "Opacity.Opacity" });
         }
