@@ -305,14 +305,17 @@ namespace UICompositionAnimations.Behaviours
         /// </summary>
         /// <param name="factory">The blend function to use</param>
         /// <param name="background">The background pipeline to blend with the current instance</param>
+        /// <param name="animations">The list of optional animatable properties in the returned effect</param>
+        /// <param name="initializers">The list of source parameters that require deferred initialization (see <see cref="CompositionEffectSourceParameter"/> for more info)</param>
         [Pure, NotNull]
         public CompositionBrushBuilder Merge(
             [NotNull] Func<IGraphicsEffectSource, IGraphicsEffectSource, IGraphicsEffectSource> factory,
-            [NotNull] CompositionBrushBuilder background)
+            [NotNull] CompositionBrushBuilder background,
+            IEnumerable<string> animations = null, IEnumerable<CompositionSourceInitializer> initializers = null)
         {
             async Task<IGraphicsEffectSource> Factory() => factory(await SourceProducer(), await background.SourceProducer());
 
-            return new CompositionBrushBuilder(Factory, this, background);
+            return new CompositionBrushBuilder(Factory, this, background, animations?.ToArray(), initializers?.ToDictionary(item => item.Name, item => item.Initializer));
         }
 
         /// <summary>
@@ -320,14 +323,17 @@ namespace UICompositionAnimations.Behaviours
         /// </summary>
         /// <param name="factory">The asynchronous blend function to use</param>
         /// <param name="background">The background pipeline to blend with the current instance</param>
+        /// <param name="animations">The list of optional animatable properties in the returned effect</param>
+        /// <param name="initializers">The list of source parameters that require deferred initialization (see <see cref="CompositionEffectSourceParameter"/> for more info)</param>
         [Pure, NotNull]
         public CompositionBrushBuilder Merge(
             [NotNull] Func<IGraphicsEffectSource, IGraphicsEffectSource, Task<IGraphicsEffectSource>> factory,
-            [NotNull] CompositionBrushBuilder background)
+            [NotNull] CompositionBrushBuilder background,
+            IEnumerable<string> animations = null, IEnumerable<CompositionSourceInitializer> initializers = null)
         {
             async Task<IGraphicsEffectSource> Factory() => await factory(await SourceProducer(), await background.SourceProducer());
 
-            return new CompositionBrushBuilder(Factory, this, background);
+            return new CompositionBrushBuilder(Factory, this, background, animations?.ToArray(), initializers?.ToDictionary(item => item.Name, item => item.Initializer));
         }
 
         #endregion
