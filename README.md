@@ -94,7 +94,7 @@ The library provides several ways to use `UI.Composition` effects. There are rea
 
 #### Build an acrylic effect pipeline from scratch:
 ```C#
-  CompositionBrush brush = await CompositionBrushBuilder.FromHostBackdropBrush()
+CompositionBrush brush = await CompositionBrushBuilder.FromHostBackdropBrush()
     .Effect(source => new LuminanceToAlphaEffect { Source = source })
     .Opacity(0.4f)
     .Blend(CompositionBrushBuilder.FromHostBackdropBrush(), BlendEffectMode.Multiply)
