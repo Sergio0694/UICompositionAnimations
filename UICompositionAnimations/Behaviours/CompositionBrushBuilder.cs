@@ -37,16 +37,16 @@ namespace UICompositionAnimations.Behaviours
         private readonly Func<Task<IGraphicsEffectSource>> SourceProducer;
 
         /// <summary>
-        /// The collection of info on the parameters that need to be initialized after creating the final <see cref="CompositionBrush"/>
-        /// </summary>
-        [NotNull]
-        private readonly IReadOnlyDictionary<string, Func<Task<CompositionBrush>>> LazyParameters;
-
-        /// <summary>
         /// The collection of animation properties present in the current pipeline
         /// </summary>
         [NotNull, ItemNotNull]
         private readonly IReadOnlyCollection<string> AnimationProperties;
+
+        /// <summary>
+        /// The collection of info on the parameters that need to be initialized after creating the final <see cref="CompositionBrush"/>
+        /// </summary>
+        [NotNull]
+        private readonly IReadOnlyDictionary<string, Func<Task<CompositionBrush>>> LazyParameters;
 
         #region Constructors
 
@@ -69,13 +69,13 @@ namespace UICompositionAnimations.Behaviours
         /// Base constructor used to create a new instance from scratch
         /// </summary>
         /// <param name="factory">A <see cref="Func{TResult}"/> instance that will produce the new <see cref="IGraphicsEffectSource"/> to add to the pipeline</param>
-        /// <param name="lazy">The collection of <see cref="CompositionBrush"/> instances that needs to be initialized for the new effect</param>
         /// <param name="animations">The collection of animation properties for the new effect</param>
-        private CompositionBrushBuilder([NotNull] Func<Task<IGraphicsEffectSource>> factory, [NotNull] IReadOnlyDictionary<string, Func<Task<CompositionBrush>>> lazy, [NotNull, ItemNotNull] IReadOnlyCollection<string> animations)
+        /// <param name="lazy">The collection of <see cref="CompositionBrush"/> instances that needs to be initialized for the new effect</param>
+        private CompositionBrushBuilder([NotNull] Func<Task<IGraphicsEffectSource>> factory, [NotNull] [ItemNotNull] IReadOnlyCollection<string> animations, [NotNull] IReadOnlyDictionary<string, Func<Task<CompositionBrush>>> lazy)
         {
             SourceProducer = factory;
-            LazyParameters = lazy;
             AnimationProperties = animations;
+            LazyParameters = lazy;
         }
 
         /// <summary>
@@ -83,7 +83,7 @@ namespace UICompositionAnimations.Behaviours
         /// </summary>
         /// <param name="factory">A <see cref="Func{TResult}"/> instance that will return the initial <see cref="IGraphicsEffectSource"/></param>
         private CompositionBrushBuilder([NotNull] Func<Task<IGraphicsEffectSource>> factory)
-            : this(factory, new Dictionary<string, Func<Task<CompositionBrush>>>(), new string[0])
+            : this(factory, new string[0], new Dictionary<string, Func<Task<CompositionBrush>>>())
         { }
 
         /// <summary>
@@ -91,12 +91,12 @@ namespace UICompositionAnimations.Behaviours
         /// </summary>
         /// <param name="source">The source pipeline to attach the new effect to</param>
         /// <param name="factory">A <see cref="Func{TResult}"/> instance that will produce the new <see cref="IGraphicsEffectSource"/> to add to the pipeline</param>
-        /// <param name="lazy">The collection of <see cref="CompositionBrush"/> instances that needs to be initialized for the new effect</param>
         /// <param name="animations">The collection of animation properties for the new effect</param>
-        private CompositionBrushBuilder(
-            [NotNull] CompositionBrushBuilder source, 
-            [NotNull] Func<Task<IGraphicsEffectSource>> factory, [CanBeNull] IReadOnlyDictionary<string, Func<Task<CompositionBrush>>> lazy = null, [CanBeNull, ItemNotNull] IReadOnlyCollection<string> animations = null)
-            : this(factory, lazy?.Merge(source.LazyParameters) ?? source.LazyParameters, animations?.Merge(source.AnimationProperties) ?? source.AnimationProperties)
+        /// <param name="lazy">The collection of <see cref="CompositionBrush"/> instances that needs to be initialized for the new effect</param>
+        private CompositionBrushBuilder([NotNull] CompositionBrushBuilder source,
+            [NotNull] Func<Task<IGraphicsEffectSource>> factory,
+            [CanBeNull] [ItemNotNull] IReadOnlyCollection<string> animations = null, [CanBeNull] IReadOnlyDictionary<string, Func<Task<CompositionBrush>>> lazy = null)
+            : this(factory, animations?.Merge(source.AnimationProperties) ?? source.AnimationProperties, lazy?.Merge(source.LazyParameters) ?? source.LazyParameters)
         { }
 
         /// <summary>
@@ -105,13 +105,12 @@ namespace UICompositionAnimations.Behaviours
         /// <param name="factory">A <see cref="Func{TResult}"/> instance that will produce the new <see cref="IGraphicsEffectSource"/> to add to the pipeline</param>
         /// <param name="a">The first pipeline to merge</param>
         /// <param name="b">The second pipeline to merge</param>
-        /// <param name="lazy">The collection of <see cref="CompositionBrush"/> instances that needs to be initialized for the new effect</param>
         /// <param name="animations">The collection of animation properties for the new effect</param>
-        private CompositionBrushBuilder(
-            [NotNull] Func<Task<IGraphicsEffectSource>> factory,
+        /// <param name="lazy">The collection of <see cref="CompositionBrush"/> instances that needs to be initialized for the new effect</param>
+        private CompositionBrushBuilder([NotNull] Func<Task<IGraphicsEffectSource>> factory,
             [NotNull] CompositionBrushBuilder a, [NotNull] CompositionBrushBuilder b,
-            [CanBeNull] IReadOnlyDictionary<string, Func<Task<CompositionBrush>>> lazy = null, [CanBeNull, ItemNotNull] IReadOnlyCollection<string> animations = null)
-            : this(factory, lazy?.Merge(a.LazyParameters.Merge(b.LazyParameters)) ?? a.LazyParameters.Merge(b.LazyParameters), animations?.Merge(a.AnimationProperties.Merge(b.AnimationProperties)) ?? a.AnimationProperties.Merge(b.AnimationProperties))
+            [CanBeNull] [ItemNotNull] IReadOnlyCollection<string> animations = null, [CanBeNull] IReadOnlyDictionary<string, Func<Task<CompositionBrush>>> lazy = null)
+            : this(factory, animations?.Merge(a.AnimationProperties.Merge(b.AnimationProperties)) ?? a.AnimationProperties.Merge(b.AnimationProperties), lazy?.Merge(a.LazyParameters.Merge(b.LazyParameters)) ?? a.LazyParameters.Merge(b.LazyParameters))
         { }
 
         #endregion
@@ -298,7 +297,7 @@ namespace UICompositionAnimations.Behaviours
                 return brush.StartAnimationAsync("Fade.CrossFade", value, TimeSpan.FromMilliseconds(ms));
             };
 
-            return new CompositionBrushBuilder(Factory, foreground, background, null, new[] { "Fade.CrossFade" });
+            return new CompositionBrushBuilder(Factory, foreground, background, new[] { "Fade.CrossFade" }, null);
         }
 
         /// <summary>
@@ -379,7 +378,7 @@ namespace UICompositionAnimations.Behaviours
 
             animation = (brush, value, ms) => brush.StartAnimationAsync("Blur.BlurAmount", value, TimeSpan.FromMilliseconds(ms));
 
-            return new CompositionBrushBuilder(this, Factory, null, new[] { "Blur.BlurAmount" });
+            return new CompositionBrushBuilder(this, Factory, new[] { "Blur.BlurAmount" });
         }
 
         /// <summary>
@@ -418,7 +417,7 @@ namespace UICompositionAnimations.Behaviours
 
             animation = (brush, value, ms) => brush.StartAnimationAsync("Saturation.Saturation", value, TimeSpan.FromMilliseconds(ms));
 
-            return new CompositionBrushBuilder(this, Factory, null, new[] { "Saturation.Saturation" });
+            return new CompositionBrushBuilder(this, Factory, new[] { "Saturation.Saturation" });
         }
 
         /// <summary>
@@ -457,7 +456,7 @@ namespace UICompositionAnimations.Behaviours
 
             animation = (brush, value, ms) => brush.StartAnimationAsync("Opacity.Opacity", value, TimeSpan.FromMilliseconds(ms));
 
-            return new CompositionBrushBuilder(this, Factory, null, new[] { "Opacity.Opacity" });
+            return new CompositionBrushBuilder(this, Factory, new[] { "Opacity.Opacity" });
         }
 
         /// <summary>
