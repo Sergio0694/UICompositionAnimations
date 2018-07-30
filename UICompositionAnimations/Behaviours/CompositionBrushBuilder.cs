@@ -10,6 +10,7 @@ using Windows.UI.Xaml;
 using JetBrains.Annotations;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
+using UICompositionAnimations.Brushes;
 using UICompositionAnimations.Brushes.Cache;
 using UICompositionAnimations.Enums;
 using UICompositionAnimations.Helpers;
@@ -176,24 +177,24 @@ namespace UICompositionAnimations.Behaviours
         /// Starts a new <see cref="CompositionBrushBuilder"/> pipeline from a Win2D image
         /// </summary>
         /// <param name="uri">The path for the image to load</param>
-        /// <param name="options">Indicates whether or not to force the reload of the Win2D image</param>
         /// <param name="dpiMode">Indicates the desired DPI mode to use when loading the image</param>
+        /// <param name="cache">The cache mode to use to load the image</param>
         [Pure, NotNull]
-        public static CompositionBrushBuilder FromImage([NotNull] Uri uri, BitmapCacheMode options = BitmapCacheMode.EnableCaching, BitmapDPIMode dpiMode = BitmapDPIMode.CopyDisplayDPISettingsWith96AsLowerBound)
+        public static CompositionBrushBuilder FromImage([NotNull] Uri uri, BitmapDPIMode dpiMode = BitmapDPIMode.CopyDisplayDPISettingsWith96AsLowerBound, BitmapCacheMode cache = BitmapCacheMode.Default)
         {
-            return new CompositionBrushBuilder(() => Win2DImageHelper.LoadImageAsync(Window.Current.Compositor, uri, options, dpiMode).ContinueWith(t => t.Result as CompositionBrush));
+            return new CompositionBrushBuilder(() => Win2DImageHelper.LoadImageAsync(Window.Current.Compositor, uri, dpiMode, cache).ContinueWith(t => t.Result as CompositionBrush));
         }
 
         /// <summary>
         /// Starts a new <see cref="CompositionBrushBuilder"/> pipeline from a Win2D image tiled to cover the available space
         /// </summary>
         /// <param name="uri">The path for the image to load</param>
-        /// <param name="options">Indicates whether or not to force the reload of the Win2D image</param>
         /// <param name="dpiMode">Indicates the desired DPI mode to use when loading the image</param>
+        /// <param name="cache">The cache mode to use to load the image</param>
         [Pure, NotNull]
-        public static CompositionBrushBuilder FromTiles([NotNull] Uri uri, BitmapCacheMode options = BitmapCacheMode.EnableCaching, BitmapDPIMode dpiMode = BitmapDPIMode.CopyDisplayDPISettingsWith96AsLowerBound)
+        public static CompositionBrushBuilder FromTiles([NotNull] Uri uri, BitmapDPIMode dpiMode = BitmapDPIMode.CopyDisplayDPISettingsWith96AsLowerBound, BitmapCacheMode cache = BitmapCacheMode.Default)
         {
-            CompositionBrushBuilder image = FromImage(uri, options, dpiMode);
+            CompositionBrushBuilder image = FromImage(uri, dpiMode, cache);
 
             async Task<IGraphicsEffectSource> Factory() => new BorderEffect
             {
@@ -525,6 +526,8 @@ namespace UICompositionAnimations.Behaviours
 
         #endregion
 
+        #region Results
+
         /// <summary>
         /// Builds a <see cref="CompositionBrush"/> instance from the current effects pipeline
         /// </summary>
@@ -547,5 +550,13 @@ namespace UICompositionAnimations.Behaviours
             HostBackdropBrushCache.Cleanup();
             return effectBrush;
         }
+
+        /// <summary>
+        /// Creates a new <see cref="XamlCompositionBrush"/> from the current effects pipeline
+        /// </summary>
+        [Pure, NotNull]
+        public XamlCompositionBrush AsBrush() => new XamlCompositionBrush(this);
+
+        #endregion
     }
 }

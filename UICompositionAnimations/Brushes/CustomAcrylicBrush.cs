@@ -49,8 +49,8 @@ namespace UICompositionAnimations.Brushes
         /// </summary>
         public AcrylicEffectMode Mode
         {
-            get { return GetValue(ModeProperty).To<AcrylicEffectMode>(); }
-            set { SetValue(ModeProperty, value); }
+            get => GetValue(ModeProperty).To<AcrylicEffectMode>();
+            set => SetValue(ModeProperty, value);
         }
 
         /// <summary>
@@ -80,8 +80,8 @@ namespace UICompositionAnimations.Brushes
         /// <remarks>This property is ignored when the active mode is <see cref="AcrylicEffectMode.HostBackdrop"/></remarks>
         public double BlurAmount
         {
-            get { return GetValue(BlurAmountProperty).To<double>(); }
-            set { SetValue(BlurAmountProperty, value); }
+            get => GetValue(BlurAmountProperty).To<double>();
+            set => SetValue(BlurAmountProperty, value);
         }
 
         /// <summary>
@@ -112,8 +112,8 @@ namespace UICompositionAnimations.Brushes
         /// <remarks>This property is ignored when the active mode is <see cref="AcrylicEffectMode.HostBackdrop"/></remarks>
         public int BlurAnimationDuration
         {
-            get { return GetValue(BlurAnimationDurationProperty).To<int>(); }
-            set { SetValue(BlurAnimationDurationProperty, value); }
+            get => GetValue(BlurAnimationDurationProperty).To<int>();
+            set => SetValue(BlurAnimationDurationProperty, value);
         }
 
         /// <summary>
@@ -127,8 +127,8 @@ namespace UICompositionAnimations.Brushes
         /// </summary>
         public Color Tint
         {
-            get { return GetValue(TintProperty).To<Color>(); }
-            set { SetValue(TintProperty, value); }
+            get => GetValue(TintProperty).To<Color>();
+            set => SetValue(TintProperty, value);
         }
 
         /// <summary>
@@ -153,8 +153,8 @@ namespace UICompositionAnimations.Brushes
         /// </summary>
         public double TintMix
         {
-            get { return GetValue(TintMixProperty).To<double>(); }
-            set { SetValue(TintMixProperty, value); }
+            get => GetValue(TintMixProperty).To<double>();
+            set => SetValue(TintMixProperty, value);
         }
 
         /// <summary>
@@ -167,7 +167,7 @@ namespace UICompositionAnimations.Brushes
         {
             double value = e.NewValue.To<double>();
             float fvalue = (float)value;
-            if (value < 0 || value >= 1) throw new ArgumentOutOfRangeException("The tint mix must be in the [0..1) range");
+            if (value < 0 || value >= 1) throw new ArgumentOutOfRangeException(nameof(value), "The tint mix must be in the [0..1) range");
             CustomAcrylicBrush @this = d.To<CustomAcrylicBrush>();
             await @this.ConnectedSemaphore.WaitAsync();
             if (@this.CompositionBrush != null && @this._State != AcrylicBrushEffectState.FallbackMode)
@@ -183,8 +183,8 @@ namespace UICompositionAnimations.Brushes
         /// </summary>
         public Color UnsupportedEffectFallbackColor
         {
-            get { return GetValue(UnsupportedEffectFallbackColorProperty).To<Color>(); }
-            set { SetValue(UnsupportedEffectFallbackColorProperty, value); }
+            get => GetValue(UnsupportedEffectFallbackColorProperty).To<Color>();
+            set => SetValue(UnsupportedEffectFallbackColorProperty, value);
         }
 
         /// <summary>
@@ -232,11 +232,6 @@ namespace UICompositionAnimations.Brushes
         /// </summary>
         /// <remarks>This property must be initialized before using the brush</remarks>
         public Uri NoiseTextureUri { get; set; }
-
-        /// <summary>
-        /// Gets or sets the caching setting for the acrylic brush
-        /// </summary>
-        public BitmapCacheMode CacheMode { get; set; } = BitmapCacheMode.EnableCaching;
 
         /// <summary>
         /// Indicates whether or not to enable an additional safety procedure when loading the acrylic brush.
@@ -444,14 +439,13 @@ namespace UICompositionAnimations.Brushes
 
             // Get the noise brush using Win2D
             IGraphicsEffect source = await AcrylicEffectHelper.ConcatenateEffectWithTintAndBorderAsync(Window.Current.Compositor,
-                baseEffect, sourceParameters, Tint, (float)TintMix, null, NoiseTextureUri, CacheMode);
+                baseEffect, sourceParameters, Tint, (float)TintMix, null, NoiseTextureUri);
 
             // Extract and setup the tint and color effects
             ArithmeticCompositeEffect tint = source as ArithmeticCompositeEffect ?? source.To<BlendEffect>().Background as ArithmeticCompositeEffect;
             if (tint == null) throw new InvalidOperationException("Error while retrieving the tint effect");
             tint.Name = "Tint";
-            ColorSourceEffect color = tint.Source2 as ColorSourceEffect;
-            if (color == null) throw new InvalidOperationException("Error while retrieving the color effect");
+            if (!(tint.Source2 is ColorSourceEffect color)) throw new InvalidOperationException("Error while retrieving the color effect");
             color.Name = "ColorSource";
 
             // Make sure the Win2D brush was loaded correctly

@@ -9,7 +9,6 @@ using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 using UICompositionAnimations.Behaviours;
-using UICompositionAnimations.Enums;
 using UICompositionAnimations.Helpers;
 using Windows.ApplicationModel;
 
@@ -30,8 +29,8 @@ namespace UICompositionAnimations.Brushes
         /// </summary>
         public Color Tint
         {
-            get { return GetValue(TintProperty).To<Color>(); }
-            set { SetValue(TintProperty, value); }
+            get => GetValue(TintProperty).To<Color>();
+            set => SetValue(TintProperty, value);
         }
 
         /// <summary>
@@ -56,11 +55,6 @@ namespace UICompositionAnimations.Brushes
         /// </summary>
         /// <remarks>This property must be initialized before using the brush</remarks>
         public Uri TextureUri { get; set; }
-
-        /// <summary>
-        /// Gets or sets the caching setting for the acrylic brush
-        /// </summary>
-        public BitmapCacheMode CacheMode { get; set; } = BitmapCacheMode.EnableCaching;
 
         #endregion
 
@@ -114,7 +108,7 @@ namespace UICompositionAnimations.Brushes
             List<String> animatableParameters = new List<String> { ColorSourceParameterName };
 
             // Get the noise brush using Win2D
-            IGraphicsEffect source = await AcrylicEffectHelper.LoadTextureEffectWithTintAsync(Window.Current.Compositor, sourceParameters, Tint, TextureUri, CacheMode);
+            IGraphicsEffect source = await AcrylicEffectHelper.LoadTextureEffectWithTintAsync(Window.Current.Compositor, sourceParameters, Tint, TextureUri);
 
             // Extract and setup the tint and color effects
             ColorSourceEffect color = source as ColorSourceEffect ?? source.To<BlendEffect>().Background as ColorSourceEffect;
