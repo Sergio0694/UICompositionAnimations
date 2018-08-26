@@ -1,10 +1,18 @@
 ﻿using System;
+using System.Threading.Tasks;
 using JetBrains.Annotations;
 using UICompositionAnimations.Behaviours;
 using UICompositionAnimations.Brushes.Base;
 
 namespace UICompositionAnimations.Brushes
 {
+    /// <summary>
+    /// A <see langword="delegate"/> that represents a custom effect animation that can be applied to a <see cref="XamlCompositionBrush"/> instance
+    /// </summary>
+    /// <param name="value">The animation target value</param>
+    /// <param name="ms">The animation duration, in milliseconds</param>
+    public delegate Task XamlEffectAnimation(float value, int ms);
+
     /// <summary>
     /// A simple <see langword="class"/> that can be used to quickly create XAML brushes from arbitrary <see cref="CompositionBrushBuilder"/> pipelines
     /// </summary>
@@ -21,6 +29,18 @@ namespace UICompositionAnimations.Brushes
         /// </summary>
         /// <param name="pipeline">The <see cref="CompositionBrushBuilder"/> instance to create the effect</param>
         public XamlCompositionBrush([NotNull] CompositionBrushBuilder pipeline) => Pipeline = pipeline;
+
+        /// <summary>
+        /// Binds an <see cref="EffectAnimation"/> to the composition brush in the current instance
+        /// </summary>
+        /// <param name="animation">The input animation</param>
+        /// <param name="bound">The resulting animation</param>
+        [Pure, NotNull]
+        public XamlCompositionBrush Bind([NotNull] EffectAnimation animation, out XamlEffectAnimation bound)
+        {
+            bound = (value, ms) => animation(CompositionBrush, value, ms);
+            return this;
+        }
 
         /// <inheritdoc cref="XamlCompositionEffectBrushBase"/>
         protected override CompositionBrushBuilder OnBrushRequested() => Pipeline;
