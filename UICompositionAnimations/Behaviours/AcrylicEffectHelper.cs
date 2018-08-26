@@ -28,7 +28,6 @@ namespace UICompositionAnimations.Behaviours
         /// <param name="colorMix">The amount of tint color to apply</param>
         /// <param name="canvas">The optional <see cref="CanvasControl"/> to use to generate the image for the <see cref="BorderEffect"/></param>
         /// <param name="uri">The path to the source image to use for the <see cref="BorderEffect"/></param>
-        /// <param name="options">Indicates whether or not to force the reload of the Win2D image</param>
         /// <returns>The resulting effect through the pipeline</returns>
         /// <remarks>The method does side effect on the <paramref name="parameters"/> variable</remarks>
         [MustUseReturnValue, ItemNotNull]
@@ -36,7 +35,7 @@ namespace UICompositionAnimations.Behaviours
             [NotNull] Compositor compositor,
             [NotNull] IGraphicsEffectSource source, [NotNull] IDictionary<string, CompositionBrush> parameters,
             Color color, float colorMix,
-            [CanBeNull] CanvasControl canvas, [NotNull] Uri uri, BitmapCacheMode options)
+            [CanBeNull] CanvasControl canvas, [NotNull] Uri uri)
         {
             // Setup the tint effect
             ArithmeticCompositeEffect tint = new ArithmeticCompositeEffect
@@ -50,8 +49,8 @@ namespace UICompositionAnimations.Behaviours
 
             // Get the noise brush using Win2D
             CompositionSurfaceBrush noiseBitmap = canvas == null
-                ? await Win2DImageHelper.LoadImageAsync(compositor, uri, options, BitmapDPIMode.CopyDisplayDPISettingsWith96AsLowerBound)
-                : await Win2DImageHelper.LoadImageAsync(compositor, canvas, uri, options, BitmapDPIMode.CopyDisplayDPISettingsWith96AsLowerBound);
+                ? await Win2DImageHelper.LoadImageAsync(compositor, uri, BitmapDPIMode.CopyDisplayDPISettingsWith96AsLowerBound, BitmapCacheMode.Default)
+                : await Win2DImageHelper.LoadImageAsync(compositor, canvas, uri, BitmapDPIMode.CopyDisplayDPISettingsWith96AsLowerBound, BitmapCacheMode.Default);
 
             // Make sure the Win2D brush was loaded correctly
             if (noiseBitmap != null)
@@ -82,17 +81,16 @@ namespace UICompositionAnimations.Behaviours
         /// <param name="parameters">A dictionary to use to keep track of reference parameters to add when creating a <see cref="CompositionEffectFactory"/></param>
         /// <param name="color">The tint color</param>
         /// <param name="uri">The path to the source image to use for the <see cref="BorderEffect"/></param>
-        /// <param name="options">Indicates whether or not to force the reload of the Win2D image</param>
         /// <returns>The resulting effect through the pipeline</returns>
         /// <remarks>The method does side effect on the <paramref name="parameters"/> variable</remarks>
         [MustUseReturnValue, ItemNotNull]
         public static async Task<IGraphicsEffect> LoadTextureEffectWithTintAsync(
             [NotNull] Compositor compositor, [NotNull] IDictionary<string, CompositionBrush> parameters,
-            Color color, [NotNull] Uri uri, BitmapCacheMode options)
+            Color color, [NotNull] Uri uri)
         {
             // Initial setup
             ColorSourceEffect colorEffect = new ColorSourceEffect { Color = color };
-            CompositionSurfaceBrush noiseBitmap = await Win2DImageHelper.LoadImageAsync(compositor, uri, options, BitmapDPIMode.CopyDisplayDPISettingsWith96AsLowerBound);
+            CompositionSurfaceBrush noiseBitmap = await Win2DImageHelper.LoadImageAsync(compositor, uri, BitmapDPIMode.CopyDisplayDPISettingsWith96AsLowerBound, BitmapCacheMode.Default);
             if (noiseBitmap == null) return colorEffect;
 
             // Blend the effects

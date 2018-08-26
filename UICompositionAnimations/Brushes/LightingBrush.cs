@@ -17,8 +17,8 @@ namespace UICompositionAnimations.Brushes
         /// </summary>
         public double DiffuseAmount
         {
-            get { return (double)GetValue(DiffuseAmountProperty); }
-            set { SetValue(DiffuseAmountProperty, value); }
+            get => (double)GetValue(DiffuseAmountProperty);
+            set => SetValue(DiffuseAmountProperty, value);
         }
 
         /// <summary>
@@ -38,8 +38,8 @@ namespace UICompositionAnimations.Brushes
         /// </summary>
         public double SpecularShine
         {
-            get { return (double)GetValue(SpecularShineProperty); }
-            set { SetValue(SpecularShineProperty, value); }
+            get => (double)GetValue(SpecularShineProperty);
+            set => SetValue(SpecularShineProperty, value);
         }
 
         /// <summary>
@@ -58,8 +58,8 @@ namespace UICompositionAnimations.Brushes
         /// </summary>
         public double SpecularAmount
         {
-            get { return (double)GetValue(SpecularAmountProperty); }
-            set { SetValue(SpecularAmountProperty, value); }
+            get => (double)GetValue(SpecularAmountProperty);
+            set => SetValue(SpecularAmountProperty, value);
         }
 
         /// <summary>

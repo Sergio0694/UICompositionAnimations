@@ -87,14 +87,12 @@ namespace UICompositionAnimations.Behaviours
         /// <param name="saturation">An optional parameter to set the overall saturation of the effect (if null, it will default to 1)</param>
         /// <param name="canvas">The optional source <see cref="CanvasControl"/> to generate the noise image using Win2D</param>
         /// <param name="uri">The path of the noise image to use</param>
-        /// <param name="options">Indicates whether or not to force the reload of the Win2D image</param>
         /// <param name="fadeIn">Indicates whether or not to fade the effect in</param>
         /// <param name="disposeOnUnload">Indicates whether or not to automatically dispose and remove the effect when the target element is unloaded</param>
         [ItemNotNull]
         public static async Task<AttachedStaticCompositionEffect<T>> AttachCompositionInAppCustomAcrylicEffectAsync<TSource, T>(
             [NotNull] this TSource element, [NotNull] T target, float blur, int ms, Color color, float colorMix, float? saturation,
-            [CanBeNull] CanvasControl canvas, [NotNull] Uri uri, 
-            BitmapCacheMode options = BitmapCacheMode.EnableCaching, bool fadeIn = false, bool disposeOnUnload = false)
+            [CanBeNull] CanvasControl canvas, [NotNull] Uri uri, bool fadeIn = false, bool disposeOnUnload = false)
             where TSource : FrameworkElement
             where T : FrameworkElement
         {
@@ -128,7 +126,7 @@ namespace UICompositionAnimations.Behaviours
 
             // Get the noise brush using Win2D
             IGraphicsEffect source = await AcrylicEffectHelper.ConcatenateEffectWithTintAndBorderAsync(compositor,
-                blurEffect, sourceParameters, color, colorMix, canvas, uri, options);
+                blurEffect, sourceParameters, color, colorMix, canvas, uri);
 
             // Add the final saturation effect if needed
             if (saturation != null)
@@ -208,12 +206,11 @@ namespace UICompositionAnimations.Behaviours
         /// <param name="colorMix">The opacity of the color over the blurred background</param>
         /// <param name="canvas">The optional source <see cref="CanvasControl"/> to generate the noise image using Win2D</param>
         /// <param name="uri">The path of the noise image to use</param>
-        /// <param name="options">Indicates whether or not to force the reload of the Win2D image</param>
         /// <param name="disposeOnUnload">Indicates whether or not to automatically dispose and remove the effect when the target element is unloaded</param>
         [ItemNotNull]
         public static async Task<AttachedStaticCompositionEffect<T>> AttachCompositionCustomAcrylicEffectAsync<T>(
             [NotNull] this T element, Color color, float colorMix,
-            [CanBeNull] CanvasControl canvas, [NotNull] Uri uri, BitmapCacheMode options = BitmapCacheMode.EnableCaching, bool disposeOnUnload = false) 
+            [CanBeNull] CanvasControl canvas, [NotNull] Uri uri, bool disposeOnUnload = false)
             where T : FrameworkElement
         {
             // Percentage check
@@ -247,7 +244,7 @@ namespace UICompositionAnimations.Behaviours
 
             // Get the noise brush using Win2D
             IGraphicsEffect source = await AcrylicEffectHelper.ConcatenateEffectWithTintAndBorderAsync(compositor,
-                alphaBlend, sourceParameters, color, colorMix, canvas, uri, options);
+                alphaBlend, sourceParameters, color, colorMix, canvas, uri);
 
             // Make sure the Win2D brush was loaded correctly
             CompositionEffectFactory factory = compositor.CreateEffectFactory(source);
@@ -283,13 +280,12 @@ namespace UICompositionAnimations.Behaviours
         /// <param name="ms">The duration of the initial blur animation, in milliseconds</param>
         /// <param name="canvas">The optional source <see cref="CanvasControl"/> to generate the noise image using Win2D</param>
         /// <param name="uri">The path of the noise image to use</param>
-        /// <param name="options">Indicates whether or not to force the reload of the Win2D image</param>
         /// <param name="disposeOnUnload">Indicates whether or not to automatically dispose and remove the effect when the target element is unloaded</param>
         [ItemNotNull]
         public static async Task<AttachedToggleAcrylicEffect<T>> AttachCompositionCustomAcrylicToggleEffectAsync<T>(
             [NotNull] this T element, Color color, float inAppColorMix, float hostColorMix,
             AcrylicEffectMode mode, float blur, int ms,
-            [CanBeNull] CanvasControl canvas, [NotNull] Uri uri, BitmapCacheMode options = BitmapCacheMode.EnableCaching, bool disposeOnUnload = false)
+            [CanBeNull] CanvasControl canvas, [NotNull] Uri uri, bool disposeOnUnload = false)
             where T : FrameworkElement
         {
             // Percentage check
@@ -350,7 +346,7 @@ namespace UICompositionAnimations.Behaviours
                 { nameof(backdropBrush), backdropBrush }
             };
             IGraphicsEffect source = await AcrylicEffectHelper.ConcatenateEffectWithTintAndBorderAsync(compositor,
-                switchEffect, sourceParameters, color, mode == AcrylicEffectMode.InAppBlur ? inAppColorMix : hostColorMix, canvas, uri, options);
+                switchEffect, sourceParameters, color, mode == AcrylicEffectMode.InAppBlur ? inAppColorMix : hostColorMix, canvas, uri);
 
             // Setup the tint effect
             ArithmeticCompositeEffect tint = source as ArithmeticCompositeEffect ?? source.To<BlendEffect>().Background as ArithmeticCompositeEffect;
@@ -384,7 +380,7 @@ namespace UICompositionAnimations.Behaviours
             void Toggle(AcrylicEffectMode m)
             {
                 effectBrush.SetInstantValue(source1Name, m == AcrylicEffectMode.InAppBlur ? 1 : 0);
-                effectBrush.SetInstantValue(source2Name, m == AcrylicEffectMode.InAppBlur ? 0 :1);
+                effectBrush.SetInstantValue(source2Name, m == AcrylicEffectMode.InAppBlur ? 0 : 1);
                 float
                     mix = m == AcrylicEffectMode.InAppBlur ? inAppColorMix : hostColorMix,
                     source1 = 1 - mix,
@@ -420,7 +416,7 @@ namespace UICompositionAnimations.Behaviours
         /// <param name="disposeOnUnload">Indicates whether or not to automatically dispose and remove the effect when the target element is unloaded</param>
         [ItemNotNull]
         public static async Task<AttachedAnimatableCompositionEffect<T>> AttachCompositionAnimatableSaturationEffectAsync<T>(
-            [NotNull] this T element, float on, float off, bool initiallyVisible, bool disposeOnUnload = false) 
+            [NotNull] this T element, float on, float off, bool initiallyVisible, bool disposeOnUnload = false)
             where T : FrameworkElement
         {
             // Get the compositor
@@ -504,14 +500,12 @@ namespace UICompositionAnimations.Behaviours
         /// <param name="colorMix">The opacity of the color over the blurred background</param>
         /// <param name="canvas">The optional source <see cref="CanvasControl"/> to generate the noise image using Win2D</param>
         /// <param name="uri">The path of the noise image to use</param>
-        /// <param name="options">Indicates whether or not to force the reload of the Win2D image</param>
         /// <param name="disposeOnUnload">Indicates whether or not to automatically dispose and remove the effect when the target element is unloaded</param>
         [ItemNotNull]
         public static async Task<AttachedAnimatableCompositionEffect<T>> AttachCompositionAnimatableInAppCustomAcrylicEffectAsync<TSource, T>(
             [NotNull] this TSource element, [NotNull] T target,
             float on, float off, bool initiallyVisible,
-            Color color, float colorMix, [CanBeNull] CanvasControl canvas, [NotNull] Uri uri,
-            BitmapCacheMode options = BitmapCacheMode.EnableCaching, bool disposeOnUnload = false) 
+            Color color, float colorMix, [CanBeNull] CanvasControl canvas, [NotNull] Uri uri, bool disposeOnUnload = false)
             where TSource : FrameworkElement
             where T : FrameworkElement
         {
@@ -539,7 +533,7 @@ namespace UICompositionAnimations.Behaviours
 
             // Get the noise brush using Win2D
             IGraphicsEffect source = await AcrylicEffectHelper.ConcatenateEffectWithTintAndBorderAsync(compositor,
-                blurEffect, sourceParameters, color, colorMix, canvas, uri, options);
+                blurEffect, sourceParameters, color, colorMix, canvas, uri);
 
             // Make sure the Win2D brush was loaded correctly
             CompositionEffectFactory effectFactory = compositor.CreateEffectFactory(source, new[] { animationPropertyName });
@@ -575,7 +569,6 @@ namespace UICompositionAnimations.Behaviours
         /// <param name="colorMix">The opacity of the color over the blurred background</param>
         /// <param name="canvas">The optional source <see cref="CanvasControl"/> to generate the noise image using Win2D</param>
         /// <param name="uri">The path of the noise image to use</param>
-        /// <param name="options">Indicates whether or not to force the reload of the Win2D image</param>
         /// <param name="disposeOnUnload">Indicates whether or not to automatically dispose and remove the effect when the target element is unloaded</param>
         [ItemNotNull]
         public static async Task<AttachedCompositeAnimatableCompositionEffect<T>> AttachCompositionAnimatableInAppCustomAcrylicAndSaturationEffectAsync<TSource, T>(
@@ -583,8 +576,7 @@ namespace UICompositionAnimations.Behaviours
             float onBlur, float offBlur,
             float onSaturation, float offSaturation,
             bool initiallyVisible,
-            Color color, float colorMix, [CanBeNull] CanvasControl canvas, [NotNull] Uri uri,
-            BitmapCacheMode options = BitmapCacheMode.EnableCaching, bool disposeOnUnload = false)
+            Color color, float colorMix, [CanBeNull] CanvasControl canvas, [NotNull] Uri uri, bool disposeOnUnload = false)
             where TSource : FrameworkElement
             where T : FrameworkElement
         {
@@ -612,7 +604,7 @@ namespace UICompositionAnimations.Behaviours
 
             // Get the noise brush using Win2D
             IGraphicsEffect source = await AcrylicEffectHelper.ConcatenateEffectWithTintAndBorderAsync(compositor,
-                blurEffect, sourceParameters, color, colorMix, canvas, uri, options);
+                blurEffect, sourceParameters, color, colorMix, canvas, uri);
 
             // Add the final saturation effect
             SaturationEffect saturationEffect = new SaturationEffect
@@ -664,7 +656,7 @@ namespace UICompositionAnimations.Behaviours
         /// <param name="disposeOnUnload">Indicates whether or not to automatically dispose and remove the effect when the target element is unloaded</param>
         [ItemNotNull]
         public static async Task<AttachedCompositeAnimatableCompositionEffect<T>> AttachCompositionAnimatableBlurAndSaturationEffectAsync<T>(
-            [NotNull] this T element, float onBlur, float offBlur, float onSaturation, float offSaturation, bool initiallyVisible, bool disposeOnUnload = false) 
+            [NotNull] this T element, float onBlur, float offBlur, float onSaturation, float offSaturation, bool initiallyVisible, bool disposeOnUnload = false)
             where T : FrameworkElement
         {
             // Get the compositor
