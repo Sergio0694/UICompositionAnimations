@@ -211,23 +211,6 @@ namespace UICompositionAnimations.Behaviours
         #region Blends
 
         /// <summary>
-        /// An <see langword="enum"/> used to modify the default placement of the input <see cref="IGraphicsEffectSource"/> instance in a blend operation
-        /// </summary>
-        [PublicAPI]
-        public enum EffectPlacement
-        {
-            /// <summary>
-            /// The instance used to call the blend method is placed on top of the other
-            /// </summary>
-            Foreground,
-
-            /// <summary>
-            /// The instance used to call the blend method is placed behind the other
-            /// </summary>
-            Background
-        }
-
-        /// <summary>
         /// Blends two pipelines using a <see cref="BlendEffect"/> instance with the specified mode
         /// </summary>
         /// <param name="pipeline">The second <see cref="CompositionBrushBuilder"/> instance to blend</param>
