@@ -218,7 +218,7 @@ namespace UICompositionAnimations.Behaviours
         /// <param name="noiseUri">The <see cref="Uri"/> for the noise texture to load for the acrylic effect</param>
         /// <param name="cache">The cache mode to use to load the image</param>
         [Pure, NotNull]
-        private static CompositionBrushBuilder FromHostBackdropAcrylic(Color tint, float mix, [NotNull] Uri noiseUri, BitmapCacheMode cache = BitmapCacheMode.Default)
+        public static CompositionBrushBuilder FromHostBackdropAcrylic(Color tint, float mix, [NotNull] Uri noiseUri, BitmapCacheMode cache = BitmapCacheMode.Default)
         {
             return FromHostBackdropBrush()
                 .Effect(source => new LuminanceToAlphaEffect { Source = source })
@@ -240,9 +240,6 @@ namespace UICompositionAnimations.Behaviours
         public static CompositionBrushBuilder FromBackdropAcrylic(Color tint, float mix, float blur, [NotNull] Uri noiseUri, BitmapCacheMode cache = BitmapCacheMode.Default)
         {
             return FromBackdropBrush()
-                .Effect(source => new LuminanceToAlphaEffect { Source = source })
-                .Opacity(0.4f)
-                .Blend(FromBackdropBrush(), BlendEffectMode.Multiply)
                 .Tint(tint, mix)
                 .Blur(blur)
                 .Blend(FromTiles(noiseUri, cache: cache), BlendEffectMode.Overlay, EffectPlacement.Background);
@@ -265,9 +262,6 @@ namespace UICompositionAnimations.Behaviours
             [NotNull] Uri noiseUri, BitmapCacheMode cache = BitmapCacheMode.Default)
         {
             return FromBackdropBrush()
-                .Effect(source => new LuminanceToAlphaEffect { Source = source })
-                .Opacity(0.4f)
-                .Blend(FromBackdropBrush(), BlendEffectMode.Multiply)
                 .Tint(tint, mix, out tintAnimation)
                 .Blur(blur, out blurAnimation)
                 .Blend(FromTiles(noiseUri, cache: cache), BlendEffectMode.Overlay, EffectPlacement.Background);
