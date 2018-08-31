@@ -2043,12 +2043,22 @@ namespace UICompositionAnimations
             ElementCompositionPreview.SetElementChildVisual(target, sprite);
 
             // Keep the sprite size in sync
+            sprite.BindSize(target);
+        }
+
+        /// <summary>
+        /// Starts an expression animation to keep the size of the source <see cref="CompositionObject"/> in sync with the target <see cref="FrameworkElement"/>
+        /// </summary>
+        /// <param name="source">The composition object to start the animation on</param>
+        /// <param name="target">The target <see cref="FrameworkElement"/> to read the size updates from</param>
+        public static void BindSize([NotNull] this CompositionObject source, [NotNull] FrameworkElement target)
+        {
             Visual visual = target.GetVisual();
             ExpressionAnimation bindSizeAnimation = Window.Current.Compositor.CreateExpressionAnimation($"{nameof(visual)}.Size");
             bindSizeAnimation.SetReferenceParameter(nameof(visual), visual);
 
             // Start the animation
-            sprite.StartAnimation("Size", bindSizeAnimation);
+            source.StartAnimation("Size", bindSizeAnimation);
         }
 
         #endregion
