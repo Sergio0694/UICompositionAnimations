@@ -5,6 +5,8 @@ It also has a collection of helper methods to load Win2D images, dispatch code t
 
 <a href="https://www.nuget.org/packages/UICompositionAnimations/"><img src="http://i.pi.gy/r8Wr.png" alt="Get it from NuGet" width='280' /></a>
 
+[![NuGet](https://img.shields.io/nuget/v/UICompositionAnimations.svg)](https://www.nuget.org/packages/UICompositionAnimations/) [![NuGet](https://img.shields.io/nuget/dt/UICompositionAnimations.svg)](https://www.nuget.org/stats/packages/UICompositionAnimations?groupby=Version)
+
 ## Used by
 
 | [**OneLocker**](https://www.microsoft.com/store/apps/9nblggh3t7g3?cid=UICompositionAnimations) | [**myTube!**](https://www.microsoft.com/store/apps/9wzdncrcwf3l?cid=UICompositionAnimations) | [**Brainf\*ck#**](https://www.microsoft.com/store/apps/9nblgggzhvq5?cid=UICompositionAnimations) |
