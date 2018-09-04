@@ -2,7 +2,7 @@
 <package>
   <metadata>
     <id>UICompositionAnimations</id>
-    <version>3.0.0-beta7</version>
+    <version>3.0.0-beta8</version>
     <title>UICompositionAnimations</title>
     <description>A wrapper UWP PCL to work with Windows.UI.Composition and XAML animations, and Win2D effects</description>
     <authors>Sergio Pedri</authors>
@@ -13,5 +13,10 @@
     <releaseNotes>Retargeted to support SDK 17134, bug fixes and code improvements</releaseNotes>
     <copyright>Copyright ©  2018</copyright>
     <tags>uwp composition animations xaml csharp windows winrt universal app ui win2d graphics</tags>
+    <dependencies>
+      <dependency id="JetBrains.Annotations" version="2018.2.1" />
+      <dependency id="Microsoft.NETCore.UniversalWindowsPlatform" version="6.1.5" />
+      <dependency id="Win2D.uwp" version="1.23.0" />
+    </dependencies>
   </metadata>
 </package>
