@@ -206,6 +206,16 @@ namespace UICompositionAnimations.Behaviours
             return new CompositionBrushBuilder(image, Factory);
         }
 
+        /// <summary>
+        /// Starts a new <see cref="CompositionBrushBuilder"/> pipeline from the <see cref="CompositionBrush"/> returned by <see cref="Compositor.CreateBackdropBrush"/> on the input <see cref="UIElement"/>
+        /// </summary>
+        /// <param name="element">The source <see cref="UIElement"/> to use to create the pipeline</param>
+        [Pure, NotNull]
+        public static CompositionBrushBuilder FromUIElement([NotNull] UIElement element)
+        {
+            return new CompositionBrushBuilder(() => Task.FromResult(element.GetVisual().Compositor.CreateBackdropBrush().To<CompositionBrush>()));
+        }
+
         #endregion
 
         #region Prebuilt pipelines
