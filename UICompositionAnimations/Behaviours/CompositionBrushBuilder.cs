@@ -7,6 +7,7 @@ using Windows.Graphics.Effects;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Hosting;
 using JetBrains.Annotations;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
@@ -664,6 +665,21 @@ namespace UICompositionAnimations.Behaviours
             BackdropBrushCache.Cleanup();
             HostBackdropBrushCache.Cleanup();
             return effectBrush;
+        }
+
+        /// <summary>
+        /// Builds the current pipeline and creates a <see cref="SpriteVisual"/> that is applied to the input <see cref="UIElement"/>
+        /// </summary>
+        /// <param name="target">The target <see cref="UIElement"/> to apply the brush to</param>
+        /// <param name="reference">An optional <see cref="UIElement"/> to use to bind the size of the created brush</param>
+        [ItemNotNull]
+        public async Task<SpriteVisual> AttachAsync([NotNull] UIElement target, [CanBeNull] UIElement reference = null)
+        {
+            SpriteVisual visual = Window.Current.Compositor.CreateSpriteVisual();
+            visual.Brush = await BuildAsync();
+            ElementCompositionPreview.SetElementChildVisual(target, visual);
+            if (reference != null) visual.BindSize(reference);
+            return visual;
         }
 
         /// <summary>
