@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Windows.UI.Composition;
+using Windows.UI.Core;
 using JetBrains.Annotations;
 
 namespace UICompositionAnimations.Brushes.Cache
@@ -35,7 +36,7 @@ namespace UICompositionAnimations.Brushes.Cache
             {
                 // Try to retrieve an valid instance from the cache
                 foreach (WeakReference<T> value in Cache)
-                    if (value.TryGetTarget(out T instance) && instance.Dispatcher.HasThreadAccess)
+                    if (value.TryGetTarget(out T instance) && instance.TryGetDispatcher(out CoreDispatcher dispatcher) && dispatcher.HasThreadAccess)
                         return instance;
 
                 // Create a new instance when needed
@@ -51,7 +52,7 @@ namespace UICompositionAnimations.Brushes.Cache
         public async void Cleanup()
         {
             using (await Mutex.LockAsync())
-                Cache.RemoveAll(reference => !reference.TryGetTarget(out _));
+                Cache.RemoveAll(reference => !reference.TryGetTarget(out T target) || !target.TryGetDispatcher(out _));
         }
     }
 }

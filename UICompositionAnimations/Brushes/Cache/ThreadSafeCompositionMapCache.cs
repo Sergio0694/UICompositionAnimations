@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Windows.UI.Composition;
+using Windows.UI.Core;
 using JetBrains.Annotations;
 
 namespace UICompositionAnimations.Brushes.Cache
@@ -30,7 +31,7 @@ namespace UICompositionAnimations.Brushes.Cache
             // Try to retrieve an valid instance from the cache
             if (Cache.TryGetValue(key, out List<WeakReference<TValue>> values))
                 foreach (WeakReference<TValue> value in values)
-                    if (value.TryGetTarget(out TValue instance) && instance.Dispatcher.HasThreadAccess)
+                    if (value.TryGetTarget(out TValue instance) && instance.TryGetDispatcher(out CoreDispatcher dispatcher) && dispatcher.HasThreadAccess)
                     {
                         result = instance;
                         return true;
@@ -69,7 +70,7 @@ namespace UICompositionAnimations.Brushes.Cache
         public void Cleanup()
         {
             foreach (List<WeakReference<TValue>> list in Cache.Values)
-                list.RemoveAll(reference => !reference.TryGetTarget(out _));
+                list.RemoveAll(reference => !reference.TryGetTarget(out TValue value) || !value.TryGetDispatcher(out _));
             foreach (TKey key in Cache.Keys.ToArray())
                 if (Cache[key].Count == 0)
                     Cache.Remove(key);

@@ -124,8 +124,7 @@ namespace UICompositionAnimations.Helpers
 
                 // Get the device and the target surface
                 CompositionGraphicsDevice device = CanvasComposition.CreateCompositionGraphicsDevice(compositor, canvasDevice);
-                CompositionDrawingSurface surface = device.CreateDrawingSurface(default(Size),
-                    DirectXPixelFormat.B8G8R8A8UIntNormalized, DirectXAlphaMode.Premultiplied);
+                CompositionDrawingSurface surface = device.CreateDrawingSurface(default, DirectXPixelFormat.B8G8R8A8UIntNormalized, DirectXAlphaMode.Premultiplied);
 
                 // Calculate the surface size
                 Size

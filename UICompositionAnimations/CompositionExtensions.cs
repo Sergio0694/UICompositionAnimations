@@ -3,9 +3,11 @@ using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Hosting;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Composition;
+using Windows.UI.Core;
 using Windows.UI.Xaml.Controls;
 using JetBrains.Annotations;
 using UICompositionAnimations.Composition;
@@ -2059,6 +2061,27 @@ namespace UICompositionAnimations
 
             // Start the animation
             source.StartAnimation("Size", bindSizeAnimation);
+        }
+
+        /// <summary>
+        /// Tries to retrieve the <see cref="CoreDispatcher"/> instance of the input <see cref="CompositionObject"/>
+        /// </summary>
+        /// <param name="source">The source <see cref="CompositionObject"/> instance</param>
+        /// <param name="dispatcher">The resulting <see cref="CoreDispatcher"/>, if existing</param>
+        [MustUseReturnValue]
+        public static bool TryGetDispatcher([NotNull] this CompositionObject source, out CoreDispatcher dispatcher)
+        {
+            try
+            {
+                dispatcher = source.Dispatcher;
+                return true;
+            }
+            catch (ObjectDisposedException)
+            {
+                // I'm sorry Jack, I was too late! :'(
+                dispatcher = null;
+                return false;
+            }
         }
 
         #endregion
