@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Hosting;
 using System.Numerics;
-using System.Runtime.CompilerServices;
 using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Composition;
@@ -1525,7 +1524,7 @@ namespace UICompositionAnimations
             int ms, int? msDelay, [NotNull] CompositionEasingFunction easingFunction)
         {
             // Setup
-            InsetClip clip = visual.Clip as InsetClip ?? ((InsetClip)(visual.Clip = visual.Compositor.CreateInsetClip()));
+            InsetClip clip = visual.Clip as InsetClip ?? (InsetClip)(visual.Clip = visual.Compositor.CreateInsetClip());
             string property;
             switch (side)
             {

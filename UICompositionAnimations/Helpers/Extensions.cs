@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
 using Windows.Foundation;
 using JetBrains.Annotations;
 
@@ -45,13 +44,6 @@ namespace UICompositionAnimations.Helpers
         /// <param name="action">The IAsyncAction returned by the async call</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Forget(this IAsyncAction action) { }
-
-        /// <summary>
-        /// Suppresses the warnings when calling an async method without awaiting it
-        /// </summary>
-        /// <param name="task">The task returned by the async call</param>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void Forget(this Task task) { }
 
         /// <summary>
         /// Merges the two input <see cref="IReadOnlyDictionary{TKey,TValue}"/> instances and makes sure no duplicate keys are present

@@ -22,10 +22,7 @@ namespace UICompositionAnimations.Helpers
         public static void Run([NotNull] this CoreDispatcher dispatcher, [NotNull] Action callback)
         {
             if (dispatcher.HasThreadAccess) callback();
-            else
-            {
-                dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => callback()).Forget();
-            }
+            else dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => callback()).Forget();
         }
 
         /// <summary>
@@ -35,11 +32,8 @@ namespace UICompositionAnimations.Helpers
         /// <param name="asyncCallback">The action to execute on the UI thread</param>
         public static void Run([NotNull] this CoreDispatcher dispatcher, [NotNull] Func<Task> asyncCallback)
         {
-            // Check the current thread
             if (dispatcher.HasThreadAccess) asyncCallback();
-
-            // Schedule on the UI thread if necessary
-            dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => asyncCallback()).Forget();
+            else dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => asyncCallback()).Forget();
         }
 
         /// <summary>
@@ -69,10 +63,7 @@ namespace UICompositionAnimations.Helpers
         /// <param name="asyncCallback">The action to execute on the UI thread</param>
         public static Task RunAsync([NotNull] this CoreDispatcher dispatcher, [NotNull] Func<Task> asyncCallback)
         {
-            // Check the current thread
             if (dispatcher.HasThreadAccess) return asyncCallback();
-
-            // Schedule on the UI thread if necessary
             TaskCompletionSource<Task> tcs = new TaskCompletionSource<Task>();
             dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
@@ -107,10 +98,7 @@ namespace UICompositionAnimations.Helpers
         /// <param name="function">The async function to execute on the UI thread</param>
         public static Task<T> GetAsync<T>([NotNull] this CoreDispatcher dispatcher, [NotNull] Func<Task<T>> function)
         {
-            // Check the current thread
             if (dispatcher.HasThreadAccess) return function();
-
-            // Schedule on the UI thread if necessary
             TaskCompletionSource<Task<T>> tcs = new TaskCompletionSource<Task<T>>();
             dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {

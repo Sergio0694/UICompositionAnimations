@@ -123,14 +123,7 @@
     <Compile Include="Behaviours\AcrylicEffectHelper.cs" />
     <Compile Include="Behaviours\CompositionBrushBuilder.cs" />
     <Compile Include="Behaviours\CompositionSourceInitializer.cs" />
-    <Compile Include="Behaviours\Effects\AcrylicEffectMode.cs" />
-    <Compile Include="Behaviours\Effects\AttachedAnimatableCompositionEffect.cs" />
-    <Compile Include="Behaviours\Effects\AttachedCompositeAnimatableCompositionEffect.cs" />
-    <Compile Include="Behaviours\Effects\AttachedToggleAcrylicEffect.cs" />
-    <Compile Include="Behaviours\Effects\Base\AttachedAnimatableCompositionEffectBase.cs" />
-    <Compile Include="Behaviours\Effects\AttachedStaticCompositionEffect.cs" />
-    <Compile Include="Behaviours\Misc\CompositionAnimationParameters.cs" />
-    <Compile Include="Behaviours\Misc\FixedAnimationType.cs" />
+    <Compile Include="Enums\AcrylicEffectMode.cs" />
     <Compile Include="Brushes\Base\XamlCompositionEffectBrushBase.cs" />
     <Compile Include="Brushes\Cache\HostBackdropInstanceWrapper.cs" />
     <Compile Include="Brushes\Cache\ThreadSafeCompositionCache.cs" />
@@ -180,6 +173,7 @@
       <Version>1.23.0</Version>
     </PackageReference>
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

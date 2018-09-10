@@ -10,7 +10,6 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 using JetBrains.Annotations;
 using UICompositionAnimations.Behaviours;
-using UICompositionAnimations.Behaviours.Effects;
 using UICompositionAnimations.Brushes.Cache;
 using UICompositionAnimations.Enums;
 using UICompositionAnimations.Helpers;
