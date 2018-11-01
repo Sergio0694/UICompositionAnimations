@@ -9,7 +9,7 @@
     <owners>Sergio Pedri</owners>
     <projectUrl>https://github.com/Sergio0694/UICompositionAnimations</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <releaseNotes>Added new Composition Translation animations APIs, bug fixes</releaseNotes>
+    <releaseNotes>Backported new pipeline APIs from RS4 branch</releaseNotes>
     <copyright>Copyright 2017</copyright>
     <tags>uwp composition animations xaml csharp windows winrt universal app ui win2d graphics</tags>
   </metadata>
