@@ -90,50 +90,36 @@ The library provides several ways to use `UI.Composition` effects. There are rea
 </ResourceDictionary/>
 ```
 
-**Note**: the `NoiseTextureUri` parameter must be set to a .png image with a noise texture. It is up to the developer to create his own noise texture and to import it into the app. An easy plugin to create a custom noise texture is [NoiseChoice](https://forums.getpaint.net/topic/22500-red-ochre-plug-in-pack-v9-updated-30th-july-2014/) for [Paint.NET](https://www.getpaint.net/).
+**Note**: the `NoiseTextureUri` parameter must be set to a .png image with a noise texture. It is up to the developer to create his own noise texture and to import it into the app. An easy plugin to create one is [NoiseChoice](https://forums.getpaint.net/topic/22500-red-ochre-plug-in-pack-v9-updated-30th-july-2014/) for [Paint.NET](https://www.getpaint.net/).
+
+#### Create and assign an acrylic brush in C#
+```C#
+control.Background = CompositionBrushBuilder.FromHostBackdropAcrylic(Colors.DarkOrange, 0.6f, new Uri("ms-appx:///Assets/noise.png")).AsBrush();
+```
 
 #### Build an acrylic effect pipeline from scratch:
 ```C#
-CompositionBrush brush = await CompositionBrushBuilder.FromHostBackdropBrush()
+Brush brush = CompositionBrushBuilder.FromHostBackdropBrush()
     .Effect(source => new LuminanceToAlphaEffect { Source = source })
     .Opacity(0.4f)
     .Blend(CompositionBrushBuilder.FromHostBackdropBrush(), BlendEffectMode.Multiply)
     .Tint(Color.FromArgb(0xFF, 0x14, 0x14, 0x14), 0.8f)
-    .Blend(CompositionBrushBuilder.FromTiles(new Uri("ms-appx:///Assets/noise.png")), BlendEffectMode.Overlay, CompositionBrushBuilder.EffectPlacement.Background)
-    .BuildAsync();
+    .Blend(CompositionBrushBuilder.FromTiles(new Uri("ms-appx:///Assets/noise.png")), BlendEffectMode.Overlay, EffectPlacement.Background)
+    .AsBrush();
 ```
 
 The `CompositionBrushBuilder` class can also be used to quickly implement custom XAML brushes with an arbitrary effects pipeline. To do so, just inherit from `XamlCompositionEffectBrushBase` and setup your own effects pipeline in the `OnBrushRequested` method.
 
-#### Get a custom acrylic brush effect:
+#### Get a custom effect that can be animated:
 ```C#
-AttachedStaticCompositionEffect<Border> attached = await BlurBorder.AttachCompositionInAppCustomAcrylicEffectAsync(
-  BlurBorder, // The target host control for the effect visual (can be the same as the source)
-  8, // The amount of blur to apply
-  800, // The milliseconds to initially apply the blur effect with an automatic animation
-  Color.FromArgb(byte.MaxValue, 0x1B, 0x1B, 0x1B), // The tint overlay color
-  0.8f, // The ratio of tint overlay over the source effect (the strength of the tint effect)
-  null, // Use the default saturation value for the effect (1)
-  Win2DCanvas, // A CanvasControl in the current visual tree, used to render parts of the acrylic brush
-  new Uri("ms-appx:///Assets/Misc/noise.png"), // A Uri to a custom noise texture to use to create the effect
-  BitmapCacheMode.EnableCaching, // The cache mode for the Win2D image to load
-  false, // Indicates whether to fade the effect it or to display it as soon as possible
-  true); // Indicates whether or not to automatically dispose the effect when the target `UIElement` is unloaded
-```
-
-**Note**: in order to remove the effect from the target `UIElement`, it is possible to call the `Dispose` method on the returned `AttachedStaticCompositionEffect<T>` object - calling that method will remove the effect from the object `Visual`.
-
-#### Get an attached blur effect that can be animated (using composition and Win2D effects):
-```C#
-AttachedAnimatableCompositionEffect<Border> attached = await MyBorder.AttachCompositionAnimatableBlurEffectAsync(
-  14f, // The amount of blur to apply when the effect is enabled
-  0f, // The default amount of blur
-  false); // Indicates whether or not to immediately apply the effect to the target amount
+// Build the effects pipeline
+XamlCompositionBrush acrylic = CompositionBrushBuilder.FromHostBackdropAcrylic(Colors.Orange, 0.6f, new Uri("ms-appx:///Assets/noise.png"))
+    .Saturation(1, out EffectAnimation animation)
+    .AsBrush();
+acrylic.Bind(animation, out XamlEffectAnimation saturation); // Bind the effect animation to the target brush
 
 // Later on, when needed
-await attached.AnimateAsync(
-  FixedAnimationType.In, // Indicates whether to fade the blur effect in or out
-  TimeSpan.FromMilliseconds(500)); // The animation duration
+saturation(0.2f, 250); // Animate the opacity to 0.2 in 250ms
 ```
 
 ## Reveal highlight effect
