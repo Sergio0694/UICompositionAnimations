@@ -140,8 +140,8 @@ LightsSourceHelper.Initialize(
         Z = 30,
         Shade = 0x10
     }); // It is possible to add an arbitrary number of lights here
-DefaultContent = new Shell();
-LightsSourceHelper.SetIsLightsContainer(Window.Current.Content, true); // Assigns the lights to the app main UI
+Window.Current.Content = new Frame(); // Sample UI initialization
+LightsSourceHelper.SetIsLightsContainer(Window.Current.Content, true); // Assign the lights to the app main UI
 ```
 
 #### Setup the target brushes for the lights
