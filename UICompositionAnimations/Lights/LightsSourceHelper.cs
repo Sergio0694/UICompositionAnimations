@@ -13,6 +13,7 @@ namespace UICompositionAnimations.Lights
     /// <summary>
     /// A class that contains an attached property to register a target <see cref="UIElement"/> as a lights container
     /// </summary>
+    [PublicAPI]
     public static class LightsSourceHelper
     {
         // The list of light generators
@@ -62,10 +63,7 @@ namespace UICompositionAnimations.Lights
         private static void OnIsLightsContainerPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             // Designer test
-            if (DesignMode.DesignModeEnabled) return;
-
-            // Platform test
-            if (ApiInformationHelper.IsMobileDevice) return;
+            if (DesignMode.DesignMode2Enabled) return;
 
             // Unpack
             if (LightGenerators == null) throw new NullReferenceException($"The {nameof(LightsSourceHelper)} class hasn't been initialized");

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Windows.UI;
 using Windows.UI.Xaml;
@@ -14,6 +15,7 @@ namespace UICompositionAnimations
     /// <summary>
     /// A static class that wraps the animation methods in the Windows.UI.Xaml.Media.Animation namespace
     /// </summary>
+    [PublicAPI]
     public static class XAMLTransformExtensions
     {
         #region Fade
@@ -150,7 +152,7 @@ namespace UICompositionAnimations
         /// <param name="element">The element to animate</param>
         /// <param name="startOp">The initial opacity</param>
         /// <param name="endOp">The end opacity</param>
-        /// <param name="axis">A String that indicates which axis to use with the TranslateTransform animation</param>
+        /// <param name="axis">A string that indicates which axis to use with the TranslateTransform animation</param>
         /// <param name="startXY">The initial axis value</param>
         /// <param name="endXY">The final axis value</param>
         /// <param name="ms">The duration of the animation in milliseconds</param>
@@ -385,7 +387,7 @@ namespace UICompositionAnimations
         /// Slides a target element over a given axis
         /// </summary>
         /// <param name="element">The element to animate</param>
-        /// <param name="axis">A String that indicates which axis to use with the TranslateTransform animation</param>
+        /// <param name="axis">A string that indicates which axis to use with the TranslateTransform animation</param>
         /// <param name="startXY">The initial axis value</param>
         /// <param name="endXY">The final axis value</param>
         /// <param name="ms">The duration of the animation in milliseconds</param>
@@ -423,6 +425,7 @@ namespace UICompositionAnimations
         /// <param name="side">The margin side to animate</param>
         /// <param name="duration">The duration of the animation to create</param>
         /// <param name="delay">The optional initial delay for the animation</param>
+        [SuppressMessage("ReSharper", "AccessToModifiedClosure")] // Margin updates at each animation timestep
         public static async Task StartXAMLMarginAnimation([NotNull] this FrameworkElement element, double? start, double end, MarginSide side, int duration, int? delay = null)
         {
             // Delay if needed, and calculate the start offset
@@ -460,6 +463,7 @@ namespace UICompositionAnimations
             DispatcherTimer timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(25) }; // 40fps
             timer.Tick += TickHandler;
             Thickness margin = element.Margin;
+
             void TickHandler(object sender, object e)
             {
                 elapsed++;
@@ -521,7 +525,7 @@ namespace UICompositionAnimations
         /// <param name="toColor">The target color to set</param>
         /// <param name="ms">The duration of the animation</param>
         /// <param name="easing">The easing function to use</param>
-        public static void AnimateColor(this SolidColorBrush solidColorBrush, String toColor, int ms, EasingFunctionNames easing)
+        public static void AnimateColor(this SolidColorBrush solidColorBrush, string toColor, int ms, EasingFunctionNames easing)
         {
             // Get the target color
             Color targetColor = ColorConverter.String2Color(toColor);

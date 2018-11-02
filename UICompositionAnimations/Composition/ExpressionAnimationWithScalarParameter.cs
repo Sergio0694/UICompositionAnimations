@@ -18,7 +18,7 @@ namespace UICompositionAnimations.Composition
         public ExpressionAnimation Animation { get; }
 
         // Variable parameter name
-        private readonly String ParameterName;
+        private readonly string ParameterName;
 
         // Target property set with the variable parameter
         private readonly CompositionPropertySet PropertySet;
@@ -30,7 +30,7 @@ namespace UICompositionAnimations.Composition
         /// <param name="propertySet">The property set with the custom parameter</param>
         /// <param name="parameterName">The name of the custom parameter that will be updated when requested</param>
         internal ExpressionAnimationWithScalarParameter([NotNull] ExpressionAnimation animation, 
-            [NotNull] CompositionPropertySet propertySet, [NotNull] String parameterName)
+            [NotNull] CompositionPropertySet propertySet, [NotNull] string parameterName)
         {
             Animation = animation;
             PropertySet = propertySet;

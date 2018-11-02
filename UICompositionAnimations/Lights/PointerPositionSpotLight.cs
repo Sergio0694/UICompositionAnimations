@@ -12,6 +12,7 @@ namespace UICompositionAnimations.Lights
     /// <summary>
     /// An attached XAML property to enable the <see cref="Brushes.LightingBrush"/> XAML brush
     /// </summary>
+    [PublicAPI]
     public class PointerPositionSpotLight : XamlLight
     {
         #region Properties
@@ -21,8 +22,8 @@ namespace UICompositionAnimations.Lights
         /// </summary>
         public byte Shade
         {
-            get { return GetValue(ShadeProperty).To<byte>(); }
-            set { SetValue(ShadeProperty, value); }
+            get => GetValue(ShadeProperty).To<byte>();
+            set => SetValue(ShadeProperty, value);
         }
 
         /// <summary>
@@ -33,8 +34,7 @@ namespace UICompositionAnimations.Lights
 
         private static void OnShadePropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            PointerPositionSpotLight l = d as PointerPositionSpotLight;
-            if (l?._Light != null)
+            if (d is PointerPositionSpotLight @this && @this._Light != null)
             {
                 byte shade = e.NewValue.To<byte>();
                 Color color = new Color
@@ -44,7 +44,7 @@ namespace UICompositionAnimations.Lights
                     G = shade,
                     B = shade
                 };
-                l._Light.InnerConeColor = l._Light.OuterConeColor = color;
+                @this._Light.InnerConeColor = @this._Light.OuterConeColor = color;
             }
         }
 
@@ -73,8 +73,8 @@ namespace UICompositionAnimations.Lights
         /// </summary>
         public float OuterConeAngle
         {
-            get { return (float)GetValue(OuterConeAngleProperty); }
-            set { SetValue(OuterConeAngleProperty, value); }
+            get => (float)GetValue(OuterConeAngleProperty);
+            set => SetValue(OuterConeAngleProperty, value);
         }
 
         /// <summary>
@@ -85,10 +85,9 @@ namespace UICompositionAnimations.Lights
 
         private static void OuterConeAngleChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            PointerPositionSpotLight l = d as PointerPositionSpotLight;
-            if (l?._Light != null)
+            if (d is PointerPositionSpotLight @this && @this._Light != null)
             {
-                l._Light.OuterConeAngleInDegrees = (float)e.NewValue;
+                @this._Light.OuterConeAngleInDegrees = (float)e.NewValue;
             }
         }
 
@@ -100,8 +99,8 @@ namespace UICompositionAnimations.Lights
         /// </summary>
         public bool Active
         {
-            get { return GetValue(ActiveProperty).To<bool>(); }
-            set { SetValue(ActiveProperty, value); }
+            get => GetValue(ActiveProperty).To<bool>();
+            set => SetValue(ActiveProperty, value);
         }
 
         /// <summary>
@@ -112,8 +111,8 @@ namespace UICompositionAnimations.Lights
 
         private static void OnActivePropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            PointerPositionSpotLight l = d as PointerPositionSpotLight;
-            l?._Light?.StartAnimationAsync("ConstantAttenuation", e.NewValue.To<bool>() ? 0 : InactiveAttenuationValue, TimeSpan.FromMilliseconds(250));
+            if (d is PointerPositionSpotLight @this)
+                @this._Light?.StartAnimationAsync("ConstantAttenuation", e.NewValue.To<bool>() ? 0 : InactiveAttenuationValue, TimeSpan.FromMilliseconds(250));
         }
 
         #endregion
@@ -139,9 +138,6 @@ namespace UICompositionAnimations.Lights
 
         private static void OnIsTargetChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            // API test
-            if (!ApiInformationHelper.AreXamlLightsSupported) return;
-
             // Apply the changes
             if ((bool)e.NewValue)
             {
@@ -170,16 +166,16 @@ namespace UICompositionAnimations.Lights
         }
 
         // The light to use
-        SpotLight _Light;
+        private SpotLight _Light;
 
         // The source compositor
-        Compositor _Compositor;
+        private Compositor _Compositor;
 
         // The expression animation for the light position
-        ExpressionAnimation _Animation;
+        private ExpressionAnimation _Animation;
 
         // The properties for the animation
-        CompositionPropertySet _Properties;
+        private CompositionPropertySet _Properties;
 
         /// <inheritdoc cref="XamlLight"/>
         protected override void OnConnected(UIElement newElement)
@@ -211,14 +207,14 @@ namespace UICompositionAnimations.Lights
         /// Gets or sets a custom appendage for the <see cref="GetIdStatic"/> method
         /// </summary>
         [NotNull]
-        public String IdAppendage { get; set; } = String.Empty;
+        public string IdAppendage { get; set; } = string.Empty;
 
         /// <inheritdoc cref="XamlLight"/>
-        protected override String GetId() => GetIdStatic() + IdAppendage;
+        protected override string GetId() => GetIdStatic() + IdAppendage;
 
         /// <summary>
         /// Gets a static Id for the class
         /// </summary>
-        public static String GetIdStatic() => typeof(PointerPositionSpotLight).FullName;
+        public static string GetIdStatic() => typeof(PointerPositionSpotLight).FullName;
     }
 }

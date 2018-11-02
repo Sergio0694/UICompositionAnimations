@@ -69,17 +69,9 @@ await MyControl.StartCompositionFadeScaleAnimationAsync(
   EasingFunctionNames.Linear); // Easing function
 ```
 
-#### ColorBrush animation
-```C#
-MyBrush.AnimateColor(
-  #FFFF2B1C, // Target color
-  250, // Duration in ms
-  EasingFunctionNames.Linear); // Easing function
-```
-
 ## `UI.Composition` effects
 
-The library provides several ways to use `UI.Composition` effects. There's a custom acrylic brush that can be used when running Windows 10 build 15063.x or greater, and other "attached" effects. An attached effect (created using the `AttachedCompositionEffectsFactory` class) is an effect that is loaded and then applied to the underlying `Visual` object behing a target `UIElement`. The main advantage of brushes is that they can be initialized and used in XAML and don't need any code-behind. Here are some examples:
+The library provides several ways to use `UI.Composition` effects. There are ready to use XAML brushes, a `CompositionBrushBuilder` class to create complex composition effect pipelines, an `AttachedCompositionEffectsFactory` class that provides an alternative way to attach commonly used effects to visual elements, and much more.
 
 #### Declare a shared acrylic brush in XAML
 
@@ -91,7 +83,7 @@ The library provides several ways to use `UI.Composition` effects. There's a cus
   <!--The acrylic brush to use in the app-->
   <brushes:CustomAcrylicBrush
       x:Key="InAppGrayAcrylicBrush"
-      Mode="InAppBlur"
+      Mode="HostBackdrop"
       BlurAmount="8"
       Tint="#FF222222"
       TintMix="0.6"
@@ -100,37 +92,36 @@ The library provides several ways to use `UI.Composition` effects. There's a cus
 </ResourceDictionary/>
 ```
 
-**Note**: the `NoiseTextureUri` parameter must be set to a .png image with a noise texture. It is up to the developer to create his own noise texture and to import it into the app. An easy plugin to create a custom noise texture is [NoiseChoice](https://forums.getpaint.net/topic/22500-red-ochre-plug-in-pack-v9-updated-30th-july-2014/) for [Paint.NET](https://www.getpaint.net/).
+**Note**: the `NoiseTextureUri` parameter must be set to a .png image with a noise texture. It is up to the developer to create his own noise texture and to import it into the app. An easy plugin to create one is [NoiseChoice](https://forums.getpaint.net/topic/22500-red-ochre-plug-in-pack-v9-updated-30th-july-2014/) for [Paint.NET](https://www.getpaint.net/).
 
-#### Get a custom acrylic brush effect:
+#### Create and assign an acrylic brush in C#
 ```C#
-AttachedStaticCompositionEffect<Border> attached = await BlurBorder.AttachCompositionInAppCustomAcrylicEffectAsync(
-  BlurBorder, // The target host control for the effect visual (can be the same as the source)
-  8, // The amount of blur to apply
-  800, // The milliseconds to initially apply the blur effect with an automatic animation
-  Color.FromArgb(byte.MaxValue, 0x1B, 0x1B, 0x1B), // The tint overlay color
-  0.8f, // The ratio of tint overlay over the source effect (the strength of the tint effect)
-  null, // Use the default saturation value for the effect (1)
-  Win2DCanvas, // A CanvasControl in the current visual tree, used to render parts of the acrylic brush
-  new Uri("ms-appx:///Assets/Misc/noise.png"), // A Uri to a custom noise texture to use to create the effect
-  BitmapCacheMode.EnableCaching, // The cache mode for the Win2D image to load
-  false, // Indicates whether to fade the effect it or to display it as soon as possible
-  true); // Indicates whether or not to automatically dispose the effect when the target `UIElement` is unloaded
+control.Background = CompositionBrushBuilder.FromHostBackdropAcrylic(Colors.DarkOrange, 0.6f, new Uri("ms-appx:///Assets/noise.png")).AsBrush();
 ```
 
-**Note**: in order to remove the effect from the target `UIElement`, it is possible to call the `Dispose` method on the returned `AttachedStaticCompositionEffect<T>` object - calling that method will remove the effect from the object `Visual`.
-
-#### Get an attached blur effect that can be animated (using composition and Win2D effects):
+#### Build an acrylic effect pipeline from scratch:
 ```C#
-AttachedAnimatableCompositionEffect<Border> attached = await MyBorder.AttachCompositionAnimatableBlurEffectAsync(
-  14f, // The amount of blur to apply when the effect is enabled
-  0f, // The default amount of blur
-  false); // Indicates whether or not to immediately apply the effect to the target amount
+Brush brush = CompositionBrushBuilder.FromHostBackdropBrush()
+    .Effect(source => new LuminanceToAlphaEffect { Source = source })
+    .Opacity(0.4f)
+    .Blend(CompositionBrushBuilder.FromHostBackdropBrush(), BlendEffectMode.Multiply)
+    .Tint(Color.FromArgb(0xFF, 0x14, 0x14, 0x14), 0.8f)
+    .Blend(CompositionBrushBuilder.FromTiles(new Uri("ms-appx:///Assets/noise.png")), BlendEffectMode.Overlay, EffectPlacement.Background)
+    .AsBrush();
+```
+
+The `CompositionBrushBuilder` class can also be used to quickly implement custom XAML brushes with an arbitrary effects pipeline. To do so, just inherit from `XamlCompositionEffectBrushBase` and setup your own effects pipeline in the `OnBrushRequested` method.
+
+#### Get a custom effect that can be animated:
+```C#
+// Build the effects pipeline
+XamlCompositionBrush acrylic = CompositionBrushBuilder.FromHostBackdropAcrylic(Colors.Orange, 0.6f, new Uri("ms-appx:///Assets/noise.png"))
+    .Saturation(1, out EffectAnimation animation)
+    .AsBrush();
+acrylic.Bind(animation, out XamlEffectAnimation saturation); // Bind the effect animation to the target brush
 
 // Later on, when needed
-await attached.AnimateAsync(
-  FixedAnimationType.In, // Indicates whether to fade the blur effect in or out
-  TimeSpan.FromMilliseconds(500)); // The animation duration
+saturation(0.2f, 250); // Animate the opacity to 0.2 in 250ms
 ```
 
 ## Reveal highlight effect
@@ -182,8 +173,7 @@ Many utility methods are also available, here are some useful classes:
 - `XAMLTransformToolkit`: exposes methods to manually create, start and wait for `DoubleAnimation`(s) and `Storyboard`(s), as well as for quickly assigning a certain `RenderTransform` object to a `UIElement`.
 - `DispatcherHelper`: exposes methods to easily execute code on the UI thread or on a target `CoreDispatcher` object
 - `Win2DImageHelper`: exposes APIs to quickly load a Win2D image on a `CompositionSurfaceBrush` object
-- `ApiInformationHelper`: provides useful methods to check the capabilities of the current device
 - `PointerHelper`: exposes APIs to quickly setup pointer event handlers for `UIElement`s
 
 # Requirements
-At least Windows 10 November Update (10586.x)
+At least Windows 10 April Update (17134.x)

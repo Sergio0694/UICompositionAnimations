@@ -6,6 +6,7 @@ using System.Numerics;
 using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Composition;
+using Windows.UI.Core;
 using Windows.UI.Xaml.Controls;
 using JetBrains.Annotations;
 using UICompositionAnimations.Composition;
@@ -19,6 +20,7 @@ namespace UICompositionAnimations
     /// <summary>
     /// A static class that wraps the animation methods in the Windows.UI.Composition namespace
     /// </summary>
+    [PublicAPI]
     public static class CompositionExtensions
     {
         #region Internal tools
@@ -1522,8 +1524,8 @@ namespace UICompositionAnimations
             int ms, int? msDelay, [NotNull] CompositionEasingFunction easingFunction)
         {
             // Setup
-            InsetClip clip = visual.Clip as InsetClip ?? ((InsetClip)(visual.Clip = visual.Compositor.CreateInsetClip()));
-            String property;
+            InsetClip clip = visual.Clip as InsetClip ?? (InsetClip)(visual.Clip = visual.Compositor.CreateInsetClip());
+            string property;
             switch (side)
             {
                 case MarginSide.Top: 
@@ -1622,7 +1624,7 @@ namespace UICompositionAnimations
             TranslationAxis sourceXY, TranslationAxis? targetXY = null, bool invertSourceAxis = false)
         {
             CompositionPropertySet scrollSet = ElementCompositionPreview.GetScrollViewerManipulationPropertySet(scroller);
-            String sign = invertSourceAxis ? "-" : String.Empty;
+            string sign = invertSourceAxis ? "-" : string.Empty;
             ExpressionAnimation animation = scrollSet.Compositor.CreateExpressionAnimation($"{sign}scroll.Translation.{sourceXY}");
             animation.SetReferenceParameter("scroll", scrollSet);
             element.GetVisual().StartAnimation($"Offset.{targetXY ?? sourceXY}", animation);
@@ -1646,7 +1648,7 @@ namespace UICompositionAnimations
         {
             // Get the property set and setup the scroller offset sign
             CompositionPropertySet scrollSet = ElementCompositionPreview.GetScrollViewerManipulationPropertySet(scroller);
-            String sign = invertSourceAxis ? "-" : "+";
+            string sign = invertSourceAxis ? "-" : "+";
 
             // Prepare the second property set to insert the additional parameter
             CompositionPropertySet properties = scroller.GetVisual().Compositor.CreatePropertySet();
@@ -1719,7 +1721,6 @@ namespace UICompositionAnimations
                 case Shape shape: shadow.Mask = shape.GetAlphaMask(); break;
                 case Image image: shadow.Mask = image.GetAlphaMask(); break;
                 case TextBlock textBlock: shadow.Mask = textBlock.GetAlphaMask(); break;
-                default: break;
             }
             if (apply) ElementCompositionPreview.SetElementChildVisual(target, sprite);
             return sprite;
@@ -1735,7 +1736,7 @@ namespace UICompositionAnimations
         /// <param name="compObject">The target object</param>
         /// <param name="property">The name of the property to animate</param>
         /// <param name="value">The final value of the property</param>
-        public static void SetInstantValue(this CompositionObject compObject, String property, float value)
+        public static void SetInstantValue([NotNull] this CompositionObject compObject, string property, float value)
         {
             // Stop previous animations
             compObject.StopAnimation(property);
@@ -1754,7 +1755,7 @@ namespace UICompositionAnimations
         /// <param name="property">The name of the property to animate</param>
         /// <param name="value">The final value of the property</param>
         /// <param name="duration">The animation duration</param>
-        public static Task StartAnimationAsync(this CompositionObject compObject, String property, float value, TimeSpan duration)
+        public static Task StartAnimationAsync([NotNull] this CompositionObject compObject, string property, float value, TimeSpan duration)
         {
             // Stop previous animations
             compObject.StopAnimation(property);
@@ -1778,11 +1779,11 @@ namespace UICompositionAnimations
         /// </summary>
         /// <param name="element">The target element</param>
         /// <param name="properties">The names of the animations to stop</param>
-        public static void StopAnimations(this UIElement element, params String[] properties)
+        public static void StopAnimations([NotNull] this UIElement element, [NotNull, ItemNotNull] params string[] properties)
         {
-            if (properties == null || properties.Length == 0) return;
+            if (properties.Length == 0) return;
             Visual visual = element.GetVisual();
-            foreach (String property in properties) visual.StopAnimation(property);
+            foreach (string property in properties) visual.StopAnimation(property);
         }
 
         /// <summary>
@@ -1792,7 +1793,7 @@ namespace UICompositionAnimations
         /// <param name="x">The X value of the scale property</param>
         /// <param name="y">The Y value of the scale property</param>
         /// <param name="z">The Z value of the scale property</param>
-        public static void SetVisualScale(this UIElement element, float? x, float? y, float? z)
+        public static void SetVisualScale([NotNull] this UIElement element, float? x, float? y, float? z)
         {
             // Get the default values and set the CenterPoint
             Visual visual = element.GetVisual();
@@ -1815,7 +1816,7 @@ namespace UICompositionAnimations
         /// <param name="x">The X value of the scale property</param>
         /// <param name="y">The Y value of the scale property</param>
         /// <param name="z">The Z value of the scale property</param>
-        public static async Task SetVisualScaleAsync(this FrameworkElement element, float? x, float? y, float? z)
+        public static async Task SetVisualScaleAsync([NotNull] this FrameworkElement element, float? x, float? y, float? z)
         {
             // Get the default values and set the CenterPoint
             Visual visual = element.GetVisual();
@@ -1838,7 +1839,7 @@ namespace UICompositionAnimations
         /// <param name="element">The target element</param>
         /// <param name="axis">The offset axis to edit</param>
         /// <param name="offset">The final offset value to set for that axis</param>
-        public static void SetVisualOffset(this UIElement element, TranslationAxis axis, float offset)
+        public static void SetVisualOffset([NotNull] this UIElement element, TranslationAxis axis, float offset)
         {
             // Get the element visual and stop the animation
             Visual visual = element.GetVisual();
@@ -1856,7 +1857,7 @@ namespace UICompositionAnimations
         /// <param name="element">The target element</param>
         /// <param name="x">The x offset</param>
         /// <param name="y">The y offset</param>
-        public static void SetVisualOffset(this UIElement element, float x, float y)
+        public static void SetVisualOffset([NotNull] this UIElement element, float x, float y)
         {
             // Get the element visual and stop the animation
             Visual visual = element.GetVisual();
@@ -1872,7 +1873,7 @@ namespace UICompositionAnimations
         /// <param name="element">The <see cref="UIElement"/> to edit</param>
         /// <param name="axis">The offset axis to set</param>
         /// <param name="value">The new value for the axis to set</param>
-        public static Task SetVisualOffsetAsync(this UIElement element, TranslationAxis axis, float value)
+        public static Task SetVisualOffsetAsync([NotNull] this UIElement element, TranslationAxis axis, float value)
         {
             Visual visual = element.GetVisual();
             return Task.Run(() =>
@@ -1890,7 +1891,7 @@ namespace UICompositionAnimations
         /// <param name="element">The <see cref="UIElement"/> to edit</param>
         /// <param name="x">The x offset</param>
         /// <param name="y">The y offset</param>
-        public static Task SetVisualOffsetAsync(this UIElement element, float x, float y)
+        public static Task SetVisualOffsetAsync([NotNull] this UIElement element, float x, float y)
         {
             Visual visual = element.GetVisual();
             return Task.Run(() =>
@@ -1904,7 +1905,7 @@ namespace UICompositionAnimations
         /// Returns the visual offset for a target <see cref="UIElement"/>
         /// </summary>
         /// <param name="element">The input element</param>
-        public static Vector3 GetVisualOffset(this UIElement element) => element.GetVisual().Offset;
+        public static Vector3 GetVisualOffset([NotNull] this UIElement element) => element.GetVisual().Offset;
 
         /// <summary>
         /// Sets the translation property of the visual object for a given <see cref="UIElement"/> object
@@ -1912,7 +1913,7 @@ namespace UICompositionAnimations
         /// <param name="element">The target element</param>
         /// <param name="axis">The translation axis to edit</param>
         /// <param name="translation">The final translation value to set for that axis</param>
-        public static void SetVisualTranslation(this UIElement element, TranslationAxis axis, float translation)
+        public static void SetVisualTranslation([NotNull] this UIElement element, TranslationAxis axis, float translation)
         {
             // Get the element visual and stop the animation
             Visual visual = element.GetVisual();
@@ -1940,7 +1941,7 @@ namespace UICompositionAnimations
         /// <param name="element">The target element</param>
         /// <param name="x">The x translation</param>
         /// <param name="y">The y translation</param>
-        public static void SetVisualTranslation(this UIElement element, float x, float y)
+        public static void SetVisualTranslation([NotNull] this UIElement element, float x, float y)
         {
             // Get the element visual and stop the animation
             Visual visual = element.GetVisual();
@@ -1954,7 +1955,7 @@ namespace UICompositionAnimations
         /// </summary>
         /// <param name="element">The target element</param>
         /// <param name="clip">The desired clip margins to set</param>
-        public static void SetVisualClip(this UIElement element, Thickness clip)
+        public static void SetVisualClip([NotNull] this UIElement element, Thickness clip)
         {
             // Get the element visual
             Visual visual = element.GetVisual();
@@ -1974,7 +1975,7 @@ namespace UICompositionAnimations
         /// <param name="element">The target element</param>
         /// <param name="clip">The desired clip value to set</param>
         /// <param name="side">The target clip side to update</param>
-        public static void SetVisualClip(this UIElement element, float clip, MarginSide side)
+        public static void SetVisualClip([NotNull] this UIElement element, float clip, MarginSide side)
         {
             // Get the element visual
             Visual visual = element.GetVisual();
@@ -1995,7 +1996,7 @@ namespace UICompositionAnimations
         /// Resets the scale, offset and opacity properties for a framework element
         /// </summary>
         /// <param name="element">The element to edit</param>
-        public static async Task ResetCompositionVisualPropertiesAsync(this FrameworkElement element)
+        public static async Task ResetCompositionVisualPropertiesAsync([NotNull] this FrameworkElement element)
         {
             // Get the default values and set the CenterPoint
             Visual visual = element.GetVisual();
@@ -2014,20 +2015,73 @@ namespace UICompositionAnimations
         /// Gets the opacity for the Visual object behind a given UIElement
         /// </summary>
         /// <param name="element">The source UIElement</param>
-        public static float GetVisualOpacity(this UIElement element) => element.GetVisual().Opacity;
+        public static float GetVisualOpacity([NotNull] this UIElement element) => element.GetVisual().Opacity;
 
         /// <summary>
         /// Sets the opacity for the Visual object behind a given UIElement
         /// </summary>
         /// <param name="element">The source UIElement</param>
         /// <param name="value">The new opacity value</param>
-        public static void SetVisualOpacity(this UIElement element, float value) => element.GetVisual().Opacity = value;
+        public static void SetVisualOpacity([NotNull] this UIElement element, float value) => element.GetVisual().Opacity = value;
 
         /// <summary>
         /// Returns the Visual object for a given UIElement
         /// </summary>
         /// <param name="element">The source UIElement</param>
-        public static Visual GetVisual(this UIElement element) => ElementCompositionPreview.GetElementVisual(element);
+        public static Visual GetVisual([NotNull] this UIElement element) => ElementCompositionPreview.GetElementVisual(element);
+
+        /// <summary>
+        /// Adds a <see cref="CompositionBrush"/> instance on top of the target <see cref="FrameworkElement"/> and binds the size of the two items with an expression animation
+        /// </summary>
+        /// <param name="brush">The <see cref="CompositionBrush"/> instance to display</param>
+        /// <param name="target">The target <see cref="FrameworkElement"/> that will host the effect</param>
+        public static void AttachToElement([NotNull] this CompositionBrush brush, [NotNull] FrameworkElement target)
+        {
+            // Add the brush to a sprite and attach it to the target element
+            SpriteVisual sprite = Window.Current.Compositor.CreateSpriteVisual();
+            sprite.Brush = brush;
+            sprite.Size = new Vector2((float)target.ActualWidth, (float)target.ActualHeight);
+            ElementCompositionPreview.SetElementChildVisual(target, sprite);
+
+            // Keep the sprite size in sync
+            sprite.BindSize(target);
+        }
+
+        /// <summary>
+        /// Starts an expression animation to keep the size of the source <see cref="CompositionObject"/> in sync with the target <see cref="UIElement"/>
+        /// </summary>
+        /// <param name="source">The composition object to start the animation on</param>
+        /// <param name="target">The target <see cref="UIElement"/> to read the size updates from</param>
+        public static void BindSize([NotNull] this CompositionObject source, [NotNull] UIElement target)
+        {
+            Visual visual = target.GetVisual();
+            ExpressionAnimation bindSizeAnimation = Window.Current.Compositor.CreateExpressionAnimation($"{nameof(visual)}.Size");
+            bindSizeAnimation.SetReferenceParameter(nameof(visual), visual);
+
+            // Start the animation
+            source.StartAnimation("Size", bindSizeAnimation);
+        }
+
+        /// <summary>
+        /// Tries to retrieve the <see cref="CoreDispatcher"/> instance of the input <see cref="CompositionObject"/>
+        /// </summary>
+        /// <param name="source">The source <see cref="CompositionObject"/> instance</param>
+        /// <param name="dispatcher">The resulting <see cref="CoreDispatcher"/>, if existing</param>
+        [MustUseReturnValue]
+        public static bool TryGetDispatcher([NotNull] this CompositionObject source, out CoreDispatcher dispatcher)
+        {
+            try
+            {
+                dispatcher = source.Dispatcher;
+                return true;
+            }
+            catch (ObjectDisposedException)
+            {
+                // I'm sorry Jack, I was too late! :'(
+                dispatcher = null;
+                return false;
+            }
+        }
 
         #endregion
     }

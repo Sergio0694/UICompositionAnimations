@@ -1,23 +1,26 @@
-﻿namespace UICompositionAnimations.Enums
+﻿using JetBrains.Annotations;
+
+namespace UICompositionAnimations.Enums
 {
     /// <summary>
-    /// Indicates the cache mode to use when loading an item
+    /// Indicates the cache mode to use when loading a Win2D image
     /// </summary>
+    [PublicAPI]
     public enum BitmapCacheMode
     {
         /// <summary>
-        /// The new item will be either loaded from the cache when possible, or saved in the cache for future use
+        /// The default behavior, the cache is enabled
         /// </summary>
-        EnableCaching,
+        Default,
 
         /// <summary>
-        /// The item will not be loaded from the cache, but it will be stored in the cache for future use if possible
+        /// Reload the target image and overwrite the cached entry, if it exists
         /// </summary>
-        DisableCachingOnRead,
+        Overwrite,
 
         /// <summary>
-        /// The new item will not be loaded from the cache and it will not be saved into the cache either
+        /// The cache is disabled and new images are always reloaded
         /// </summary>
-        DisableCaching
+        Disabled
     }
 }
