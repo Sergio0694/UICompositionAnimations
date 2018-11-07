@@ -3,7 +3,7 @@
 The **UICompositionAnimations** library exposes classes and APIs to quickly implement animations and effects to a UWP application.
 It also has a collection of helper methods to load Win2D images, dispatch code to the UI thread and more.
 
-<a href="https://www.nuget.org/packages/UICompositionAnimations/"><img src="http://i.pi.gy/r8Wr.png" alt="Get it from NuGet" width='280' /></a>
+<a href="https://www.nuget.org/packages/UICompositionAnimations/"><img src="https://i.imgur.com/7WcDj71.png" alt="Get it from NuGet" width='280' /></a>
 
 [![NuGet](https://img.shields.io/nuget/v/UICompositionAnimations.svg)](https://www.nuget.org/packages/UICompositionAnimations/) [![NuGet](https://img.shields.io/nuget/dt/UICompositionAnimations.svg)](https://www.nuget.org/stats/packages/UICompositionAnimations?groupby=Version)
 
@@ -11,7 +11,7 @@ It also has a collection of helper methods to load Win2D images, dispatch code t
 
 | [**OneLocker**](https://www.microsoft.com/store/apps/9nblggh3t7g3?cid=UICompositionAnimations) | [**myTube!**](https://www.microsoft.com/store/apps/9wzdncrcwf3l?cid=UICompositionAnimations) | [**Brainf\*ck#**](https://www.microsoft.com/store/apps/9nblgggzhvq5?cid=UICompositionAnimations) |
 | --- | --- | --- |
-| <img src="http://i.pi.gy/7mn2.png" alt="OneLocker screens" width='280'/> | <img src="http://i.pi.gy/DVpK.png" alt="IDE" width='280'/> | <img src="http://i.pi.gy/k83G.png" alt="IDE" width='280'/> |
+| <img src="https://i.imgur.com/i2LgImE.png" alt="OneLocker screens" width='280'/> | <img src="https://i.imgur.com/Rjc3nlY.png" alt="IDE" width='280'/> | <img src="https://i.imgur.com/rdiVWEH.png" alt="IDE" width='280'/> |
 
 # Table of Contents
 
