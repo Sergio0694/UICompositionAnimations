@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Windows.Devices.Input;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Input;
@@ -61,6 +62,19 @@ namespace UICompositionAnimations.Helpers.PointerEvents
                 state = value;
                 action(value);
             });
+        }
+
+        /// <summary>
+        /// Adds an event handler to the specified <see cref="RoutedEvent"/> events of the input <see cref="UIElement"/>
+        /// </summary>
+        /// <param name="control">The <see cref="UIElement"/> to monitor</param>
+        /// <param name="action">An <see cref="Action"/> to call every time a <see cref="RoutedEvent"/> is raised. The <see cref="bool"/> parameter indicates whether the pointer is moving to or from the control</param>
+        /// <param name="events">The list of <see cref="RoutedEvent"/> to monitor</param>
+        [NotNull]
+        public static ControlAttachedHandlersInfo ManageControlPointerStates([NotNull] this UIElement control, [NotNull] Action<PointerDeviceType, bool> action, [NotNull] params (RoutedEvent Event, bool State)[] events)
+        {
+            if (events.Length == 0) throw new ArgumentException("The list of events can't be empty", nameof(events));
+            return new ControlAttachedHandlersInfo(control, events.ToDictionary(t => t.Event, t => t.State).Select(p => AddHandler(control, p.Key, p.Value, null, action)).ToArray());
         }
 
         // Private method that adds a custom handler to the target event and control
