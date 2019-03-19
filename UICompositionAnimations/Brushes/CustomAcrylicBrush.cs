@@ -8,19 +8,18 @@ using Microsoft.Graphics.Canvas.Effects;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
-using JetBrains.Annotations;
 using UICompositionAnimations.Behaviours;
 using UICompositionAnimations.Brushes.Cache;
 using UICompositionAnimations.Enums;
 using UICompositionAnimations.Helpers;
 using Windows.ApplicationModel;
+using JetBrains.Annotations;
 
 namespace UICompositionAnimations.Brushes
 {
     /// <summary>
     /// A custom XAML brush that includes an acrylic effect that blurs the in-app content
     /// </summary>
-    [PublicAPI]
     public sealed class CustomAcrylicBrush : XamlCompositionBrushBase
     {
         #region Constants
@@ -304,6 +303,7 @@ namespace UICompositionAnimations.Brushes
         /// <summary>
         /// Clears the internal cache of <see cref="CompositionBackdropBrush"/> instances
         /// </summary>
+        [PublicAPI]
         public static async Task ClearCacheAsync(AcrylicEffectMode targets)
         {
             // In-app backdrop brush

@@ -46,6 +46,7 @@ The package exposes synchronous and asynchronous APIs (from the `CompositionExte
 The library also has APIs to automatically combine different kinds of animations, like Fade + Slide or Fade + Scale, and various helper methods to change UI-related parameters of a target object. Here are some animation exaples:
 
 #### Synchronous fade animation
+
 ```C#
 MyControl.StartCompositionFadeAnimation(
   null, // Using null will make the fade animation start from the current value
@@ -57,6 +58,7 @@ MyControl.StartCompositionFadeAnimation(
 ```
 
 #### Asynchronous fade and scale animation
+
 ```C#
 await MyControl.StartCompositionFadeScaleAnimationAsync(
   null, // Initial opacity (use current value)
@@ -95,11 +97,13 @@ The library provides several ways to use `UI.Composition` effects. There are rea
 **Note**: the `NoiseTextureUri` parameter must be set to a .png image with a noise texture. It is up to the developer to create his own noise texture and to import it into the app. An easy plugin to create one is [NoiseChoice](https://forums.getpaint.net/topic/22500-red-ochre-plug-in-pack-v9-updated-30th-july-2014/) for [Paint.NET](https://www.getpaint.net/).
 
 #### Create and assign an acrylic brush in C#
+
 ```C#
 control.Background = CompositionBrushBuilder.FromHostBackdropAcrylic(Colors.DarkOrange, 0.6f, new Uri("ms-appx:///Assets/noise.png")).AsBrush();
 ```
 
 #### Build an acrylic effect pipeline from scratch:
+
 ```C#
 Brush brush = CompositionBrushBuilder.FromHostBackdropBrush()
     .Effect(source => new LuminanceToAlphaEffect { Source = source })
@@ -113,6 +117,7 @@ Brush brush = CompositionBrushBuilder.FromHostBackdropBrush()
 The `CompositionBrushBuilder` class can also be used to quickly implement custom XAML brushes with an arbitrary effects pipeline. To do so, just inherit from `XamlCompositionEffectBrushBase` and setup your own effects pipeline in the `OnBrushRequested` method.
 
 #### Get a custom effect that can be animated:
+
 ```C#
 // Build the effects pipeline
 XamlCompositionBrush acrylic = CompositionBrushBuilder.FromHostBackdropAcrylic(Colors.Orange, 0.6f, new Uri("ms-appx:///Assets/noise.png"))
@@ -122,6 +127,34 @@ acrylic.Bind(animation, out XamlEffectAnimation saturation); // Bind the effect 
 
 // Later on, when needed
 saturation(0.2f, 250); // Animate the opacity to 0.2 in 250ms
+```
+
+#### Create custom effects in XAML:
+
+Using the APIs in `UICompositionAnimations.Behaviours.Xaml` it is also possible to build complex Composition/Win2D pipelines directly from XAML, in a declarative way. This is how to define a custom host backdrop acrylic brush:
+
+```xml
+xmlns:xaml="using:UICompositionAnimations.Behaviours.Xaml"
+xmlns:effects="using:UICompositionAnimations.Behaviours.Xaml.Effects"
+
+<xaml:PipelineBrush>
+    <xaml:PipelineBrush.Effects>
+        <effects:BackdropEffect Source="HostBackdrop"/>
+        <effects:LuminanceEffect/>
+        <effects:OpacityEffect Value="0.4"/>
+        <effects:BlendEffect Mode="Multiply">
+            <effects:BlendEffect.Input>
+                <effects:BackdropEffect Source="HostBackdrop"/>
+            </effects:BlendEffect.Input>
+        </effects:BlendEffect>
+        <effects:TintEffect Color="#FF1E90FF" Opacity="0.2"/>
+        <effects:BlendEffect Mode="Overlay" Placement="Background">
+            <effects:BlendEffect.Input>
+                <effects:TileEffect Uri="/Assets/noise_high.png"/>
+            </effects:BlendEffect.Input>
+        </effects:BlendEffect>
+    </xaml:PipelineBrush.Effects>
+</xaml:PipelineBrush>
 ```
 
 ## Reveal highlight effect
@@ -145,6 +178,7 @@ LightsSourceHelper.SetIsLightsContainer(Window.Current.Content, true); // Assign
 ```
 
 #### Setup the target brushes for the lights
+
 ````XAML
 <ResourceDictionary
     ...
@@ -157,6 +191,7 @@ LightsSourceHelper.SetIsLightsContainer(Window.Current.Content, true); // Assign
     ...
 </ResourceDictionary/>
 ````
+
 ```C#
 // Since the second light has a special ID, it is necessary to manually set its target brush
 LightingBrush brush = Application.Current.Resources["BorderWideLightBrush"] as LightingBrush;

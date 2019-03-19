@@ -2,19 +2,19 @@
 <package>
   <metadata>
     <id>UICompositionAnimations</id>
-    <version>3.0.1</version>
+    <version>3.1.0</version>
     <title>UICompositionAnimations</title>
     <description>A wrapper UWP PCL to work with Windows.UI.Composition and XAML animations, and Win2D effects</description>
     <authors>Sergio Pedri</authors>
     <owners>Sergio Pedri</owners>
     <projectUrl>https://github.com/Sergio0694/UICompositionAnimations</projectUrl>
-    <licenseUrl>https://github.com/Sergio0694/UICompositionAnimations/blob/master/LICENSE.md</licenseUrl>
+    <license type="expression">GPL-3.0-only</license>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <releaseNotes>Added new pointer events handling APIs</releaseNotes>
-    <copyright>Copyright ©  2018</copyright>
+    <releaseNotes>New PipelineBrush and composition effect APIs</releaseNotes>
+    <copyright>Copyright © 2010</copyright>
     <tags>uwp composition animations xaml csharp windows winrt universal app ui win2d graphics</tags>
     <dependencies>
-      <dependency id="JetBrains.Annotations" version="2018.2.1" />
+      <dependency id="JetBrains.Annotations" version="2018.3.0" />
       <dependency id="Microsoft.NETCore.UniversalWindowsPlatform" version="6.1.9" />
       <dependency id="Win2D.uwp" version="1.23.0" />
     </dependencies>
