@@ -14,7 +14,7 @@ namespace UICompositionAnimations.Behaviours.Xaml.Effects
         /// Gets or sets the input pipeline to merge with the current instance
         /// </summary>
         [ItemNotNull]
-        public List<IPipelineEffect> Input { get; set; } = new List<IPipelineEffect>();
+        public IList<IPipelineEffect> Input { get; set; } = new List<IPipelineEffect>();
 
         /// <summary>
         /// Gets or sets the blending mode to use (the default mode is <see cref="BlendEffectMode.Multiply"/>)
