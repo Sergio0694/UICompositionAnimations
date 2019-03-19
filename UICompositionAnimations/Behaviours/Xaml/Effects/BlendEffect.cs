@@ -13,7 +13,7 @@ namespace UICompositionAnimations.Behaviours.Xaml.Effects
         /// <summary>
         /// Gets or sets the input pipeline to merge with the current instance
         /// </summary>
-        [ItemNotNull]
+        [NotNull, ItemNotNull]
         public IList<IPipelineEffect> Input { get; set; } = new List<IPipelineEffect>();
 
         /// <summary>

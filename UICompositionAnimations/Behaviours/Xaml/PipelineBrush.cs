@@ -61,7 +61,7 @@ namespace UICompositionAnimations.Behaviours.Xaml
         /// <summary>
         /// Gets or sets the collection of effects to use in the current pipeline
         /// </summary>
-        [ItemNotNull]
+        [NotNull, ItemNotNull]
         public IList<IPipelineEffect> Effects { get; set; } = new List<IPipelineEffect>();
     }
 }
