@@ -8,6 +8,6 @@
         /// <summary>
         /// Gets or sets the value of the parameter for the current effect
         /// </summary>
-        public float Value { get; set; }
+        public double Value { get; set; }
     }
 }

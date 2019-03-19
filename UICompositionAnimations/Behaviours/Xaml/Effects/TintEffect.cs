@@ -15,6 +15,6 @@ namespace UICompositionAnimations.Behaviours.Xaml.Effects
         /// <summary>
         /// Gets or sets the opacity of the tint effect
         /// </summary>
-        public float Opacity { get; set; }
+        public double Opacity { get; set; }
     }
 }

@@ -27,8 +27,8 @@ namespace UICompositionAnimations.Behaviours.Xaml
                     case BackdropEffect backdrop when backdrop.Source == AcrylicBackgroundSource.HostBackdrop:
                         return CompositionBrushBuilder.FromHostBackdropBrush();
                     case SolidColorEffect color: return CompositionBrushBuilder.FromColor(color.Color);
-                    case ImageEffect image: return CompositionBrushBuilder.FromImage(image.Uri);
-                    case TileEffect tile: return CompositionBrushBuilder.FromTiles(tile.Uri);
+                    case ImageEffect image: return CompositionBrushBuilder.FromImage(image.Uri, image.DPIMode, image.CacheMode);
+                    case TileEffect tile: return CompositionBrushBuilder.FromTiles(tile.Uri, tile.DPIMode, tile.CacheMode);
                     default: throw new ArgumentException($"Invalid initial pipeline effect: {effect.GetType()}");
                 }
             }
@@ -38,11 +38,11 @@ namespace UICompositionAnimations.Behaviours.Xaml
             {
                 switch (effect)
                 {
-                    case OpacityEffect opacity: return builder.Opacity(opacity.Value);
+                    case OpacityEffect opacity: return builder.Opacity((float)opacity.Value);
                     case LuminanceEffect _: return builder.Effect(source => new LuminanceToAlphaEffect { Source = source });
-                    case TintEffect tint: return builder.Tint(tint.Color, tint.Opacity);
-                    case BlurEffect blur: return builder.Blur(blur.Value);
-                    case SaturationEffect saturation: return builder.Saturation(saturation.Value);
+                    case TintEffect tint: return builder.Tint(tint.Color, (float)tint.Opacity);
+                    case BlurEffect blur: return builder.Blur((float)blur.Value);
+                    case SaturationEffect saturation: return builder.Saturation((float)saturation.Value);
                     case BlendEffect blend: return builder.Blend(Build(blend.Input), blend.Mode, blend.Placement);
                     default: throw new ArgumentException($"Invalid pipeline effect: {effect.GetType()}");
                 }
@@ -62,6 +62,6 @@ namespace UICompositionAnimations.Behaviours.Xaml
         /// Gets or sets the collection of effects to use in the current pipeline
         /// </summary>
         [ItemNotNull]
-        public IList<IPipelineEffect> Effects { get; set; }
+        public List<IPipelineEffect> Effects { get; set; } = new List<IPipelineEffect>();
     }
 }
