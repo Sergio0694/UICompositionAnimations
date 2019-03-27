@@ -214,7 +214,7 @@ namespace UICompositionAnimations.Animations
         }
 
         /// <inheritdoc/>
-        public override IAnimationBuilder Clip(float to, MarginSide side, EasingFunctionNames ease = EasingFunctionNames.Linear)
+        public override IAnimationBuilder Clip(MarginSide side, float to, EasingFunctionNames ease = EasingFunctionNames.Linear)
         {
             InsetClip clip = TargetVisual.Clip as InsetClip ?? (TargetVisual.Clip = TargetVisual.Compositor.CreateInsetClip()).To<InsetClip>();
             float from;
@@ -227,11 +227,11 @@ namespace UICompositionAnimations.Animations
                 default: throw new ArgumentException("Invalid side", nameof(side));
             }
 
-            return Clip(from, to, side, ease);
+            return Clip(side, from, to, ease);
         }
 
         /// <inheritdoc/>
-        public override IAnimationBuilder Clip(float from, float to, MarginSide side, EasingFunctionNames ease = EasingFunctionNames.Linear)
+        public override IAnimationBuilder Clip(MarginSide side, float from, float to, EasingFunctionNames ease = EasingFunctionNames.Linear)
         {
             Animations.Add(duration =>
             {

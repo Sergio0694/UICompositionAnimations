@@ -137,21 +137,21 @@ namespace UICompositionAnimations.Animations.Interfaces
         /// <summary>
         /// Schedules a clip animation
         /// </summary>
-        /// <param name="to">The target clip value to animate to</param>
         /// <param name="side">The clip side to animate</param>
+        /// <param name="to">The target clip value to animate to</param>
         /// <param name="ease">The easing function to use for the clip animation</param>
         [MustUseReturnValue, NotNull]
-        IAnimationBuilder Clip(float to, MarginSide side, EasingFunctionNames ease = EasingFunctionNames.Linear);
+        IAnimationBuilder Clip(MarginSide side, float to, EasingFunctionNames ease = EasingFunctionNames.Linear);
 
         /// <summary>
         /// Schedules a clip animation
         /// </summary>
+        /// <param name="side">The clip side to animate</param>
         /// <param name="from">The clip value to animate from</param>
         /// <param name="to">The target clip value to animate to</param>
-        /// <param name="side">The clip side to animate</param>
         /// <param name="ease">The easing function to use for the clip animation</param>
         [MustUseReturnValue, NotNull]
-        IAnimationBuilder Clip(float from, float to, MarginSide side, EasingFunctionNames ease = EasingFunctionNames.Linear);
+        IAnimationBuilder Clip(MarginSide side, float from, float to, EasingFunctionNames ease = EasingFunctionNames.Linear);
 
         /// <summary>
         /// Sets the duration of the animation
