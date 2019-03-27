@@ -84,13 +84,36 @@ namespace UICompositionAnimations.Animations
         /// <inheritdoc/>
         public override IAnimationBuilder Scale(float to, EasingFunctionNames ease = EasingFunctionNames.Linear)
         {
-            throw new NotImplementedException();
+            Vector3 scale = TargetVisual.Scale;
+            return Scale(scale.X, to, ease);
         }
 
         /// <inheritdoc/>
-        public override IAnimationBuilder Scale(float @from, float to, EasingFunctionNames ease = EasingFunctionNames.Linear)
+        public override IAnimationBuilder Scale(float from, float to, EasingFunctionNames ease = EasingFunctionNames.Linear)
         {
-            throw new NotImplementedException();
+            // Center the visual center point
+            if (!(TargetElement is FrameworkElement element)) throw new InvalidOperationException("The scale animation needs a framework element");
+            element.GetVisual().CenterPoint = new Vector3((float)(element.ActualWidth / 2), (float)(element.ActualHeight / 2), 0);
+
+            // Add the scale animation
+            AnimationProducers.Add(duration =>
+            {
+                // Stop the animation and get the easing function
+                TargetVisual.StopAnimation(nameof(Visual.Scale));
+                CompositionEasingFunction easingFunction = TargetVisual.GetEasingFunction(ease);
+
+                // Get the starting and target vectors
+                Vector3
+                    scale = TargetVisual.Scale,
+                    from3 = new Vector3(from, from, scale.Z),
+                    to3 = new Vector3(to, to, scale.Z);
+
+                // Create and return the animation
+                Vector3KeyFrameAnimation animation = TargetVisual.Compositor.CreateVector3KeyFrameAnimation(from3, to3, duration, null, easingFunction);
+                return (nameof(Visual.Scale), animation);
+            });
+
+            return this;
         }
 
         /// <inheritdoc/>
@@ -144,8 +167,8 @@ namespace UICompositionAnimations.Animations
         {
             foreach (var producer in AnimationProducers)
             {
-                var info = producer(DurationInterval);
-                TargetVisual.StartAnimation(info.Property, info.Animation);
+                var (property, animation) = producer(DurationInterval);
+                TargetVisual.StartAnimation(property, animation);
             }
         }
     }
