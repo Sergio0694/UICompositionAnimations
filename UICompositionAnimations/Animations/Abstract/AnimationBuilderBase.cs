@@ -1,65 +1,100 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Windows.UI.Xaml;
+using JetBrains.Annotations;
 using UICompositionAnimations.Animations.Interfaces;
 using UICompositionAnimations.Enums;
 
 namespace UICompositionAnimations.Animations.Abstract
 {
+    /// <summary>
+    /// An <see langword="abstract"/> <see langword="class"/> used as base by all the animation builder classes
+    /// </summary>
     internal abstract class AnimationBuilderBase : IAnimationBuilder
     {
-        public IAnimationBuilder Opacity(float to, EasingFunctionNames ease)
-        {
-            throw new NotImplementedException();
-        }
+        /// <summary>
+        /// A <see langword="protected"/> constructor that initializes the target <see cref="UIElement"/>
+        /// </summary>
+        /// <param name="target">The target <see cref="UIElement"/> to animate</param>
+        protected AnimationBuilderBase([NotNull] UIElement target) => TargetElement = target;
 
-        public IAnimationBuilder Opacity(float @from, float to, EasingFunctionNames ease)
-        {
-            throw new NotImplementedException();
-        }
+        /// <summary>
+        /// The target <see cref="UIElement"/> to animate
+        /// </summary>
+        [NotNull]
+        protected UIElement TargetElement { get; }
 
-        public IAnimationBuilder Translation(float to, EasingFunctionNames ease)
-        {
-            throw new NotImplementedException();
-        }
+        /// <summary>
+        /// Gets the <see cref="TimeSpan"/> that defines the duration of the animation
+        /// </summary>
+        protected TimeSpan DurationInterval { get; private set; }
 
-        public IAnimationBuilder Translation(float @from, float to, EasingFunctionNames ease)
-        {
-            throw new NotImplementedException();
-        }
+        /// <summary>
+        /// The <see cref="TimeSpan"/> that defines the initial delay of the animation
+        /// </summary>
+        private TimeSpan? _Delay;
 
-        public IAnimationBuilder Duration(int ms)
-        {
-            throw new NotImplementedException();
-        }
+        /// <inheritdoc/>
+        public abstract IAnimationBuilder Opacity(float to, EasingFunctionNames ease);
 
+        /// <inheritdoc/>
+        public abstract IAnimationBuilder Opacity(float from, float to, EasingFunctionNames ease);
+
+        /// <inheritdoc/>
+        public abstract IAnimationBuilder Translation(float to, EasingFunctionNames ease);
+
+        /// <inheritdoc/>
+        public abstract IAnimationBuilder Translation(float from, float to, EasingFunctionNames ease);
+
+        /// <inheritdoc/>
+        public IAnimationBuilder Duration(int ms) => Duration(TimeSpan.FromMilliseconds(ms));
+
+        /// <inheritdoc/>
         public IAnimationBuilder Duration(TimeSpan duration)
         {
-            throw new NotImplementedException();
+            DurationInterval = duration;
+            return this;
         }
 
-        public IAnimationBuilder Delay(int ms)
+        /// <inheritdoc/>
+        public IAnimationBuilder Delay(int ms) => Delay(TimeSpan.FromMilliseconds(ms));
+
+        /// <inheritdoc/>
+        public IAnimationBuilder Delay(TimeSpan interval)
         {
-            throw new NotImplementedException();
+            _Delay = interval;
+            return this;
         }
 
-        public IAnimationBuilder Delay(TimeSpan duration)
+        /// <inheritdoc/>
+        public async void Start()
         {
-            throw new NotImplementedException();
+            if (_Delay != null) await Task.Delay(_Delay.Value);
+            OnStart();
         }
 
-        public void Start()
+        /// <summary>
+        /// Starts the animation represented by the current instance
+        /// </summary>
+        protected abstract void OnStart();
+
+        /// <inheritdoc/>
+        public async void Start(Action callback)
         {
-            throw new NotImplementedException();
+            await StartAsync();
+            callback();
         }
 
-        public void Start(Action callback)
+        /// <inheritdoc/>
+        public async Task StartAsync()
         {
-            throw new NotImplementedException();
+            if (_Delay != null) await Task.Delay(_Delay.Value);
+            await OnStartAsync();
         }
 
-        public Task StartAsync()
-        {
-            throw new NotImplementedException();
-        }
+        /// <summary>
+        /// Starts the animation represented by the current instance, and returns a <see cref="Task"/> to track it
+        /// </summary>
+        protected abstract Task OnStartAsync();
     }
 }

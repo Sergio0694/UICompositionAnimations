@@ -7,13 +7,13 @@ namespace UICompositionAnimations.Animations.Interfaces
 {
     public interface IAnimationBuilder
     {
-        IAnimationBuilder Opacity(float to, EasingFunctionNames ease);
+        IAnimationBuilder Opacity(float to, EasingFunctionNames ease = EasingFunctionNames.Linear);
 
-        IAnimationBuilder Opacity(float from, float to, EasingFunctionNames ease);
+        IAnimationBuilder Opacity(float from, float to, EasingFunctionNames ease = EasingFunctionNames.Linear);
 
-        IAnimationBuilder Translation(float to, EasingFunctionNames ease);
+        IAnimationBuilder Translation(float to, EasingFunctionNames ease = EasingFunctionNames.Linear);
 
-        IAnimationBuilder Translation(float from, float to, EasingFunctionNames ease);
+        IAnimationBuilder Translation(float from, float to, EasingFunctionNames ease = EasingFunctionNames.Linear);
 
         IAnimationBuilder Duration(int ms);
 
