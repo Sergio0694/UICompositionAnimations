@@ -18,8 +18,7 @@ namespace System.Collections.Generic
             [NotNull] this IReadOnlyDictionary<TKey, TValue> a,
             [NotNull] IReadOnlyDictionary<TKey, TValue> b)
         {
-            if (a.Keys.FirstOrDefault(b.ContainsKey) is TKey key)
-                throw new InvalidOperationException($"The key {key} already exists in the current pipeline");
+            if (a.Keys.FirstOrDefault(b.ContainsKey) is TKey key) throw new InvalidOperationException($"The key {key} already exists in the current pipeline");
             return new Dictionary<TKey, TValue>(a.Concat(b));
         }
 
@@ -31,8 +30,7 @@ namespace System.Collections.Generic
         [Pure, NotNull, ItemNotNull]
         public static IReadOnlyCollection<T> Merge<T>([NotNull, ItemNotNull] this IReadOnlyCollection<T> a, [NotNull, ItemNotNull] IReadOnlyCollection<T> b)
         {
-            if (a.FirstOrDefault(b.Contains) is T animation)
-                throw new InvalidOperationException($"The animation {animation} already exists in the current pipeline");
+            if (a.Any(b.Contains)) throw new InvalidOperationException("The input collection has at least an item already present in the second collection");
             return a.Concat(b).ToArray();
         }
     }

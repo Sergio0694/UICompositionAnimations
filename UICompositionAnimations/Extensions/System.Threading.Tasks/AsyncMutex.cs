@@ -6,7 +6,7 @@ namespace System.Threading.Tasks
     /// <summary>
     /// An <see langword="async"/> <see cref="AsyncMutex"/> implementation that can be easily used inside a <see langword="using"/> block
     /// </summary>
-    internal sealed class AsyncMutex
+    public sealed class AsyncMutex
     {
         // The underlying semaphore used by this instance
         [NotNull]
@@ -15,8 +15,8 @@ namespace System.Threading.Tasks
         /// <summary>
         /// Acquires a lock for the current instance, that is automatically released outside the <see langword="using"/> block
         /// </summary>
-        [NotNull, ItemNotNull]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [NotNull, ItemNotNull]
         public async Task<IDisposable> LockAsync()
         {
             await Semaphore.WaitAsync().ConfigureAwait(false);

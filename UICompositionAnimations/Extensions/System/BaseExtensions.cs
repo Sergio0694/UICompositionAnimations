@@ -6,10 +6,10 @@ namespace System
     /// <summary>
     /// An extension <see langword="class"/> for the <see cref="System"/> <see langword="namespace"/>
     /// </summary>
-    internal static class BaseExtensions
+    public static class BaseExtensions
     {
         /// <summary>
-        /// Performs a direct cast on the given object
+        /// Performs a direct cast on the given <see cref="object"/>
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         [Pure]
