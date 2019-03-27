@@ -11,6 +11,7 @@ namespace Windows.UI.Xaml
     /// <summary>
     /// An extension <see langword="class"/> for the <see cref="FrameworkElement"/> <see langword="class"/>
     /// </summary>
+    [PublicAPI]
     public static class FrameworkElementExtensions
     {
         /// <summary>

@@ -1720,41 +1720,6 @@ namespace UICompositionAnimations
         }
 
         /// <summary>
-        /// Stops the animations with the target names on the given element
-        /// </summary>
-        /// <param name="element">The target element</param>
-        /// <param name="properties">The names of the animations to stop</param>
-        public static void StopAnimations([NotNull] this UIElement element, [NotNull, ItemNotNull] params string[] properties)
-        {
-            if (properties.Length == 0) return;
-            Visual visual = element.GetVisual();
-            foreach (string property in properties) visual.StopAnimation(property);
-        }
-
-        /// <summary>
-        /// Sets the scale property of the visual object for a given <see cref="UIElement"/>
-        /// </summary>
-        /// <param name="element">The target element</param>
-        /// <param name="x">The X value of the scale property</param>
-        /// <param name="y">The Y value of the scale property</param>
-        /// <param name="z">The Z value of the scale property</param>
-        public static void SetVisualScale([NotNull] this UIElement element, float? x, float? y, float? z)
-        {
-            // Get the default values and set the CenterPoint
-            Visual visual = element.GetVisual();
-
-            // Set the scale property
-            if (x == null && y == null && z == null) return;
-            Vector3 targetScale = new Vector3
-            {
-                X = x ?? visual.Scale.X,
-                Y = y ?? visual.Scale.Y,
-                Z = z ?? visual.Scale.Z
-            };
-            visual.Scale = targetScale;
-        }
-
-        /// <summary>
         /// Sets the scale property of the visual object for a given <see cref="FrameworkElement"/> and sets the center point to the center of the element
         /// </summary>
         /// <param name="element">The target element</param>
