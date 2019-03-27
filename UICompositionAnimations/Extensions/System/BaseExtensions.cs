@@ -30,5 +30,23 @@ namespace System
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         [Pure]
         public static float ToRadians(this float degrees) => (float)(Math.PI / 180 * degrees);
+
+        /// <summary>
+        /// Returns an <see cref="Uri"/> that starts with the ms-appx:// prefix
+        /// </summary>
+        /// <param name="uri">The input <see cref="Uri"/> to process</param>
+        [Pure, NotNull]
+        internal static Uri ToAppxUri([NotNull] this Uri uri)
+        {
+            if (uri.Scheme.Equals("ms-resource"))
+            {
+                string path = uri.AbsolutePath.StartsWith("/Files")
+                    ? uri.AbsolutePath.Replace("/Files", string.Empty)
+                    : uri.AbsolutePath;
+                return new Uri($"ms-appx://{path}");
+            }
+
+            return uri;
+        }
     }
 }
