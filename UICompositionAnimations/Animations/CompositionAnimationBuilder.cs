@@ -43,14 +43,14 @@ namespace UICompositionAnimations.Animations
         }
 
         /// <inheritdoc/>
-        public override IAnimationBuilder Opacity(float to, EasingFunctionNames ease)
+        public override IAnimationBuilder Opacity(float to, EasingFunctionNames ease = EasingFunctionNames.Linear)
         {
             float from = TargetVisual.Opacity;
             return Opacity(from, to, ease);
         }
 
         /// <inheritdoc/>
-        public override IAnimationBuilder Opacity(float from, float to, EasingFunctionNames ease)
+        public override IAnimationBuilder Opacity(float from, float to, EasingFunctionNames ease = EasingFunctionNames.Linear)
         {
             AnimationProducers.Add(duration =>
             {
@@ -64,7 +64,7 @@ namespace UICompositionAnimations.Animations
         }
 
         /// <inheritdoc/>
-        public override IAnimationBuilder Translation(TranslationAxis axis, float to, EasingFunctionNames ease)
+        public override IAnimationBuilder Translation(TranslationAxis axis, float to, EasingFunctionNames ease = EasingFunctionNames.Linear)
         {
             Vector3 translation = TargetVisual.TransformMatrix.Translation;
             if (axis == TranslationAxis.X) translation.X = to;
@@ -73,12 +73,66 @@ namespace UICompositionAnimations.Animations
         }
 
         /// <inheritdoc/>
-        public override IAnimationBuilder Translation(TranslationAxis axis, float from, float to, EasingFunctionNames ease)
+        public override IAnimationBuilder Translation(TranslationAxis axis, float from, float to, EasingFunctionNames ease = EasingFunctionNames.Linear)
         {
             Vector3 translation = TargetVisual.TransformMatrix.Translation;
             return axis == TranslationAxis.X
                 ? Translation(new Vector2(from, translation.Y), new Vector2(to, translation.Y), ease)
                 : Translation(new Vector2(translation.X, from), new Vector2(translation.X, to), ease);
+        }
+
+        /// <inheritdoc/>
+        public override IAnimationBuilder Translation(Vector2 to, EasingFunctionNames ease = EasingFunctionNames.Linear)
+        {
+            Vector3 translation = TargetVisual.TransformMatrix.Translation;
+            return Translation(new Vector2(translation.X, translation.Y), to, ease);
+        }
+
+        /// <inheritdoc/>
+        public override IAnimationBuilder Translation(Vector2 from, Vector2 to, EasingFunctionNames ease = EasingFunctionNames.Linear)
+        {
+            AnimationProducers.Add(duration =>
+            {
+                // Stop the animation and get the easing function
+                TargetVisual.StopAnimation("Translation");
+                CompositionEasingFunction easingFunction = TargetVisual.GetEasingFunction(ease);
+
+                // Get the starting and target vectors
+                Vector3
+                    translation = TargetVisual.TransformMatrix.Translation,
+                    from3 = new Vector3(from.X, from.Y, translation.Z),
+                    to3 = new Vector3(to.X, to.Y, translation.Z);
+
+                // Create and return the animation
+                Vector3KeyFrameAnimation animation = TargetVisual.Compositor.CreateVector3KeyFrameAnimation(from3, to3, duration, null, easingFunction);
+                return ("Translation", animation);
+            });
+
+            return this;
+        }
+
+        /// <inheritdoc/>
+        public override IAnimationBuilder Offset(TranslationAxis axis, float to, EasingFunctionNames ease = EasingFunctionNames.Linear)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc/>
+        public override IAnimationBuilder Offset(TranslationAxis axis, float from, float to, EasingFunctionNames ease = EasingFunctionNames.Linear)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc/>
+        public override IAnimationBuilder Offset(Vector2 to, EasingFunctionNames ease = EasingFunctionNames.Linear)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc/>
+        public override IAnimationBuilder Offset(Vector2 from, Vector2 to, EasingFunctionNames ease = EasingFunctionNames.Linear)
+        {
+            throw new NotImplementedException();
         }
 
         /// <inheritdoc/>
@@ -111,36 +165,6 @@ namespace UICompositionAnimations.Animations
                 // Create and return the animation
                 Vector3KeyFrameAnimation animation = TargetVisual.Compositor.CreateVector3KeyFrameAnimation(from3, to3, duration, null, easingFunction);
                 return (nameof(Visual.Scale), animation);
-            });
-
-            return this;
-        }
-
-        /// <inheritdoc/>
-        public override IAnimationBuilder Translation(Vector2 to, EasingFunctionNames ease = EasingFunctionNames.Linear)
-        {
-            Vector3 translation = TargetVisual.TransformMatrix.Translation;
-            return Translation(new Vector2(translation.X, translation.Y), to, ease);
-        }
-
-        /// <inheritdoc/>
-        public override IAnimationBuilder Translation(Vector2 from, Vector2 to, EasingFunctionNames ease = EasingFunctionNames.Linear)
-        {
-            AnimationProducers.Add(duration =>
-            {
-                // Stop the animation and get the easing function
-                TargetVisual.StopAnimation("Translation");
-                CompositionEasingFunction easingFunction = TargetVisual.GetEasingFunction(ease);
-
-                // Get the starting and target vectors
-                Vector3
-                    translation = TargetVisual.TransformMatrix.Translation,
-                    from3 = new Vector3(from.X, from.Y, translation.Z),
-                    to3 = new Vector3(to.X, to.Y, translation.Z);
-
-                // Create and return the animation
-                Vector3KeyFrameAnimation animation = TargetVisual.Compositor.CreateVector3KeyFrameAnimation(from3, to3, duration, null, easingFunction);
-                return ("Translation", animation);
             });
 
             return this;

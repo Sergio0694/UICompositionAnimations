@@ -63,6 +63,40 @@ namespace UICompositionAnimations.Animations.Interfaces
         IAnimationBuilder Translation(Vector2 from, Vector2 to, EasingFunctionNames ease = EasingFunctionNames.Linear);
 
         /// <summary>
+        /// Schedules an offset animation
+        /// </summary>
+        /// <param name="axis">The offset axis to animate</param>
+        /// <param name="to">The target offset value to animate to</param>
+        /// <param name="ease">The easing function to use for the offset animation</param>
+        [MustUseReturnValue, NotNull]
+        IAnimationBuilder Offset(TranslationAxis axis, float to, EasingFunctionNames ease = EasingFunctionNames.Linear);
+
+        /// <summary>
+        /// Schedules an offset animation
+        /// </summary>
+        /// <param name="axis">The offset axis to animate</param>
+        /// <param name="from">The initial offset value to animate from</param>
+        /// <param name="to">The target offset value to animate to</param>
+        /// <param name="ease">The easing function to use for the offset animation</param>
+        [MustUseReturnValue, NotNull]
+        IAnimationBuilder Offset(TranslationAxis axis, float from, float to, EasingFunctionNames ease = EasingFunctionNames.Linear);
+
+        /// <summary>
+        /// Schedules an offset animation
+        /// </summary>
+        /// <param name="to">The target offset position to animate to</param>
+        /// <param name="ease">The easing function to use for the offset animation</param>
+        IAnimationBuilder Offset(Vector2 to, EasingFunctionNames ease = EasingFunctionNames.Linear);
+
+        /// <summary>
+        /// Schedules an offset animation
+        /// </summary>
+        /// <param name="from">The initial offset position to animate from</param>
+        /// <param name="to">The target offset position to animate to</param>
+        /// <param name="ease">The easing function to use for the offset animation</param>
+        IAnimationBuilder Offset(Vector2 from, Vector2 to, EasingFunctionNames ease = EasingFunctionNames.Linear);
+
+        /// <summary>
         /// Schedules a scale animation
         /// </summary>
         /// <param name="to">The target scale value to animate to</param>
