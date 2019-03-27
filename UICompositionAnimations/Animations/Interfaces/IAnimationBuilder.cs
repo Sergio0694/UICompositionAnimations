@@ -52,6 +52,7 @@ namespace UICompositionAnimations.Animations.Interfaces
         /// </summary>
         /// <param name="to">The target translation position to animate to</param>
         /// <param name="ease">The easing function to use for the translation animation</param>
+        [MustUseReturnValue, NotNull]
         IAnimationBuilder Translation(Vector2 to, EasingFunctionNames ease = EasingFunctionNames.Linear);
 
         /// <summary>
@@ -60,6 +61,7 @@ namespace UICompositionAnimations.Animations.Interfaces
         /// <param name="from">The initial translation position to animate from</param>
         /// <param name="to">The target translation position to animate to</param>
         /// <param name="ease">The easing function to use for the translation animation</param>
+        [MustUseReturnValue, NotNull]
         IAnimationBuilder Translation(Vector2 from, Vector2 to, EasingFunctionNames ease = EasingFunctionNames.Linear);
 
         /// <summary>
@@ -86,6 +88,7 @@ namespace UICompositionAnimations.Animations.Interfaces
         /// </summary>
         /// <param name="to">The target offset position to animate to</param>
         /// <param name="ease">The easing function to use for the offset animation</param>
+        [MustUseReturnValue, NotNull]
         IAnimationBuilder Offset(Vector2 to, EasingFunctionNames ease = EasingFunctionNames.Linear);
 
         /// <summary>
@@ -94,6 +97,7 @@ namespace UICompositionAnimations.Animations.Interfaces
         /// <param name="from">The initial offset position to animate from</param>
         /// <param name="to">The target offset position to animate to</param>
         /// <param name="ease">The easing function to use for the offset animation</param>
+        [MustUseReturnValue, NotNull]
         IAnimationBuilder Offset(Vector2 from, Vector2 to, EasingFunctionNames ease = EasingFunctionNames.Linear);
 
         /// <summary>
@@ -112,6 +116,23 @@ namespace UICompositionAnimations.Animations.Interfaces
         /// <param name="ease">The easing function to use for the scale animation</param>
         [MustUseReturnValue, NotNull]
         IAnimationBuilder Scale(float from, float to, EasingFunctionNames ease = EasingFunctionNames.Linear);
+
+        /// <summary>
+        /// Schedules a rotation animation
+        /// </summary>
+        /// <param name="to">The target rotation value to animate to</param>
+        /// <param name="ease">The easing function to use for the rotation animation</param>
+        [MustUseReturnValue, NotNull]
+        IAnimationBuilder Rotate(float to, EasingFunctionNames ease = EasingFunctionNames.Linear);
+
+        /// <summary>
+        /// Schedules a rotation animation
+        /// </summary>
+        /// <param name="from">The rotation value to animate from</param>
+        /// <param name="to">The target rotation value to animate to</param>
+        /// <param name="ease">The easing function to use for the rotation animation</param>
+        [MustUseReturnValue, NotNull]
+        IAnimationBuilder Rotate(float from, float to, EasingFunctionNames ease = EasingFunctionNames.Linear);
 
         /// <summary>
         /// Sets the duration of the animation

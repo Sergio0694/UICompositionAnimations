@@ -72,6 +72,12 @@ namespace UICompositionAnimations.Animations.Abstract
         public abstract IAnimationBuilder Scale(float from, float to, EasingFunctionNames ease = EasingFunctionNames.Linear);
 
         /// <inheritdoc/>
+        public abstract IAnimationBuilder Rotate(float to, EasingFunctionNames ease = EasingFunctionNames.Linear);
+
+        /// <inheritdoc/>
+        public abstract IAnimationBuilder Rotate(float from, float to, EasingFunctionNames ease = EasingFunctionNames.Linear);
+
+        /// <inheritdoc/>
         public IAnimationBuilder Duration(int ms) => Duration(TimeSpan.FromMilliseconds(ms));
 
         /// <inheritdoc/>

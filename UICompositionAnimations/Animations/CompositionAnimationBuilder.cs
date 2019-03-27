@@ -195,6 +195,31 @@ namespace UICompositionAnimations.Animations
         }
 
         /// <inheritdoc/>
+        public override IAnimationBuilder Rotate(float to, EasingFunctionNames ease = EasingFunctionNames.Linear)
+        {
+            return Rotate(TargetVisual.RotationAngleInDegrees, to, ease);
+        }
+
+        /// <inheritdoc/>
+        public override IAnimationBuilder Rotate(float from, float to, EasingFunctionNames ease = EasingFunctionNames.Linear)
+        {
+            // Center the visual center point
+            if (!(TargetElement is FrameworkElement element)) throw new InvalidOperationException("The rotation animation needs a framework element");
+            element.GetVisual().CenterPoint = new Vector3((float)(element.ActualWidth / 2), (float)(element.ActualHeight / 2), 0);
+
+            // Add the rotation animation
+            AnimationProducers.Add(duration =>
+            {
+                TargetVisual.StopAnimation(nameof(Visual.RotationAngleInDegrees));
+                CompositionEasingFunction easingFunction = TargetVisual.GetEasingFunction(ease);
+                ScalarKeyFrameAnimation animation = TargetVisual.Compositor.CreateScalarKeyFrameAnimation(from, to, duration, null, easingFunction);
+                return (nameof(Visual.RotationAngleInDegrees), animation);
+            });
+
+            return this;
+        }
+
+        /// <inheritdoc/>
         protected override void OnStart() => StartAnimations();
 
         /// <inheritdoc/>
