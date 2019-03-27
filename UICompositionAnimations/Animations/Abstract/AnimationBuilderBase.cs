@@ -48,6 +48,12 @@ namespace UICompositionAnimations.Animations.Abstract
         public abstract IAnimationBuilder Translation(TranslationAxis axis, float from, float to, EasingFunctionNames ease);
 
         /// <inheritdoc/>
+        public abstract IAnimationBuilder Scale(float to, EasingFunctionNames ease = EasingFunctionNames.Linear);
+
+        /// <inheritdoc/>
+        public abstract IAnimationBuilder Scale(float from, float to, EasingFunctionNames ease = EasingFunctionNames.Linear);
+
+        /// <inheritdoc/>
         public abstract IAnimationBuilder Translation(Vector2 to, EasingFunctionNames ease = EasingFunctionNames.Linear);
 
         /// <inheritdoc/>

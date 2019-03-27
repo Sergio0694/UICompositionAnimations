@@ -31,21 +31,6 @@ namespace UICompositionAnimations.Animations.Interfaces
         /// <summary>
         /// Schedules a translation animation
         /// </summary>
-        /// <param name="to">The target translation position to animate to</param>
-        /// <param name="ease">The easing function to use for the translation animation</param>
-        IAnimationBuilder Translation(Vector2 to, EasingFunctionNames ease = EasingFunctionNames.Linear);
-
-        /// <summary>
-        /// Schedules a translation animation
-        /// </summary>
-        /// <param name="from">The initial translation position to animate from</param>
-        /// <param name="to">The target translation position to animate to</param>
-        /// <param name="ease">The easing function to use for the translation animation</param>
-        IAnimationBuilder Translation(Vector2 from, Vector2 to, EasingFunctionNames ease = EasingFunctionNames.Linear);
-
-        /// <summary>
-        /// Schedules a translation animation
-        /// </summary>
         /// <param name="axis">The translation axis to animate</param>
         /// <param name="to">The target translation value to animate to</param>
         /// <param name="ease">The easing function to use for the translation animation</param>
@@ -61,6 +46,38 @@ namespace UICompositionAnimations.Animations.Interfaces
         /// <param name="ease">The easing function to use for the translation animation</param>
         [MustUseReturnValue, NotNull]
         IAnimationBuilder Translation(TranslationAxis axis, float from, float to, EasingFunctionNames ease = EasingFunctionNames.Linear);
+
+        /// <summary>
+        /// Schedules a translation animation
+        /// </summary>
+        /// <param name="to">The target translation position to animate to</param>
+        /// <param name="ease">The easing function to use for the translation animation</param>
+        IAnimationBuilder Translation(Vector2 to, EasingFunctionNames ease = EasingFunctionNames.Linear);
+
+        /// <summary>
+        /// Schedules a translation animation
+        /// </summary>
+        /// <param name="from">The initial translation position to animate from</param>
+        /// <param name="to">The target translation position to animate to</param>
+        /// <param name="ease">The easing function to use for the translation animation</param>
+        IAnimationBuilder Translation(Vector2 from, Vector2 to, EasingFunctionNames ease = EasingFunctionNames.Linear);
+
+        /// <summary>
+        /// Schedules a scale animation
+        /// </summary>
+        /// <param name="to">The target scale value to animate to</param>
+        /// <param name="ease">The easing function to use for the scale animation</param>
+        [MustUseReturnValue, NotNull]
+        IAnimationBuilder Scale(float to, EasingFunctionNames ease = EasingFunctionNames.Linear);
+
+        /// <summary>
+        /// Schedules a scale animation
+        /// </summary>
+        /// <param name="from">The scale value to animate from</param>
+        /// <param name="to">The target scale value to animate to</param>
+        /// <param name="ease">The easing function to use for the scale animation</param>
+        [MustUseReturnValue, NotNull]
+        IAnimationBuilder Scale(float from, float to, EasingFunctionNames ease = EasingFunctionNames.Linear);
 
         /// <summary>
         /// Sets the duration of the animation

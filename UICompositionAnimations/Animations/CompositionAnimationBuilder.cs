@@ -64,6 +64,36 @@ namespace UICompositionAnimations.Animations
         }
 
         /// <inheritdoc/>
+        public override IAnimationBuilder Translation(TranslationAxis axis, float to, EasingFunctionNames ease)
+        {
+            Vector3 translation = TargetVisual.TransformMatrix.Translation;
+            if (axis == TranslationAxis.X) translation.X = to;
+            else translation.Y = to;
+            return Translation(new Vector2(translation.X, translation.Y), ease);
+        }
+
+        /// <inheritdoc/>
+        public override IAnimationBuilder Translation(TranslationAxis axis, float from, float to, EasingFunctionNames ease)
+        {
+            Vector3 translation = TargetVisual.TransformMatrix.Translation;
+            return axis == TranslationAxis.X
+                ? Translation(new Vector2(from, translation.Y), new Vector2(to, translation.Y), ease)
+                : Translation(new Vector2(translation.X, from), new Vector2(translation.X, to), ease);
+        }
+
+        /// <inheritdoc/>
+        public override IAnimationBuilder Scale(float to, EasingFunctionNames ease = EasingFunctionNames.Linear)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc/>
+        public override IAnimationBuilder Scale(float @from, float to, EasingFunctionNames ease = EasingFunctionNames.Linear)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc/>
         public override IAnimationBuilder Translation(Vector2 to, EasingFunctionNames ease = EasingFunctionNames.Linear)
         {
             Vector3 translation = TargetVisual.TransformMatrix.Translation;
@@ -91,24 +121,6 @@ namespace UICompositionAnimations.Animations
             });
 
             return this;
-        }
-
-        /// <inheritdoc/>
-        public override IAnimationBuilder Translation(TranslationAxis axis, float to, EasingFunctionNames ease)
-        {
-            Vector3 translation = TargetVisual.TransformMatrix.Translation;
-            if (axis == TranslationAxis.X) translation.X = to;
-            else translation.Y = to;
-            return Translation(new Vector2(translation.X, translation.Y), ease);
-        }
-
-        /// <inheritdoc/>
-        public override IAnimationBuilder Translation(TranslationAxis axis, float from, float to, EasingFunctionNames ease)
-        {
-            Vector3 translation = TargetVisual.TransformMatrix.Translation;
-            return axis == TranslationAxis.X
-                ? Translation(new Vector2(from, translation.Y), new Vector2(to, translation.Y), ease)
-                : Translation(new Vector2(translation.X, from), new Vector2(translation.X, to), ease);
         }
 
         /// <inheritdoc/>
