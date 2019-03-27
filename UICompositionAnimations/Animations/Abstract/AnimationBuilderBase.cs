@@ -41,10 +41,10 @@ namespace UICompositionAnimations.Animations.Abstract
         public abstract IAnimationBuilder Opacity(float from, float to, EasingFunctionNames ease);
 
         /// <inheritdoc/>
-        public abstract IAnimationBuilder Translation(float to, EasingFunctionNames ease);
+        public abstract IAnimationBuilder Translation(TranslationAxis axis, float to, EasingFunctionNames ease);
 
         /// <inheritdoc/>
-        public abstract IAnimationBuilder Translation(float from, float to, EasingFunctionNames ease);
+        public abstract IAnimationBuilder Translation(TranslationAxis axis, float from, float to, EasingFunctionNames ease);
 
         /// <inheritdoc/>
         public IAnimationBuilder Duration(int ms) => Duration(TimeSpan.FromMilliseconds(ms));

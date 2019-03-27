@@ -61,13 +61,13 @@ namespace UICompositionAnimations.Animations
         }
 
         /// <inheritdoc/>
-        public override IAnimationBuilder Translation(float to, EasingFunctionNames ease)
+        public override IAnimationBuilder Translation(TranslationAxis axis, float to, EasingFunctionNames ease)
         {
             throw new NotImplementedException();
         }
 
         /// <inheritdoc/>
-        public override IAnimationBuilder Translation(float from, float to, EasingFunctionNames ease)
+        public override IAnimationBuilder Translation(TranslationAxis axis, float from, float to, EasingFunctionNames ease)
         {
             throw new NotImplementedException();
         }
