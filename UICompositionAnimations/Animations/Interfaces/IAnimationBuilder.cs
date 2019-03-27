@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Numerics;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
 using UICompositionAnimations.Enums;
@@ -26,6 +27,21 @@ namespace UICompositionAnimations.Animations.Interfaces
         /// <param name="ease">The easing function to use for the opacity animation</param>
         [MustUseReturnValue, NotNull]
         IAnimationBuilder Opacity(float from, float to, EasingFunctionNames ease = EasingFunctionNames.Linear);
+
+        /// <summary>
+        /// Schedules a translation animation
+        /// </summary>
+        /// <param name="to">The target translation position to animate to</param>
+        /// <param name="ease">The easing function to use for the translation animation</param>
+        IAnimationBuilder Translation(Vector2 to, EasingFunctionNames ease = EasingFunctionNames.Linear);
+
+        /// <summary>
+        /// Schedules a translation animation
+        /// </summary>
+        /// <param name="from">The initial translation position to animate from</param>
+        /// <param name="to">The target translation position to animate to</param>
+        /// <param name="ease">The easing function to use for the translation animation</param>
+        IAnimationBuilder Translation(Vector2 from, Vector2 to, EasingFunctionNames ease = EasingFunctionNames.Linear);
 
         /// <summary>
         /// Schedules a translation animation

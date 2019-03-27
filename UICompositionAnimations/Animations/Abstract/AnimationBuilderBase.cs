@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Numerics;
 using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using JetBrains.Annotations;
@@ -25,12 +26,12 @@ namespace UICompositionAnimations.Animations.Abstract
         protected UIElement TargetElement { get; }
 
         /// <summary>
-        /// Gets the <see cref="TimeSpan"/> that defines the duration of the animation
+        /// Gets the <see cref="System.TimeSpan"/> that defines the duration of the animation
         /// </summary>
         protected TimeSpan DurationInterval { get; private set; }
 
         /// <summary>
-        /// The <see cref="TimeSpan"/> that defines the initial delay of the animation
+        /// The <see cref="System.TimeSpan"/> that defines the initial delay of the animation
         /// </summary>
         private TimeSpan? _Delay;
 
@@ -45,6 +46,12 @@ namespace UICompositionAnimations.Animations.Abstract
 
         /// <inheritdoc/>
         public abstract IAnimationBuilder Translation(TranslationAxis axis, float from, float to, EasingFunctionNames ease);
+
+        /// <inheritdoc/>
+        public abstract IAnimationBuilder Translation(Vector2 to, EasingFunctionNames ease = EasingFunctionNames.Linear);
+
+        /// <inheritdoc/>
+        public abstract IAnimationBuilder Translation(Vector2 from, Vector2 to, EasingFunctionNames ease = EasingFunctionNames.Linear);
 
         /// <inheritdoc/>
         public IAnimationBuilder Duration(int ms) => Duration(TimeSpan.FromMilliseconds(ms));
