@@ -7,7 +7,6 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 using JetBrains.Annotations;
 using UICompositionAnimations.Enums;
-using UICompositionAnimations.Helpers;
 using UICompositionAnimations.XAMLTransform;
 
 namespace UICompositionAnimations
@@ -521,21 +520,20 @@ namespace UICompositionAnimations
         /// <summary>
         /// Animates the target color brush to a given color
         /// </summary>
-        /// <param name="solidColorBrush">The brush to animate</param>
-        /// <param name="toColor">The target color to set</param>
+        /// <param name="solidColorBrush">The <see cref="SolidColorBrush"/> to animate</param>
+        /// <param name="color">The target value to set</param>
         /// <param name="ms">The duration of the animation</param>
         /// <param name="easing">The easing function to use</param>
-        public static void AnimateColor(this SolidColorBrush solidColorBrush, string toColor, int ms, EasingFunctionNames easing)
+        public static void AnimateColor(this SolidColorBrush solidColorBrush, Color color, int ms, EasingFunctionNames easing)
         {
             // Get the target color
-            Color targetColor = ColorConverter.String2Color(toColor);
-            if (solidColorBrush.Color.Equals(targetColor)) return;
+            if (solidColorBrush.Color.Equals(color)) return;
 
             // Prepare the animation
             ColorAnimation animation = new ColorAnimation
             {
                 From = solidColorBrush.Color,
-                To = targetColor,
+                To = color,
                 Duration = new Duration(TimeSpan.FromMilliseconds(ms)),
                 EasingFunction = easing.ToEasingFunction()
             };
