@@ -22,12 +22,21 @@ namespace UICompositionAnimations.Brushes.Base
         [MustUseReturnValue, NotNull]
         protected abstract CompositionBrushBuilder OnBrushRequested();
 
+        /// <summary>
+        /// Gets or sets an optional path that can be used to mask the <see cref="Windows.UI.Composition.CompositionBrush"/> in the current instance
+        /// </summary>
+        [CanBeNull]
+        public string Path { get; set; }
+
         /// <inheritdoc/>
         protected override async void OnConnected()
         {
             using (await ConnectedMutex.LockAsync())
-                if (CompositionBrush == null)
-                    CompositionBrush = await OnBrushRequested().BuildAsync();
+            {
+                if (CompositionBrush != null) return;
+                Windows.UI.Composition.CompositionBrush brush = await OnBrushRequested().BuildAsync();
+                CompositionBrush = Path == null ? brush : brush.AsMaskedBrush(Path);
+            }
             base.OnConnected();
         }
 
