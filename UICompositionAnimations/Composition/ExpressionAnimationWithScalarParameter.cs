@@ -2,7 +2,6 @@
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using JetBrains.Annotations;
-using UICompositionAnimations.Helpers;
 
 namespace UICompositionAnimations.Composition
 {

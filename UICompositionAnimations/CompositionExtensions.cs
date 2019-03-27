@@ -12,7 +12,6 @@ using JetBrains.Annotations;
 using UICompositionAnimations.Composition;
 using UICompositionAnimations.Composition.Misc;
 using UICompositionAnimations.Enums;
-using UICompositionAnimations.Helpers;
 using Windows.UI.Xaml.Shapes;
 
 namespace UICompositionAnimations

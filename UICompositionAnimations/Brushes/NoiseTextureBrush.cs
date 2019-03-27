@@ -9,7 +9,6 @@ using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 using UICompositionAnimations.Behaviours;
-using UICompositionAnimations.Helpers;
 using Windows.ApplicationModel;
 
 namespace UICompositionAnimations.Brushes

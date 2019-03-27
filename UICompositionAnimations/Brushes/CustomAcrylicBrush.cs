@@ -11,7 +11,6 @@ using Windows.UI.Xaml.Media;
 using UICompositionAnimations.Behaviours;
 using UICompositionAnimations.Brushes.Cache;
 using UICompositionAnimations.Enums;
-using UICompositionAnimations.Helpers;
 using Windows.ApplicationModel;
 using JetBrains.Annotations;
 

@@ -168,8 +168,6 @@
     <Compile Include="Helpers\PointerEvents\PointerHandlerInfo.cs" />
     <Compile Include="Helpers\Win2DImageHelper.cs" />
     <Compile Include="Helpers\PointerEvents\PointerHelper.cs" />
-    <Compile Include="Lights\LightsSourceHelper.cs" />
-    <Compile Include="Lights\PointerPositionSpotLight.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Enums\TranslationAxis.cs" />
     <Compile Include="XAMLTransformExtensions.cs" />
