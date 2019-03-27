@@ -120,6 +120,9 @@
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Animations\Abstract\AnimationBuilderBase.cs" />
+    <Compile Include="Animations\CompositionAnimationBuilder.cs" />
+    <Compile Include="Animations\Interfaces\IAnimationBuilder.cs" />
     <Compile Include="Behaviours\AcrylicEffectHelper.cs" />
     <Compile Include="Behaviours\CompositionBrushBuilder.cs" />
     <Compile Include="Behaviours\CompositionSourceInitializer.cs" />
@@ -159,9 +162,12 @@
     <Compile Include="Enums\ImplicitAnimationType.cs" />
     <Compile Include="Enums\MarginSide.cs" />
     <Compile Include="Extensions\System.Collections.Generic\GenericExtensions.cs" />
+    <Compile Include="Extensions\System.Threading.Tasks\TaskCompletionSource.cs" />
     <Compile Include="Extensions\System\BaseExtensions.cs" />
+    <Compile Include="Extensions\System\Unit.cs" />
     <Compile Include="Extensions\Windows.UI.Core\DispatcherExtensions.cs" />
     <Compile Include="Extensions\System.Threading.Tasks\AsyncMutex.cs" />
+    <Compile Include="Extensions\Windows.UI.Xaml\AnimationExtensions.cs" />
     <Compile Include="Helpers\DispatcherHelper.cs" />
     <Compile Include="Helpers\PointerEvents\ControlAttachedHandlersInfo.cs" />
     <Compile Include="Helpers\PointerEvents\HandlersRemovalResult.cs" />
