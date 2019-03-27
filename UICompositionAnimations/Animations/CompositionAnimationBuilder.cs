@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Numerics;
 using System.Threading.Tasks;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Hosting;
 using JetBrains.Annotations;
 using UICompositionAnimations.Animations.Abstract;
 using UICompositionAnimations.Animations.Interfaces;
@@ -37,6 +39,7 @@ namespace UICompositionAnimations.Animations
         public CompositionAnimationBuilder([NotNull] UIElement target) : base(target)
         {
             TargetVisual = target.GetVisual();
+            ElementCompositionPreview.SetIsTranslationEnabled(TargetElement, true);
         }
 
         /// <inheritdoc/>
@@ -63,13 +66,33 @@ namespace UICompositionAnimations.Animations
         /// <inheritdoc/>
         public override IAnimationBuilder Translation(TranslationAxis axis, float to, EasingFunctionNames ease)
         {
-            throw new NotImplementedException();
+            Vector3 translation = TargetVisual.TransformMatrix.Translation;
+            float from = axis == TranslationAxis.X ? translation.X : translation.Y;
+            return Translation(axis, from, to, ease);
         }
 
         /// <inheritdoc/>
         public override IAnimationBuilder Translation(TranslationAxis axis, float from, float to, EasingFunctionNames ease)
         {
-            throw new NotImplementedException();
+            AnimationProducers.Add(duration =>
+            {
+                // Stop the animation and get the easing function
+                TargetVisual.StopAnimation("Translation");
+                CompositionEasingFunction easingFunction = TargetVisual.GetEasingFunction(ease);
+
+                // Get the starting and target vectors
+                Vector3
+                    from3 = TargetVisual.TransformMatrix.Translation,
+                    to3 = from3;
+                if (axis == TranslationAxis.X) to3.X = to;
+                else to3.Y = to;
+
+                // Create and return the animation
+                Vector3KeyFrameAnimation animation = TargetVisual.Compositor.CreateVector3KeyFrameAnimation(from3, to3, duration, null, easingFunction);
+                return ("Translation", animation);
+            });
+
+            return this;
         }
 
         /// <inheritdoc/>
