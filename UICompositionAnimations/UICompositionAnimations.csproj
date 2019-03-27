@@ -158,6 +158,8 @@
     <Compile Include="Enums\EffectPlacement.cs" />
     <Compile Include="Enums\ImplicitAnimationType.cs" />
     <Compile Include="Enums\MarginSide.cs" />
+    <Compile Include="Extensions\System.Collections.Generic\GenericExtensions.cs" />
+    <Compile Include="Extensions\System\BaseExtensions.cs" />
     <Compile Include="Helpers\AsyncMutex.cs" />
     <Compile Include="Helpers\ColorConverter.cs" />
     <Compile Include="Helpers\DispatcherHelper.cs" />

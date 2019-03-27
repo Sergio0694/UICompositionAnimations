@@ -6,7 +6,6 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 using JetBrains.Annotations;
 using UICompositionAnimations.Enums;
-using UICompositionAnimations.Helpers;
 
 namespace UICompositionAnimations.XAMLTransform
 {
@@ -93,7 +92,7 @@ namespace UICompositionAnimations.XAMLTransform
         public static bool CompareTargetValue(this Storyboard storyboard, Storyboard test)
         {
             if (storyboard == null || storyboard.Children.Count != 1 || test == null || test.Children.Count != 1) return false;
-            return storyboard.Children.First().To<DoubleAnimation>().To.SafeEquals(test.Children.First().To<DoubleAnimation>().To);
+            return storyboard.Children.First().To<DoubleAnimation>().To?.Equals(test.Children.First().To<DoubleAnimation>().To) == true;
         }
 
         #endregion

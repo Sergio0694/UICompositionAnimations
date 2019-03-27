@@ -1,9 +1,9 @@
-﻿using Microsoft.Graphics.Canvas.Effects;
+﻿using System;
+using Microsoft.Graphics.Canvas.Effects;
 using Windows.UI.Composition;
 using Windows.UI.Composition.Effects;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
-using UICompositionAnimations.Helpers;
 
 namespace UICompositionAnimations.Brushes
 {
