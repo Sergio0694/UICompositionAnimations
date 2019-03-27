@@ -160,10 +160,10 @@
     <Compile Include="Enums\MarginSide.cs" />
     <Compile Include="Extensions\System.Collections.Generic\GenericExtensions.cs" />
     <Compile Include="Extensions\System\BaseExtensions.cs" />
+    <Compile Include="Extensions\Windows.UI.Core\DispatcherExtensions.cs" />
     <Compile Include="Helpers\AsyncMutex.cs" />
     <Compile Include="Helpers\ColorConverter.cs" />
     <Compile Include="Helpers\DispatcherHelper.cs" />
-    <Compile Include="Helpers\Extensions.cs" />
     <Compile Include="Helpers\PointerEvents\ControlAttachedHandlersInfo.cs" />
     <Compile Include="Helpers\PointerEvents\HandlersRemovalResult.cs" />
     <Compile Include="Helpers\PointerEvents\PointerHandlerInfo.cs" />
