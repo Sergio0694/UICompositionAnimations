@@ -4,6 +4,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Hosting;
 using System.Numerics;
 using Windows.Foundation;
+using Windows.Graphics.Effects;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Core;
@@ -14,6 +15,11 @@ using UICompositionAnimations.Composition.Misc;
 using UICompositionAnimations.Enums;
 using UICompositionAnimations.Helpers;
 using Windows.UI.Xaml.Shapes;
+using CompositionProToolkit;
+using CompositionProToolkit.Win2d;
+using Microsoft.Graphics.Canvas;
+using Microsoft.Graphics.Canvas.Geometry;
+using UICompositionAnimations.Behaviours;
 
 namespace UICompositionAnimations
 {
@@ -2081,6 +2087,42 @@ namespace UICompositionAnimations
                 dispatcher = null;
                 return false;
             }
+        }
+
+        /// <summary>
+        /// Creates a masked <see cref="CompositionBrush"/> from the input brush
+        /// </summary>
+        /// <param name="brush">The input <see cref="CompositionBrush"/> instance to mask</param>
+        /// <param name="path">The mask path, in Win2D mini format</param>
+        /// <param name="resolution">The optional target resolution for the masking brush. The path size will be used, if <see langword="null"/></param>
+        [MustUseReturnValue, NotNull]
+        public static CompositionMaskBrush AsMaskedBrush([NotNull] this CompositionBrush brush, string path, Size? resolution = null)
+        {
+            if (string.IsNullOrEmpty(path)) throw new ArgumentException("The input path isn't valid", nameof(path));
+
+            // Create the path geometry
+            CanvasDevice device = CanvasDevice.GetSharedDevice();
+            CanvasGeometry geometry = CanvasObject.CreateGeometry(device, path);
+
+            // Compute the target resolution, if needed
+            if (resolution == null)
+            {
+                Rect bounds = geometry.ComputeBounds();
+                resolution = new Size(bounds.Width, bounds.Height);
+            }
+
+            // Create the mask brush
+            Compositor compositor = Window.Current.Compositor;
+            ICompositionGenerator generator = compositor.CreateCompositionGenerator();
+            IGeometrySurface surface = generator.CreateGeometrySurface(resolution.Value, geometry, Colors.Green);
+            CompositionBrush mask = compositor.CreateSurfaceBrush(surface.Surface);
+
+            // Create the final effect
+            CompositionMaskBrush maskedBrush = compositor.CreateMaskBrush();
+            maskedBrush.Source = brush;
+            maskedBrush.Mask = mask;
+
+            return maskedBrush;
         }
 
         #endregion
