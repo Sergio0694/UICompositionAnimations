@@ -14,12 +14,6 @@ using UICompositionAnimations.Enums;
 namespace UICompositionAnimations.Animations
 {
     /// <summary>
-    /// A <see langword="delegate"/> that prepares composition animations with a specified duration
-    /// </summary>
-    /// <param name="duration">The duration of the animation returned by the <see langword="delegate"/></param>
-    internal delegate (string Property, CompositionAnimation Animation) CompositionAnimationProducer(TimeSpan duration);
-
-    /// <summary>
     /// A <see langword="class"/> that implements the <see cref="IAnimationBuilder"/> <see langword="interface"/> using composition APIs
     /// </summary>
     internal sealed class CompositionAnimationBuilder : AnimationBuilderBase
@@ -31,10 +25,10 @@ namespace UICompositionAnimations.Animations
         private readonly Visual TargetVisual;
 
         /// <summary>
-        /// The list of <see cref="CompositionAnimationProducer"/> instances used to create the animations to run
+        /// The list of <see cref="Action"/> instances used to create the animations to run
         /// </summary>
         [NotNull, ItemNotNull]
-        private readonly IList<CompositionAnimationProducer> AnimationProducers = new List<CompositionAnimationProducer>();
+        private readonly IList<Action<TimeSpan>> Animations = new List<Action<TimeSpan>>();
 
         public CompositionAnimationBuilder([NotNull] UIElement target) : base(target)
         {
@@ -52,12 +46,12 @@ namespace UICompositionAnimations.Animations
         /// <inheritdoc/>
         public override IAnimationBuilder Opacity(float from, float to, EasingFunctionNames ease = EasingFunctionNames.Linear)
         {
-            AnimationProducers.Add(duration =>
+            Animations.Add(duration =>
             {
                 TargetVisual.StopAnimation(nameof(Visual.Opacity));
                 CompositionEasingFunction easingFunction = TargetVisual.GetEasingFunction(ease);
                 ScalarKeyFrameAnimation animation = TargetVisual.Compositor.CreateScalarKeyFrameAnimation(from, to, duration, null, easingFunction);
-                return (nameof(Visual.Opacity), animation);
+                TargetVisual.StartAnimation(nameof(Visual.Opacity), animation);
             });
 
             return this;
@@ -91,7 +85,7 @@ namespace UICompositionAnimations.Animations
         /// <inheritdoc/>
         public override IAnimationBuilder Translation(Vector2 from, Vector2 to, EasingFunctionNames ease = EasingFunctionNames.Linear)
         {
-            AnimationProducers.Add(duration =>
+            Animations.Add(duration =>
             {
                 // Stop the animation and get the easing function
                 TargetVisual.StopAnimation("Translation");
@@ -105,7 +99,7 @@ namespace UICompositionAnimations.Animations
 
                 // Create and return the animation
                 Vector3KeyFrameAnimation animation = TargetVisual.Compositor.CreateVector3KeyFrameAnimation(from3, to3, duration, null, easingFunction);
-                return ("Translation", animation);
+                TargetVisual.StartAnimation("Translation", animation);
             });
 
             return this;
@@ -139,7 +133,7 @@ namespace UICompositionAnimations.Animations
         /// <inheritdoc/>
         public override IAnimationBuilder Offset(Vector2 from, Vector2 to, EasingFunctionNames ease = EasingFunctionNames.Linear)
         {
-            AnimationProducers.Add(duration =>
+            Animations.Add(duration =>
             {
                 // Stop the animation and get the easing function
                 TargetVisual.StopAnimation(nameof(Visual.Offset));
@@ -153,7 +147,7 @@ namespace UICompositionAnimations.Animations
 
                 // Create and return the animation
                 Vector3KeyFrameAnimation animation = TargetVisual.Compositor.CreateVector3KeyFrameAnimation(from3, to3, duration, null, easingFunction);
-                return (nameof(Visual.Offset), animation);
+                TargetVisual.StartAnimation(nameof(Visual.Offset), animation);
             });
 
             return this;
@@ -174,7 +168,7 @@ namespace UICompositionAnimations.Animations
             element.GetVisual().CenterPoint = new Vector3((float)(element.ActualWidth / 2), (float)(element.ActualHeight / 2), 0);
 
             // Add the scale animation
-            AnimationProducers.Add(duration =>
+            Animations.Add(duration =>
             {
                 // Stop the animation and get the easing function
                 TargetVisual.StopAnimation(nameof(Visual.Scale));
@@ -188,7 +182,7 @@ namespace UICompositionAnimations.Animations
 
                 // Create and return the animation
                 Vector3KeyFrameAnimation animation = TargetVisual.Compositor.CreateVector3KeyFrameAnimation(from3, to3, duration, null, easingFunction);
-                return (nameof(Visual.Scale), animation);
+                TargetVisual.StartAnimation(nameof(Visual.Scale), animation);
             });
 
             return this;
@@ -208,12 +202,56 @@ namespace UICompositionAnimations.Animations
             element.GetVisual().CenterPoint = new Vector3((float)(element.ActualWidth / 2), (float)(element.ActualHeight / 2), 0);
 
             // Add the rotation animation
-            AnimationProducers.Add(duration =>
+            Animations.Add(duration =>
             {
                 TargetVisual.StopAnimation(nameof(Visual.RotationAngleInDegrees));
                 CompositionEasingFunction easingFunction = TargetVisual.GetEasingFunction(ease);
                 ScalarKeyFrameAnimation animation = TargetVisual.Compositor.CreateScalarKeyFrameAnimation(from, to, duration, null, easingFunction);
-                return (nameof(Visual.RotationAngleInDegrees), animation);
+                TargetVisual.StartAnimation(nameof(Visual.RotationAngleInDegrees), animation);
+            });
+
+            return this;
+        }
+
+        /// <inheritdoc/>
+        public override IAnimationBuilder Clip(float to, MarginSide side, EasingFunctionNames ease = EasingFunctionNames.Linear)
+        {
+            InsetClip clip = TargetVisual.Clip as InsetClip ?? (TargetVisual.Clip = TargetVisual.Compositor.CreateInsetClip()).To<InsetClip>();
+            float from;
+            switch (side)
+            {
+                case MarginSide.Top: from = clip.TopInset; break;
+                case MarginSide.Bottom: from = clip.BottomInset; break;
+                case MarginSide.Right: from = clip.RightInset; break;
+                case MarginSide.Left: from = clip.LeftInset; break;
+                default: throw new ArgumentException("Invalid side", nameof(side));
+            }
+
+            return Clip(from, to, side, ease);
+        }
+
+        /// <inheritdoc/>
+        public override IAnimationBuilder Clip(float from, float to, MarginSide side, EasingFunctionNames ease = EasingFunctionNames.Linear)
+        {
+            Animations.Add(duration =>
+            {
+                // Stop the animation and get the easing function
+                string property;
+                switch (side)
+                {
+                    case MarginSide.Top: property = nameof(InsetClip.TopInset); break;
+                    case MarginSide.Bottom: property = nameof(InsetClip.BottomInset); break;
+                    case MarginSide.Right: property = nameof(InsetClip.RightInset); break;
+                    case MarginSide.Left: property = nameof(InsetClip.LeftInset); break;
+                    default: throw new ArgumentException("Invalid side", nameof(side));
+                }
+                InsetClip clip = TargetVisual.Clip as InsetClip ?? (TargetVisual.Clip = TargetVisual.Compositor.CreateInsetClip()).To<InsetClip>();
+                clip.StopAnimation(property);
+                CompositionEasingFunction easingFunction = clip.GetEasingFunction(ease);
+
+                // Create and return the animation
+                ScalarKeyFrameAnimation animation = clip.Compositor.CreateScalarKeyFrameAnimation(from, to, duration, null, easingFunction);
+                clip.StartAnimation(property, animation);
             });
 
             return this;
@@ -238,11 +276,8 @@ namespace UICompositionAnimations.Animations
         /// </summary>
         private void StartAnimations()
         {
-            foreach (var producer in AnimationProducers)
-            {
-                var (property, animation) = producer(DurationInterval);
-                TargetVisual.StartAnimation(property, animation);
-            }
+            foreach (var animation in Animations)
+                animation(DurationInterval);
         }
     }
 }

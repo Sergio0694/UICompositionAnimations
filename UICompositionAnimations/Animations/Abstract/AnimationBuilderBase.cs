@@ -78,6 +78,12 @@ namespace UICompositionAnimations.Animations.Abstract
         public abstract IAnimationBuilder Rotate(float from, float to, EasingFunctionNames ease = EasingFunctionNames.Linear);
 
         /// <inheritdoc/>
+        public abstract IAnimationBuilder Clip(float to, MarginSide side, EasingFunctionNames ease = EasingFunctionNames.Linear);
+
+        /// <inheritdoc/>
+        public abstract IAnimationBuilder Clip(float from, float to, MarginSide side, EasingFunctionNames ease = EasingFunctionNames.Linear);
+
+        /// <inheritdoc/>
         public IAnimationBuilder Duration(int ms) => Duration(TimeSpan.FromMilliseconds(ms));
 
         /// <inheritdoc/>
