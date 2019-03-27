@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.UI.Composition;
 using JetBrains.Annotations;
-using UICompositionAnimations;
 
 namespace Windows.UI.Xaml
 {

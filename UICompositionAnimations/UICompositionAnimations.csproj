@@ -168,6 +168,7 @@
     <Compile Include="Extensions\System\Unit.cs" />
     <Compile Include="Extensions\Windows.UI.Core\DispatcherExtensions.cs" />
     <Compile Include="Extensions\System.Threading.Tasks\AsyncMutex.cs" />
+    <Compile Include="Extensions\Windows.UI.Xaml\ScrollViewerExtensions.cs" />
     <Compile Include="Extensions\Windows.UI.Xaml\UIElementExtensions.cs" />
     <Compile Include="Extensions\Windows.UI.Xaml\FrameworkElementExtensions.cs" />
     <Compile Include="Helpers\DispatcherHelper.cs" />
@@ -194,7 +195,9 @@
       <Version>1.23.0</Version>
     </PackageReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Extensions\Windows.UI.Composition\" />
+  </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
