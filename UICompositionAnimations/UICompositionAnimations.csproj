@@ -168,6 +168,7 @@
     <Compile Include="Extensions\Windows.UI.Core\DispatcherExtensions.cs" />
     <Compile Include="Extensions\System.Threading.Tasks\AsyncMutex.cs" />
     <Compile Include="Extensions\Windows.UI.Xaml\AnimationExtensions.cs" />
+    <Compile Include="Extensions\Windows.UI.Xaml\FrameworkElementExtensions.cs" />
     <Compile Include="Helpers\DispatcherHelper.cs" />
     <Compile Include="Helpers\PointerEvents\ControlAttachedHandlersInfo.cs" />
     <Compile Include="Helpers\PointerEvents\HandlersRemovalResult.cs" />

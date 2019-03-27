@@ -22,59 +22,6 @@ namespace UICompositionAnimations
     [PublicAPI]
     public static class CompositionExtensions
     {
-        #region Internal tools
-
-        /// <summary>
-        /// Sets the <see cref="Visual.CenterPoint"/> property of a <see cref="Visual"/> object to the center of a given <see cref="FrameworkElement"/>
-        /// </summary>
-        /// <param name="element">The source element</param>
-        /// <param name="visual">The Visual object for the source <see cref="FrameworkElement"/></param>
-        private static void SetFixedCenterPoint([NotNull] this FrameworkElement element, [NotNull] Visual visual)
-        {
-            if (double.IsNaN(element.Width) || double.IsNaN(element.Height))
-                throw new InvalidOperationException("The target element must have a fixed size");
-            visual.CenterPoint = new Vector3((float)element.Width / 2, (float)element.Height / 2, 0);
-        }
-
-        /// <summary>
-        /// Sets the <see cref="Visual.CenterPoint"/> property of a <see cref="Visual"/> object to the center of a given <see cref="FrameworkElement"/>
-        /// </summary>
-        /// <param name="element">The source element</param>
-        /// <param name="visual">The Visual object for the source <see cref="FrameworkElement"/></param>
-        private static async Task SetCenterPointAsync([NotNull] this FrameworkElement element, [NotNull] Visual visual)
-        {
-            // Check if the control hasn't already been loaded
-            bool CheckLoadingPending() => element.ActualWidth + element.ActualHeight < 0.1;
-            if (CheckLoadingPending())
-            {
-                // Wait for the loaded event and set the CenterPoint
-                TaskCompletionSource<object> loadedTcs = new TaskCompletionSource<object>();
-                void Handler(object s, RoutedEventArgs e)
-                {
-                    loadedTcs.SetResult(null);
-                    element.Loaded -= Handler;
-                }
-
-                // Wait for the loaded event for a given time threshold
-                element.Loaded += Handler;
-                await Task.WhenAny(loadedTcs.Task, Task.Delay(500));
-                element.Loaded -= Handler;
-
-                // If the control still hasn't been loaded, approximate the center point with its desired size
-                if (CheckLoadingPending())
-                {
-                    element.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
-                    visual.CenterPoint = new Vector3((float)element.DesiredSize.Width / 2, (float)element.DesiredSize.Height / 2, 0);
-                    return;
-                }
-            }
-
-            // Update the center point
-            visual.CenterPoint = new Vector3((float)element.ActualWidth / 2, (float)element.ActualHeight / 2, 0);
-        }
-
-        #endregion
-
         #region Fade
 
         // Manages the fade animation
@@ -504,8 +451,8 @@ namespace UICompositionAnimations
             // Get the default values and set the CenterPoint
             visual.StopAnimation("Opacity");
             visual.StopAnimation("Scale");
-            if (useFixedScale) element.SetFixedCenterPoint(visual);
-            else await element.SetCenterPointAsync(visual);
+            if (useFixedScale) element.SetVisualCenterPoint();
+            else await element.SetVisualCenterPointAsync();
             if (!startOp.HasValue) startOp = visual.Opacity;
 
             // Get the easing function, the duration and delay
@@ -654,8 +601,8 @@ namespace UICompositionAnimations
             int msOp, int? msScale, int? msDelay, [NotNull] CompositionEasingFunction easingFunction, bool useFixedSize)
         {
             // Get the default values and set the CenterPoint
-            if (useFixedSize) element.SetFixedCenterPoint(visual);
-            else await element.SetCenterPointAsync(visual);
+            if (useFixedSize) element.SetVisualCenterPoint();
+            else await element.SetVisualCenterPointAsync();
 
             // Get the easing function, the duration and delay
             TimeSpan durationOp = TimeSpan.FromMilliseconds(msOp);
@@ -746,8 +693,8 @@ namespace UICompositionAnimations
         {
             // Get the default values and set the CenterPoint
             visual.StopAnimation("Scale");
-            if (useFixedSize) element.SetFixedCenterPoint(visual);
-            else await element.SetCenterPointAsync(visual);
+            if (useFixedSize) element.SetVisualCenterPoint();
+            else await element.SetVisualCenterPointAsync();
 
             // Get the easing function, the duration and delay
             TimeSpan duration = TimeSpan.FromMilliseconds(ms);
@@ -881,7 +828,7 @@ namespace UICompositionAnimations
             int ms, int? msDelay, [NotNull] CompositionEasingFunction easingFunction)
         {
             // Get the default values and set the CenterPoint
-            await element.SetCenterPointAsync(visual);
+            await element.SetVisualCenterPointAsync();
 
             // Get the easing function, the duration and delay
             TimeSpan duration = TimeSpan.FromMilliseconds(ms);
@@ -1287,8 +1234,8 @@ namespace UICompositionAnimations
             visual.StopAnimation("Opacity");
             visual.StopAnimation("Offset");
             visual.StopAnimation("RotationAngle");
-            if (useFixedSize) element.SetFixedCenterPoint(visual);
-            else await element.SetCenterPointAsync(visual);
+            if (useFixedSize) element.SetVisualCenterPoint();
+            else await element.SetVisualCenterPointAsync();
 
             // Get the current opacity
             if (!startOp.HasValue) startOp = visual.Opacity;
@@ -1409,8 +1356,8 @@ namespace UICompositionAnimations
             visual.StopAnimation("Opacity");
             visual.StopAnimation("Scale");
             visual.StopAnimation("RotationAngle");
-            if (useFixedSize) element.SetFixedCenterPoint(visual);
-            else await element.SetCenterPointAsync(visual);
+            if (useFixedSize) element.SetVisualCenterPoint();
+            else await element.SetVisualCenterPointAsync();
 
             // Get the current opacity
             if (!startOp.HasValue) startOp = visual.Opacity;
@@ -1819,7 +1766,7 @@ namespace UICompositionAnimations
         {
             // Get the default values and set the CenterPoint
             Visual visual = element.GetVisual();
-            await element.SetCenterPointAsync(visual);
+            await element.SetVisualCenterPointAsync();
 
             // Set the scale property
             if (x == null && y == null && z == null) return;
@@ -2002,7 +1949,7 @@ namespace UICompositionAnimations
             visual.StopAnimation("Scale");
             visual.StopAnimation("Offset");
             visual.StopAnimation("Opacity");
-            await element.SetCenterPointAsync(visual);
+            await element.SetVisualCenterPointAsync();
 
             // Reset the visual properties
             visual.Scale = Vector3.One;
