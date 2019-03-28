@@ -24,7 +24,7 @@ namespace Windows.UI.Xaml
         [NotNull]
         public static ExpressionAnimation StartExpressionAnimation(
             [NotNull] this ScrollViewer scroller, [NotNull] UIElement target,
-            TranslationAxis sourceXY, TranslationAxis? targetXY = null, bool invertSourceAxis = false)
+            Axis sourceXY, Axis? targetXY = null, bool invertSourceAxis = false)
         {
             CompositionPropertySet scrollSet = ElementCompositionPreview.GetScrollViewerManipulationPropertySet(scroller);
             string sign = invertSourceAxis ? "-" : string.Empty;
@@ -46,8 +46,8 @@ namespace Windows.UI.Xaml
         [NotNull]
         public static ExpressionAnimationWithScalarParameter StartExpressionAnimation(
             [NotNull] this ScrollViewer scroller, [NotNull] UIElement target,
-            TranslationAxis sourceXY, float parameter,
-            TranslationAxis? targetXY = null, bool invertSourceAxis = false)
+            Axis sourceXY, float parameter,
+            Axis? targetXY = null, bool invertSourceAxis = false)
         {
             // Get the property set and setup the scroller offset sign
             CompositionPropertySet scrollSet = ElementCompositionPreview.GetScrollViewerManipulationPropertySet(scroller);

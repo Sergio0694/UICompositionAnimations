@@ -37,14 +37,14 @@ namespace UICompositionAnimations.Animations
         }
 
         /// <inheritdoc/>
-        public override IAnimationBuilder Opacity(float to, EasingFunctionNames ease = EasingFunctionNames.Linear)
+        public override IAnimationBuilder Opacity(float to, Easing ease = Easing.Linear)
         {
             float from = TargetVisual.Opacity;
             return Opacity(from, to, ease);
         }
 
         /// <inheritdoc/>
-        public override IAnimationBuilder Opacity(float from, float to, EasingFunctionNames ease = EasingFunctionNames.Linear)
+        public override IAnimationBuilder Opacity(float from, float to, Easing ease = Easing.Linear)
         {
             Animations.Add(duration =>
             {
@@ -58,32 +58,32 @@ namespace UICompositionAnimations.Animations
         }
 
         /// <inheritdoc/>
-        public override IAnimationBuilder Translation(TranslationAxis axis, float to, EasingFunctionNames ease = EasingFunctionNames.Linear)
+        public override IAnimationBuilder Translation(Axis axis, float to, Easing ease = Easing.Linear)
         {
             Vector3 translation = TargetVisual.TransformMatrix.Translation;
-            if (axis == TranslationAxis.X) translation.X = to;
+            if (axis == Axis.X) translation.X = to;
             else translation.Y = to;
             return Translation(new Vector2(translation.X, translation.Y), ease);
         }
 
         /// <inheritdoc/>
-        public override IAnimationBuilder Translation(TranslationAxis axis, float from, float to, EasingFunctionNames ease = EasingFunctionNames.Linear)
+        public override IAnimationBuilder Translation(Axis axis, float from, float to, Easing ease = Easing.Linear)
         {
             Vector3 translation = TargetVisual.TransformMatrix.Translation;
-            return axis == TranslationAxis.X
+            return axis == Axis.X
                 ? Translation(new Vector2(from, translation.Y), new Vector2(to, translation.Y), ease)
                 : Translation(new Vector2(translation.X, from), new Vector2(translation.X, to), ease);
         }
 
         /// <inheritdoc/>
-        public override IAnimationBuilder Translation(Vector2 to, EasingFunctionNames ease = EasingFunctionNames.Linear)
+        public override IAnimationBuilder Translation(Vector2 to, Easing ease = Easing.Linear)
         {
             Vector3 translation = TargetVisual.TransformMatrix.Translation;
             return Translation(new Vector2(translation.X, translation.Y), to, ease);
         }
 
         /// <inheritdoc/>
-        public override IAnimationBuilder Translation(Vector2 from, Vector2 to, EasingFunctionNames ease = EasingFunctionNames.Linear)
+        public override IAnimationBuilder Translation(Vector2 from, Vector2 to, Easing ease = Easing.Linear)
         {
             Animations.Add(duration =>
             {
@@ -106,32 +106,32 @@ namespace UICompositionAnimations.Animations
         }
 
         /// <inheritdoc/>
-        public override IAnimationBuilder Offset(TranslationAxis axis, float to, EasingFunctionNames ease = EasingFunctionNames.Linear)
+        public override IAnimationBuilder Offset(Axis axis, float to, Easing ease = Easing.Linear)
         {
             Vector3 offset = TargetVisual.Offset;
-            if (axis == TranslationAxis.X) offset.X = to;
+            if (axis == Axis.X) offset.X = to;
             else offset.Y = to;
             return Offset(new Vector2(offset.X, offset.Y), ease);
         }
 
         /// <inheritdoc/>
-        public override IAnimationBuilder Offset(TranslationAxis axis, float from, float to, EasingFunctionNames ease = EasingFunctionNames.Linear)
+        public override IAnimationBuilder Offset(Axis axis, float from, float to, Easing ease = Easing.Linear)
         {
             Vector3 offset = TargetVisual.Offset;
-            return axis == TranslationAxis.X
+            return axis == Axis.X
                 ? Offset(new Vector2(from, offset.Y), new Vector2(to, offset.Y), ease)
                 : Offset(new Vector2(offset.X, from), new Vector2(offset.X, to), ease);
         }
 
         /// <inheritdoc/>
-        public override IAnimationBuilder Offset(Vector2 to, EasingFunctionNames ease = EasingFunctionNames.Linear)
+        public override IAnimationBuilder Offset(Vector2 to, Easing ease = Easing.Linear)
         {
             Vector3 offset = TargetVisual.Offset;
             return Offset(new Vector2(offset.X, offset.Y), to, ease);
         }
 
         /// <inheritdoc/>
-        public override IAnimationBuilder Offset(Vector2 from, Vector2 to, EasingFunctionNames ease = EasingFunctionNames.Linear)
+        public override IAnimationBuilder Offset(Vector2 from, Vector2 to, Easing ease = Easing.Linear)
         {
             Animations.Add(duration =>
             {
@@ -154,14 +154,14 @@ namespace UICompositionAnimations.Animations
         }
 
         /// <inheritdoc/>
-        public override IAnimationBuilder Scale(float to, EasingFunctionNames ease = EasingFunctionNames.Linear)
+        public override IAnimationBuilder Scale(float to, Easing ease = Easing.Linear)
         {
             Vector3 scale = TargetVisual.Scale;
             return Scale(scale.X, to, ease);
         }
 
         /// <inheritdoc/>
-        public override IAnimationBuilder Scale(float from, float to, EasingFunctionNames ease = EasingFunctionNames.Linear)
+        public override IAnimationBuilder Scale(float from, float to, Easing ease = Easing.Linear)
         {
             // Center the visual center point
             if (!(TargetElement is FrameworkElement element)) throw new InvalidOperationException("The scale animation needs a framework element");
@@ -189,13 +189,13 @@ namespace UICompositionAnimations.Animations
         }
 
         /// <inheritdoc/>
-        public override IAnimationBuilder Rotate(float to, EasingFunctionNames ease = EasingFunctionNames.Linear)
+        public override IAnimationBuilder Rotate(float to, Easing ease = Easing.Linear)
         {
             return Rotate(TargetVisual.RotationAngleInDegrees, to, ease);
         }
 
         /// <inheritdoc/>
-        public override IAnimationBuilder Rotate(float from, float to, EasingFunctionNames ease = EasingFunctionNames.Linear)
+        public override IAnimationBuilder Rotate(float from, float to, Easing ease = Easing.Linear)
         {
             // Center the visual center point
             if (!(TargetElement is FrameworkElement element)) throw new InvalidOperationException("The rotation animation needs a framework element");
@@ -214,7 +214,7 @@ namespace UICompositionAnimations.Animations
         }
 
         /// <inheritdoc/>
-        public override IAnimationBuilder Clip(MarginSide side, float to, EasingFunctionNames ease = EasingFunctionNames.Linear)
+        public override IAnimationBuilder Clip(MarginSide side, float to, Easing ease = Easing.Linear)
         {
             InsetClip clip = TargetVisual.Clip as InsetClip ?? (TargetVisual.Clip = TargetVisual.Compositor.CreateInsetClip()).To<InsetClip>();
             float from;
@@ -231,7 +231,7 @@ namespace UICompositionAnimations.Animations
         }
 
         /// <inheritdoc/>
-        public override IAnimationBuilder Clip(MarginSide side, float from, float to, EasingFunctionNames ease = EasingFunctionNames.Linear)
+        public override IAnimationBuilder Clip(MarginSide side, float from, float to, Easing ease = Easing.Linear)
         {
             Animations.Add(duration =>
             {

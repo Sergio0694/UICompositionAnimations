@@ -22,8 +22,8 @@ namespace UICompositionAnimations.Behaviours.Xaml.Effects
         public BlendEffectMode Mode { get; set; }
 
         /// <summary>
-        /// Gets or sets the placement of the input pipeline with respect to the current one (the default is <see cref="EffectPlacement.Foreground"/>)
+        /// Gets or sets the placement of the input pipeline with respect to the current one (the default is <see cref="Enums.Placement.Foreground"/>)
         /// </summary>
-        public EffectPlacement Placement { get; set; } = EffectPlacement.Foreground;
+        public Placement Placement { get; set; } = Placement.Foreground;
     }
 }

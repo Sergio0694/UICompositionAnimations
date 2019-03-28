@@ -13,20 +13,20 @@ namespace UICompositionAnimations.XAMLTransform
         /// Converts an easing function name to the right easing function
         /// </summary>
         /// <param name="ease">The desired easing function</param>
-        public static EasingFunctionBase ToEasingFunction(this EasingFunctionNames ease)
+        public static EasingFunctionBase ToEasingFunction(this Easing ease)
         {
             switch (ease)
             {
-                case EasingFunctionNames.Linear: return null;
-                case EasingFunctionNames.SineEaseIn: return new SineEase { EasingMode = EasingMode.EaseIn };
-                case EasingFunctionNames.SineEaseOut: return new SineEase { EasingMode = EasingMode.EaseOut };
-                case EasingFunctionNames.SineEaseInOut: return new SineEase { EasingMode = EasingMode.EaseInOut };
-                case EasingFunctionNames.QuadraticEaseIn: return new QuadraticEase { EasingMode = EasingMode.EaseIn };
-                case EasingFunctionNames.QuadraticEaseOut: return new QuadraticEase { EasingMode = EasingMode.EaseOut };
-                case EasingFunctionNames.QuadraticEaseInOut: return new QuadraticEase { EasingMode = EasingMode.EaseInOut };
-                case EasingFunctionNames.CircleEaseIn: return new CircleEase { EasingMode = EasingMode.EaseIn };
-                case EasingFunctionNames.CircleEaseOut: return new CircleEase { EasingMode = EasingMode.EaseOut };
-                case EasingFunctionNames.CircleEaseInOut: return new CircleEase { EasingMode = EasingMode.EaseInOut };
+                case Easing.Linear: return null;
+                case Easing.SineEaseIn: return new SineEase { EasingMode = EasingMode.EaseIn };
+                case Easing.SineEaseOut: return new SineEase { EasingMode = EasingMode.EaseOut };
+                case Easing.SineEaseInOut: return new SineEase { EasingMode = EasingMode.EaseInOut };
+                case Easing.QuadraticEaseIn: return new QuadraticEase { EasingMode = EasingMode.EaseIn };
+                case Easing.QuadraticEaseOut: return new QuadraticEase { EasingMode = EasingMode.EaseOut };
+                case Easing.QuadraticEaseInOut: return new QuadraticEase { EasingMode = EasingMode.EaseInOut };
+                case Easing.CircleEaseIn: return new CircleEase { EasingMode = EasingMode.EaseIn };
+                case Easing.CircleEaseOut: return new CircleEase { EasingMode = EasingMode.EaseOut };
+                case Easing.CircleEaseInOut: return new CircleEase { EasingMode = EasingMode.EaseInOut };
                 default: throw new ArgumentOutOfRangeException(nameof(ease), ease, "This shouldn't happen");
             }
         }

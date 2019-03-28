@@ -236,7 +236,7 @@ namespace UICompositionAnimations.Behaviours
                 .Opacity(0.4f)
                 .Blend(FromHostBackdropBrush(), BlendEffectMode.Multiply)
                 .Tint(tint, mix)
-                .Blend(FromTiles(noiseUri, cache: cache), BlendEffectMode.Overlay, EffectPlacement.Background);
+                .Blend(FromTiles(noiseUri, cache: cache), BlendEffectMode.Overlay, Placement.Background);
         }
 
         /// <summary>
@@ -255,7 +255,7 @@ namespace UICompositionAnimations.Behaviours
                 .Opacity(0.4f)
                 .Blend(FromHostBackdropBrush(), BlendEffectMode.Multiply)
                 .Tint(tint, mix, out tintAnimation)
-                .Blend(FromTiles(noiseUri, cache: cache), BlendEffectMode.Overlay, EffectPlacement.Background);
+                .Blend(FromTiles(noiseUri, cache: cache), BlendEffectMode.Overlay, Placement.Background);
         }
 
         /// <summary>
@@ -272,7 +272,7 @@ namespace UICompositionAnimations.Behaviours
             return FromBackdropBrush()
                 .Tint(tint, mix)
                 .Blur(blur)
-                .Blend(FromTiles(noiseUri, cache: cache), BlendEffectMode.Overlay, EffectPlacement.Background);
+                .Blend(FromTiles(noiseUri, cache: cache), BlendEffectMode.Overlay, Placement.Background);
         }
 
         /// <summary>
@@ -293,7 +293,7 @@ namespace UICompositionAnimations.Behaviours
             return FromBackdropBrush()
                 .Tint(tint, mix, out tintAnimation)
                 .Blur(blur)
-                .Blend(FromTiles(noiseUri, cache: cache), BlendEffectMode.Overlay, EffectPlacement.Background);
+                .Blend(FromTiles(noiseUri, cache: cache), BlendEffectMode.Overlay, Placement.Background);
         }
 
         /// <summary>
@@ -314,7 +314,7 @@ namespace UICompositionAnimations.Behaviours
             return FromBackdropBrush()
                 .Tint(tint, mix)
                 .Blur(blur, out blurAnimation)
-                .Blend(FromTiles(noiseUri, cache: cache), BlendEffectMode.Overlay, EffectPlacement.Background);
+                .Blend(FromTiles(noiseUri, cache: cache), BlendEffectMode.Overlay, Placement.Background);
         }
 
         /// <summary>
@@ -336,7 +336,7 @@ namespace UICompositionAnimations.Behaviours
             return FromBackdropBrush()
                 .Tint(tint, mix, out tintAnimation)
                 .Blur(blur, out blurAnimation)
-                .Blend(FromTiles(noiseUri, cache: cache), BlendEffectMode.Overlay, EffectPlacement.Background);
+                .Blend(FromTiles(noiseUri, cache: cache), BlendEffectMode.Overlay, Placement.Background);
         }
 
         #endregion
@@ -350,9 +350,9 @@ namespace UICompositionAnimations.Behaviours
         /// <param name="mode">The desired <see cref="BlendEffectMode"/> to use to blend the input pipelines</param>
         /// <param name="sorting">The sorting mode to use with the two input pipelines</param>
         [Pure, NotNull]
-        public CompositionBrushBuilder Blend([NotNull] CompositionBrushBuilder pipeline, BlendEffectMode mode, EffectPlacement sorting = EffectPlacement.Foreground)
+        public CompositionBrushBuilder Blend([NotNull] CompositionBrushBuilder pipeline, BlendEffectMode mode, Placement sorting = Placement.Foreground)
         {
-            (var foreground, var background) = sorting == EffectPlacement.Foreground ? (this, pipeline) : (pipeline, this);
+            (var foreground, var background) = sorting == Placement.Foreground ? (this, pipeline) : (pipeline, this);
 
             async Task<IGraphicsEffectSource> Factory() => new BlendEffect
             {
@@ -371,10 +371,10 @@ namespace UICompositionAnimations.Behaviours
         /// <param name="factor">The cross fade factor to blend the input effects</param>
         /// <param name="sorting">The sorting mode to use with the two input pipelines</param>
         [Pure, NotNull]
-        public CompositionBrushBuilder Mix([NotNull] CompositionBrushBuilder pipeline, float factor = 0.5f, EffectPlacement sorting = EffectPlacement.Foreground)
+        public CompositionBrushBuilder Mix([NotNull] CompositionBrushBuilder pipeline, float factor = 0.5f, Placement sorting = Placement.Foreground)
         {
             if (factor < 0 || factor > 1) throw new ArgumentOutOfRangeException(nameof(factor), "The factor must be in the [0,1] range");
-            (var foreground, var background) = sorting == EffectPlacement.Foreground ? (this, pipeline) : (pipeline, this);
+            (var foreground, var background) = sorting == Placement.Foreground ? (this, pipeline) : (pipeline, this);
 
             async Task<IGraphicsEffectSource> Factory() => new CrossFadeEffect
             {
@@ -395,10 +395,10 @@ namespace UICompositionAnimations.Behaviours
         /// <param name="sorting">The sorting mode to use with the two input pipelines</param>
         /// <remarks>Note that each pipeline can only contain a single instance of any of the built-in effects with animation support</remarks>
         [Pure, NotNull]
-        public CompositionBrushBuilder Mix([NotNull] CompositionBrushBuilder pipeline, float factor, out EffectAnimation animation, EffectPlacement sorting = EffectPlacement.Foreground)
+        public CompositionBrushBuilder Mix([NotNull] CompositionBrushBuilder pipeline, float factor, out EffectAnimation animation, Placement sorting = Placement.Foreground)
         {
             if (factor < 0 || factor > 1) throw new ArgumentOutOfRangeException(nameof(factor), "The factor must be in the [0,1] range");
-            (var foreground, var background) = sorting == EffectPlacement.Foreground ? (this, pipeline) : (pipeline, this);
+            (var foreground, var background) = sorting == Placement.Foreground ? (this, pipeline) : (pipeline, this);
 
             async Task<IGraphicsEffectSource> Factory() => new CrossFadeEffect
             {

@@ -36,52 +36,52 @@ namespace UICompositionAnimations.Animations.Abstract
         private TimeSpan? _Delay;
 
         /// <inheritdoc/>
-        public abstract IAnimationBuilder Opacity(float to, EasingFunctionNames ease = EasingFunctionNames.Linear);
+        public abstract IAnimationBuilder Opacity(float to, Easing ease = Easing.Linear);
 
         /// <inheritdoc/>
-        public abstract IAnimationBuilder Opacity(float from, float to, EasingFunctionNames ease = EasingFunctionNames.Linear);
+        public abstract IAnimationBuilder Opacity(float from, float to, Easing ease = Easing.Linear);
 
         /// <inheritdoc/>
-        public abstract IAnimationBuilder Translation(TranslationAxis axis, float to, EasingFunctionNames ease = EasingFunctionNames.Linear);
+        public abstract IAnimationBuilder Translation(Axis axis, float to, Easing ease = Easing.Linear);
 
         /// <inheritdoc/>
-        public abstract IAnimationBuilder Translation(TranslationAxis axis, float from, float to, EasingFunctionNames ease = EasingFunctionNames.Linear);
+        public abstract IAnimationBuilder Translation(Axis axis, float from, float to, Easing ease = Easing.Linear);
 
         /// <inheritdoc/>
-        public abstract IAnimationBuilder Translation(Vector2 to, EasingFunctionNames ease = EasingFunctionNames.Linear);
+        public abstract IAnimationBuilder Translation(Vector2 to, Easing ease = Easing.Linear);
 
         /// <inheritdoc/>
-        public abstract IAnimationBuilder Translation(Vector2 from, Vector2 to, EasingFunctionNames ease = EasingFunctionNames.Linear);
+        public abstract IAnimationBuilder Translation(Vector2 from, Vector2 to, Easing ease = Easing.Linear);
 
         /// <inheritdoc/>
-        public abstract IAnimationBuilder Offset(TranslationAxis axis, float to, EasingFunctionNames ease = EasingFunctionNames.Linear);
+        public abstract IAnimationBuilder Offset(Axis axis, float to, Easing ease = Easing.Linear);
 
         /// <inheritdoc/>
-        public abstract IAnimationBuilder Offset(TranslationAxis axis, float from, float to, EasingFunctionNames ease = EasingFunctionNames.Linear);
+        public abstract IAnimationBuilder Offset(Axis axis, float from, float to, Easing ease = Easing.Linear);
 
         /// <inheritdoc/>
-        public abstract IAnimationBuilder Offset(Vector2 to, EasingFunctionNames ease = EasingFunctionNames.Linear);
+        public abstract IAnimationBuilder Offset(Vector2 to, Easing ease = Easing.Linear);
 
         /// <inheritdoc/>
-        public abstract IAnimationBuilder Offset(Vector2 from, Vector2 to, EasingFunctionNames ease = EasingFunctionNames.Linear);
+        public abstract IAnimationBuilder Offset(Vector2 from, Vector2 to, Easing ease = Easing.Linear);
 
         /// <inheritdoc/>
-        public abstract IAnimationBuilder Scale(float to, EasingFunctionNames ease = EasingFunctionNames.Linear);
+        public abstract IAnimationBuilder Scale(float to, Easing ease = Easing.Linear);
 
         /// <inheritdoc/>
-        public abstract IAnimationBuilder Scale(float from, float to, EasingFunctionNames ease = EasingFunctionNames.Linear);
+        public abstract IAnimationBuilder Scale(float from, float to, Easing ease = Easing.Linear);
 
         /// <inheritdoc/>
-        public abstract IAnimationBuilder Rotate(float to, EasingFunctionNames ease = EasingFunctionNames.Linear);
+        public abstract IAnimationBuilder Rotate(float to, Easing ease = Easing.Linear);
 
         /// <inheritdoc/>
-        public abstract IAnimationBuilder Rotate(float from, float to, EasingFunctionNames ease = EasingFunctionNames.Linear);
+        public abstract IAnimationBuilder Rotate(float from, float to, Easing ease = Easing.Linear);
 
         /// <inheritdoc/>
-        public abstract IAnimationBuilder Clip(MarginSide side, float to, EasingFunctionNames ease = EasingFunctionNames.Linear);
+        public abstract IAnimationBuilder Clip(MarginSide side, float to, Easing ease = Easing.Linear);
 
         /// <inheritdoc/>
-        public abstract IAnimationBuilder Clip(MarginSide side, float from, float to, EasingFunctionNames ease = EasingFunctionNames.Linear);
+        public abstract IAnimationBuilder Clip(MarginSide side, float from, float to, Easing ease = Easing.Linear);
 
         /// <inheritdoc/>
         public IAnimationBuilder Duration(int ms) => Duration(TimeSpan.FromMilliseconds(ms));

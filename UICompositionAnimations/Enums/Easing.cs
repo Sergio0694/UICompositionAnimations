@@ -1,10 +1,11 @@
-﻿#pragma warning disable 1591
+﻿#pragma warning disable 1591 // Missing XML comments in the enum values
+
 namespace UICompositionAnimations.Enums
 {
     /// <summary>
     /// Indicates an easing function for an animation
     /// </summary>
-    public enum EasingFunctionNames
+    public enum Easing
     {
         Linear,
         SineEaseIn,

@@ -117,7 +117,7 @@ namespace Windows.UI.Xaml
         /// <param name="element">The target <see cref="UIElement"/></param>
         /// <param name="axis">The <see cref="Visual.Offset"/> axis to edit</param>
         /// <param name="translation">The translation value to set for that axis</param>
-        public static void SetVisualTranslation([NotNull] this UIElement element, TranslationAxis axis, float translation)
+        public static void SetVisualTranslation([NotNull] this UIElement element, Axis axis, float translation)
         {
             // Get the element visual and stop the animation
             Visual visual = element.GetVisual();
@@ -126,7 +126,7 @@ namespace Windows.UI.Xaml
             // Set the desired offset
             Matrix4x4 transform = visual.TransformMatrix;
             Vector3 translation3 = visual.TransformMatrix.Translation;
-            if (axis == TranslationAxis.X) translation3.X = translation;
+            if (axis == Axis.X) translation3.X = translation;
             else translation3.Y = translation;
             transform.Translation = translation3;
             visual.TransformMatrix = transform;
@@ -159,14 +159,14 @@ namespace Windows.UI.Xaml
         /// <param name="element">The target <see cref="UIElement"/></param>
         /// <param name="axis">The <see cref="Visual.Offset"/> axis to edit</param>
         /// <param name="offset">The <see cref="Visual.Offset"/> value to set for that axis</param>
-        public static void SetVisualOffset([NotNull] this UIElement element, TranslationAxis axis, float offset)
+        public static void SetVisualOffset([NotNull] this UIElement element, Axis axis, float offset)
         {
             // Get the element visual and stop the animation
             Visual visual = element.GetVisual();
 
             // Set the desired offset
             Vector3 offset3 = visual.Offset;
-            if (axis == TranslationAxis.X) offset3.X = offset;
+            if (axis == Axis.X) offset3.X = offset;
             else offset3.Y = offset;
             visual.Offset = offset3;
         }
