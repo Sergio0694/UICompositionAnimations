@@ -50,37 +50,36 @@ namespace UICompositionAnimations.Animations.Abstract
         /// <inheritdoc/>
         public abstract IAnimationBuilder Opacity(double from, double to, Easing ease = Easing.Linear);
 
+        /// <inheritdoc/>
+        public IAnimationBuilder Translation(Axis axis, double to, Easing ease = Easing.Linear) => OnTranslation(axis, null, to, ease);
+
+        /// <inheritdoc/>
+        public IAnimationBuilder Translation(Axis axis, double from, double to, Easing ease = Easing.Linear) => OnTranslation(axis, from, to, ease);
+
         /// <summary>
-        /// Gets a <see cref="Vector2"/> value that represents the current translation for the target <see cref="UIElement"/>
+        /// Schedules a translation animation on a single axis
         /// </summary>
-        protected abstract Vector2 CurrentTranslation { get; }
+        /// <param name="axis">The target axis to animate</param>
+        /// <param name="from">The optional starting value</param>
+        /// <param name="to">The target value</param>
+        /// <param name="ease">The easing function to use for the translation animation</param>
+        [MustUseReturnValue, NotNull]
+        protected abstract IAnimationBuilder OnTranslation(Axis axis, double? from, double to, Easing ease);
 
         /// <inheritdoc/>
-        public IAnimationBuilder Translation(Axis axis, double to, Easing ease = Easing.Linear)
-        {
-            Vector2 translation = CurrentTranslation;
-            if (axis == Axis.X) translation.X = (float)to;
-            else translation.Y = (float)to;
-            return Translation(CurrentOffset, translation, ease);
-        }
+        public IAnimationBuilder Translation(Vector2 to, Easing ease = Easing.Linear) => OnTranslation(null, to, ease);
 
         /// <inheritdoc/>
-        public IAnimationBuilder Translation(Axis axis, double from, double to, Easing ease = Easing.Linear)
-        {
-            Vector2 translation = CurrentTranslation;
-            return axis == Axis.X
-                ? Translation(new Vector2((float)from, translation.Y), new Vector2((float)to, translation.Y), ease)
-                : Translation(new Vector2(translation.X, (float)from), new Vector2(translation.X, (float)to), ease);
-        }
+        public IAnimationBuilder Translation(Vector2 from, Vector2 to, Easing ease = Easing.Linear) => OnTranslation(from, to, ease);
 
-        /// <inheritdoc/>
-        public IAnimationBuilder Translation(Vector2 to, Easing ease = Easing.Linear)
-        {
-            return Translation(CurrentTranslation, to, ease);
-        }
-
-        /// <inheritdoc/>
-        public abstract IAnimationBuilder Translation(Vector2 from, Vector2 to, Easing ease = Easing.Linear);
+        /// <summary>
+        /// Schedules a 2D translation animation
+        /// </summary>
+        /// <param name="from">The optional starting position</param>
+        /// <param name="to">The target position</param>
+        /// <param name="ease">The easing function to use for the translation animation</param>
+        [MustUseReturnValue, NotNull]
+        protected abstract IAnimationBuilder OnTranslation(Vector2? from, Vector2 to, Easing ease = Easing.Linear);
 
         /// <summary>
         /// Gets a <see cref="Vector2"/> value that represents the current offset for the target <see cref="UIElement"/>

@@ -46,13 +46,18 @@ namespace UICompositionAnimations.Animations
         }
 
         /// <inheritdoc/>
-        protected override Vector2 CurrentTranslation => new Vector2((float)TargetTransform.TranslateX, (float)TargetTransform.TranslateY);
+        protected override IAnimationBuilder OnTranslation(Axis axis, double? from, double to, Easing ease)
+        {
+            AnimationFactories.Add(duration => TargetElement.CreateDoubleAnimation(nameof(UIElement.Opacity), from, to, duration, ease));
+
+            return this;
+        }
 
         /// <inheritdoc/>
-        public override IAnimationBuilder Translation(Vector2 from, Vector2 to, Easing ease = Easing.Linear)
+        protected override IAnimationBuilder OnTranslation(Vector2? from, Vector2 to, Easing ease = Easing.Linear)
         {
-            AnimationFactories.Add(duration => TargetTransform.CreateDoubleAnimation(Axis.X.ToString(), from.X, to.X, duration, ease));
-            AnimationFactories.Add(duration => TargetTransform.CreateDoubleAnimation(Axis.Y.ToString(), from.Y, to.Y, duration, ease));
+            AnimationFactories.Add(duration => TargetTransform.CreateDoubleAnimation(Axis.X.ToString(), from?.X, to.X, duration, ease));
+            AnimationFactories.Add(duration => TargetTransform.CreateDoubleAnimation(Axis.Y.ToString(), from?.Y, to.Y, duration, ease));
 
             return this;
         }

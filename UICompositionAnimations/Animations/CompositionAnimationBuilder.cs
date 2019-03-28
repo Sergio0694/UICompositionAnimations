@@ -50,10 +50,25 @@ namespace UICompositionAnimations.Animations
         }
 
         /// <inheritdoc/>
-        protected override Vector2 CurrentTranslation => new Vector2(TargetVisual.TransformMatrix.Translation.X, TargetVisual.TransformMatrix.Translation.Y);
+        protected override IAnimationBuilder OnTranslation(Axis axis, double? from, double to, Easing ease)
+        {
+            AnimationFactories.Add(duration =>
+            {
+                // Stop the animation and get the easing function
+                string property = $"Translation.{axis}";
+                TargetVisual.StopAnimation(property);
+                CompositionEasingFunction easingFunction = TargetVisual.GetEasingFunction(ease);
+
+                // Create and return the animation
+                ScalarKeyFrameAnimation animation = TargetVisual.Compositor.CreateScalarKeyFrameAnimation((float?)from, (float)to, duration, null, easingFunction);
+                TargetVisual.StartAnimation(property, animation);
+            });
+
+            return this;
+        }
 
         /// <inheritdoc/>
-        public override IAnimationBuilder Translation(Vector2 from, Vector2 to, Easing ease = Easing.Linear)
+        protected override IAnimationBuilder OnTranslation(Vector2? from, Vector2 to, Easing ease = Easing.Linear)
         {
             AnimationFactories.Add(duration =>
             {
@@ -61,13 +76,9 @@ namespace UICompositionAnimations.Animations
                 TargetVisual.StopAnimation("Translation");
                 CompositionEasingFunction easingFunction = TargetVisual.GetEasingFunction(ease);
 
-                // Get the starting and target vectors
-                Vector3
-                    translation = TargetVisual.TransformMatrix.Translation,
-                    from3 = new Vector3(from.X, from.Y, translation.Z),
-                    to3 = new Vector3(to.X, to.Y, translation.Z);
-
                 // Create and return the animation
+                Vector3? from3 = from == null ? (Vector3?)null : new Vector3(from.Value, 0);
+                Vector3 to3 = new Vector3(to, 0);
                 Vector3KeyFrameAnimation animation = TargetVisual.Compositor.CreateVector3KeyFrameAnimation(from3, to3, duration, null, easingFunction);
                 TargetVisual.StartAnimation("Translation", animation);
             });
