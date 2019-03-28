@@ -152,10 +152,20 @@ namespace UICompositionAnimations.Animations.Abstract
         protected abstract IAnimationBuilder OnRotate(double? from, double to, Easing ease);
 
         /// <inheritdoc/>
-        public abstract IAnimationBuilder Clip(Side side, double to, Easing ease = Easing.Linear);
+        public IAnimationBuilder Clip(Side side, double to, Easing ease = Easing.Linear) => OnClip(side, null, to, ease);
 
         /// <inheritdoc/>
-        public abstract IAnimationBuilder Clip(Side side, double from, double to, Easing ease = Easing.Linear);
+        public IAnimationBuilder Clip(Side side, double from, double to, Easing ease = Easing.Linear) => OnClip(side, from, to, ease);
+
+        /// <summary>
+        /// Schedules a clip animation
+        /// </summary>
+        /// <param name="side">The clip side to animate</param>
+        /// <param name="from">The optional starting value</param>
+        /// <param name="to">The target value</param>
+        /// <param name="ease">The easing function to use for the clip animation</param>
+        [MustUseReturnValue, NotNull]
+        protected abstract IAnimationBuilder OnClip(Side side, double? from, double to, Easing ease);
 
         #endregion
 

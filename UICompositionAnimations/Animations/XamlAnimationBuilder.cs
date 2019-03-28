@@ -77,16 +77,7 @@ namespace UICompositionAnimations.Animations
         }
 
         /// <inheritdoc/>
-        public override IAnimationBuilder Clip(Side side, double to, Easing ease = Easing.Linear)
-        {
-            throw new NotSupportedException("Can't animate the clip property from XAML");
-        }
-
-        /// <inheritdoc/>
-        public override IAnimationBuilder Clip(Side side, double from, double to, Easing ease = Easing.Linear)
-        {
-            throw new NotSupportedException("Can't animate the clip property from XAML");
-        }
+        protected override IAnimationBuilder OnClip(Side side, double? @from, double to, Easing ease) => throw new NotSupportedException("Can't animate the clip property from XAML");
 
         /// <summary>
         /// Gets the <see cref="Windows.UI.Xaml.Media.Animation.Storyboard"/> represented by the current instance

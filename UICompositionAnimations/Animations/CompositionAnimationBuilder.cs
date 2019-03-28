@@ -159,24 +159,7 @@ namespace UICompositionAnimations.Animations
         }
 
         /// <inheritdoc/>
-        public override IAnimationBuilder Clip(Side side, double to, Easing ease = Easing.Linear)
-        {
-            InsetClip clip = TargetVisual.Clip as InsetClip ?? (TargetVisual.Clip = TargetVisual.Compositor.CreateInsetClip()).To<InsetClip>();
-            float from;
-            switch (side)
-            {
-                case Side.Top: from = clip.TopInset; break;
-                case Side.Bottom: from = clip.BottomInset; break;
-                case Side.Right: from = clip.RightInset; break;
-                case Side.Left: from = clip.LeftInset; break;
-                default: throw new ArgumentException("Invalid side", nameof(side));
-            }
-
-            return Clip(side, from, to, ease);
-        }
-
-        /// <inheritdoc/>
-        public override IAnimationBuilder Clip(Side side, double from, double to, Easing ease = Easing.Linear)
+        protected override IAnimationBuilder OnClip(Side side, double? from, double to, Easing ease)
         {
             AnimationFactories.Add(duration =>
             {
@@ -195,7 +178,7 @@ namespace UICompositionAnimations.Animations
                 CompositionEasingFunction easingFunction = clip.GetEasingFunction(ease);
 
                 // Create and return the animation
-                ScalarKeyFrameAnimation animation = clip.Compositor.CreateScalarKeyFrameAnimation((float)from, (float)to, duration, null, easingFunction);
+                ScalarKeyFrameAnimation animation = clip.Compositor.CreateScalarKeyFrameAnimation((float?)from, (float)to, duration, null, easingFunction);
                 clip.StartAnimation(property, animation);
             });
 
