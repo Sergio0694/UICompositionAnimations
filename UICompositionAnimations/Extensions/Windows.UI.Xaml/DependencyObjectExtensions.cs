@@ -18,14 +18,14 @@ namespace Windows.UI.Xaml
         /// <param name="property">The property to animate inside the target <see cref="DependencyObject"/></param>
         /// <param name="from">The initial property value</param>
         /// <param name="to">The final property value</param>
-        /// <param name="ms">The duration of the <see cref="DoubleAnimation"/></param>
+        /// <param name="duration">The duration of the <see cref="DoubleAnimation"/></param>
         /// <param name="easing">The easing function to use inside the <see cref="DoubleAnimation"/></param>
         /// <param name="enableDependecyAnimations">Indicates whether or not to apply this animation to elements that need the visual tree to be rearranged</param>
         [Pure, NotNull]
         public static DoubleAnimation CreateDoubleAnimation(
             [NotNull] this DependencyObject target, string property,
             double? from, double? to,
-            int ms,
+            TimeSpan duration,
             Easing easing = Easing.Linear,
             bool enableDependecyAnimations = false)
         {
@@ -33,7 +33,7 @@ namespace Windows.UI.Xaml
             {
                 From = from,
                 To = to,
-                Duration = new Duration(TimeSpan.FromMilliseconds(ms)),
+                Duration = duration,
                 EnableDependentAnimation = enableDependecyAnimations
             };
             if (easing != Easing.Linear) animation.EasingFunction = easing.ToEasingFunction();

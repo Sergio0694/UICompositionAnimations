@@ -16,16 +16,16 @@ namespace Windows.UI.Xaml.Media
         /// </summary>
         /// <param name="solidColorBrush">The <see cref="SolidColorBrush"/> to animate</param>
         /// <param name="to">The target value to set</param>
-        /// <param name="ms">The duration of the animation</param>
+        /// <param name="duration">The duration of the animation</param>
         /// <param name="easing">The easing function to use</param>
         [Pure, NotNull]
-        public static ColorAnimation CreateColorAnimation([NotNull] this SolidColorBrush solidColorBrush, Color to, int ms, Easing easing)
+        public static ColorAnimation CreateColorAnimation([NotNull] this SolidColorBrush solidColorBrush, Color to, TimeSpan duration, Easing easing)
         {
             ColorAnimation animation = new ColorAnimation
             {
                 From = solidColorBrush.Color,
                 To = to,
-                Duration = new Duration(TimeSpan.FromMilliseconds(ms)),
+                Duration = duration,
                 EasingFunction = easing.ToEasingFunction()
             };
             Storyboard.SetTarget(animation, solidColorBrush);
