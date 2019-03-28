@@ -29,20 +29,13 @@ namespace UICompositionAnimations.Animations
         }
 
         /// <inheritdoc/>
-        public override IAnimationBuilder Opacity(double to, Easing ease = Easing.Linear)
-        {
-            float from = TargetVisual.Opacity;
-            return Opacity(from, to, ease);
-        }
-
-        /// <inheritdoc/>
-        public override IAnimationBuilder Opacity(double from, double to, Easing ease = Easing.Linear)
+        protected override IAnimationBuilder OnOpacity(double? from, double to, Easing ease)
         {
             AnimationFactories.Add(duration =>
             {
                 TargetVisual.StopAnimation(nameof(Visual.Opacity));
                 CompositionEasingFunction easingFunction = TargetVisual.GetEasingFunction(ease);
-                ScalarKeyFrameAnimation animation = TargetVisual.Compositor.CreateScalarKeyFrameAnimation((float)from, (float)to, duration, null, easingFunction);
+                ScalarKeyFrameAnimation animation = TargetVisual.Compositor.CreateScalarKeyFrameAnimation((float?)from, (float)to, duration, null, easingFunction);
                 TargetVisual.StartAnimation(nameof(Visual.Opacity), animation);
             });
 

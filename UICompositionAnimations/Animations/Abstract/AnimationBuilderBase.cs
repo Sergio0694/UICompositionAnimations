@@ -38,17 +38,26 @@ namespace UICompositionAnimations.Animations.Abstract
         protected TimeSpan DurationInterval { get; private set; }
 
         /// <summary>
-        /// The <see cref="System.TimeSpan"/> that defines the initial delay of the animation
+        /// The <see cref="TimeSpan"/> that defines the initial delay of the animation
         /// </summary>
         private TimeSpan? _Delay;
 
         #region Animations
 
         /// <inheritdoc/>
-        public abstract IAnimationBuilder Opacity(double to, Easing ease = Easing.Linear);
+        public IAnimationBuilder Opacity(double to, Easing ease = Easing.Linear) => OnOpacity(null, to, ease);
 
         /// <inheritdoc/>
-        public abstract IAnimationBuilder Opacity(double from, double to, Easing ease = Easing.Linear);
+        public IAnimationBuilder Opacity(double from, double to, Easing ease = Easing.Linear) => OnOpacity(from, to, ease);
+
+        /// <summary>
+        /// Schedules an opacity animation on a single axis
+        /// </summary>
+        /// <param name="from">The optional starting value</param>
+        /// <param name="to">The target value</param>
+        /// <param name="ease">The easing function to use for the translation animation</param>
+        [MustUseReturnValue, NotNull]
+        protected abstract IAnimationBuilder OnOpacity(double? from, double to, Easing ease);
 
         /// <inheritdoc/>
         public IAnimationBuilder Translation(Axis axis, double to, Easing ease = Easing.Linear) => OnTranslation(axis, null, to, ease);

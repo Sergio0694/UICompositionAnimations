@@ -31,14 +31,7 @@ namespace UICompositionAnimations.Animations
         }
 
         /// <inheritdoc/>
-        public override IAnimationBuilder Opacity(double to, Easing ease = Easing.Linear)
-        {
-            double from = TargetElement.Opacity;
-            return Opacity(from, to, ease);
-        }
-
-        /// <inheritdoc/>
-        public override IAnimationBuilder Opacity(double from, double to, Easing ease = Easing.Linear)
+        protected override IAnimationBuilder OnOpacity(double? from, double to, Easing ease)
         {
             AnimationFactories.Add(duration => TargetElement.CreateDoubleAnimation(nameof(UIElement.Opacity), from, to, duration, ease));
 
