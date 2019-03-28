@@ -153,7 +153,6 @@
     <Compile Include="Composition\CompositionManager.cs" />
     <Compile Include="Composition\CubicBeizerEasingProvider.cs" />
     <Compile Include="Composition\ExpressionAnimationWithScalarParameter.cs" />
-    <Compile Include="Composition\Misc\CompositeRotationAnimationStartInfo.cs" />
     <Compile Include="Enums\AcrylicBrushEffectState.cs" />
     <Compile Include="Enums\BitmapDPIMode.cs" />
     <Compile Include="Enums\BitmapCacheMode.cs" />
