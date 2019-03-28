@@ -1,12 +1,11 @@
 ﻿using Windows.UI.Composition;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using JetBrains.Annotations;
 using UICompositionAnimations.Composition;
 using UICompositionAnimations.Enums;
 
-namespace UICompositionAnimations.Extensions.Windows.UI.Xaml
+namespace Windows.UI.Xaml
 {
     /// <summary>
     /// An extension <see langword="class"/> for the <see cref="ScrollViewer"/> control
