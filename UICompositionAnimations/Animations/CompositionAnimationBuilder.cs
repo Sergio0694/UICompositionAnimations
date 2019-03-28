@@ -116,14 +116,7 @@ namespace UICompositionAnimations.Animations
         }
 
         /// <inheritdoc/>
-        public override IAnimationBuilder Scale(double to, Easing ease = Easing.Linear)
-        {
-            Vector3 scale = TargetVisual.Scale;
-            return Scale(scale.X, to, ease);
-        }
-
-        /// <inheritdoc/>
-        public override IAnimationBuilder Scale(double from, double to, Easing ease = Easing.Linear)
+        protected override IAnimationBuilder OnScale(double? from, double to, Easing ease)
         {
             // Center the visual center point
             if (!(TargetElement is FrameworkElement element)) throw new InvalidOperationException("The scale animation needs a framework element");
@@ -136,13 +129,9 @@ namespace UICompositionAnimations.Animations
                 TargetVisual.StopAnimation(nameof(Visual.Scale));
                 CompositionEasingFunction easingFunction = TargetVisual.GetEasingFunction(ease);
 
-                // Get the starting and target vectors
-                Vector3
-                    scale = TargetVisual.Scale,
-                    from3 = new Vector3((float)from, (float)from, scale.Z),
-                    to3 = new Vector3((float)to, (float)to, scale.Z);
-
                 // Create and return the animation
+                Vector3? from3 = from == null ? default : new Vector3((float)from.Value, (float)from.Value, 0);
+                Vector3 to3 = new Vector3((float)to, (float)to, 0);
                 Vector3KeyFrameAnimation animation = TargetVisual.Compositor.CreateVector3KeyFrameAnimation(from3, to3, duration, null, easingFunction);
                 TargetVisual.StartAnimation(nameof(Visual.Scale), animation);
             });

@@ -122,10 +122,19 @@ namespace UICompositionAnimations.Animations.Abstract
         protected abstract IAnimationBuilder OnOffset(Vector2? from, Vector2 to, Easing ease = Easing.Linear);
 
         /// <inheritdoc/>
-        public abstract IAnimationBuilder Scale(double to, Easing ease = Easing.Linear);
+        public IAnimationBuilder Scale(double to, Easing ease = Easing.Linear) => OnScale(null, to, ease);
 
         /// <inheritdoc/>
-        public abstract IAnimationBuilder Scale(double from, double to, Easing ease = Easing.Linear);
+        public IAnimationBuilder Scale(double from, double to, Easing ease = Easing.Linear) => OnScale(from, to, ease);
+
+        /// <summary>
+        /// Schedules a scale animation
+        /// </summary>
+        /// <param name="from">The optional starting value</param>
+        /// <param name="to">The target value</param>
+        /// <param name="ease">The easing function to use for the scale animation</param>
+        [MustUseReturnValue, NotNull]
+        protected abstract IAnimationBuilder OnScale(double? from, double to, Easing ease);
 
         /// <inheritdoc/>
         public abstract IAnimationBuilder Rotate(double to, Easing ease = Easing.Linear);

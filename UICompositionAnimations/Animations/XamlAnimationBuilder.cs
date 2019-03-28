@@ -60,14 +60,7 @@ namespace UICompositionAnimations.Animations
         protected override IAnimationBuilder OnOffset(Vector2? @from, Vector2 to, Easing ease = Easing.Linear) => throw new NotSupportedException("Can't animate the offset property from XAML");
 
         /// <inheritdoc/>
-        public override IAnimationBuilder Scale(double to, Easing ease = Easing.Linear)
-        {
-            double scale = TargetTransform.ScaleX;
-            return Scale((float)scale, to, ease);
-        }
-
-        /// <inheritdoc/>
-        public override IAnimationBuilder Scale(double from, double to, Easing ease = Easing.Linear)
+        protected override IAnimationBuilder OnScale(double? from, double to, Easing ease)
         {
             AnimationFactories.Add(duration => TargetTransform.CreateDoubleAnimation(nameof(CompositeTransform.ScaleX), from, to, duration, ease));
             AnimationFactories.Add(duration => TargetTransform.CreateDoubleAnimation(nameof(CompositeTransform.ScaleY), from, to, duration, ease));
