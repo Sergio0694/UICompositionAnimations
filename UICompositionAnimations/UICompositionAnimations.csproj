@@ -147,7 +147,6 @@
     <Compile Include="Brushes\Cache\ThreadSafeCompositionMapCache.cs" />
     <Compile Include="Brushes\NoiseTextureBrush.cs" />
     <Compile Include="Brushes\CustomAcrylicBrush.cs" />
-    <Compile Include="Brushes\LightingBrush.cs" />
     <Compile Include="Brushes\XamlCompositionBrush.cs" />
     <Compile Include="Composition\CubicBeizerEasingProvider.cs" />
     <Compile Include="Composition\ExpressionAnimationWithScalarParameter.cs" />
