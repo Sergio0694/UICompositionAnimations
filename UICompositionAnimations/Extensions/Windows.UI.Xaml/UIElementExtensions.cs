@@ -28,10 +28,16 @@ namespace Windows.UI.Xaml
         /// Initializes an <see cref="IAnimationBuilder"/> instance that targets the input <see cref="UIElement"/>
         /// </summary>
         /// <param name="target">The target <see cref="UIElement"/> to animate</param>
+        /// <param name="layer">The target layer to animate</param>
         [Pure, NotNull]
-        public static IAnimationBuilder Animate([NotNull] this UIElement target)
+        public static IAnimationBuilder Animate([NotNull] this UIElement target, FrameworkLayer layer = FrameworkLayer.Composition)
         {
-            return new CompositionAnimationBuilder(target);
+            switch (layer)
+            {
+                case FrameworkLayer.Composition: return new CompositionAnimationBuilder(target);
+                case FrameworkLayer.Xaml: return new XamlAnimationBuilder(target);
+                default: throw new ArgumentOutOfRangeException(nameof(layer), layer, $"The {layer} value isn't valid");
+            }
         }
 
         /// <summary>
