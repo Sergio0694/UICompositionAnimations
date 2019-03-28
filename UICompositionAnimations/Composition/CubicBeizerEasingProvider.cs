@@ -7,7 +7,7 @@ using UICompositionAnimations.Enums;
 namespace UICompositionAnimations.Composition
 {
     /// <summary>
-    /// A static class that generates a CubicBeizer curve from an input easing function name
+    /// A <see langword="static"/> <see langword="class"/> that generates a cubic beizer curve from an input easing function name
     /// </summary>
     internal static class CubicBeizerEasingProvider
     {

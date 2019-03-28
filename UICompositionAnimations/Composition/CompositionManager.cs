@@ -7,60 +7,12 @@ using JetBrains.Annotations;
 namespace UICompositionAnimations.Composition
 {
     /// <summary>
-    /// Create composition animations using this class
+    /// A <see langword="class"/> 
     /// </summary>
     [PublicAPI]
     public static class CompositionManager
     {
         #region Animations initialization
-
-        /// <summary>
-        /// Creates and starts a scalar animation on the target element
-        /// </summary>
-        /// <param name="element">The element to animate</param>
-        /// <param name="propertyPath">The path that identifies the property to animate</param>
-        /// <param name="from">The optional starting value for the animation</param>
-        /// <param name="to">The final value for the animation</param>
-        /// <param name="duration">The animation duration</param>
-        /// <param name="delay">The optional initial delay for the animation</param>
-        /// <param name="ease">The optional easing function for the animation</param>
-        public static void BeginScalarAnimation([NotNull] UIElement element, [NotNull] string propertyPath, 
-            float? from, float to, TimeSpan duration, TimeSpan? delay, [CanBeNull] CompositionEasingFunction ease = null)
-        {
-            element.GetVisual().BeginScalarAnimation(propertyPath, from, to, duration, delay, ease);
-        }
-
-        /// <summary>
-        /// Creates and starts a <see cref="Vector2"/> animation on the target element
-        /// </summary>
-        /// <param name="element">The element to animate</param>
-        /// <param name="propertyPath">The path that identifies the property to animate</param>
-        /// <param name="from">The optional starting value for the animation</param>
-        /// <param name="to">The final value for the animation</param>
-        /// <param name="duration">The animation duration</param>
-        /// <param name="delay">The optional initial delay for the animation</param>
-        /// <param name="ease">The optional easing function for the animation</param>
-        public static void BeginVector2Animation([NotNull] UIElement element, [NotNull] string propertyPath, 
-            Vector2? from, Vector2 to, TimeSpan duration, TimeSpan? delay, [CanBeNull] CompositionEasingFunction ease = null)
-        {
-            element.GetVisual().BeginVector2Animation(propertyPath, from, to, duration, delay, ease);
-        }
-
-        /// <summary>
-        /// Creates and starts a <see cref="Vector3"/> animation on the target element
-        /// </summary>
-        /// <param name="element">The element to animate</param>
-        /// <param name="propertyPath">The path that identifies the property to animate</param>
-        /// <param name="from">The optional starting value for the animation</param>
-        /// <param name="to">The final value for the animation</param>
-        /// <param name="duration">The animation duration</param>
-        /// <param name="delay">The optional initial delay for the animation</param>
-        /// <param name="ease">The optional easing function for the animation</param>
-        public static void BeginVector3Animation([NotNull] UIElement element, [NotNull] string propertyPath, 
-            Vector3? from, Vector3 to, TimeSpan duration, TimeSpan? delay, [CanBeNull] CompositionEasingFunction ease = null)
-        {
-            element.GetVisual().BeginVector3Animation(propertyPath, from, to, duration, delay, ease);
-        }
 
         /// <summary>
         /// Creates and starts a scalar animation on the current <see cref="CompositionObject"/>

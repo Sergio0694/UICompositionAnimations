@@ -6,7 +6,7 @@ using JetBrains.Annotations;
 namespace UICompositionAnimations.Composition
 {
     /// <summary>
-    /// A simple wrapper class around an <see cref="ExpressionAnimation"/> instance with a custom parameter
+    /// A simple wrapper <see langword="class"/> around an <see cref="ExpressionAnimation"/> instance with a custom parameter
     /// </summary>
     public sealed class ExpressionAnimationWithScalarParameter : DependencyObject
     {
