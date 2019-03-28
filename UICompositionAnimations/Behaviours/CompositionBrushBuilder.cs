@@ -181,7 +181,7 @@ namespace UICompositionAnimations.Behaviours
         /// <param name="dpiMode">Indicates the desired DPI mode to use when loading the image</param>
         /// <param name="cache">The cache mode to use to load the image</param>
         [Pure, NotNull]
-        public static CompositionBrushBuilder FromImage([NotNull] Uri uri, BitmapDPIMode dpiMode = BitmapDPIMode.CopyDisplayDPISettingsWith96AsLowerBound, BitmapCacheMode cache = BitmapCacheMode.Default)
+        public static CompositionBrushBuilder FromImage([NotNull] Uri uri, DpiMode dpiMode = DpiMode.DisplayDpiWith96AsLowerBound, CacheMode cache = CacheMode.Default)
         {
             return new CompositionBrushBuilder(() => Win2DImageHelper.LoadImageAsync(Window.Current.Compositor, uri, dpiMode, cache).ContinueWith(t => t.Result as CompositionBrush));
         }
@@ -193,7 +193,7 @@ namespace UICompositionAnimations.Behaviours
         /// <param name="dpiMode">Indicates the desired DPI mode to use when loading the image</param>
         /// <param name="cache">The cache mode to use to load the image</param>
         [Pure, NotNull]
-        public static CompositionBrushBuilder FromTiles([NotNull] Uri uri, BitmapDPIMode dpiMode = BitmapDPIMode.CopyDisplayDPISettingsWith96AsLowerBound, BitmapCacheMode cache = BitmapCacheMode.Default)
+        public static CompositionBrushBuilder FromTiles([NotNull] Uri uri, DpiMode dpiMode = DpiMode.DisplayDpiWith96AsLowerBound, CacheMode cache = CacheMode.Default)
         {
             CompositionBrushBuilder image = FromImage(uri, dpiMode, cache);
 
@@ -229,7 +229,7 @@ namespace UICompositionAnimations.Behaviours
         /// <param name="noiseUri">The <see cref="Uri"/> for the noise texture to load for the acrylic effect</param>
         /// <param name="cache">The cache mode to use to load the image</param>
         [Pure, NotNull]
-        public static CompositionBrushBuilder FromHostBackdropAcrylic(Color tint, float mix, [NotNull] Uri noiseUri, BitmapCacheMode cache = BitmapCacheMode.Default)
+        public static CompositionBrushBuilder FromHostBackdropAcrylic(Color tint, float mix, [NotNull] Uri noiseUri, CacheMode cache = CacheMode.Default)
         {
             return FromHostBackdropBrush()
                 .Effect(source => new LuminanceToAlphaEffect { Source = source })
@@ -248,7 +248,7 @@ namespace UICompositionAnimations.Behaviours
         /// <param name="noiseUri">The <see cref="Uri"/> for the noise texture to load for the acrylic effect</param>
         /// <param name="cache">The cache mode to use to load the image</param>
         [Pure, NotNull]
-        public static CompositionBrushBuilder FromHostBackdropAcrylic(Color tint, float mix, out EffectAnimation tintAnimation, [NotNull] Uri noiseUri, BitmapCacheMode cache = BitmapCacheMode.Default)
+        public static CompositionBrushBuilder FromHostBackdropAcrylic(Color tint, float mix, out EffectAnimation tintAnimation, [NotNull] Uri noiseUri, CacheMode cache = CacheMode.Default)
         {
             return FromHostBackdropBrush()
                 .Effect(source => new LuminanceToAlphaEffect { Source = source })
@@ -267,7 +267,7 @@ namespace UICompositionAnimations.Behaviours
         /// <param name="noiseUri">The <see cref="Uri"/> for the noise texture to load for the acrylic effect</param>
         /// <param name="cache">The cache mode to use to load the image</param>
         [Pure, NotNull]
-        public static CompositionBrushBuilder FromBackdropAcrylic(Color tint, float mix, float blur, [NotNull] Uri noiseUri, BitmapCacheMode cache = BitmapCacheMode.Default)
+        public static CompositionBrushBuilder FromBackdropAcrylic(Color tint, float mix, float blur, [NotNull] Uri noiseUri, CacheMode cache = CacheMode.Default)
         {
             return FromBackdropBrush()
                 .Tint(tint, mix)
@@ -288,7 +288,7 @@ namespace UICompositionAnimations.Behaviours
         public static CompositionBrushBuilder FromBackdropAcrylic(
             Color tint, float mix, out EffectAnimation tintAnimation,
             float blur,
-            [NotNull] Uri noiseUri, BitmapCacheMode cache = BitmapCacheMode.Default)
+            [NotNull] Uri noiseUri, CacheMode cache = CacheMode.Default)
         {
             return FromBackdropBrush()
                 .Tint(tint, mix, out tintAnimation)
@@ -309,7 +309,7 @@ namespace UICompositionAnimations.Behaviours
         public static CompositionBrushBuilder FromBackdropAcrylic(
             Color tint, float mix,
             float blur, out EffectAnimation blurAnimation,
-            [NotNull] Uri noiseUri, BitmapCacheMode cache = BitmapCacheMode.Default)
+            [NotNull] Uri noiseUri, CacheMode cache = CacheMode.Default)
         {
             return FromBackdropBrush()
                 .Tint(tint, mix)
@@ -331,7 +331,7 @@ namespace UICompositionAnimations.Behaviours
         public static CompositionBrushBuilder FromBackdropAcrylic(
             Color tint, float mix, out EffectAnimation tintAnimation,
             float blur, out EffectAnimation blurAnimation,
-            [NotNull] Uri noiseUri, BitmapCacheMode cache = BitmapCacheMode.Default)
+            [NotNull] Uri noiseUri, CacheMode cache = CacheMode.Default)
         {
             return FromBackdropBrush()
                 .Tint(tint, mix, out tintAnimation)

@@ -151,12 +151,12 @@
     <Compile Include="Composition\CubicBeizerEasingProvider.cs" />
     <Compile Include="Composition\ExpressionAnimationWithScalarParameter.cs" />
     <Compile Include="Enums\AcrylicBrushEffectState.cs" />
-    <Compile Include="Enums\BitmapDPIMode.cs" />
-    <Compile Include="Enums\BitmapCacheMode.cs" />
+    <Compile Include="Enums\DpiMode.cs" />
+    <Compile Include="Enums\CacheMode.cs" />
     <Compile Include="Enums\Easing.cs" />
     <Compile Include="Enums\Placement.cs" />
-    <Compile Include="Enums\ImplicitAnimationType.cs" />
-    <Compile Include="Enums\MarginSide.cs" />
+    <Compile Include="Enums\AnimationType.cs" />
+    <Compile Include="Enums\Side.cs" />
     <Compile Include="Extensions\System.Collections.Generic\GenericExtensions.cs" />
     <Compile Include="Extensions\System.Threading.Tasks\TaskCompletionSource.cs" />
     <Compile Include="Extensions\System\BaseExtensions.cs" />

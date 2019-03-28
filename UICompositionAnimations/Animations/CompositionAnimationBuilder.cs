@@ -214,16 +214,16 @@ namespace UICompositionAnimations.Animations
         }
 
         /// <inheritdoc/>
-        public override IAnimationBuilder Clip(MarginSide side, float to, Easing ease = Easing.Linear)
+        public override IAnimationBuilder Clip(Side side, float to, Easing ease = Easing.Linear)
         {
             InsetClip clip = TargetVisual.Clip as InsetClip ?? (TargetVisual.Clip = TargetVisual.Compositor.CreateInsetClip()).To<InsetClip>();
             float from;
             switch (side)
             {
-                case MarginSide.Top: from = clip.TopInset; break;
-                case MarginSide.Bottom: from = clip.BottomInset; break;
-                case MarginSide.Right: from = clip.RightInset; break;
-                case MarginSide.Left: from = clip.LeftInset; break;
+                case Side.Top: from = clip.TopInset; break;
+                case Side.Bottom: from = clip.BottomInset; break;
+                case Side.Right: from = clip.RightInset; break;
+                case Side.Left: from = clip.LeftInset; break;
                 default: throw new ArgumentException("Invalid side", nameof(side));
             }
 
@@ -231,7 +231,7 @@ namespace UICompositionAnimations.Animations
         }
 
         /// <inheritdoc/>
-        public override IAnimationBuilder Clip(MarginSide side, float from, float to, Easing ease = Easing.Linear)
+        public override IAnimationBuilder Clip(Side side, float from, float to, Easing ease = Easing.Linear)
         {
             Animations.Add(duration =>
             {
@@ -239,10 +239,10 @@ namespace UICompositionAnimations.Animations
                 string property;
                 switch (side)
                 {
-                    case MarginSide.Top: property = nameof(InsetClip.TopInset); break;
-                    case MarginSide.Bottom: property = nameof(InsetClip.BottomInset); break;
-                    case MarginSide.Right: property = nameof(InsetClip.RightInset); break;
-                    case MarginSide.Left: property = nameof(InsetClip.LeftInset); break;
+                    case Side.Top: property = nameof(InsetClip.TopInset); break;
+                    case Side.Bottom: property = nameof(InsetClip.BottomInset); break;
+                    case Side.Right: property = nameof(InsetClip.RightInset); break;
+                    case Side.Left: property = nameof(InsetClip.LeftInset); break;
                     default: throw new ArgumentException("Invalid side", nameof(side));
                 }
                 InsetClip clip = TargetVisual.Clip as InsetClip ?? (TargetVisual.Clip = TargetVisual.Compositor.CreateInsetClip()).To<InsetClip>();

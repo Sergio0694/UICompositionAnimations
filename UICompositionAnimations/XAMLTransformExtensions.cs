@@ -425,7 +425,7 @@ namespace UICompositionAnimations
         /// <param name="duration">The duration of the animation to create</param>
         /// <param name="delay">The optional initial delay for the animation</param>
         [SuppressMessage("ReSharper", "AccessToModifiedClosure")] // Margin updates at each animation timestep
-        public static async Task StartXAMLMarginAnimation([NotNull] this FrameworkElement element, double? start, double end, MarginSide side, int duration, int? delay = null)
+        public static async Task StartXAMLMarginAnimation([NotNull] this FrameworkElement element, double? start, double end, Side side, int duration, int? delay = null)
         {
             // Delay if needed, and calculate the start offset
             if (delay != null) await Task.Delay(delay.Value);
@@ -433,16 +433,16 @@ namespace UICompositionAnimations
             {
                 switch (side)
                 {
-                    case MarginSide.Top:
+                    case Side.Top:
                         start = element.Margin.Top;
                         break;
-                    case MarginSide.Bottom:
+                    case Side.Bottom:
                         start = element.Margin.Bottom;
                         break;
-                    case MarginSide.Left:
+                    case Side.Left:
                         start = element.Margin.Left;
                         break;
-                    case MarginSide.Right:
+                    case Side.Right:
                         start = element.Margin.Right;
                         break;
                     default: throw new ArgumentOutOfRangeException(nameof(side), "Invalid margin side");
@@ -468,16 +468,16 @@ namespace UICompositionAnimations
                 elapsed++;
                 switch (side)
                 {
-                    case MarginSide.Top:
+                    case Side.Top:
                         margin.Top += step;
                         break;
-                    case MarginSide.Bottom:
+                    case Side.Bottom:
                         margin.Bottom += step;
                         break;
-                    case MarginSide.Left:
+                    case Side.Left:
                         margin.Left += step;
                         break;
-                    case MarginSide.Right:
+                    case Side.Right:
                         margin.Right += step;
                         break;
                     default: throw new ArgumentOutOfRangeException(nameof(side), "Invalid margin side");
@@ -496,16 +496,16 @@ namespace UICompositionAnimations
             // Wait for completion and adjust the final margin (just to be sure)
             switch (side)
             {
-                case MarginSide.Top:
+                case Side.Top:
                     margin.Top = end;
                     break;
-                case MarginSide.Bottom:
+                case Side.Bottom:
                     margin.Bottom = end;
                     break;
-                case MarginSide.Left:
+                case Side.Left:
                     margin.Left = end;
                     break;
-                case MarginSide.Right:
+                case Side.Right:
                     margin.Right = end;
                     break;
                 default: throw new ArgumentOutOfRangeException(nameof(side), "Invalid margin side");

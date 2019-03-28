@@ -219,7 +219,7 @@ namespace Windows.UI.Xaml
         /// <param name="element">The target <see cref="UIElement"/></param>
         /// <param name="side">The target clip side to update</param>
         /// <param name="clip">The desired clip value to set</param>
-        public static void SetVisualClip([NotNull] this UIElement element, MarginSide side, float clip)
+        public static void SetVisualClip([NotNull] this UIElement element, Side side, float clip)
         {
             // Get the element visual
             Visual visual = element.GetVisual();
@@ -228,10 +228,10 @@ namespace Windows.UI.Xaml
             InsetClip inset = visual.Clip as InsetClip ?? (InsetClip)(visual.Clip = visual.Compositor.CreateInsetClip());
             switch (side)
             {
-                case MarginSide.Top: inset.TopInset = clip; break;
-                case MarginSide.Bottom: inset.BottomInset = clip; break;
-                case MarginSide.Right: inset.RightInset = clip; break;
-                case MarginSide.Left: inset.LeftInset = clip; break;
+                case Side.Top: inset.TopInset = clip; break;
+                case Side.Bottom: inset.BottomInset = clip; break;
+                case Side.Right: inset.RightInset = clip; break;
+                case Side.Left: inset.LeftInset = clip; break;
                 default: throw new ArgumentException("Invalid side", nameof(side));
             }
         }

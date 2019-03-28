@@ -14,13 +14,13 @@ namespace UICompositionAnimations.Behaviours.Xaml.Effects.Abstract
         public Uri Uri { get; set; }
 
         /// <summary>
-        /// Gets or sets the DPI mode used to render the image (the default is <see cref="BitmapDPIMode.CopyDisplayDPISettingsWith96AsLowerBound"/>)
+        /// Gets or sets the DPI mode used to render the image (the default is <see cref="DpiMode.DisplayDpiWith96AsLowerBound"/>)
         /// </summary>
-        public BitmapDPIMode DPIMode { get; set; } = BitmapDPIMode.CopyDisplayDPISettingsWith96AsLowerBound;
+        public DpiMode DPIMode { get; set; } = DpiMode.DisplayDpiWith96AsLowerBound;
 
         /// <summary>
-        /// Gets or sets the cache mode to use when loading the image (the default is <see cref="BitmapCacheMode.Default"/>)
+        /// Gets or sets the cache mode to use when loading the image (the default is <see cref="Enums.CacheMode.Default"/>)
         /// </summary>
-        public BitmapCacheMode CacheMode { get; set; } = BitmapCacheMode.Default;
+        public CacheMode CacheMode { get; set; } = CacheMode.Default;
     }
 }

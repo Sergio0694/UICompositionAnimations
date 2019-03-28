@@ -3,7 +3,7 @@
     /// <summary>
     /// Indicates a side to animate in the margin of a given element
     /// </summary>
-    public enum MarginSide
+    public enum Side
     {
         /// <summary>
         /// Maps the top side of the target margin
