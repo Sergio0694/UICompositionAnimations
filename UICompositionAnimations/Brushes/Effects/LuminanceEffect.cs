@@ -1,4 +1,6 @@
-﻿namespace UICompositionAnimations.Behaviours.Xaml.Effects
+﻿using UICompositionAnimations.Brushes.Effects.Interfaces;
+
+namespace UICompositionAnimations.Brushes.Effects
 {
     /// <summary>
     /// A luminance effect which directly replicates <see cref="Microsoft.Graphics.Canvas.Effects.LuminanceToAlphaEffect"/>

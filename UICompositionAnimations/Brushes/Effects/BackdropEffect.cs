@@ -1,6 +1,7 @@
 ﻿using Windows.UI.Xaml.Media;
+using UICompositionAnimations.Brushes.Effects.Interfaces;
 
-namespace UICompositionAnimations.Behaviours.Xaml.Effects
+namespace UICompositionAnimations.Brushes.Effects
 {
     /// <summary>
     /// A backdrop effect that can sample from a specified source

@@ -1,6 +1,7 @@
 ﻿using Windows.UI;
+using UICompositionAnimations.Brushes.Effects.Interfaces;
 
-namespace UICompositionAnimations.Behaviours.Xaml.Effects
+namespace UICompositionAnimations.Brushes.Effects
 {
     /// <summary>
     /// A tint effect with a customizable opacity

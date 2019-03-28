@@ -1,6 +1,6 @@
-﻿using UICompositionAnimations.Behaviours.Xaml.Effects.Abstract;
+﻿using UICompositionAnimations.Brushes.Effects.Abstract;
 
-namespace UICompositionAnimations.Behaviours.Xaml.Effects
+namespace UICompositionAnimations.Brushes.Effects
 {
     /// <summary>
     /// An image effect, which displays an image loaded as a Win2D surface

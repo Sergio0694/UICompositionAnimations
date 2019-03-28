@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using Windows.UI.Xaml.Media;
 using JetBrains.Annotations;
-using UICompositionAnimations.Behaviours.Xaml.Effects;
+using UICompositionAnimations.Behaviours;
 using UICompositionAnimations.Brushes.Base;
+using UICompositionAnimations.Brushes.Effects;
+using UICompositionAnimations.Brushes.Effects.Interfaces;
 using LuminanceToAlphaEffect = Microsoft.Graphics.Canvas.Effects.LuminanceToAlphaEffect;
 
-namespace UICompositionAnimations.Behaviours.Xaml
+namespace UICompositionAnimations.Brushes
 {
     /// <summary>
     /// A <see cref="Brush"/> that renders a customizable Composition/Win2D effects pipeline

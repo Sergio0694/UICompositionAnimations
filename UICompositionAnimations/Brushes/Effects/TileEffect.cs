@@ -1,6 +1,6 @@
-﻿using UICompositionAnimations.Behaviours.Xaml.Effects.Abstract;
+﻿using UICompositionAnimations.Brushes.Effects.Abstract;
 
-namespace UICompositionAnimations.Behaviours.Xaml.Effects
+namespace UICompositionAnimations.Brushes.Effects
 {
     /// <summary>
     /// An effect that loads an image and replicates it to cover all the available surface area

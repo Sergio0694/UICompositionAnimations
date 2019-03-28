@@ -1,6 +1,6 @@
-﻿using UICompositionAnimations.Behaviours.Xaml.Effects.Abstract;
+﻿using UICompositionAnimations.Brushes.Effects.Abstract;
 
-namespace UICompositionAnimations.Behaviours.Xaml.Effects
+namespace UICompositionAnimations.Brushes.Effects
 {
     /// <summary>
     /// A saturation effect

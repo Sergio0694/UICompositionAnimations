@@ -1,7 +1,8 @@
 ﻿using System;
+using UICompositionAnimations.Brushes.Effects.Interfaces;
 using UICompositionAnimations.Enums;
 
-namespace UICompositionAnimations.Behaviours.Xaml.Effects.Abstract
+namespace UICompositionAnimations.Brushes.Effects.Abstract
 {
     /// <summary>
     /// An image based effect that loads an image at the specified location

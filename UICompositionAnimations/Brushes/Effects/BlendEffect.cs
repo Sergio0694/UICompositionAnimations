@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
 using JetBrains.Annotations;
 using Microsoft.Graphics.Canvas.Effects;
+using UICompositionAnimations.Brushes.Effects.Interfaces;
 using UICompositionAnimations.Enums;
 
-namespace UICompositionAnimations.Behaviours.Xaml.Effects
+namespace UICompositionAnimations.Brushes.Effects
 {
     /// <summary>
     /// A blend effect that merges the current pipeline with an input one
