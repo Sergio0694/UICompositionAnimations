@@ -159,7 +159,7 @@
     <Compile Include="Extensions\System\Threading.Tasks\TaskCompletionSource.cs" />
     <Compile Include="Extensions\System\BaseExtensions.cs" />
     <Compile Include="Extensions\System\Unit.cs" />
-    <Compile Include="Extensions\UICompositionAnimations.Enums\EnumExtensions.cs" />
+    <Compile Include="Extensions\EnumExtensions.cs" />
     <Compile Include="Extensions\Windows.UI\Composition\CompositionExtensions.cs" />
     <Compile Include="Extensions\Windows.UI\Composition\CompositorExtensions.cs" />
     <Compile Include="Extensions\Windows.UI\Composition\ScalarExpressionAnimation.cs" />

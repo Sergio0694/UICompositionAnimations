@@ -2,6 +2,7 @@
 using Windows.UI.Xaml.Media.Animation;
 using JetBrains.Annotations;
 using UICompositionAnimations.Enums;
+using UICompositionAnimations.Extensions;
 
 namespace Windows.UI.Xaml.Media
 {

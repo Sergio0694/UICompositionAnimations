@@ -1,7 +1,8 @@
 ﻿using System;
 using Windows.UI.Xaml.Media.Animation;
+using UICompositionAnimations.Enums;
 
-namespace UICompositionAnimations.Enums
+namespace UICompositionAnimations.Extensions
 {
     /// <summary>
     /// An extension <see langword="class"/> for the <see cref="Enum"/> types in the library
