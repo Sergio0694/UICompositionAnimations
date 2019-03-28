@@ -150,7 +150,6 @@
     <Compile Include="Brushes\CustomAcrylicBrush.cs" />
     <Compile Include="Brushes\LightingBrush.cs" />
     <Compile Include="Brushes\XamlCompositionBrush.cs" />
-    <Compile Include="CompositionExtensions.cs" />
     <Compile Include="Composition\CompositionManager.cs" />
     <Compile Include="Composition\CubicBeizerEasingProvider.cs" />
     <Compile Include="Composition\ExpressionAnimationWithScalarParameter.cs" />
