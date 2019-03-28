@@ -123,6 +123,7 @@
     <Compile Include="Animations\Abstract\AnimationBuilderBase.cs" />
     <Compile Include="Animations\CompositionAnimationBuilder.cs" />
     <Compile Include="Animations\Interfaces\IAnimationBuilder.cs" />
+    <Compile Include="Animations\XamlAnimationBuilder.cs" />
     <Compile Include="AttachedProperties\ClipHelper.cs" />
     <Compile Include="Behaviours\AcrylicEffectHelper.cs" />
     <Compile Include="Behaviours\CompositionBrushBuilder.cs" />

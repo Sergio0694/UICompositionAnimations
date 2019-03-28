@@ -205,6 +205,15 @@ namespace UICompositionAnimations.Animations
             return this;
         }
 
+        /// <summary>
+        /// Creates and starts the pending animations
+        /// </summary>
+        private void StartAnimations()
+        {
+            foreach (var animation in AnimationFactories)
+                animation(DurationInterval);
+        }
+
         /// <inheritdoc/>
         protected override void OnStart() => StartAnimations();
 
@@ -217,15 +226,6 @@ namespace UICompositionAnimations.Animations
             StartAnimations();
             batch.End();
             return tcs.Task;
-        }
-
-        /// <summary>
-        /// Creates and starts the pending animations
-        /// </summary>
-        private void StartAnimations()
-        {
-            foreach (var animation in AnimationFactories)
-                animation(DurationInterval);
         }
     }
 }
