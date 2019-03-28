@@ -150,7 +150,6 @@
     <Compile Include="Brushes\CustomAcrylicBrush.cs" />
     <Compile Include="Brushes\LightingBrush.cs" />
     <Compile Include="Brushes\XamlCompositionBrush.cs" />
-    <Compile Include="Composition\CompositionManager.cs" />
     <Compile Include="Composition\CubicBeizerEasingProvider.cs" />
     <Compile Include="Composition\ExpressionAnimationWithScalarParameter.cs" />
     <Compile Include="Enums\AcrylicBrushEffectState.cs" />
@@ -165,6 +164,7 @@
     <Compile Include="Extensions\System\BaseExtensions.cs" />
     <Compile Include="Extensions\System\Unit.cs" />
     <Compile Include="Extensions\Windows.UI.Composition\CompositionExtensions.cs" />
+    <Compile Include="Extensions\Windows.UI.Composition\CompositorExtensions.cs" />
     <Compile Include="Extensions\Windows.UI.Core\DispatcherExtensions.cs" />
     <Compile Include="Extensions\System.Threading.Tasks\AsyncMutex.cs" />
     <Compile Include="Extensions\Windows.UI.Xaml\ScrollViewerExtensions.cs" />

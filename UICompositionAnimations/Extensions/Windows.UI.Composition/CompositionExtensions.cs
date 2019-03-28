@@ -9,11 +9,71 @@ using JetBrains.Annotations;
 namespace Windows.UI.Composition
 {
     /// <summary>
-    /// An extension <see langword="class"/> for the composition types
-    /// </summary>ù
+    /// An extension <see langword="class"/> for some composition types
+    /// </summary>
     [PublicAPI]
     public static class CompositionExtensions
     {
+        /// <summary>
+        /// Creates and starts a scalar animation on the current <see cref="CompositionObject"/>
+        /// </summary>
+        /// <param name="target">The target to animate</param>
+        /// <param name="propertyPath">The path that identifies the property to animate</param>
+        /// <param name="from">The optional starting value for the animation</param>
+        /// <param name="to">The final value for the animation</param>
+        /// <param name="duration">The animation duration</param>
+        /// <param name="delay">The optional initial delay for the animation</param>
+        /// <param name="ease">The optional easing function for the animation</param>
+        public static void BeginScalarAnimation(
+            [NotNull] this CompositionObject target,
+            [NotNull] string propertyPath,
+            float? from, float to,
+            TimeSpan duration, TimeSpan? delay,
+            [CanBeNull] CompositionEasingFunction ease = null)
+        {
+            target.StartAnimation(propertyPath, target.Compositor.CreateScalarKeyFrameAnimation(from, to, duration, delay, ease));
+        }
+
+        /// <summary>
+        /// Creates and starts a <see cref="Vector2"/> animation on the current <see cref="CompositionObject"/>
+        /// </summary>
+        /// <param name="target">The target to animate</param>
+        /// <param name="propertyPath">The path that identifies the property to animate</param>
+        /// <param name="from">The optional starting value for the animation</param>
+        /// <param name="to">The final value for the animation</param>
+        /// <param name="duration">The animation duration</param>
+        /// <param name="delay">The optional initial delay for the animation</param>
+        /// <param name="ease">The optional easing function for the animation</param>
+        public static void BeginVector2Animation(
+            [NotNull]this CompositionObject target,
+            [NotNull] string propertyPath,
+            Vector2? from, Vector2 to,
+            TimeSpan duration, TimeSpan? delay,
+            [CanBeNull] CompositionEasingFunction ease = null)
+        {
+            target.StartAnimation(propertyPath, target.Compositor.CreateVector2KeyFrameAnimation(from, to, duration, delay, ease));
+        }
+
+        /// <summary>
+        /// Creates and starts a <see cref="Vector3"/> animation on the current <see cref="CompositionObject"/>
+        /// </summary>
+        /// <param name="target">The target to animate</param>
+        /// <param name="propertyPath">The path that identifies the property to animate</param>
+        /// <param name="from">The optional starting value for the animation</param>
+        /// <param name="to">The final value for the animation</param>
+        /// <param name="duration">The animation duration</param>
+        /// <param name="delay">The optional initial delay for the animation</param>
+        /// <param name="ease">The optional easing function for the animation</param>
+        public static void BeginVector3Animation(
+            [NotNull] this CompositionObject target,
+            [NotNull] string propertyPath,
+            Vector3? from, Vector3 to,
+            TimeSpan duration, TimeSpan? delay,
+            [CanBeNull] CompositionEasingFunction ease = null)
+        {
+            target.StartAnimation(propertyPath, target.Compositor.CreateVector3KeyFrameAnimation(from, to, duration, delay, ease));
+        }
+
         /// <summary>
         /// Starts an animation on the given property of a <see cref="CompositionObject"/>
         /// </summary>
