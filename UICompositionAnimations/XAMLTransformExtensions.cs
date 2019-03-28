@@ -29,9 +29,9 @@ namespace UICompositionAnimations
 
             // Start and wait the animation
             DoubleAnimation animation = XAMLTransformToolkit.CreateDoubleAnimation(element, "Opacity", startOp ?? element.Opacity, endOp, ms, easingFunction);
-            Storyboard storyboard = XAMLTransformToolkit.PrepareStoryboard(animation);
+            Storyboard storyboard = animation.ToStoryboard();
             storyboard.AutoReverse = reverse;
-            await storyboard.WaitAsync();
+            await storyboard.BeginAsync();
         }
 
         /// <summary>
@@ -91,12 +91,12 @@ namespace UICompositionAnimations
 
             // Start and wait the animation
             DoubleAnimation opacity = XAMLTransformToolkit.CreateDoubleAnimation(element, "Opacity", startOp ?? element.Opacity, endOp, msOp, easingFunction);
-            DoubleAnimation slide = XAMLTransformToolkit.CreateDoubleAnimation(element.GetRenderTransform<TranslateTransform>(),
+            DoubleAnimation slide = XAMLTransformToolkit.CreateDoubleAnimation(element.GetTransform<TranslateTransform>(),
                 axis.ToString(), startXY, endXY,
                 msSlide ?? msOp, easingFunction);
-            Storyboard storyboard = XAMLTransformToolkit.PrepareStoryboard(opacity, slide);
+            Storyboard storyboard = new[] { opacity, slide }.ToStoryboard();
             storyboard.AutoReverse = reverse;
-            await storyboard.WaitAsync();
+            await storyboard.BeginAsync();
         }
 
         /// <summary>
@@ -167,15 +167,19 @@ namespace UICompositionAnimations
                 startXY = axis == Axis.X ? translate.X : translate.Y;
             }
 
-            // Prepare and run the animation
+            // Setup the transform
             if (translate == null || cleanAnimation)
             {
                 translate = new TranslateTransform();
                 element.RenderTransform = translate;
             }
-            return XAMLTransformToolkit.PrepareStoryboard(
+
+            // Create the animation
+            return new[]
+            {
                 XAMLTransformToolkit.CreateDoubleAnimation(element, "Opacity", startOp ?? element.Opacity, endOp, ms, easing),
-                XAMLTransformToolkit.CreateDoubleAnimation(translate, axis.ToString(), startXY, endXY, ms, easing));
+                XAMLTransformToolkit.CreateDoubleAnimation(translate, axis.ToString(), startXY, endXY, ms, easing)
+            }.ToStoryboard();
         }
 
         #endregion
@@ -200,13 +204,13 @@ namespace UICompositionAnimations
 
             // Start and wait the animation
             DoubleAnimation opacity = XAMLTransformToolkit.CreateDoubleAnimation(element, "Opacity", startOp ?? element.Opacity, endOp, msOp, easingFunction);
-            DoubleAnimation scaleX = XAMLTransformToolkit.CreateDoubleAnimation(element.GetRenderTransform<ScaleTransform>(), "ScaleX",
+            DoubleAnimation scaleX = XAMLTransformToolkit.CreateDoubleAnimation(element.GetTransform<ScaleTransform>(), "ScaleX",
                 startScale, endScale, msScale ?? msOp, easingFunction);
-            DoubleAnimation scaleY = XAMLTransformToolkit.CreateDoubleAnimation(element.GetRenderTransform<ScaleTransform>(), "ScaleY",
+            DoubleAnimation scaleY = XAMLTransformToolkit.CreateDoubleAnimation(element.GetTransform<ScaleTransform>(), "ScaleY",
                 startScale, endScale, msScale ?? msOp, easingFunction);
-            Storyboard storyboard = XAMLTransformToolkit.PrepareStoryboard(opacity, scaleX, scaleY);
+            Storyboard storyboard = new[] { opacity, scaleX, scaleY }.ToStoryboard();
             storyboard.AutoReverse = reverse;
-            await storyboard.WaitAsync();
+            await storyboard.BeginAsync();
         }
 
         /// <summary>
@@ -273,13 +277,13 @@ namespace UICompositionAnimations
             }
 
             // Start and wait the animation
-            DoubleAnimation scaleX = XAMLTransformToolkit.CreateDoubleAnimation(element.GetRenderTransform<ScaleTransform>(), "ScaleX",
+            DoubleAnimation scaleX = XAMLTransformToolkit.CreateDoubleAnimation(element.GetTransform<ScaleTransform>(), "ScaleX",
                 startScale, endScale, ms, easingFunction);
-            DoubleAnimation scaleY = XAMLTransformToolkit.CreateDoubleAnimation(element.GetRenderTransform<ScaleTransform>(), "ScaleY",
+            DoubleAnimation scaleY = XAMLTransformToolkit.CreateDoubleAnimation(element.GetTransform<ScaleTransform>(), "ScaleY",
                 startScale, endScale, ms, easingFunction);
-            Storyboard storyboard = XAMLTransformToolkit.PrepareStoryboard(scaleX, scaleY);
+            Storyboard storyboard = new[] { scaleX, scaleY }.ToStoryboard();
             storyboard.AutoReverse = reverse;
-            await storyboard.WaitAsync();
+            await storyboard.BeginAsync();
         }
 
         /// <summary>
@@ -337,11 +341,11 @@ namespace UICompositionAnimations
             }
 
             // Start and wait the animation
-            DoubleAnimation slide = XAMLTransformToolkit.CreateDoubleAnimation(element.GetRenderTransform<TranslateTransform>(),
+            DoubleAnimation slide = XAMLTransformToolkit.CreateDoubleAnimation(element.GetTransform<TranslateTransform>(),
                 axis.ToString(), startXY, endXY, ms, easingFunction);
-            Storyboard storyboard = XAMLTransformToolkit.PrepareStoryboard(slide);
+            Storyboard storyboard = slide.ToStoryboard();
             storyboard.AutoReverse = reverse;
-            await storyboard.WaitAsync();
+            await storyboard.BeginAsync();
         }
 
         /// <summary>
@@ -408,7 +412,7 @@ namespace UICompositionAnimations
                 translate = new TranslateTransform();
                 element.RenderTransform = translate;
             }
-            return XAMLTransformToolkit.PrepareStoryboard(XAMLTransformToolkit.CreateDoubleAnimation(translate, axis.ToString(), startXY, endXY, ms, easing));
+            return XAMLTransformToolkit.CreateDoubleAnimation(translate, axis.ToString(), startXY, endXY, ms, easing).ToStoryboard();
         }
 
         #endregion
@@ -562,7 +566,7 @@ namespace UICompositionAnimations
             };
             Storyboard.SetTarget(backgroundAnimation, element);
             Storyboard.SetTargetProperty(backgroundAnimation, "Opacity");
-            return XAMLTransformToolkit.PrepareStoryboard(backgroundAnimation);
+            return backgroundAnimation.ToStoryboard();
         }
 
         #endregion

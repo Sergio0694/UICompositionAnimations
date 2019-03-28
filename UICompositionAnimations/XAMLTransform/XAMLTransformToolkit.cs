@@ -17,48 +17,9 @@ namespace UICompositionAnimations.XAMLTransform
     {
         #region Extensions
 
-        /// <summary>
-        /// Creates a new <see cref="Storyboard"/> with the given animation
-        /// </summary>
-        /// <param name="animation">The single animation to insert into the returned <see cref="Storyboard"/></param>
-        [NotNull]
-        public static Storyboard ToStoryboard([NotNull] this Timeline animation)
-        {
-            Storyboard storyboard = new Storyboard();
-            storyboard.Children.Add(animation);
-            return storyboard;
-        }
+        
 
-        /// <summary>
-        /// Returns the desired XAML transform object after assigning it to the render transform property of the target item
-        /// </summary>
-        /// <typeparam name="T">The desired render transform object</typeparam>
-        /// <param name="element">The target element to modify</param>
-        /// <param name="forceReset">If true, a new render transform object will always be created and assigned to the element</param>
-        /// <returns></returns>
-        public static T GetRenderTransform<T>(this UIElement element, bool forceReset = true) where T : Transform, new()
-        {
-            // Return the existing transform object, if it exists
-            if (element.RenderTransform is T && !forceReset) return element.RenderTransform.To<T>();
-
-            // Create a new transform
-            T transform = new T();
-            element.RenderTransform = transform;
-            return transform;
-        }
-
-        /// <summary>
-        /// Starts an animation and waits for it to be completed
-        /// </summary>
-        /// <param name="storyboard">The target storyboard</param>
-        public static Task WaitAsync(this Storyboard storyboard)
-        {
-            if (storyboard == null) throw new ArgumentNullException();
-            TaskCompletionSource<object> tcs = new TaskCompletionSource<object>();
-            storyboard.Completed += (s, e) => tcs.SetResult(null);
-            storyboard.Begin();
-            return tcs.Task;
-        }
+        
 
         /// <summary>
         /// Starts an animation and runs an action when it completes
@@ -125,19 +86,7 @@ namespace UICompositionAnimations.XAMLTransform
             return animation;
         }
 
-        /// <summary>
-        /// Prepares a <see cref="Storyboard"/> with the given animations
-        /// </summary>
-        /// <param name="animations">The animations to run inside the storyboard</param>
-        public static Storyboard PrepareStoryboard(params Timeline[] animations)
-        {
-            Storyboard storyboard = new Storyboard();
-            foreach (Timeline animation in animations)
-            {
-                storyboard.Children.Add(animation);
-            }
-            return storyboard;
-        }
+        
 
         #endregion
     }
