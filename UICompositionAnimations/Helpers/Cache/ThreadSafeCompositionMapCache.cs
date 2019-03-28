@@ -5,7 +5,7 @@ using Windows.UI.Composition;
 using Windows.UI.Core;
 using JetBrains.Annotations;
 
-namespace UICompositionAnimations.Brushes.Cache
+namespace UICompositionAnimations.Helpers.Cache
 {
     /// <summary>
     /// A <see langword="class"/> used to cache reusable <see cref="CompositionObject"/> instances with an associated key

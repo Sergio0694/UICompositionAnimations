@@ -15,8 +15,8 @@ using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.UI;
 using Microsoft.Graphics.Canvas.UI.Composition;
 using Microsoft.Graphics.Canvas.UI.Xaml;
-using UICompositionAnimations.Brushes.Cache;
 using UICompositionAnimations.Enums;
+using UICompositionAnimations.Helpers.Cache;
 
 namespace UICompositionAnimations.Helpers
 {

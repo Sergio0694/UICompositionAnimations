@@ -12,9 +12,9 @@ using JetBrains.Annotations;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
 using UICompositionAnimations.Brushes;
-using UICompositionAnimations.Brushes.Cache;
 using UICompositionAnimations.Enums;
 using UICompositionAnimations.Helpers;
+using UICompositionAnimations.Helpers.Cache;
 
 namespace UICompositionAnimations.Behaviours
 {

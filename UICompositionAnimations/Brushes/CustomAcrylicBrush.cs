@@ -9,10 +9,10 @@ using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 using UICompositionAnimations.Behaviours;
-using UICompositionAnimations.Brushes.Cache;
 using UICompositionAnimations.Enums;
 using Windows.ApplicationModel;
 using JetBrains.Annotations;
+using UICompositionAnimations.Helpers.Cache;
 
 namespace UICompositionAnimations.Brushes
 {
