@@ -168,6 +168,7 @@
     <Compile Include="Extensions\System.Threading.Tasks\AsyncMutex.cs" />
     <Compile Include="Extensions\Windows.UI.Xaml.Media.Animation\StoryboardExtensions.cs" />
     <Compile Include="Extensions\Windows.UI.Xaml.Media.Animation\TimelineExtensions.cs" />
+    <Compile Include="Extensions\Windows.UI.Xaml.Media\SolidColorBrushExtensions.cs" />
     <Compile Include="Extensions\Windows.UI.Xaml\DependencyObjectExtensions.cs" />
     <Compile Include="Extensions\Windows.UI.Xaml\ScrollViewerExtensions.cs" />
     <Compile Include="Extensions\Windows.UI.Xaml\UIElementExtensions.cs" />
@@ -180,7 +181,6 @@
     <Compile Include="Helpers\PointerEvents\PointerHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Enums\Axis.cs" />
-    <Compile Include="XAMLTransformExtensions.cs" />
     <EmbeddedResource Include="Properties\UICompositionAnimations.rd.xml" />
   </ItemGroup>
   <ItemGroup>

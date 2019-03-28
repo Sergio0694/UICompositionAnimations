@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using System.Threading.Tasks;
 using Windows.Foundation;
@@ -7,6 +8,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Shapes;
 using JetBrains.Annotations;
+using UICompositionAnimations.Enums;
 
 namespace Windows.UI.Xaml
 {
@@ -123,6 +125,102 @@ namespace Windows.UI.Xaml
             }
             if (apply) ElementCompositionPreview.SetElementChildVisual(target, sprite);
             return sprite;
+        }
+
+        /// <summary>
+        /// Animates a side of the margin of the target <see cref="FrameworkElement"/>
+        /// </summary>
+        /// <param name="element">The <see cref="FrameworkElement"/> to animate</param>
+        /// <param name="start">The initial value for the animation</param>
+        /// <param name="end">The final value for the animation</param>
+        /// <param name="side">The margin side to animate</param>
+        /// <param name="duration">The duration of the animation to create</param>
+        [SuppressMessage("ReSharper", "AccessToModifiedClosure")] // Margin updated at each animation timestep
+        public static async Task AnimateMarginAsync([NotNull] this FrameworkElement element, double? start, double end, Side side, int duration)
+        {
+            // Calculate the start offset
+            if (start == null)
+            {
+                switch (side)
+                {
+                    case Side.Top:
+                        start = element.Margin.Top;
+                        break;
+                    case Side.Bottom:
+                        start = element.Margin.Bottom;
+                        break;
+                    case Side.Left:
+                        start = element.Margin.Left;
+                        break;
+                    case Side.Right:
+                        start = element.Margin.Right;
+                        break;
+                    default: throw new ArgumentOutOfRangeException(nameof(side), "Invalid margin side");
+                }
+            }
+
+            // Calculate the animation steps
+            int
+                frames = (int)Math.Ceiling(duration * 4d / 100d),
+                elapsed = 0;
+            double
+                delta = end - start.Value,
+                step = delta / frames;
+
+            // Execute the animation
+            TaskCompletionSource<bool> tcs = new TaskCompletionSource<bool>();
+            DispatcherTimer timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(25) }; // 40fps
+            timer.Tick += TickHandler;
+            Thickness margin = element.Margin;
+
+            void TickHandler(object sender, object e)
+            {
+                elapsed++;
+                switch (side)
+                {
+                    case Side.Top:
+                        margin.Top += step;
+                        break;
+                    case Side.Bottom:
+                        margin.Bottom += step;
+                        break;
+                    case Side.Left:
+                        margin.Left += step;
+                        break;
+                    case Side.Right:
+                        margin.Right += step;
+                        break;
+                    default: throw new ArgumentOutOfRangeException(nameof(side), "Invalid margin side");
+                }
+                element.Margin = margin;
+                if (elapsed >= frames)
+                {
+                    timer.Tick -= TickHandler;
+                    timer.Stop();
+                    tcs.SetResult(true);
+                }
+            }
+            timer.Start();
+            await tcs.Task;
+
+            // Wait for completion and adjust the final margin (just to be sure)
+            switch (side)
+            {
+                case Side.Top:
+                    margin.Top = end;
+                    break;
+                case Side.Bottom:
+                    margin.Bottom = end;
+                    break;
+                case Side.Left:
+                    margin.Left = end;
+                    break;
+                case Side.Right:
+                    margin.Right = end;
+                    break;
+                default: throw new ArgumentOutOfRangeException(nameof(side), "Invalid margin side");
+            }
+            element.Margin = margin;
         }
     }
 }

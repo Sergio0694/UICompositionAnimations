@@ -21,6 +21,7 @@ namespace Windows.UI.Xaml
         /// <param name="ms">The duration of the <see cref="DoubleAnimation"/></param>
         /// <param name="easing">The easing function to use inside the <see cref="DoubleAnimation"/></param>
         /// <param name="enableDependecyAnimations">Indicates whether or not to apply this animation to elements that need the visual tree to be rearranged</param>
+        [Pure, NotNull]
         public static DoubleAnimation CreateDoubleAnimation(
             [NotNull] this DependencyObject target, string property,
             double? from, double? to,
