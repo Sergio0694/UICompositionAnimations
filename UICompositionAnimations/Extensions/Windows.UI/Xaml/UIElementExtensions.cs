@@ -30,7 +30,7 @@ namespace Windows.UI.Xaml
         /// <param name="target">The target <see cref="UIElement"/> to animate</param>
         /// <param name="layer">The target layer to animate</param>
         [Pure, NotNull]
-        public static IAnimationBuilder Animate([NotNull] this UIElement target, FrameworkLayer layer = FrameworkLayer.Composition)
+        public static IAnimationBuilder Animation([NotNull] this UIElement target, FrameworkLayer layer = FrameworkLayer.Composition)
         {
             switch (layer)
             {
