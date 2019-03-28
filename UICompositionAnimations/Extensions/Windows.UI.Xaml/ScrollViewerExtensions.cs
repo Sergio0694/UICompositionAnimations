@@ -2,7 +2,6 @@
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using JetBrains.Annotations;
-using UICompositionAnimations.Composition;
 using UICompositionAnimations.Enums;
 
 namespace Windows.UI.Xaml
@@ -44,7 +43,7 @@ namespace Windows.UI.Xaml
         /// <param name="targetXY">The optional scrolling axis of the target element, if <see langword="null"/> the source axis will be used</param>
         /// <param name="invertSourceAxis">Indicates whether or not to invert the animation from the source <see cref="CompositionPropertySet"/></param>
         [NotNull]
-        public static ExpressionAnimationWithScalarParameter StartExpressionAnimation(
+        public static ScalarExpressionAnimation StartExpressionAnimation(
             [NotNull] this ScrollViewer scroller, [NotNull] UIElement target,
             Axis sourceXY, float parameter,
             Axis? targetXY = null, bool invertSourceAxis = false)
@@ -62,7 +61,7 @@ namespace Windows.UI.Xaml
             animation.SetReferenceParameter("scroll", scrollSet);
             animation.SetReferenceParameter(nameof(properties), properties);
             target.GetVisual().StartAnimation($"Offset.{targetXY ?? sourceXY}", animation);
-            return new ExpressionAnimationWithScalarParameter(animation, properties, nameof(parameter));
+            return new ScalarExpressionAnimation(animation, properties, nameof(parameter));
         }
     }
 }

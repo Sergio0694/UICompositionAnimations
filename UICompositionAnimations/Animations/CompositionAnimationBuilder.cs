@@ -8,7 +8,6 @@ using Windows.UI.Xaml.Hosting;
 using JetBrains.Annotations;
 using UICompositionAnimations.Animations.Abstract;
 using UICompositionAnimations.Animations.Interfaces;
-using UICompositionAnimations.Composition;
 using UICompositionAnimations.Enums;
 
 namespace UICompositionAnimations.Animations

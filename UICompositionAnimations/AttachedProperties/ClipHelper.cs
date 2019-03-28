@@ -34,8 +34,11 @@ namespace UICompositionAnimations.AttachedProperties
         /// <summary>
         /// A property that indicates whether or not the contents of the target <see cref="UIElement"/> should always be clipped to their parent's bounds
         /// </summary>
-        public static readonly DependencyProperty ClipToBoundsProperty =
-            DependencyProperty.RegisterAttached("ClipToBounds", typeof(bool), typeof(UIElementProperties), new PropertyMetadata(false, OnClipToBoundsPropertyChanged));
+        public static readonly DependencyProperty ClipToBoundsProperty = DependencyProperty.RegisterAttached(
+            "ClipToBounds",
+            typeof(bool),
+            typeof(UIElementProperties),
+            new PropertyMetadata(false, OnClipToBoundsPropertyChanged));
 
         private static void OnClipToBoundsPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {

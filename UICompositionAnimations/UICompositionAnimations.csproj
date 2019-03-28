@@ -148,8 +148,6 @@
     <Compile Include="Brushes\NoiseTextureBrush.cs" />
     <Compile Include="Brushes\CustomAcrylicBrush.cs" />
     <Compile Include="Brushes\XamlCompositionBrush.cs" />
-    <Compile Include="Composition\CubicBeizerEasingProvider.cs" />
-    <Compile Include="Composition\ExpressionAnimationWithScalarParameter.cs" />
     <Compile Include="Enums\AcrylicBrushEffectState.cs" />
     <Compile Include="Enums\DpiMode.cs" />
     <Compile Include="Enums\CacheMode.cs" />
@@ -164,6 +162,7 @@
     <Compile Include="Extensions\UICompositionAnimations.Enums\EnumExtensions.cs" />
     <Compile Include="Extensions\Windows.UI.Composition\CompositionExtensions.cs" />
     <Compile Include="Extensions\Windows.UI.Composition\CompositorExtensions.cs" />
+    <Compile Include="Extensions\Windows.UI.Composition\ScalarExpressionAnimation.cs" />
     <Compile Include="Extensions\Windows.UI.Core\DispatcherExtensions.cs" />
     <Compile Include="Extensions\System.Threading.Tasks\AsyncMutex.cs" />
     <Compile Include="Extensions\Windows.UI.Xaml.Media.Animation\StoryboardExtensions.cs" />
