@@ -92,7 +92,7 @@ namespace UICompositionAnimations
             // Start and wait the animation
             DoubleAnimation opacity = XAMLTransformToolkit.CreateDoubleAnimation(element, "Opacity", startOp ?? element.Opacity, endOp, msOp, easingFunction);
             DoubleAnimation slide = XAMLTransformToolkit.CreateDoubleAnimation(element.GetRenderTransform<TranslateTransform>(),
-                axis.ToPropertyString(), startXY, endXY,
+                axis.ToString(), startXY, endXY,
                 msSlide ?? msOp, easingFunction);
             Storyboard storyboard = XAMLTransformToolkit.PrepareStoryboard(opacity, slide);
             storyboard.AutoReverse = reverse;
@@ -175,7 +175,7 @@ namespace UICompositionAnimations
             }
             return XAMLTransformToolkit.PrepareStoryboard(
                 XAMLTransformToolkit.CreateDoubleAnimation(element, "Opacity", startOp ?? element.Opacity, endOp, ms, easing),
-                XAMLTransformToolkit.CreateDoubleAnimation(translate, axis.ToPropertyString(), startXY, endXY, ms, easing));
+                XAMLTransformToolkit.CreateDoubleAnimation(translate, axis.ToString(), startXY, endXY, ms, easing));
         }
 
         #endregion
@@ -338,7 +338,7 @@ namespace UICompositionAnimations
 
             // Start and wait the animation
             DoubleAnimation slide = XAMLTransformToolkit.CreateDoubleAnimation(element.GetRenderTransform<TranslateTransform>(),
-                axis.ToPropertyString(), startXY, endXY, ms, easingFunction);
+                axis.ToString(), startXY, endXY, ms, easingFunction);
             Storyboard storyboard = XAMLTransformToolkit.PrepareStoryboard(slide);
             storyboard.AutoReverse = reverse;
             await storyboard.WaitAsync();
@@ -408,7 +408,7 @@ namespace UICompositionAnimations
                 translate = new TranslateTransform();
                 element.RenderTransform = translate;
             }
-            return XAMLTransformToolkit.PrepareStoryboard(XAMLTransformToolkit.CreateDoubleAnimation(translate, axis.ToPropertyString(), startXY, endXY, ms, easing));
+            return XAMLTransformToolkit.PrepareStoryboard(XAMLTransformToolkit.CreateDoubleAnimation(translate, axis.ToString(), startXY, endXY, ms, easing));
         }
 
         #endregion

@@ -139,12 +139,6 @@ namespace UICompositionAnimations.XAMLTransform
             return storyboard;
         }
 
-        /// <summary>
-        /// Converts the given <see cref="Axis"/> enum into its string representation
-        /// </summary>
-        /// <param name="axis">The enum to convert</param>
-        public static string ToPropertyString(this Axis axis) => axis == Axis.X ? "X" : "Y";
-
         #endregion
     }
 }

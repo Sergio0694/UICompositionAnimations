@@ -1,16 +1,15 @@
 ﻿using System;
 using Windows.UI.Xaml.Media.Animation;
-using UICompositionAnimations.Enums;
 
-namespace UICompositionAnimations.XAMLTransform
+namespace UICompositionAnimations.Enums
 {
     /// <summary>
-    /// A simple class that creates the desired XAML transform easing function
+    /// An extension <see langword="class"/> for the <see cref="Enum"/> types in the library
     /// </summary>
-    internal static class EasingFunctionBaseProvider
+    internal static class EnumExtensions
     {
         /// <summary>
-        /// Converts an easing function name to the right easing function
+        /// Converts an easing value to the right easing function
         /// </summary>
         /// <param name="ease">The desired easing function</param>
         public static EasingFunctionBase ToEasingFunction(this Easing ease)
