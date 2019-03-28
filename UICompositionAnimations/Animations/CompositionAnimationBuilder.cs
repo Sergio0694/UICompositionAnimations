@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Numerics;
 using System.Threading.Tasks;
 using Windows.UI.Composition;
@@ -15,19 +14,13 @@ namespace UICompositionAnimations.Animations
     /// <summary>
     /// A <see langword="class"/> that implements the <see cref="IAnimationBuilder"/> <see langword="interface"/> using composition APIs
     /// </summary>
-    internal sealed class CompositionAnimationBuilder : AnimationBuilderBase
+    internal sealed class CompositionAnimationBuilder : AnimationBuilderBase<Action<TimeSpan>>
     {
         /// <summary>
         /// The target <see cref="Visual"/> to animate
         /// </summary>
         [NotNull]
         private readonly Visual TargetVisual;
-
-        /// <summary>
-        /// The list of <see cref="Action"/> instances used to create the animations to run
-        /// </summary>
-        [NotNull, ItemNotNull]
-        private readonly IList<Action<TimeSpan>> Animations = new List<Action<TimeSpan>>();
 
         public CompositionAnimationBuilder([NotNull] UIElement target) : base(target)
         {
@@ -45,7 +38,7 @@ namespace UICompositionAnimations.Animations
         /// <inheritdoc/>
         public override IAnimationBuilder Opacity(float from, float to, Easing ease = Easing.Linear)
         {
-            Animations.Add(duration =>
+            AnimationFactories.Add(duration =>
             {
                 TargetVisual.StopAnimation(nameof(Visual.Opacity));
                 CompositionEasingFunction easingFunction = TargetVisual.GetEasingFunction(ease);
@@ -62,7 +55,7 @@ namespace UICompositionAnimations.Animations
         /// <inheritdoc/>
         public override IAnimationBuilder Translation(Vector2 from, Vector2 to, Easing ease = Easing.Linear)
         {
-            Animations.Add(duration =>
+            AnimationFactories.Add(duration =>
             {
                 // Stop the animation and get the easing function
                 TargetVisual.StopAnimation("Translation");
@@ -88,7 +81,7 @@ namespace UICompositionAnimations.Animations
         /// <inheritdoc/>
         public override IAnimationBuilder Offset(Vector2 from, Vector2 to, Easing ease = Easing.Linear)
         {
-            Animations.Add(duration =>
+            AnimationFactories.Add(duration =>
             {
                 // Stop the animation and get the easing function
                 TargetVisual.StopAnimation(nameof(Visual.Offset));
@@ -123,7 +116,7 @@ namespace UICompositionAnimations.Animations
             element.GetVisual().CenterPoint = new Vector3((float)(element.ActualWidth / 2), (float)(element.ActualHeight / 2), 0);
 
             // Add the scale animation
-            Animations.Add(duration =>
+            AnimationFactories.Add(duration =>
             {
                 // Stop the animation and get the easing function
                 TargetVisual.StopAnimation(nameof(Visual.Scale));
@@ -157,7 +150,7 @@ namespace UICompositionAnimations.Animations
             element.GetVisual().CenterPoint = new Vector3((float)(element.ActualWidth / 2), (float)(element.ActualHeight / 2), 0);
 
             // Add the rotation animation
-            Animations.Add(duration =>
+            AnimationFactories.Add(duration =>
             {
                 TargetVisual.StopAnimation(nameof(Visual.RotationAngleInDegrees));
                 CompositionEasingFunction easingFunction = TargetVisual.GetEasingFunction(ease);
@@ -188,7 +181,7 @@ namespace UICompositionAnimations.Animations
         /// <inheritdoc/>
         public override IAnimationBuilder Clip(Side side, float from, float to, Easing ease = Easing.Linear)
         {
-            Animations.Add(duration =>
+            AnimationFactories.Add(duration =>
             {
                 // Stop the animation and get the easing function
                 string property;
@@ -231,7 +224,7 @@ namespace UICompositionAnimations.Animations
         /// </summary>
         private void StartAnimations()
         {
-            foreach (var animation in Animations)
+            foreach (var animation in AnimationFactories)
                 animation(DurationInterval);
         }
     }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Numerics;
 using System.Threading.Tasks;
 using Windows.UI.Xaml;
@@ -11,7 +12,7 @@ namespace UICompositionAnimations.Animations.Abstract
     /// <summary>
     /// An <see langword="abstract"/> <see langword="class"/> used as base by all the animation builder classes
     /// </summary>
-    internal abstract class AnimationBuilderBase : IAnimationBuilder
+    internal abstract class AnimationBuilderBase<T> : IAnimationBuilder
     {
         /// <summary>
         /// A <see langword="protected"/> constructor that initializes the target <see cref="UIElement"/>
@@ -24,6 +25,12 @@ namespace UICompositionAnimations.Animations.Abstract
         /// </summary>
         [NotNull]
         protected UIElement TargetElement { get; }
+
+        /// <summary>
+        /// Gets the list of <typeparamref name="T"/> instances used to create the animations to run
+        /// </summary>
+        [NotNull, ItemNotNull]
+        protected IList<T> AnimationFactories { get; } = new List<T>();
 
         /// <summary>
         /// Gets the <see cref="System.TimeSpan"/> that defines the duration of the animation
