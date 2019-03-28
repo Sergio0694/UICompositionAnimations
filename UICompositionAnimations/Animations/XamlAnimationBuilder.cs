@@ -55,9 +55,9 @@ namespace UICompositionAnimations.Animations
             return this;
         }
 
-        protected override IAnimationBuilder OnOffset(Axis axis, double? @from, double to, Easing ease) => throw new NotSupportedException("Can't animate the offset property from XAML");
+        protected override IAnimationBuilder OnOffset(Axis axis, double? from, double to, Easing ease) => throw new NotSupportedException("Can't animate the offset property from XAML");
 
-        protected override IAnimationBuilder OnOffset(Vector2? @from, Vector2 to, Easing ease = Easing.Linear) => throw new NotSupportedException("Can't animate the offset property from XAML");
+        protected override IAnimationBuilder OnOffset(Vector2? from, Vector2 to, Easing ease = Easing.Linear) => throw new NotSupportedException("Can't animate the offset property from XAML");
 
         /// <inheritdoc/>
         protected override IAnimationBuilder OnScale(double? from, double to, Easing ease)
@@ -69,14 +69,7 @@ namespace UICompositionAnimations.Animations
         }
 
         /// <inheritdoc/>
-        public override IAnimationBuilder Rotate(double to, Easing ease = Easing.Linear)
-        {
-            double angle = TargetTransform.Rotation;
-            return Rotate(angle, to, ease);
-        }
-
-        /// <inheritdoc/>
-        public override IAnimationBuilder Rotate(double from, double to, Easing ease = Easing.Linear)
+        protected override IAnimationBuilder OnRotate(double? from, double to, Easing ease)
         {
             AnimationFactories.Add(duration => TargetTransform.CreateDoubleAnimation(nameof(CompositeTransform.Rotation), from, to, duration, ease));
 

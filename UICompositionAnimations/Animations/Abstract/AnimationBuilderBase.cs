@@ -137,10 +137,19 @@ namespace UICompositionAnimations.Animations.Abstract
         protected abstract IAnimationBuilder OnScale(double? from, double to, Easing ease);
 
         /// <inheritdoc/>
-        public abstract IAnimationBuilder Rotate(double to, Easing ease = Easing.Linear);
+        public IAnimationBuilder Rotate(double to, Easing ease = Easing.Linear) => OnRotate(null, to, ease);
 
         /// <inheritdoc/>
-        public abstract IAnimationBuilder Rotate(double from, double to, Easing ease = Easing.Linear);
+        public IAnimationBuilder Rotate(double from, double to, Easing ease = Easing.Linear) => OnRotate(from, to, ease);
+
+        /// <summary>
+        /// Schedules a rotation animation
+        /// </summary>
+        /// <param name="from">The optional starting value</param>
+        /// <param name="to">The target value</param>
+        /// <param name="ease">The easing function to use for the rotation animation</param>
+        [MustUseReturnValue, NotNull]
+        protected abstract IAnimationBuilder OnRotate(double? from, double to, Easing ease);
 
         /// <inheritdoc/>
         public abstract IAnimationBuilder Clip(Side side, double to, Easing ease = Easing.Linear);
