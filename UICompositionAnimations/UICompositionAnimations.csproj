@@ -125,9 +125,9 @@
     <Compile Include="Animations\Interfaces\IAnimationBuilder.cs" />
     <Compile Include="Animations\XamlAnimationBuilder.cs" />
     <Compile Include="AttachedProperties\ClipHelper.cs" />
-    <Compile Include="Behaviours\AcrylicEffectHelper.cs" />
     <Compile Include="Behaviours\CompositionBrushBuilder.cs" />
     <Compile Include="Behaviours\CompositionSourceInitializer.cs" />
+    <Compile Include="Brushes\AcrylicBrush.cs" />
     <Compile Include="Brushes\Effects\Abstract\ImageEffectBase.cs" />
     <Compile Include="Brushes\Effects\Abstract\ValueEffectBase.cs" />
     <Compile Include="Brushes\Effects\BackdropEffect.cs" />
@@ -147,9 +147,7 @@
     <Compile Include="Helpers\Cache\ThreadSafeCompositionCache.cs" />
     <Compile Include="Helpers\Cache\ThreadSafeCompositionMapCache.cs" />
     <Compile Include="Brushes\NoiseTextureBrush.cs" />
-    <Compile Include="Brushes\CustomAcrylicBrush.cs" />
     <Compile Include="Brushes\XamlCompositionBrush.cs" />
-    <Compile Include="Enums\AcrylicBrushEffectState.cs" />
     <Compile Include="Enums\DpiMode.cs" />
     <Compile Include="Enums\CacheMode.cs" />
     <Compile Include="Enums\Easing.cs" />
