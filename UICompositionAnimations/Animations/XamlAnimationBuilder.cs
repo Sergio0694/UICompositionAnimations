@@ -62,14 +62,9 @@ namespace UICompositionAnimations.Animations
             return this;
         }
 
-        /// <inheritdoc/>
-        protected override Vector2 CurrentOffset => throw new NotSupportedException("Can't animate the offset property from XAML");
+        protected override IAnimationBuilder OnOffset(Axis axis, double? @from, double to, Easing ease) => throw new NotSupportedException("Can't animate the offset property from XAML");
 
-        /// <inheritdoc/>
-        public override IAnimationBuilder Offset(Vector2 from, Vector2 to, Easing ease = Easing.Linear)
-        {
-            throw new NotSupportedException("Can't animate the offset property from XAML");
-        }
+        protected override IAnimationBuilder OnOffset(Vector2? @from, Vector2 to, Easing ease = Easing.Linear) => throw new NotSupportedException("Can't animate the offset property from XAML");
 
         /// <inheritdoc/>
         public override IAnimationBuilder Scale(double to, Easing ease = Easing.Linear)

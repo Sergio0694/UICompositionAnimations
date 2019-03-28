@@ -81,37 +81,36 @@ namespace UICompositionAnimations.Animations.Abstract
         [MustUseReturnValue, NotNull]
         protected abstract IAnimationBuilder OnTranslation(Vector2? from, Vector2 to, Easing ease = Easing.Linear);
 
+        /// <inheritdoc/>
+        public IAnimationBuilder Offset(Axis axis, double to, Easing ease = Easing.Linear) => OnOffset(axis, null, to, ease);
+
+        /// <inheritdoc/>
+        public IAnimationBuilder Offset(Axis axis, double from, double to, Easing ease = Easing.Linear) => OnOffset(axis, from, to, ease);
+
         /// <summary>
-        /// Gets a <see cref="Vector2"/> value that represents the current offset for the target <see cref="UIElement"/>
+        /// Schedules an offset animation on a single axis
         /// </summary>
-        protected abstract Vector2 CurrentOffset { get; }
+        /// <param name="axis">The target axis to animate</param>
+        /// <param name="from">The optional starting value</param>
+        /// <param name="to">The target value</param>
+        /// <param name="ease">The easing function to use for the offset animation</param>
+        [MustUseReturnValue, NotNull]
+        protected abstract IAnimationBuilder OnOffset(Axis axis, double? from, double to, Easing ease);
 
         /// <inheritdoc/>
-        public IAnimationBuilder Offset(Axis axis, double to, Easing ease = Easing.Linear)
-        {
-            Vector2 offset = CurrentOffset;
-            if (axis == Axis.X) offset.X = (float)to;
-            else offset.Y = (float)to;
-            return Offset(CurrentOffset, offset, ease);
-        }
+        public IAnimationBuilder Offset(Vector2 to, Easing ease = Easing.Linear) => OnOffset(null, to, ease);
 
         /// <inheritdoc/>
-        public IAnimationBuilder Offset(Axis axis, double from, double to, Easing ease = Easing.Linear)
-        {
-            Vector2 offset = CurrentOffset;
-            return axis == Axis.X
-                ? Offset(new Vector2((float)from, offset.Y), new Vector2((float)to, offset.Y), ease)
-                : Offset(new Vector2(offset.X, (float)from), new Vector2(offset.X, (float)to), ease);
-        }
+        public IAnimationBuilder Offset(Vector2 from, Vector2 to, Easing ease = Easing.Linear) => OnOffset(from, to, ease);
 
-        /// <inheritdoc/>
-        public IAnimationBuilder Offset(Vector2 to, Easing ease = Easing.Linear)
-        {
-            return Offset(CurrentOffset, to, ease);
-        }
-
-        /// <inheritdoc/>
-        public abstract IAnimationBuilder Offset(Vector2 from, Vector2 to, Easing ease = Easing.Linear);
+        /// <summary>
+        /// Schedules a 2D offset animation
+        /// </summary>
+        /// <param name="from">The optional starting position</param>
+        /// <param name="to">The target position</param>
+        /// <param name="ease">The easing function to use for the offset animation</param>
+        [MustUseReturnValue, NotNull]
+        protected abstract IAnimationBuilder OnOffset(Vector2? from, Vector2 to, Easing ease = Easing.Linear);
 
         /// <inheritdoc/>
         public abstract IAnimationBuilder Scale(double to, Easing ease = Easing.Linear);

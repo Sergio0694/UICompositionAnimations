@@ -77,7 +77,7 @@ namespace UICompositionAnimations.Animations
                 CompositionEasingFunction easingFunction = TargetVisual.GetEasingFunction(ease);
 
                 // Create and return the animation
-                Vector3? from3 = from == null ? (Vector3?)null : new Vector3(from.Value, 0);
+                Vector3? from3 = from == null ? default : new Vector3(from.Value, 0);
                 Vector3 to3 = new Vector3(to, 0);
                 Vector3KeyFrameAnimation animation = TargetVisual.Compositor.CreateVector3KeyFrameAnimation(from3, to3, duration, null, easingFunction);
                 TargetVisual.StartAnimation("Translation", animation);
@@ -87,10 +87,7 @@ namespace UICompositionAnimations.Animations
         }
 
         /// <inheritdoc/>
-        protected override Vector2 CurrentOffset => new Vector2(TargetVisual.Offset.X, TargetVisual.Offset.Y);
-
-        /// <inheritdoc/>
-        public override IAnimationBuilder Offset(Vector2 from, Vector2 to, Easing ease = Easing.Linear)
+        protected override IAnimationBuilder OnOffset(Axis axis, double? from, double to, Easing ease)
         {
             AnimationFactories.Add(duration =>
             {
@@ -98,13 +95,26 @@ namespace UICompositionAnimations.Animations
                 TargetVisual.StopAnimation(nameof(Visual.Offset));
                 CompositionEasingFunction easingFunction = TargetVisual.GetEasingFunction(ease);
 
-                // Get the starting and target vectors
-                Vector3
-                    offset = TargetVisual.Offset,
-                    from3 = new Vector3(from.X, from.Y, offset.Z),
-                    to3 = new Vector3(to.X, to.Y, offset.Z);
+                // Create and return the animation
+                ScalarKeyFrameAnimation animation = TargetVisual.Compositor.CreateScalarKeyFrameAnimation((float?)from, (float)to, duration, null, easingFunction);
+                TargetVisual.StartAnimation(nameof(Visual.Offset), animation);
+            });
+
+            return this;
+        }
+
+        /// <inheritdoc/>
+        protected override IAnimationBuilder OnOffset(Vector2? from, Vector2 to, Easing ease = Easing.Linear)
+        {
+            AnimationFactories.Add(duration =>
+            {
+                // Stop the animation and get the easing function
+                TargetVisual.StopAnimation(nameof(Visual.Offset));
+                CompositionEasingFunction easingFunction = TargetVisual.GetEasingFunction(ease);
 
                 // Create and return the animation
+                Vector3? from3 = from == null ? default : new Vector3(from.Value, 0);
+                Vector3 to3 = new Vector3(to, 0);
                 Vector3KeyFrameAnimation animation = TargetVisual.Compositor.CreateVector3KeyFrameAnimation(from3, to3, duration, null, easingFunction);
                 TargetVisual.StartAnimation(nameof(Visual.Offset), animation);
             });
