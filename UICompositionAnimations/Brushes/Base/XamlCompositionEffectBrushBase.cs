@@ -44,18 +44,5 @@ namespace UICompositionAnimations.Brushes.Base
             }
             base.OnDisconnected();
         }
-
-        /// <summary>
-        /// Refreshes the <see cref="Windows.UI.Composition.CompositionBrush"/> used by the current instance
-        /// </summary>
-        protected async void Refresh()
-        {
-            using (await ConnectedMutex.LockAsync())
-            {
-                if (CompositionBrush == null) return;
-                CompositionBrush?.Dispose();
-                CompositionBrush = await OnBrushRequested().BuildAsync();
-            }
-        }
     }
 }
