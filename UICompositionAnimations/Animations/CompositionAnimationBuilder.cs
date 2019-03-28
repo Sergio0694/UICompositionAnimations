@@ -57,29 +57,7 @@ namespace UICompositionAnimations.Animations
         }
 
         /// <inheritdoc/>
-        public override IAnimationBuilder Translation(Axis axis, float to, Easing ease = Easing.Linear)
-        {
-            Vector3 translation = TargetVisual.TransformMatrix.Translation;
-            if (axis == Axis.X) translation.X = to;
-            else translation.Y = to;
-            return Translation(new Vector2(translation.X, translation.Y), ease);
-        }
-
-        /// <inheritdoc/>
-        public override IAnimationBuilder Translation(Axis axis, float from, float to, Easing ease = Easing.Linear)
-        {
-            Vector3 translation = TargetVisual.TransformMatrix.Translation;
-            return axis == Axis.X
-                ? Translation(new Vector2(from, translation.Y), new Vector2(to, translation.Y), ease)
-                : Translation(new Vector2(translation.X, from), new Vector2(translation.X, to), ease);
-        }
-
-        /// <inheritdoc/>
-        public override IAnimationBuilder Translation(Vector2 to, Easing ease = Easing.Linear)
-        {
-            Vector3 translation = TargetVisual.TransformMatrix.Translation;
-            return Translation(new Vector2(translation.X, translation.Y), to, ease);
-        }
+        protected override Vector2 CurrentTranslation => new Vector2(TargetVisual.TransformMatrix.Translation.X, TargetVisual.TransformMatrix.Translation.Y);
 
         /// <inheritdoc/>
         public override IAnimationBuilder Translation(Vector2 from, Vector2 to, Easing ease = Easing.Linear)
@@ -105,29 +83,7 @@ namespace UICompositionAnimations.Animations
         }
 
         /// <inheritdoc/>
-        public override IAnimationBuilder Offset(Axis axis, float to, Easing ease = Easing.Linear)
-        {
-            Vector3 offset = TargetVisual.Offset;
-            if (axis == Axis.X) offset.X = to;
-            else offset.Y = to;
-            return Offset(new Vector2(offset.X, offset.Y), ease);
-        }
-
-        /// <inheritdoc/>
-        public override IAnimationBuilder Offset(Axis axis, float from, float to, Easing ease = Easing.Linear)
-        {
-            Vector3 offset = TargetVisual.Offset;
-            return axis == Axis.X
-                ? Offset(new Vector2(from, offset.Y), new Vector2(to, offset.Y), ease)
-                : Offset(new Vector2(offset.X, from), new Vector2(offset.X, to), ease);
-        }
-
-        /// <inheritdoc/>
-        public override IAnimationBuilder Offset(Vector2 to, Easing ease = Easing.Linear)
-        {
-            Vector3 offset = TargetVisual.Offset;
-            return Offset(new Vector2(offset.X, offset.Y), to, ease);
-        }
+        protected override Vector2 CurrentOffset => new Vector2(TargetVisual.Offset.X, TargetVisual.Offset.Y);
 
         /// <inheritdoc/>
         public override IAnimationBuilder Offset(Vector2 from, Vector2 to, Easing ease = Easing.Linear)
@@ -264,7 +220,7 @@ namespace UICompositionAnimations.Animations
         {
             CompositionScopedBatch batch = TargetVisual.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             TaskCompletionSource tcs = new TaskCompletionSource();
-            batch.Completed += (s, e) => tcs.SetResult(null);
+            batch.Completed += (s, e) => tcs.SetResult();
             StartAnimations();
             batch.End();
             return tcs.Task;

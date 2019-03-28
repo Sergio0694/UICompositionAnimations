@@ -35,32 +35,74 @@ namespace UICompositionAnimations.Animations.Abstract
         /// </summary>
         private TimeSpan? _Delay;
 
+        #region Animations
+
         /// <inheritdoc/>
         public abstract IAnimationBuilder Opacity(float to, Easing ease = Easing.Linear);
 
         /// <inheritdoc/>
         public abstract IAnimationBuilder Opacity(float from, float to, Easing ease = Easing.Linear);
 
-        /// <inheritdoc/>
-        public abstract IAnimationBuilder Translation(Axis axis, float to, Easing ease = Easing.Linear);
+        /// <summary>
+        /// Gets a <see cref="Vector2"/> value that represents the current translation for the target <see cref="UIElement"/>
+        /// </summary>
+        protected abstract Vector2 CurrentTranslation { get; }
 
         /// <inheritdoc/>
-        public abstract IAnimationBuilder Translation(Axis axis, float from, float to, Easing ease = Easing.Linear);
+        public IAnimationBuilder Translation(Axis axis, float to, Easing ease = Easing.Linear)
+        {
+            Vector2 translation = CurrentTranslation;
+            if (axis == Axis.X) translation.X = to;
+            else translation.Y = to;
+            return Translation(CurrentOffset, translation, ease);
+        }
 
         /// <inheritdoc/>
-        public abstract IAnimationBuilder Translation(Vector2 to, Easing ease = Easing.Linear);
+        public IAnimationBuilder Translation(Axis axis, float from, float to, Easing ease = Easing.Linear)
+        {
+            Vector2 translation = CurrentTranslation;
+            return axis == Axis.X
+                ? Translation(new Vector2(from, translation.Y), new Vector2(to, translation.Y), ease)
+                : Translation(new Vector2(translation.X, from), new Vector2(translation.X, to), ease);
+        }
+
+        /// <inheritdoc/>
+        public IAnimationBuilder Translation(Vector2 to, Easing ease = Easing.Linear)
+        {
+            return Translation(CurrentTranslation, to, ease);
+        }
 
         /// <inheritdoc/>
         public abstract IAnimationBuilder Translation(Vector2 from, Vector2 to, Easing ease = Easing.Linear);
 
-        /// <inheritdoc/>
-        public abstract IAnimationBuilder Offset(Axis axis, float to, Easing ease = Easing.Linear);
+        /// <summary>
+        /// Gets a <see cref="Vector2"/> value that represents the current offset for the target <see cref="UIElement"/>
+        /// </summary>
+        protected abstract Vector2 CurrentOffset { get; }
 
         /// <inheritdoc/>
-        public abstract IAnimationBuilder Offset(Axis axis, float from, float to, Easing ease = Easing.Linear);
+        public IAnimationBuilder Offset(Axis axis, float to, Easing ease = Easing.Linear)
+        {
+            Vector2 offset = CurrentOffset;
+            if (axis == Axis.X) offset.X = to;
+            else offset.Y = to;
+            return Offset(CurrentOffset, offset, ease);
+        }
 
         /// <inheritdoc/>
-        public abstract IAnimationBuilder Offset(Vector2 to, Easing ease = Easing.Linear);
+        public IAnimationBuilder Offset(Axis axis, float from, float to, Easing ease = Easing.Linear)
+        {
+            Vector2 offset = CurrentOffset;
+            return axis == Axis.X
+                ? Offset(new Vector2(from, offset.Y), new Vector2(to, offset.Y), ease)
+                : Offset(new Vector2(offset.X, from), new Vector2(offset.X, to), ease);
+        }
+
+        /// <inheritdoc/>
+        public IAnimationBuilder Offset(Vector2 to, Easing ease = Easing.Linear)
+        {
+            return Offset(CurrentOffset, to, ease);
+        }
 
         /// <inheritdoc/>
         public abstract IAnimationBuilder Offset(Vector2 from, Vector2 to, Easing ease = Easing.Linear);
@@ -82,6 +124,8 @@ namespace UICompositionAnimations.Animations.Abstract
 
         /// <inheritdoc/>
         public abstract IAnimationBuilder Clip(Side side, float from, float to, Easing ease = Easing.Linear);
+
+        #endregion
 
         /// <inheritdoc/>
         public IAnimationBuilder Duration(int ms) => Duration(TimeSpan.FromMilliseconds(ms));
