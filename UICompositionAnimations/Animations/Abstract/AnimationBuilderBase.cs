@@ -45,10 +45,10 @@ namespace UICompositionAnimations.Animations.Abstract
         #region Animations
 
         /// <inheritdoc/>
-        public abstract IAnimationBuilder Opacity(float to, Easing ease = Easing.Linear);
+        public abstract IAnimationBuilder Opacity(double to, Easing ease = Easing.Linear);
 
         /// <inheritdoc/>
-        public abstract IAnimationBuilder Opacity(float from, float to, Easing ease = Easing.Linear);
+        public abstract IAnimationBuilder Opacity(double from, double to, Easing ease = Easing.Linear);
 
         /// <summary>
         /// Gets a <see cref="Vector2"/> value that represents the current translation for the target <see cref="UIElement"/>
@@ -56,21 +56,21 @@ namespace UICompositionAnimations.Animations.Abstract
         protected abstract Vector2 CurrentTranslation { get; }
 
         /// <inheritdoc/>
-        public IAnimationBuilder Translation(Axis axis, float to, Easing ease = Easing.Linear)
+        public IAnimationBuilder Translation(Axis axis, double to, Easing ease = Easing.Linear)
         {
             Vector2 translation = CurrentTranslation;
-            if (axis == Axis.X) translation.X = to;
-            else translation.Y = to;
+            if (axis == Axis.X) translation.X = (float)to;
+            else translation.Y = (float)to;
             return Translation(CurrentOffset, translation, ease);
         }
 
         /// <inheritdoc/>
-        public IAnimationBuilder Translation(Axis axis, float from, float to, Easing ease = Easing.Linear)
+        public IAnimationBuilder Translation(Axis axis, double from, double to, Easing ease = Easing.Linear)
         {
             Vector2 translation = CurrentTranslation;
             return axis == Axis.X
-                ? Translation(new Vector2(from, translation.Y), new Vector2(to, translation.Y), ease)
-                : Translation(new Vector2(translation.X, from), new Vector2(translation.X, to), ease);
+                ? Translation(new Vector2((float)from, translation.Y), new Vector2((float)to, translation.Y), ease)
+                : Translation(new Vector2(translation.X, (float)from), new Vector2(translation.X, (float)to), ease);
         }
 
         /// <inheritdoc/>
@@ -88,21 +88,21 @@ namespace UICompositionAnimations.Animations.Abstract
         protected abstract Vector2 CurrentOffset { get; }
 
         /// <inheritdoc/>
-        public IAnimationBuilder Offset(Axis axis, float to, Easing ease = Easing.Linear)
+        public IAnimationBuilder Offset(Axis axis, double to, Easing ease = Easing.Linear)
         {
             Vector2 offset = CurrentOffset;
-            if (axis == Axis.X) offset.X = to;
-            else offset.Y = to;
+            if (axis == Axis.X) offset.X = (float)to;
+            else offset.Y = (float)to;
             return Offset(CurrentOffset, offset, ease);
         }
 
         /// <inheritdoc/>
-        public IAnimationBuilder Offset(Axis axis, float from, float to, Easing ease = Easing.Linear)
+        public IAnimationBuilder Offset(Axis axis, double from, double to, Easing ease = Easing.Linear)
         {
             Vector2 offset = CurrentOffset;
             return axis == Axis.X
-                ? Offset(new Vector2(from, offset.Y), new Vector2(to, offset.Y), ease)
-                : Offset(new Vector2(offset.X, from), new Vector2(offset.X, to), ease);
+                ? Offset(new Vector2((float)from, offset.Y), new Vector2((float)to, offset.Y), ease)
+                : Offset(new Vector2(offset.X, (float)from), new Vector2(offset.X, (float)to), ease);
         }
 
         /// <inheritdoc/>
@@ -115,22 +115,22 @@ namespace UICompositionAnimations.Animations.Abstract
         public abstract IAnimationBuilder Offset(Vector2 from, Vector2 to, Easing ease = Easing.Linear);
 
         /// <inheritdoc/>
-        public abstract IAnimationBuilder Scale(float to, Easing ease = Easing.Linear);
+        public abstract IAnimationBuilder Scale(double to, Easing ease = Easing.Linear);
 
         /// <inheritdoc/>
-        public abstract IAnimationBuilder Scale(float from, float to, Easing ease = Easing.Linear);
+        public abstract IAnimationBuilder Scale(double from, double to, Easing ease = Easing.Linear);
 
         /// <inheritdoc/>
-        public abstract IAnimationBuilder Rotate(float to, Easing ease = Easing.Linear);
+        public abstract IAnimationBuilder Rotate(double to, Easing ease = Easing.Linear);
 
         /// <inheritdoc/>
-        public abstract IAnimationBuilder Rotate(float from, float to, Easing ease = Easing.Linear);
+        public abstract IAnimationBuilder Rotate(double from, double to, Easing ease = Easing.Linear);
 
         /// <inheritdoc/>
-        public abstract IAnimationBuilder Clip(Side side, float to, Easing ease = Easing.Linear);
+        public abstract IAnimationBuilder Clip(Side side, double to, Easing ease = Easing.Linear);
 
         /// <inheritdoc/>
-        public abstract IAnimationBuilder Clip(Side side, float from, float to, Easing ease = Easing.Linear);
+        public abstract IAnimationBuilder Clip(Side side, double from, double to, Easing ease = Easing.Linear);
 
         #endregion
 

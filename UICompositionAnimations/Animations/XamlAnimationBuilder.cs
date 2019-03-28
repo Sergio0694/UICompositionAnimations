@@ -31,14 +31,14 @@ namespace UICompositionAnimations.Animations
         }
 
         /// <inheritdoc/>
-        public override IAnimationBuilder Opacity(float to, Easing ease = Easing.Linear)
+        public override IAnimationBuilder Opacity(double to, Easing ease = Easing.Linear)
         {
             double from = TargetElement.Opacity;
-            return Opacity((float)from, to, ease);
+            return Opacity(from, to, ease);
         }
 
         /// <inheritdoc/>
-        public override IAnimationBuilder Opacity(float from, float to, Easing ease = Easing.Linear)
+        public override IAnimationBuilder Opacity(double from, double to, Easing ease = Easing.Linear)
         {
             AnimationFactories.Add(duration => TargetElement.CreateDoubleAnimation(nameof(UIElement.Opacity), from, to, duration, ease));
 
@@ -67,14 +67,14 @@ namespace UICompositionAnimations.Animations
         }
 
         /// <inheritdoc/>
-        public override IAnimationBuilder Scale(float to, Easing ease = Easing.Linear)
+        public override IAnimationBuilder Scale(double to, Easing ease = Easing.Linear)
         {
             double scale = TargetTransform.ScaleX;
             return Scale((float)scale, to, ease);
         }
 
         /// <inheritdoc/>
-        public override IAnimationBuilder Scale(float from, float to, Easing ease = Easing.Linear)
+        public override IAnimationBuilder Scale(double from, double to, Easing ease = Easing.Linear)
         {
             AnimationFactories.Add(duration => TargetTransform.CreateDoubleAnimation(nameof(CompositeTransform.ScaleX), from, to, duration, ease));
             AnimationFactories.Add(duration => TargetTransform.CreateDoubleAnimation(nameof(CompositeTransform.ScaleY), from, to, duration, ease));
@@ -83,14 +83,14 @@ namespace UICompositionAnimations.Animations
         }
 
         /// <inheritdoc/>
-        public override IAnimationBuilder Rotate(float to, Easing ease = Easing.Linear)
+        public override IAnimationBuilder Rotate(double to, Easing ease = Easing.Linear)
         {
             double angle = TargetTransform.Rotation;
-            return Rotate((float)angle, to, ease);
+            return Rotate(angle, to, ease);
         }
 
         /// <inheritdoc/>
-        public override IAnimationBuilder Rotate(float from, float to, Easing ease = Easing.Linear)
+        public override IAnimationBuilder Rotate(double from, double to, Easing ease = Easing.Linear)
         {
             AnimationFactories.Add(duration => TargetTransform.CreateDoubleAnimation(nameof(CompositeTransform.Rotation), from, to, duration, ease));
 
@@ -98,13 +98,13 @@ namespace UICompositionAnimations.Animations
         }
 
         /// <inheritdoc/>
-        public override IAnimationBuilder Clip(Side side, float to, Easing ease = Easing.Linear)
+        public override IAnimationBuilder Clip(Side side, double to, Easing ease = Easing.Linear)
         {
             throw new NotSupportedException("Can't animate the clip property from XAML");
         }
 
         /// <inheritdoc/>
-        public override IAnimationBuilder Clip(Side side, float from, float to, Easing ease = Easing.Linear)
+        public override IAnimationBuilder Clip(Side side, double from, double to, Easing ease = Easing.Linear)
         {
             throw new NotSupportedException("Can't animate the clip property from XAML");
         }

@@ -29,20 +29,20 @@ namespace UICompositionAnimations.Animations
         }
 
         /// <inheritdoc/>
-        public override IAnimationBuilder Opacity(float to, Easing ease = Easing.Linear)
+        public override IAnimationBuilder Opacity(double to, Easing ease = Easing.Linear)
         {
             float from = TargetVisual.Opacity;
             return Opacity(from, to, ease);
         }
 
         /// <inheritdoc/>
-        public override IAnimationBuilder Opacity(float from, float to, Easing ease = Easing.Linear)
+        public override IAnimationBuilder Opacity(double from, double to, Easing ease = Easing.Linear)
         {
             AnimationFactories.Add(duration =>
             {
                 TargetVisual.StopAnimation(nameof(Visual.Opacity));
                 CompositionEasingFunction easingFunction = TargetVisual.GetEasingFunction(ease);
-                ScalarKeyFrameAnimation animation = TargetVisual.Compositor.CreateScalarKeyFrameAnimation(from, to, duration, null, easingFunction);
+                ScalarKeyFrameAnimation animation = TargetVisual.Compositor.CreateScalarKeyFrameAnimation((float)from, (float)to, duration, null, easingFunction);
                 TargetVisual.StartAnimation(nameof(Visual.Opacity), animation);
             });
 
@@ -102,14 +102,14 @@ namespace UICompositionAnimations.Animations
         }
 
         /// <inheritdoc/>
-        public override IAnimationBuilder Scale(float to, Easing ease = Easing.Linear)
+        public override IAnimationBuilder Scale(double to, Easing ease = Easing.Linear)
         {
             Vector3 scale = TargetVisual.Scale;
             return Scale(scale.X, to, ease);
         }
 
         /// <inheritdoc/>
-        public override IAnimationBuilder Scale(float from, float to, Easing ease = Easing.Linear)
+        public override IAnimationBuilder Scale(double from, double to, Easing ease = Easing.Linear)
         {
             // Center the visual center point
             if (!(TargetElement is FrameworkElement element)) throw new InvalidOperationException("The scale animation needs a framework element");
@@ -125,8 +125,8 @@ namespace UICompositionAnimations.Animations
                 // Get the starting and target vectors
                 Vector3
                     scale = TargetVisual.Scale,
-                    from3 = new Vector3(from, from, scale.Z),
-                    to3 = new Vector3(to, to, scale.Z);
+                    from3 = new Vector3((float)from, (float)from, scale.Z),
+                    to3 = new Vector3((float)to, (float)to, scale.Z);
 
                 // Create and return the animation
                 Vector3KeyFrameAnimation animation = TargetVisual.Compositor.CreateVector3KeyFrameAnimation(from3, to3, duration, null, easingFunction);
@@ -137,13 +137,13 @@ namespace UICompositionAnimations.Animations
         }
 
         /// <inheritdoc/>
-        public override IAnimationBuilder Rotate(float to, Easing ease = Easing.Linear)
+        public override IAnimationBuilder Rotate(double to, Easing ease = Easing.Linear)
         {
             return Rotate(TargetVisual.RotationAngleInDegrees, to, ease);
         }
 
         /// <inheritdoc/>
-        public override IAnimationBuilder Rotate(float from, float to, Easing ease = Easing.Linear)
+        public override IAnimationBuilder Rotate(double from, double to, Easing ease = Easing.Linear)
         {
             // Center the visual center point
             if (!(TargetElement is FrameworkElement element)) throw new InvalidOperationException("The rotation animation needs a framework element");
@@ -154,7 +154,7 @@ namespace UICompositionAnimations.Animations
             {
                 TargetVisual.StopAnimation(nameof(Visual.RotationAngleInDegrees));
                 CompositionEasingFunction easingFunction = TargetVisual.GetEasingFunction(ease);
-                ScalarKeyFrameAnimation animation = TargetVisual.Compositor.CreateScalarKeyFrameAnimation(from, to, duration, null, easingFunction);
+                ScalarKeyFrameAnimation animation = TargetVisual.Compositor.CreateScalarKeyFrameAnimation((float)from, (float)to, duration, null, easingFunction);
                 TargetVisual.StartAnimation(nameof(Visual.RotationAngleInDegrees), animation);
             });
 
@@ -162,7 +162,7 @@ namespace UICompositionAnimations.Animations
         }
 
         /// <inheritdoc/>
-        public override IAnimationBuilder Clip(Side side, float to, Easing ease = Easing.Linear)
+        public override IAnimationBuilder Clip(Side side, double to, Easing ease = Easing.Linear)
         {
             InsetClip clip = TargetVisual.Clip as InsetClip ?? (TargetVisual.Clip = TargetVisual.Compositor.CreateInsetClip()).To<InsetClip>();
             float from;
@@ -179,7 +179,7 @@ namespace UICompositionAnimations.Animations
         }
 
         /// <inheritdoc/>
-        public override IAnimationBuilder Clip(Side side, float from, float to, Easing ease = Easing.Linear)
+        public override IAnimationBuilder Clip(Side side, double from, double to, Easing ease = Easing.Linear)
         {
             AnimationFactories.Add(duration =>
             {
@@ -198,7 +198,7 @@ namespace UICompositionAnimations.Animations
                 CompositionEasingFunction easingFunction = clip.GetEasingFunction(ease);
 
                 // Create and return the animation
-                ScalarKeyFrameAnimation animation = clip.Compositor.CreateScalarKeyFrameAnimation(from, to, duration, null, easingFunction);
+                ScalarKeyFrameAnimation animation = clip.Compositor.CreateScalarKeyFrameAnimation((float)from, (float)to, duration, null, easingFunction);
                 clip.StartAnimation(property, animation);
             });
 

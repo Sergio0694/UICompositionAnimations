@@ -9,6 +9,7 @@ namespace UICompositionAnimations.Animations.Interfaces
     /// <summary>
     /// An <see langword="interface"/> that represents an animation builder that uses a specific set of APIs
     /// </summary>
+    [PublicAPI]
     public interface IAnimationBuilder
     {
         /// <summary>
@@ -17,7 +18,7 @@ namespace UICompositionAnimations.Animations.Interfaces
         /// <param name="to">The target opacity value to animate to</param>
         /// <param name="ease">The easing function to use for the opacity animation</param>
         [MustUseReturnValue, NotNull]
-        IAnimationBuilder Opacity(float to, Easing ease = Easing.Linear);
+        IAnimationBuilder Opacity(double to, Easing ease = Easing.Linear);
 
         /// <summary>
         /// Schedules an opacity animation
@@ -26,7 +27,7 @@ namespace UICompositionAnimations.Animations.Interfaces
         /// <param name="to">The target opacity value to animate to</param>
         /// <param name="ease">The easing function to use for the opacity animation</param>
         [MustUseReturnValue, NotNull]
-        IAnimationBuilder Opacity(float from, float to, Easing ease = Easing.Linear);
+        IAnimationBuilder Opacity(double from, double to, Easing ease = Easing.Linear);
 
         /// <summary>
         /// Schedules a translation animation
@@ -35,7 +36,7 @@ namespace UICompositionAnimations.Animations.Interfaces
         /// <param name="to">The target translation value to animate to</param>
         /// <param name="ease">The easing function to use for the translation animation</param>
         [MustUseReturnValue, NotNull]
-        IAnimationBuilder Translation(Axis axis, float to, Easing ease = Easing.Linear);
+        IAnimationBuilder Translation(Axis axis, double to, Easing ease = Easing.Linear);
 
         /// <summary>
         /// Schedules a translation animation
@@ -45,7 +46,7 @@ namespace UICompositionAnimations.Animations.Interfaces
         /// <param name="to">The target translation value to animate to</param>
         /// <param name="ease">The easing function to use for the translation animation</param>
         [MustUseReturnValue, NotNull]
-        IAnimationBuilder Translation(Axis axis, float from, float to, Easing ease = Easing.Linear);
+        IAnimationBuilder Translation(Axis axis, double from, double to, Easing ease = Easing.Linear);
 
         /// <summary>
         /// Schedules a translation animation
@@ -71,7 +72,7 @@ namespace UICompositionAnimations.Animations.Interfaces
         /// <param name="to">The target offset value to animate to</param>
         /// <param name="ease">The easing function to use for the offset animation</param>
         [MustUseReturnValue, NotNull]
-        IAnimationBuilder Offset(Axis axis, float to, Easing ease = Easing.Linear);
+        IAnimationBuilder Offset(Axis axis, double to, Easing ease = Easing.Linear);
 
         /// <summary>
         /// Schedules an offset animation
@@ -81,7 +82,7 @@ namespace UICompositionAnimations.Animations.Interfaces
         /// <param name="to">The target offset value to animate to</param>
         /// <param name="ease">The easing function to use for the offset animation</param>
         [MustUseReturnValue, NotNull]
-        IAnimationBuilder Offset(Axis axis, float from, float to, Easing ease = Easing.Linear);
+        IAnimationBuilder Offset(Axis axis, double from, double to, Easing ease = Easing.Linear);
 
         /// <summary>
         /// Schedules an offset animation
@@ -106,7 +107,7 @@ namespace UICompositionAnimations.Animations.Interfaces
         /// <param name="to">The target scale value to animate to</param>
         /// <param name="ease">The easing function to use for the scale animation</param>
         [MustUseReturnValue, NotNull]
-        IAnimationBuilder Scale(float to, Easing ease = Easing.Linear);
+        IAnimationBuilder Scale(double to, Easing ease = Easing.Linear);
 
         /// <summary>
         /// Schedules a scale animation
@@ -115,7 +116,7 @@ namespace UICompositionAnimations.Animations.Interfaces
         /// <param name="to">The target scale value to animate to</param>
         /// <param name="ease">The easing function to use for the scale animation</param>
         [MustUseReturnValue, NotNull]
-        IAnimationBuilder Scale(float from, float to, Easing ease = Easing.Linear);
+        IAnimationBuilder Scale(double from, double to, Easing ease = Easing.Linear);
 
         /// <summary>
         /// Schedules a rotation animation
@@ -123,7 +124,7 @@ namespace UICompositionAnimations.Animations.Interfaces
         /// <param name="to">The target rotation value to animate to</param>
         /// <param name="ease">The easing function to use for the rotation animation</param>
         [MustUseReturnValue, NotNull]
-        IAnimationBuilder Rotate(float to, Easing ease = Easing.Linear);
+        IAnimationBuilder Rotate(double to, Easing ease = Easing.Linear);
 
         /// <summary>
         /// Schedules a rotation animation
@@ -132,7 +133,7 @@ namespace UICompositionAnimations.Animations.Interfaces
         /// <param name="to">The target rotation value to animate to</param>
         /// <param name="ease">The easing function to use for the rotation animation</param>
         [MustUseReturnValue, NotNull]
-        IAnimationBuilder Rotate(float from, float to, Easing ease = Easing.Linear);
+        IAnimationBuilder Rotate(double from, double to, Easing ease = Easing.Linear);
 
         /// <summary>
         /// Schedules a clip animation
@@ -141,7 +142,7 @@ namespace UICompositionAnimations.Animations.Interfaces
         /// <param name="to">The target clip value to animate to</param>
         /// <param name="ease">The easing function to use for the clip animation</param>
         [MustUseReturnValue, NotNull]
-        IAnimationBuilder Clip(Side side, float to, Easing ease = Easing.Linear);
+        IAnimationBuilder Clip(Side side, double to, Easing ease = Easing.Linear);
 
         /// <summary>
         /// Schedules a clip animation
@@ -151,7 +152,7 @@ namespace UICompositionAnimations.Animations.Interfaces
         /// <param name="to">The target clip value to animate to</param>
         /// <param name="ease">The easing function to use for the clip animation</param>
         [MustUseReturnValue, NotNull]
-        IAnimationBuilder Clip(Side side, float from, float to, Easing ease = Easing.Linear);
+        IAnimationBuilder Clip(Side side, double from, double to, Easing ease = Easing.Linear);
 
         /// <summary>
         /// Sets the duration of the animation
