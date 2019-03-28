@@ -6,7 +6,7 @@ namespace UICompositionAnimations.Enums
     /// Indicates the translation axis to use in an animation
     /// </summary>
     [PublicAPI]
-    public enum TranslationAxis
+    public enum Axis
     {
         /// <summary>
         /// Horizontal translation

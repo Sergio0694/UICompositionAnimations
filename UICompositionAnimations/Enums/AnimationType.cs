@@ -6,7 +6,7 @@ namespace UICompositionAnimations.Enums
     /// Indicates the type of an implicit composition animation
     /// </summary>
     [PublicAPI]
-    public enum ImplicitAnimationType
+    public enum AnimationType
     {
         /// <summary>
         /// The animation plays when the item becomes visible

@@ -6,7 +6,7 @@ namespace UICompositionAnimations.Enums
     /// Indicates the cache mode to use when loading a Win2D image
     /// </summary>
     [PublicAPI]
-    public enum BitmapCacheMode
+    public enum CacheMode
     {
         /// <summary>
         /// The default behavior, the cache is enabled

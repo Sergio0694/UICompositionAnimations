@@ -7,7 +7,6 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 using JetBrains.Annotations;
 using UICompositionAnimations.Enums;
-using UICompositionAnimations.XAMLTransform;
 
 namespace UICompositionAnimations
 {
@@ -22,16 +21,16 @@ namespace UICompositionAnimations
         // Manages the fade animation
         private static async Task ManageXAMLTransformFadeAnimationAsync(this UIElement element,
             double? startOp, double? endOp,
-            int ms, int? msDelay, EasingFunctionNames easingFunction, bool reverse)
+            int ms, int? msDelay, Easing easingFunction, bool reverse)
         {
             // Delay if necessary
             if (msDelay.HasValue) await Task.Delay(msDelay.Value);
 
             // Start and wait the animation
-            DoubleAnimation animation = XAMLTransformToolkit.CreateDoubleAnimation(element, "Opacity", startOp ?? element.Opacity, endOp, ms, easingFunction);
-            Storyboard storyboard = XAMLTransformToolkit.PrepareStoryboard(animation);
+            DoubleAnimation animation = element.CreateDoubleAnimation("Opacity", startOp ?? element.Opacity, endOp, ms, easingFunction);
+            Storyboard storyboard = animation.ToStoryboard();
             storyboard.AutoReverse = reverse;
-            await storyboard.WaitAsync();
+            await storyboard.BeginAsync();
         }
 
         /// <summary>
@@ -47,7 +46,7 @@ namespace UICompositionAnimations
         /// <param name="reverse">If true, the animation will be played in reverse mode when it finishes for the first time</param>
         public static async void StartXAMLTransformFadeAnimation(this UIElement element,
             double? startOp, double? endOp,
-            int ms, int? msDelay, EasingFunctionNames easingFunction, Action callback = null, bool reverse = false)
+            int ms, int? msDelay, Easing easingFunction, Action callback = null, bool reverse = false)
         {
             await ManageXAMLTransformFadeAnimationAsync(element, startOp, endOp, ms, msDelay, easingFunction, reverse);
             callback?.Invoke();
@@ -65,7 +64,7 @@ namespace UICompositionAnimations
         /// <param name="reverse">If true, the animation will be played in reverse mode when it finishes for the first time</param>
         public static Task StartXAMLTransformFadeAnimationAsync(this UIElement element,
             double? startOp, double? endOp,
-            int ms, int? msDelay, EasingFunctionNames easingFunction, bool reverse = false)
+            int ms, int? msDelay, Easing easingFunction, bool reverse = false)
         {
             return ManageXAMLTransformFadeAnimationAsync(element, startOp, endOp, ms, msDelay, easingFunction, reverse);
         }
@@ -77,8 +76,8 @@ namespace UICompositionAnimations
         // Manages the fade and slide animation
         private static async Task ManageXAMLTransformFadeSlideAnimationAsync(this UIElement element,
             double? startOp, double? endOp,
-            TranslationAxis axis, double? startXY, double? endXY,
-            int msOp, int? msSlide, int? msDelay, EasingFunctionNames easingFunction, bool reverse)
+            Axis axis, double? startXY, double? endXY,
+            int msOp, int? msSlide, int? msDelay, Easing easingFunction, bool reverse)
         {
             // Delay if necessary
             if (msDelay.HasValue) await Task.Delay(msDelay.Value);
@@ -86,17 +85,15 @@ namespace UICompositionAnimations
             // Try to get the original starting value if necessary
             if (startXY == null && element.RenderTransform is TranslateTransform)
             {
-                startXY = axis == TranslationAxis.X ? element.RenderTransform.To<TranslateTransform>().X : element.RenderTransform.To<TranslateTransform>().Y;
+                startXY = axis == Axis.X ? element.RenderTransform.To<TranslateTransform>().X : element.RenderTransform.To<TranslateTransform>().Y;
             }
 
             // Start and wait the animation
-            DoubleAnimation opacity = XAMLTransformToolkit.CreateDoubleAnimation(element, "Opacity", startOp ?? element.Opacity, endOp, msOp, easingFunction);
-            DoubleAnimation slide = XAMLTransformToolkit.CreateDoubleAnimation(element.GetRenderTransform<TranslateTransform>(),
-                axis.ToPropertyString(), startXY, endXY,
-                msSlide ?? msOp, easingFunction);
-            Storyboard storyboard = XAMLTransformToolkit.PrepareStoryboard(opacity, slide);
+            DoubleAnimation opacity = element.CreateDoubleAnimation("Opacity", startOp ?? element.Opacity, endOp, msOp, easingFunction);
+            DoubleAnimation slide = element.GetTransform<TranslateTransform>().CreateDoubleAnimation(axis.ToString(), startXY, endXY, msSlide ?? msOp, easingFunction);
+            Storyboard storyboard = new[] { opacity, slide }.ToStoryboard();
             storyboard.AutoReverse = reverse;
-            await storyboard.WaitAsync();
+            await storyboard.BeginAsync();
         }
 
         /// <summary>
@@ -116,8 +113,8 @@ namespace UICompositionAnimations
         /// <param name="reverse">If true, the animation will be played in reverse mode when it finishes for the first time</param>
         public static async void StartXAMLTransformFadeSlideAnimation(this UIElement element,
             double? startOp, double? endOp,
-            TranslationAxis axis, double? startXY, double? endXY,
-            int msOp, int? msSlide, int? msDelay, EasingFunctionNames easingFunction, Action callback = null, bool reverse = false)
+            Axis axis, double? startXY, double? endXY,
+            int msOp, int? msSlide, int? msDelay, Easing easingFunction, Action callback = null, bool reverse = false)
         {
             await element.ManageXAMLTransformFadeSlideAnimationAsync(startOp, endOp, axis, startXY, endXY, msOp, msSlide, msDelay, easingFunction, reverse);
             callback?.Invoke();
@@ -139,8 +136,8 @@ namespace UICompositionAnimations
         /// <param name="reverse">If true, the animation will be played in reverse mode when it finishes for the first time</param>
         public static Task StartXAMLTransformFadeSlideAnimationAsync(this UIElement element,
             double? startOp, double? endOp,
-            TranslationAxis axis, double? startXY, double? endXY,
-            int msOp, int? msSlide, int? msDelay, EasingFunctionNames easingFunction, bool reverse = false)
+            Axis axis, double? startXY, double? endXY,
+            int msOp, int? msSlide, int? msDelay, Easing easingFunction, bool reverse = false)
         {
             return element.ManageXAMLTransformFadeSlideAnimationAsync(startOp, endOp, axis, startXY, endXY, msOp, msSlide, msDelay, easingFunction, reverse);
         }
@@ -157,25 +154,29 @@ namespace UICompositionAnimations
         /// <param name="ms">The duration of the animation in milliseconds</param>
         /// <param name="easing">The easing function to use in the animation</param>
         public static Storyboard GetXAMLTransformFadeSlideStoryboard(this UIElement element, double? startOp, double? endOp,
-            TranslationAxis axis, double? startXY, double? endXY, int ms, EasingFunctionNames easing)
+            Axis axis, double? startXY, double? endXY, int ms, Easing easing)
         {
             // Try to get the original starting value if necessary
             TranslateTransform translate = element.RenderTransform as TranslateTransform;
             bool cleanAnimation = startXY != null;
             if (startXY == null && translate != null)
             {
-                startXY = axis == TranslationAxis.X ? translate.X : translate.Y;
+                startXY = axis == Axis.X ? translate.X : translate.Y;
             }
 
-            // Prepare and run the animation
+            // Setup the transform
             if (translate == null || cleanAnimation)
             {
                 translate = new TranslateTransform();
                 element.RenderTransform = translate;
             }
-            return XAMLTransformToolkit.PrepareStoryboard(
-                XAMLTransformToolkit.CreateDoubleAnimation(element, "Opacity", startOp ?? element.Opacity, endOp, ms, easing),
-                XAMLTransformToolkit.CreateDoubleAnimation(translate, axis.ToPropertyString(), startXY, endXY, ms, easing));
+
+            // Create the animation
+            return new[]
+            {
+                element.CreateDoubleAnimation("Opacity", startOp ?? element.Opacity, endOp, ms, easing),
+                translate.CreateDoubleAnimation(axis.ToString(), startXY, endXY, ms, easing)
+            }.ToStoryboard();
         }
 
         #endregion
@@ -186,7 +187,7 @@ namespace UICompositionAnimations
         private static async Task ManageXAMLTransformFadeScaleAnimationAsync(this UIElement element,
             double? startOp, double? endOp,
             double? startScale, double? endScale,
-            int msOp, int? msScale, int? msDelay, EasingFunctionNames easingFunction, bool reverse)
+            int msOp, int? msScale, int? msDelay, Easing easingFunction, bool reverse)
         {
             // Delay if necessary
             if (msDelay.HasValue) await Task.Delay(msDelay.Value);
@@ -199,14 +200,12 @@ namespace UICompositionAnimations
             }
 
             // Start and wait the animation
-            DoubleAnimation opacity = XAMLTransformToolkit.CreateDoubleAnimation(element, "Opacity", startOp ?? element.Opacity, endOp, msOp, easingFunction);
-            DoubleAnimation scaleX = XAMLTransformToolkit.CreateDoubleAnimation(element.GetRenderTransform<ScaleTransform>(), "ScaleX",
-                startScale, endScale, msScale ?? msOp, easingFunction);
-            DoubleAnimation scaleY = XAMLTransformToolkit.CreateDoubleAnimation(element.GetRenderTransform<ScaleTransform>(), "ScaleY",
-                startScale, endScale, msScale ?? msOp, easingFunction);
-            Storyboard storyboard = XAMLTransformToolkit.PrepareStoryboard(opacity, scaleX, scaleY);
+            DoubleAnimation opacity = element.CreateDoubleAnimation("Opacity", startOp ?? element.Opacity, endOp, msOp, easingFunction);
+            DoubleAnimation scaleX = element.GetTransform<ScaleTransform>().CreateDoubleAnimation("ScaleX", startScale, endScale, msScale ?? msOp, easingFunction);
+            DoubleAnimation scaleY = element.GetTransform<ScaleTransform>().CreateDoubleAnimation( "ScaleY", startScale, endScale, msScale ?? msOp, easingFunction);
+            Storyboard storyboard = new[] { opacity, scaleX, scaleY }.ToStoryboard();
             storyboard.AutoReverse = reverse;
-            await storyboard.WaitAsync();
+            await storyboard.BeginAsync();
         }
 
         /// <summary>
@@ -226,7 +225,7 @@ namespace UICompositionAnimations
         public static async void StartXAMLTransformFadeScaleAnimation(this UIElement element,
             double? startOp, double? endOp,
             double? startScale, double? endScale,
-            int msOp, int? msScale, int? msDelay, EasingFunctionNames easingFunction, Action callback = null, bool reverse = false)
+            int msOp, int? msScale, int? msDelay, Easing easingFunction, Action callback = null, bool reverse = false)
         {
             await element.ManageXAMLTransformFadeScaleAnimationAsync(startOp, endOp, startScale, endScale, msOp, msScale, msDelay, easingFunction, reverse);
             callback?.Invoke();
@@ -248,7 +247,7 @@ namespace UICompositionAnimations
         public static Task StartXAMLTransformFadeScaleAnimationAsync(this UIElement element,
             double? startOp, double? endOp,
             double? startScale, double? endScale,
-            int msOp, int? msSlide, int? msDelay, EasingFunctionNames easingFunction, bool reverse = false)
+            int msOp, int? msSlide, int? msDelay, Easing easingFunction, bool reverse = false)
         {
             return element.ManageXAMLTransformFadeScaleAnimationAsync(startOp, endOp, startScale, endScale, msOp, msSlide, msDelay, easingFunction, reverse);
         }
@@ -260,7 +259,7 @@ namespace UICompositionAnimations
         // Manages the scale animation
         private static async Task ManageXAMLTransformFadeScaleAnimationAsync(this UIElement element,
             double? startScale, double? endScale,
-            int ms, int? msDelay, EasingFunctionNames easingFunction, bool reverse)
+            int ms, int? msDelay, Easing easingFunction, bool reverse)
         {
             // Delay if necessary
             if (msDelay.HasValue) await Task.Delay(msDelay.Value);
@@ -273,13 +272,11 @@ namespace UICompositionAnimations
             }
 
             // Start and wait the animation
-            DoubleAnimation scaleX = XAMLTransformToolkit.CreateDoubleAnimation(element.GetRenderTransform<ScaleTransform>(), "ScaleX",
-                startScale, endScale, ms, easingFunction);
-            DoubleAnimation scaleY = XAMLTransformToolkit.CreateDoubleAnimation(element.GetRenderTransform<ScaleTransform>(), "ScaleY",
-                startScale, endScale, ms, easingFunction);
-            Storyboard storyboard = XAMLTransformToolkit.PrepareStoryboard(scaleX, scaleY);
+            DoubleAnimation scaleX = element.GetTransform<ScaleTransform>().CreateDoubleAnimation("ScaleX",startScale, endScale, ms, easingFunction);
+            DoubleAnimation scaleY = element.GetTransform<ScaleTransform>().CreateDoubleAnimation("ScaleY", startScale, endScale, ms, easingFunction);
+            Storyboard storyboard = new[] { scaleX, scaleY }.ToStoryboard();
             storyboard.AutoReverse = reverse;
-            await storyboard.WaitAsync();
+            await storyboard.BeginAsync();
         }
 
         /// <summary>
@@ -295,7 +292,7 @@ namespace UICompositionAnimations
         /// <param name="reverse">If true, the animation will be played in reverse mode when it finishes for the first time</param>
         public static async void StartXAMLTransformScaleAnimation(this UIElement element,
             double? startScale, double? endScale,
-            int ms, int? msDelay, EasingFunctionNames easingFunction, Action callback = null, bool reverse = false)
+            int ms, int? msDelay, Easing easingFunction, Action callback = null, bool reverse = false)
         {
             await element.ManageXAMLTransformFadeScaleAnimationAsync(startScale, endScale, ms, msDelay, easingFunction, reverse);
             callback?.Invoke();
@@ -313,7 +310,7 @@ namespace UICompositionAnimations
         /// <param name="reverse">If true, the animation will be played in reverse mode when it finishes for the first time</param>
         public static Task StartXAMLTransformScaleAnimationAsync(this UIElement element,
             double? startScale, double? endScale,
-            int ms, int? msDelay, EasingFunctionNames easingFunction, bool reverse = false)
+            int ms, int? msDelay, Easing easingFunction, bool reverse = false)
         {
             return element.ManageXAMLTransformFadeScaleAnimationAsync(startScale, endScale, ms, msDelay, easingFunction, reverse);
         }
@@ -324,8 +321,8 @@ namespace UICompositionAnimations
 
         // Manages the fade and slide animation
         private static async Task ManageXAMLTransformSlideAnimationAsync(this UIElement element,
-            TranslationAxis axis, double? startXY, double? endXY,
-            int ms, int? msDelay, EasingFunctionNames easingFunction, bool reverse)
+            Axis axis, double? startXY, double? endXY,
+            int ms, int? msDelay, Easing easingFunction, bool reverse)
         {
             // Delay if necessary
             if (msDelay.HasValue) await Task.Delay(msDelay.Value);
@@ -333,15 +330,14 @@ namespace UICompositionAnimations
             // Try to get the original starting value if necessary
             if (startXY == null && element.RenderTransform is TranslateTransform)
             {
-                startXY = axis == TranslationAxis.X ? element.RenderTransform.To<TranslateTransform>().X : element.RenderTransform.To<TranslateTransform>().Y;
+                startXY = axis == Axis.X ? element.RenderTransform.To<TranslateTransform>().X : element.RenderTransform.To<TranslateTransform>().Y;
             }
 
             // Start and wait the animation
-            DoubleAnimation slide = XAMLTransformToolkit.CreateDoubleAnimation(element.GetRenderTransform<TranslateTransform>(),
-                axis.ToPropertyString(), startXY, endXY, ms, easingFunction);
-            Storyboard storyboard = XAMLTransformToolkit.PrepareStoryboard(slide);
+            DoubleAnimation slide = element.GetTransform<TranslateTransform>().CreateDoubleAnimation(axis.ToString(), startXY, endXY, ms, easingFunction);
+            Storyboard storyboard = slide.ToStoryboard();
             storyboard.AutoReverse = reverse;
-            await storyboard.WaitAsync();
+            await storyboard.BeginAsync();
         }
 
         /// <summary>
@@ -357,8 +353,8 @@ namespace UICompositionAnimations
         /// <param name="callback">An Action to execute when the new animations end</param>
         /// <param name="reverse">If true, the animation will be played in reverse mode when it finishes for the first time</param>
         public static async void StartXAMLTransformSlideAnimation(this UIElement element,
-            TranslationAxis axis, double? startXY, double? endXY,
-            int ms, int? msDelay, EasingFunctionNames easingFunction, Action callback = null, bool reverse = false)
+            Axis axis, double? startXY, double? endXY,
+            int ms, int? msDelay, Easing easingFunction, Action callback = null, bool reverse = false)
         {
             await element.ManageXAMLTransformSlideAnimationAsync(axis, startXY, endXY, ms, msDelay, easingFunction, reverse);
             callback?.Invoke();
@@ -376,8 +372,8 @@ namespace UICompositionAnimations
         /// <param name="easingFunction">The easing function to use with the new animations</param>
         /// <param name="reverse">If true, the animation will be played in reverse mode when it finishes for the first time</param>
         public static Task StartXAMLTransformSlideAnimationAsync(this UIElement element,
-            TranslationAxis axis, double? startXY, double? endXY,
-            int ms, int? msDelay, EasingFunctionNames easingFunction, bool reverse = false)
+            Axis axis, double? startXY, double? endXY,
+            int ms, int? msDelay, Easing easingFunction, bool reverse = false)
         {
             return element.ManageXAMLTransformSlideAnimationAsync(axis, startXY, endXY, ms, msDelay, easingFunction, reverse);
         }
@@ -392,14 +388,14 @@ namespace UICompositionAnimations
         /// <param name="ms">The duration of the animation in milliseconds</param>
         /// <param name="easing">The easing function to use in the animation</param>
         public static Storyboard GetXAMLTransformSlideStoryboard(this UIElement element,
-            TranslationAxis axis, double? startXY, double? endXY, int ms, EasingFunctionNames easing)
+            Axis axis, double? startXY, double? endXY, int ms, Easing easing)
         {
             // Try to get the original starting value if necessary
             TranslateTransform translate = element.RenderTransform as TranslateTransform;
             bool cleanAnimation = startXY != null;
             if (startXY == null && translate != null)
             {
-                startXY = axis == TranslationAxis.X ? element.RenderTransform.To<TranslateTransform>().X : element.RenderTransform.To<TranslateTransform>().Y;
+                startXY = axis == Axis.X ? element.RenderTransform.To<TranslateTransform>().X : element.RenderTransform.To<TranslateTransform>().Y;
             }
 
             // Prepare and run the animation
@@ -408,7 +404,7 @@ namespace UICompositionAnimations
                 translate = new TranslateTransform();
                 element.RenderTransform = translate;
             }
-            return XAMLTransformToolkit.PrepareStoryboard(XAMLTransformToolkit.CreateDoubleAnimation(translate, axis.ToPropertyString(), startXY, endXY, ms, easing));
+            return translate.CreateDoubleAnimation(axis.ToString(), startXY, endXY, ms, easing).ToStoryboard();
         }
 
         #endregion
@@ -425,7 +421,7 @@ namespace UICompositionAnimations
         /// <param name="duration">The duration of the animation to create</param>
         /// <param name="delay">The optional initial delay for the animation</param>
         [SuppressMessage("ReSharper", "AccessToModifiedClosure")] // Margin updates at each animation timestep
-        public static async Task StartXAMLMarginAnimation([NotNull] this FrameworkElement element, double? start, double end, MarginSide side, int duration, int? delay = null)
+        public static async Task StartXAMLMarginAnimation([NotNull] this FrameworkElement element, double? start, double end, Side side, int duration, int? delay = null)
         {
             // Delay if needed, and calculate the start offset
             if (delay != null) await Task.Delay(delay.Value);
@@ -433,16 +429,16 @@ namespace UICompositionAnimations
             {
                 switch (side)
                 {
-                    case MarginSide.Top:
+                    case Side.Top:
                         start = element.Margin.Top;
                         break;
-                    case MarginSide.Bottom:
+                    case Side.Bottom:
                         start = element.Margin.Bottom;
                         break;
-                    case MarginSide.Left:
+                    case Side.Left:
                         start = element.Margin.Left;
                         break;
-                    case MarginSide.Right:
+                    case Side.Right:
                         start = element.Margin.Right;
                         break;
                     default: throw new ArgumentOutOfRangeException(nameof(side), "Invalid margin side");
@@ -468,16 +464,16 @@ namespace UICompositionAnimations
                 elapsed++;
                 switch (side)
                 {
-                    case MarginSide.Top:
+                    case Side.Top:
                         margin.Top += step;
                         break;
-                    case MarginSide.Bottom:
+                    case Side.Bottom:
                         margin.Bottom += step;
                         break;
-                    case MarginSide.Left:
+                    case Side.Left:
                         margin.Left += step;
                         break;
-                    case MarginSide.Right:
+                    case Side.Right:
                         margin.Right += step;
                         break;
                     default: throw new ArgumentOutOfRangeException(nameof(side), "Invalid margin side");
@@ -496,16 +492,16 @@ namespace UICompositionAnimations
             // Wait for completion and adjust the final margin (just to be sure)
             switch (side)
             {
-                case MarginSide.Top:
+                case Side.Top:
                     margin.Top = end;
                     break;
-                case MarginSide.Bottom:
+                case Side.Bottom:
                     margin.Bottom = end;
                     break;
-                case MarginSide.Left:
+                case Side.Left:
                     margin.Left = end;
                     break;
-                case MarginSide.Right:
+                case Side.Right:
                     margin.Right = end;
                     break;
                 default: throw new ArgumentOutOfRangeException(nameof(side), "Invalid margin side");
@@ -524,7 +520,7 @@ namespace UICompositionAnimations
         /// <param name="color">The target value to set</param>
         /// <param name="ms">The duration of the animation</param>
         /// <param name="easing">The easing function to use</param>
-        public static void AnimateColor(this SolidColorBrush solidColorBrush, Color color, int ms, EasingFunctionNames easing)
+        public static void AnimateColor(this SolidColorBrush solidColorBrush, Color color, int ms, Easing easing)
         {
             // Get the target color
             if (solidColorBrush.Color.Equals(color)) return;
@@ -562,7 +558,7 @@ namespace UICompositionAnimations
             };
             Storyboard.SetTarget(backgroundAnimation, element);
             Storyboard.SetTargetProperty(backgroundAnimation, "Opacity");
-            return XAMLTransformToolkit.PrepareStoryboard(backgroundAnimation);
+            return backgroundAnimation.ToStoryboard();
         }
 
         #endregion

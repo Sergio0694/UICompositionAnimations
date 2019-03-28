@@ -49,8 +49,8 @@ namespace UICompositionAnimations.Behaviours
 
             // Get the noise brush using Win2D
             CompositionSurfaceBrush noiseBitmap = canvas == null
-                ? await Win2DImageHelper.LoadImageAsync(compositor, uri, BitmapDPIMode.CopyDisplayDPISettingsWith96AsLowerBound, BitmapCacheMode.Default)
-                : await Win2DImageHelper.LoadImageAsync(compositor, canvas, uri, BitmapDPIMode.CopyDisplayDPISettingsWith96AsLowerBound, BitmapCacheMode.Default);
+                ? await Win2DImageHelper.LoadImageAsync(compositor, uri, DpiMode.DisplayDpiWith96AsLowerBound, CacheMode.Default)
+                : await Win2DImageHelper.LoadImageAsync(compositor, canvas, uri, DpiMode.DisplayDpiWith96AsLowerBound, CacheMode.Default);
 
             // Make sure the Win2D brush was loaded correctly
             if (noiseBitmap != null)
@@ -90,7 +90,7 @@ namespace UICompositionAnimations.Behaviours
         {
             // Initial setup
             ColorSourceEffect colorEffect = new ColorSourceEffect { Color = color };
-            CompositionSurfaceBrush noiseBitmap = await Win2DImageHelper.LoadImageAsync(compositor, uri, BitmapDPIMode.CopyDisplayDPISettingsWith96AsLowerBound, BitmapCacheMode.Default);
+            CompositionSurfaceBrush noiseBitmap = await Win2DImageHelper.LoadImageAsync(compositor, uri, DpiMode.DisplayDpiWith96AsLowerBound, CacheMode.Default);
             if (noiseBitmap == null) return colorEffect;
 
             // Blend the effects
