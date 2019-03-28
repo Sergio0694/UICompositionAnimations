@@ -45,9 +45,9 @@ namespace UICompositionAnimations.Brushes
         /// <summary>
         /// Gets or sets the source mode for the custom acrylic effect
         /// </summary>
-        public AcrylicEffectMode Mode
+        public AcrylicBackgroundSource Mode
         {
-            get => GetValue(ModeProperty).To<AcrylicEffectMode>();
+            get => GetValue(ModeProperty).To<AcrylicBackgroundSource>();
             set => SetValue(ModeProperty, value);
         }
 
@@ -55,7 +55,7 @@ namespace UICompositionAnimations.Brushes
         /// Gets the <see cref="DependencyProperty"/> for the <see cref="Mode"/> property
         /// </summary>
         public static readonly DependencyProperty ModeProperty =
-            DependencyProperty.Register(nameof(Mode), typeof(AcrylicEffectMode), typeof(CustomAcrylicBrush), new PropertyMetadata(AcrylicEffectMode.InAppBlur, OnModePropertyChanged));
+            DependencyProperty.Register(nameof(Mode), typeof(AcrylicBackgroundSource), typeof(CustomAcrylicBrush), new PropertyMetadata(AcrylicBackgroundSource.Backdrop, OnModePropertyChanged));
 
         private static async void OnModePropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -75,7 +75,7 @@ namespace UICompositionAnimations.Brushes
         /// <summary>
         /// Gets or sets the blur amount for the effect
         /// </summary>
-        /// <remarks>This property is ignored when the active mode is <see cref="AcrylicEffectMode.HostBackdrop"/></remarks>
+        /// <remarks>This property is ignored when the active mode is <see cref="AcrylicBackgroundSource.HostBackdrop"/></remarks>
         public double BlurAmount
         {
             get => GetValue(BlurAmountProperty).To<double>();
@@ -92,7 +92,7 @@ namespace UICompositionAnimations.Brushes
         {
             CustomAcrylicBrush @this = d.To<CustomAcrylicBrush>();
             await @this.ConnectedSemaphore.WaitAsync();
-            if (@this.Mode == AcrylicEffectMode.InAppBlur)
+            if (@this.Mode == AcrylicBackgroundSource.Backdrop)
             {
                 // Update the blur value with or without an animation
                 if (@this.BlurAnimationDuration == 0)
@@ -107,7 +107,7 @@ namespace UICompositionAnimations.Brushes
         /// <summary>
         /// Gets or sets the duration of the optional animation played when changing the <see cref="BlurAmount"/> property
         /// </summary>
-        /// <remarks>This property is ignored when the active mode is <see cref="AcrylicEffectMode.HostBackdrop"/></remarks>
+        /// <remarks>This property is ignored when the active mode is <see cref="AcrylicBackgroundSource.HostBackdrop"/></remarks>
         public int BlurAnimationDuration
         {
             get => GetValue(BlurAnimationDurationProperty).To<int>();
@@ -303,10 +303,10 @@ namespace UICompositionAnimations.Brushes
         /// Clears the internal cache of <see cref="CompositionBackdropBrush"/> instances
         /// </summary>
         [PublicAPI]
-        public static async Task ClearCacheAsync(AcrylicEffectMode targets)
+        public static async Task ClearCacheAsync(AcrylicBackgroundSource targets)
         {
             // In-app backdrop brush
-            if (targets.HasFlag(AcrylicEffectMode.InAppBlur))
+            if (targets.HasFlag(AcrylicBackgroundSource.Backdrop))
             {
                 await BackdropSemaphore.WaitAsync();
                 _BackdropInstance = null;
@@ -314,7 +314,7 @@ namespace UICompositionAnimations.Brushes
             }
 
             // Host backdrop brush
-            if (targets.HasFlag(AcrylicEffectMode.HostBackdrop))
+            if (targets.HasFlag(AcrylicBackgroundSource.HostBackdrop))
             {
                 await HostBackdropSemaphore.WaitAsync();
                 _HostBackdropCache = null;
@@ -343,7 +343,7 @@ namespace UICompositionAnimations.Brushes
 
             // Setup the base effect
             IGraphicsEffectSource baseEffect;
-            if (Mode == AcrylicEffectMode.InAppBlur)
+            if (Mode == AcrylicBackgroundSource.Backdrop)
             {
                 // Manage the cache
                 await BackdropSemaphore.WaitAsync();
@@ -431,7 +431,7 @@ namespace UICompositionAnimations.Brushes
             }
 
             // Update the blur amount and store the effect
-            if (Mode == AcrylicEffectMode.InAppBlur)
+            if (Mode == AcrylicBackgroundSource.Backdrop)
                 _EffectBrush.Properties.InsertScalar(BlurAmountParameterName, (float)BlurAmount);
             CompositionBrush = _EffectBrush;
             _State = AcrylicBrushEffectState.EffectEnabled;
