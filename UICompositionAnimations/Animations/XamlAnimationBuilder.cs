@@ -77,7 +77,24 @@ namespace UICompositionAnimations.Animations
         }
 
         /// <inheritdoc/>
-        protected override IAnimationBuilder OnClip(Side side, double? @from, double to, Easing ease) => throw new NotSupportedException("Can't animate the clip property from XAML");
+        protected override IAnimationBuilder OnClip(Side side, double? from, double to, Easing ease) => throw new NotSupportedException("Can't animate the clip property from XAML");
+
+        /// <inheritdoc/>
+        protected override IAnimationBuilder OnSize(Axis axis, double? from, double to, Easing ease)
+        {
+            AnimationFactories.Add(duration => TargetElement.CreateDoubleAnimation(axis == Axis.X ? nameof(FrameworkElement.Width) : nameof(FrameworkElement.Height), from, to, duration, ease, true));
+
+            return this;
+        }
+
+        /// <inheritdoc/>
+        protected override IAnimationBuilder OnSize(Vector2? from, Vector2 to, Easing ease = Easing.Linear)
+        {
+            AnimationFactories.Add(duration => TargetTransform.CreateDoubleAnimation(nameof(FrameworkElement.Width), from?.X, to.X, duration, ease, true));
+            AnimationFactories.Add(duration => TargetTransform.CreateDoubleAnimation(nameof(FrameworkElement.Height), from?.Y, to.Y, duration, ease, true));
+
+            return this;
+        }
 
         /// <summary>
         /// Gets the <see cref="Windows.UI.Xaml.Media.Animation.Storyboard"/> represented by the current instance

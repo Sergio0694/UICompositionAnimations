@@ -186,6 +186,43 @@ namespace UICompositionAnimations.Animations
             return this;
         }
 
+        /// <inheritdoc/>
+        protected override IAnimationBuilder OnSize(Axis axis, double? from, double to, Easing ease)
+        {
+            AnimationFactories.Add(duration =>
+            {
+                // Stop the animation and get the easing function
+                string property = $"{nameof(Visual.Size)}.{axis}";
+                TargetVisual.StopAnimation(property);
+                CompositionEasingFunction easingFunction = TargetVisual.GetEasingFunction(ease);
+
+                // Create and return the animation
+                ScalarKeyFrameAnimation animation = TargetVisual.Compositor.CreateScalarKeyFrameAnimation((float?)from, (float)to, duration, null, easingFunction);
+                TargetVisual.StartAnimation(property, animation);
+            });
+
+            return this;
+        }
+
+        /// <inheritdoc/>
+        protected override IAnimationBuilder OnSize(Vector2? from, Vector2 to, Easing ease = Easing.Linear)
+        {
+            AnimationFactories.Add(duration =>
+            {
+                // Stop the animation and get the easing function
+                TargetVisual.StopAnimation(nameof(Visual.Size));
+                CompositionEasingFunction easingFunction = TargetVisual.GetEasingFunction(ease);
+
+                // Create and return the animation
+                Vector3? from3 = from == null ? default : new Vector3(from.Value, 0);
+                Vector3 to3 = new Vector3(to, 0);
+                Vector3KeyFrameAnimation animation = TargetVisual.Compositor.CreateVector3KeyFrameAnimation(from3, to3, duration, null, easingFunction);
+                TargetVisual.StartAnimation(nameof(Visual.Size), animation);
+            });
+
+            return this;
+        }
+
         /// <summary>
         /// Creates and starts the pending animations
         /// </summary>
