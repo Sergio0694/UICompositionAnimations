@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
-using System.Threading.Tasks;
-using Windows.Foundation;
 using Windows.UI.Composition;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Shapes;
 using JetBrains.Annotations;
-using UICompositionAnimations.Enums;
 
 namespace Windows.UI.Xaml
 {
@@ -22,47 +18,13 @@ namespace Windows.UI.Xaml
         /// Sets the <see cref="Visual.CenterPoint"/> property of the <see cref="Visual"/> behind a given <see cref="FrameworkElement"/>
         /// </summary>
         /// <param name="element">The source <see cref="FrameworkElement"/></param>
-        public static void SetVisualCenterPoint([NotNull] this FrameworkElement element)
+        /// <param name="x">The center to use on the X axis. If <see langword="null"/>, the center of the <see cref="FrameworkElement"/> will be used</param>
+        /// <param name="y">The center to use on the Y axis. If <see langword="null"/>, the center of the <see cref="FrameworkElement"/> will be used</param>
+        public static void SetVisualCenterPoint([NotNull] this FrameworkElement element, double? x, double? y)
         {
             if (double.IsNaN(element.Width) || double.IsNaN(element.Height))
                 throw new InvalidOperationException("The target element must have a fixed size");
-            element.GetVisual().CenterPoint = new Vector3((float)(element.Width / 2), (float)(element.Height / 2), 0);
-        }
-
-        /// <summary>
-        /// Sets the <see cref="Visual.CenterPoint"/> property of the <see cref="Visual"/> behind a given <see cref="FrameworkElement"/> with no fixed size
-        /// </summary>
-        /// <param name="element">The source element</param>
-        public static async Task SetVisualCenterPointAsync([NotNull] this FrameworkElement element)
-        {
-            // Check if the control hasn't already been loaded
-            bool CheckLoadingPending() => element.ActualWidth + element.ActualHeight < 0.1;
-            if (CheckLoadingPending())
-            {
-                // Wait for the loaded event and set the CenterPoint
-                TaskCompletionSource tcs = new TaskCompletionSource();
-                void Handler(object s, RoutedEventArgs e)
-                {
-                    tcs.SetResult();
-                    element.Loaded -= Handler;
-                }
-
-                // Wait for the loaded event for a given time threshold
-                element.Loaded += Handler;
-                await Task.WhenAny(tcs.Task, Task.Delay(500));
-                element.Loaded -= Handler;
-
-                // If the control still hasn't been loaded, approximate the center point with its desired size
-                if (CheckLoadingPending())
-                {
-                    element.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
-                    element.GetVisual().CenterPoint = new Vector3((float)(element.DesiredSize.Width / 2), (float)(element.DesiredSize.Height / 2), 0);
-                    return;
-                }
-            }
-
-            // Update the center point
-            element.GetVisual().CenterPoint = new Vector3((float)(element.ActualWidth / 2), (float)(element.ActualHeight / 2), 0);
+            element.GetVisual().CenterPoint = new Vector3((float?)x ?? (float)(element.Width / 2), (float?)y ?? (float)(element.Height / 2), 0);
         }
 
         /// <summary>
@@ -125,102 +87,6 @@ namespace Windows.UI.Xaml
             }
             if (apply) ElementCompositionPreview.SetElementChildVisual(target, sprite);
             return sprite;
-        }
-
-        /// <summary>
-        /// Animates a side of the margin of the target <see cref="FrameworkElement"/>
-        /// </summary>
-        /// <param name="element">The <see cref="FrameworkElement"/> to animate</param>
-        /// <param name="start">The initial value for the animation</param>
-        /// <param name="end">The final value for the animation</param>
-        /// <param name="side">The margin side to animate</param>
-        /// <param name="duration">The duration of the animation to create</param>
-        [SuppressMessage("ReSharper", "AccessToModifiedClosure")] // Margin updated at each animation timestep
-        public static async Task AnimateMarginAsync([NotNull] this FrameworkElement element, double? start, double end, Side side, int duration)
-        {
-            // Calculate the start offset
-            if (start == null)
-            {
-                switch (side)
-                {
-                    case Side.Top:
-                        start = element.Margin.Top;
-                        break;
-                    case Side.Bottom:
-                        start = element.Margin.Bottom;
-                        break;
-                    case Side.Left:
-                        start = element.Margin.Left;
-                        break;
-                    case Side.Right:
-                        start = element.Margin.Right;
-                        break;
-                    default: throw new ArgumentOutOfRangeException(nameof(side), "Invalid margin side");
-                }
-            }
-
-            // Calculate the animation steps
-            int
-                frames = (int)Math.Ceiling(duration * 4d / 100d),
-                elapsed = 0;
-            double
-                delta = end - start.Value,
-                step = delta / frames;
-
-            // Execute the animation
-            TaskCompletionSource<bool> tcs = new TaskCompletionSource<bool>();
-            DispatcherTimer timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(25) }; // 40fps
-            timer.Tick += TickHandler;
-            Thickness margin = element.Margin;
-
-            void TickHandler(object sender, object e)
-            {
-                elapsed++;
-                switch (side)
-                {
-                    case Side.Top:
-                        margin.Top += step;
-                        break;
-                    case Side.Bottom:
-                        margin.Bottom += step;
-                        break;
-                    case Side.Left:
-                        margin.Left += step;
-                        break;
-                    case Side.Right:
-                        margin.Right += step;
-                        break;
-                    default: throw new ArgumentOutOfRangeException(nameof(side), "Invalid margin side");
-                }
-                element.Margin = margin;
-                if (elapsed >= frames)
-                {
-                    timer.Tick -= TickHandler;
-                    timer.Stop();
-                    tcs.SetResult(true);
-                }
-            }
-            timer.Start();
-            await tcs.Task;
-
-            // Wait for completion and adjust the final margin (just to be sure)
-            switch (side)
-            {
-                case Side.Top:
-                    margin.Top = end;
-                    break;
-                case Side.Bottom:
-                    margin.Bottom = end;
-                    break;
-                case Side.Left:
-                    margin.Left = end;
-                    break;
-                case Side.Right:
-                    margin.Right = end;
-                    break;
-                default: throw new ArgumentOutOfRangeException(nameof(side), "Invalid margin side");
-            }
-            element.Margin = margin;
         }
     }
 }
