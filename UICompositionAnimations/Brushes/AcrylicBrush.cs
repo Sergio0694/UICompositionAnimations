@@ -44,12 +44,12 @@ namespace UICompositionAnimations.Brushes
         public Uri TextureUri { get; set; }
 
         /// <inheritdoc/>
-        protected override CompositionBrushBuilder OnBrushRequested()
+        protected override PipelineBuilder OnBrushRequested()
         {
             switch (Source)
             {
-                case AcrylicBackgroundSource.Backdrop: return CompositionBrushBuilder.FromBackdropAcrylic(Tint, (float)TintMix, (float)BlurAmount, TextureUri);
-                case AcrylicBackgroundSource.HostBackdrop: return CompositionBrushBuilder.FromHostBackdropAcrylic(Tint, (float)TintMix, TextureUri);
+                case AcrylicBackgroundSource.Backdrop: return PipelineBuilder.FromBackdropAcrylic(Tint, (float)TintMix, (float)BlurAmount, TextureUri);
+                case AcrylicBackgroundSource.HostBackdrop: return PipelineBuilder.FromHostBackdropAcrylic(Tint, (float)TintMix, TextureUri);
                 default: throw new ArgumentOutOfRangeException(nameof(Source), $"Invalid acrylic source: {Source}");
             }
         }

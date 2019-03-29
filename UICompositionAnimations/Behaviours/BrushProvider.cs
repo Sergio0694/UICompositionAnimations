@@ -9,7 +9,7 @@ namespace UICompositionAnimations.Behaviours
     /// A simple container <see langword="class"/> used to store info on a custom composition effect to create
     /// </summary>
     [PublicAPI]
-    public sealed class CompositionSourceInitializer
+    public sealed class BrushProvider
     {
         /// <summary>
         /// Gets the stored effect initializer
@@ -23,7 +23,7 @@ namespace UICompositionAnimations.Behaviours
         [NotNull]
         internal string Name { get; }
 
-        private CompositionSourceInitializer([NotNull] string name, [NotNull] Func<Task<CompositionBrush>> initializer)
+        private BrushProvider([NotNull] string name, [NotNull] Func<Task<CompositionBrush>> initializer)
         {
             Name = name;
             Initializer = initializer;
@@ -35,7 +35,7 @@ namespace UICompositionAnimations.Behaviours
         /// <param name="name">The target effect name</param>
         /// <param name="initializer">A <see cref="Func{TResult}"/> instance that will produce the <see cref="CompositionBrush"/> to use to initialize the effect</param>
         [Pure, NotNull]
-        public static CompositionSourceInitializer New([NotNull] string name, [NotNull] Func<CompositionBrush> initializer) => new CompositionSourceInitializer(name, () => Task.FromResult(initializer()));
+        public static BrushProvider New([NotNull] string name, [NotNull] Func<CompositionBrush> initializer) => new BrushProvider(name, () => Task.FromResult(initializer()));
 
         /// <summary>
         /// Creates a new instance with the info on a given <see cref="CompositionEffectSourceParameter"/> to initialize
@@ -43,6 +43,6 @@ namespace UICompositionAnimations.Behaviours
         /// <param name="name">The target effect name</param>
         /// <param name="initializer">An asynchronous <see cref="Func{TResult}"/> instance that will produce the <see cref="CompositionBrush"/> to use to initialize the effect</param>
         [Pure, NotNull]
-        public static CompositionSourceInitializer New([NotNull] string name, [NotNull] Func<Task<CompositionBrush>> initializer) => new CompositionSourceInitializer(name, initializer);
+        public static BrushProvider New([NotNull] string name, [NotNull] Func<Task<CompositionBrush>> initializer) => new BrushProvider(name, initializer);
     }
 }

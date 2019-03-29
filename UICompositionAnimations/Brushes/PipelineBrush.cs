@@ -17,26 +17,26 @@ namespace UICompositionAnimations.Brushes
     public sealed class PipelineBrush : XamlCompositionEffectBrushBase
     {
         /// <inheritdoc/>
-        protected override CompositionBrushBuilder OnBrushRequested()
+        protected override PipelineBuilder OnBrushRequested()
         {
             // Starts a new composition pipeline from the given effect
-            CompositionBrushBuilder Start(IPipelineEffect effect)
+            PipelineBuilder Start(IPipelineEffect effect)
             {
                 switch (effect)
                 {
                     case BackdropEffect backdrop when backdrop.Source == AcrylicBackgroundSource.Backdrop:
-                        return CompositionBrushBuilder.FromBackdropBrush();
+                        return PipelineBuilder.FromBackdropBrush();
                     case BackdropEffect backdrop when backdrop.Source == AcrylicBackgroundSource.HostBackdrop:
-                        return CompositionBrushBuilder.FromHostBackdropBrush();
-                    case SolidColorEffect color: return CompositionBrushBuilder.FromColor(color.Color);
-                    case ImageEffect image: return CompositionBrushBuilder.FromImage(image.Uri, image.DPIMode, image.CacheMode);
-                    case TileEffect tile: return CompositionBrushBuilder.FromTiles(tile.Uri, tile.DPIMode, tile.CacheMode);
+                        return PipelineBuilder.FromHostBackdropBrush();
+                    case SolidColorEffect color: return PipelineBuilder.FromColor(color.Color);
+                    case ImageEffect image: return PipelineBuilder.FromImage(image.Uri, image.DPIMode, image.CacheMode);
+                    case TileEffect tile: return PipelineBuilder.FromTiles(tile.Uri, tile.DPIMode, tile.CacheMode);
                     default: throw new ArgumentException($"Invalid initial pipeline effect: {effect.GetType()}");
                 }
             }
 
             // Appends an effect to an existing composition pipeline
-            CompositionBrushBuilder Append(IPipelineEffect effect, CompositionBrushBuilder builder)
+            PipelineBuilder Append(IPipelineEffect effect, PipelineBuilder builder)
             {
                 switch (effect)
                 {
@@ -51,7 +51,7 @@ namespace UICompositionAnimations.Brushes
             }
 
             // Builds a new effects pipeline from the input effects sequence
-            CompositionBrushBuilder Build(IList<IPipelineEffect> effects)
+            PipelineBuilder Build(IList<IPipelineEffect> effects)
             {
                 if (effects.Count == 0) throw new ArgumentException("An effects pipeline can't be empty");
                 return effects.Skip(1).Aggregate(Start(effects[0]), (b, e) => Append(e, b));

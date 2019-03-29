@@ -125,8 +125,8 @@
     <Compile Include="Animations\Interfaces\IAnimationBuilder.cs" />
     <Compile Include="Animations\XamlAnimationBuilder.cs" />
     <Compile Include="AttachedProperties\ClipHelper.cs" />
-    <Compile Include="Behaviours\CompositionBrushBuilder.cs" />
-    <Compile Include="Behaviours\CompositionSourceInitializer.cs" />
+    <Compile Include="Behaviours\PipelineBuilder.cs" />
+    <Compile Include="Behaviours\BrushProvider.cs" />
     <Compile Include="Brushes\AcrylicBrush.cs" />
     <Compile Include="Brushes\Effects\Abstract\ImageEffectBase.cs" />
     <Compile Include="Brushes\Effects\Abstract\ValueEffectBase.cs" />

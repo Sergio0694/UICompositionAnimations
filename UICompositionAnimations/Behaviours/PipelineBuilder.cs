@@ -30,7 +30,7 @@ namespace UICompositionAnimations.Behaviours
     /// A <see langword="class"/> that allows to build custom effects pipelines and create <see cref="CompositionBrush"/> instances from them
     /// </summary>
     [PublicAPI]
-    public sealed class CompositionBrushBuilder
+    public sealed class PipelineBuilder
     {
         /// <summary>
         /// The <see cref="Func{TResult}"/> instance used to produce the output <see cref="IGraphicsEffectSource"/> for this pipeline
@@ -56,7 +56,7 @@ namespace UICompositionAnimations.Behaviours
         /// Constructor used to initialize a pipeline from a <see cref="CompositionBrush"/>, for example using the <see cref="Compositor.CreateBackdropBrush"/> method
         /// </summary>
         /// <param name="factory">A <see cref="Func{TResult}"/> instance that will return the initial <see cref="CompositionBrush"/></param>
-        private CompositionBrushBuilder([NotNull] Func<Task<CompositionBrush>> factory)
+        private PipelineBuilder([NotNull] Func<Task<CompositionBrush>> factory)
         {
             string
                 guid = Guid.NewGuid().ToString("N"),
@@ -73,7 +73,7 @@ namespace UICompositionAnimations.Behaviours
         /// <param name="factory">A <see cref="Func{TResult}"/> instance that will produce the new <see cref="IGraphicsEffectSource"/> to add to the pipeline</param>
         /// <param name="animations">The collection of animation properties for the new effect</param>
         /// <param name="lazy">The collection of <see cref="CompositionBrush"/> instances that needs to be initialized for the new effect</param>
-        private CompositionBrushBuilder([NotNull] Func<Task<IGraphicsEffectSource>> factory, [NotNull] [ItemNotNull] IReadOnlyCollection<string> animations, [NotNull] IReadOnlyDictionary<string, Func<Task<CompositionBrush>>> lazy)
+        private PipelineBuilder([NotNull] Func<Task<IGraphicsEffectSource>> factory, [NotNull] [ItemNotNull] IReadOnlyCollection<string> animations, [NotNull] IReadOnlyDictionary<string, Func<Task<CompositionBrush>>> lazy)
         {
             SourceProducer = factory;
             AnimationProperties = animations;
@@ -84,7 +84,7 @@ namespace UICompositionAnimations.Behaviours
         /// Constructor used to initialize a pipeline from a custom <see cref="IGraphicsEffectSource"/> instance
         /// </summary>
         /// <param name="factory">A <see cref="Func{TResult}"/> instance that will return the initial <see cref="IGraphicsEffectSource"/></param>
-        private CompositionBrushBuilder([NotNull] Func<Task<IGraphicsEffectSource>> factory)
+        private PipelineBuilder([NotNull] Func<Task<IGraphicsEffectSource>> factory)
             : this(factory, new string[0], new Dictionary<string, Func<Task<CompositionBrush>>>())
         { }
 
@@ -95,7 +95,7 @@ namespace UICompositionAnimations.Behaviours
         /// <param name="factory">A <see cref="Func{TResult}"/> instance that will produce the new <see cref="IGraphicsEffectSource"/> to add to the pipeline</param>
         /// <param name="animations">The collection of animation properties for the new effect</param>
         /// <param name="lazy">The collection of <see cref="CompositionBrush"/> instances that needs to be initialized for the new effect</param>
-        private CompositionBrushBuilder([NotNull] CompositionBrushBuilder source,
+        private PipelineBuilder([NotNull] PipelineBuilder source,
             [NotNull] Func<Task<IGraphicsEffectSource>> factory,
             [CanBeNull] [ItemNotNull] IReadOnlyCollection<string> animations = null, [CanBeNull] IReadOnlyDictionary<string, Func<Task<CompositionBrush>>> lazy = null)
             : this(factory, animations?.Merge(source.AnimationProperties) ?? source.AnimationProperties, lazy?.Merge(source.LazyParameters) ?? source.LazyParameters)
@@ -109,8 +109,8 @@ namespace UICompositionAnimations.Behaviours
         /// <param name="b">The second pipeline to merge</param>
         /// <param name="animations">The collection of animation properties for the new effect</param>
         /// <param name="lazy">The collection of <see cref="CompositionBrush"/> instances that needs to be initialized for the new effect</param>
-        private CompositionBrushBuilder([NotNull] Func<Task<IGraphicsEffectSource>> factory,
-            [NotNull] CompositionBrushBuilder a, [NotNull] CompositionBrushBuilder b,
+        private PipelineBuilder([NotNull] Func<Task<IGraphicsEffectSource>> factory,
+            [NotNull] PipelineBuilder a, [NotNull] PipelineBuilder b,
             [CanBeNull] [ItemNotNull] IReadOnlyCollection<string> animations = null, [CanBeNull] IReadOnlyDictionary<string, Func<Task<CompositionBrush>>> lazy = null)
             : this(factory, animations?.Merge(a.AnimationProperties.Merge(b.AnimationProperties)) ?? a.AnimationProperties.Merge(b.AnimationProperties), lazy?.Merge(a.LazyParameters.Merge(b.LazyParameters)) ?? a.LazyParameters.Merge(b.LazyParameters))
         { }
@@ -124,78 +124,78 @@ namespace UICompositionAnimations.Behaviours
         private static readonly ThreadSafeCompositionCache<CompositionBrush> BackdropBrushCache = new ThreadSafeCompositionCache<CompositionBrush>();
 
         /// <summary>
-        /// Starts a new <see cref="CompositionBrushBuilder"/> pipeline from the <see cref="CompositionBrush"/> returned by <see cref="Compositor.CreateBackdropBrush"/>
+        /// Starts a new <see cref="PipelineBuilder"/> pipeline from the <see cref="CompositionBrush"/> returned by <see cref="Compositor.CreateBackdropBrush"/>
         /// </summary>
         [Pure, NotNull]
-        public static CompositionBrushBuilder FromBackdropBrush() => new CompositionBrushBuilder(() => BackdropBrushCache.TryGetInstanceAsync(Window.Current.Compositor.CreateBackdropBrush));
+        public static PipelineBuilder FromBackdropBrush() => new PipelineBuilder(() => BackdropBrushCache.TryGetInstanceAsync(Window.Current.Compositor.CreateBackdropBrush));
 
         // The cache manager for host backdrop brushes
         [NotNull]
         private static readonly ThreadSafeCompositionCache<CompositionBrush> HostBackdropBrushCache = new ThreadSafeCompositionCache<CompositionBrush>();
 
         /// <summary>
-        /// Starts a new <see cref="CompositionBrushBuilder"/> pipeline from the <see cref="CompositionBrush"/> returned by <see cref="Compositor.CreateHostBackdropBrush"/>
+        /// Starts a new <see cref="PipelineBuilder"/> pipeline from the <see cref="CompositionBrush"/> returned by <see cref="Compositor.CreateHostBackdropBrush"/>
         /// </summary>
         [Pure, NotNull]
-        public static CompositionBrushBuilder FromHostBackdropBrush() => new CompositionBrushBuilder(() => HostBackdropBrushCache.TryGetInstanceAsync(Window.Current.Compositor.CreateHostBackdropBrush));
+        public static PipelineBuilder FromHostBackdropBrush() => new PipelineBuilder(() => HostBackdropBrushCache.TryGetInstanceAsync(Window.Current.Compositor.CreateHostBackdropBrush));
 
         /// <summary>
-        /// Starts a new <see cref="CompositionBrushBuilder"/> pipeline from a solid <see cref="CompositionBrush"/> with the specified color
+        /// Starts a new <see cref="PipelineBuilder"/> pipeline from a solid <see cref="CompositionBrush"/> with the specified color
         /// </summary>
         /// <param name="color">The desired color for the initial <see cref="CompositionBrush"/></param>
         [Pure, NotNull]
-        public static CompositionBrushBuilder FromColor(Color color) => new CompositionBrushBuilder(() => Task.FromResult(new ColorSourceEffect { Color = color }.To<IGraphicsEffectSource>()));
+        public static PipelineBuilder FromColor(Color color) => new PipelineBuilder(() => Task.FromResult(new ColorSourceEffect { Color = color }.To<IGraphicsEffectSource>()));
 
         /// <summary>
-        /// Starts a new <see cref="CompositionBrushBuilder"/> pipeline from the input <see cref="CompositionBrush"/> instance
+        /// Starts a new <see cref="PipelineBuilder"/> pipeline from the input <see cref="CompositionBrush"/> instance
         /// </summary>
         /// <param name="factory">A <see cref="Func{TResult}"/> that synchronously returns a <see cref="CompositionBrush"/> instance to start the pipeline</param>
         [Pure, NotNull]
-        public static CompositionBrushBuilder FromBrush(Func<CompositionBrush> factory) => new CompositionBrushBuilder(() => Task.FromResult(factory()));
+        public static PipelineBuilder FromBrush(Func<CompositionBrush> factory) => new PipelineBuilder(() => Task.FromResult(factory()));
 
         /// <summary>
-        /// Starts a new <see cref="CompositionBrushBuilder"/> pipeline from the input <see cref="CompositionBrush"/> instance
+        /// Starts a new <see cref="PipelineBuilder"/> pipeline from the input <see cref="CompositionBrush"/> instance
         /// </summary>
         /// <param name="factory">A <see cref="Func{TResult}"/> that asynchronously returns a <see cref="CompositionBrush"/> instance to start the pipeline</param>
         [Pure, NotNull]
-        public static CompositionBrushBuilder FromBrush(Func<Task<CompositionBrush>> factory) => new CompositionBrushBuilder(factory);
+        public static PipelineBuilder FromBrush(Func<Task<CompositionBrush>> factory) => new PipelineBuilder(factory);
 
         /// <summary>
-        /// Starts a new <see cref="CompositionBrushBuilder"/> pipeline from the input <see cref="IGraphicsEffectSource"/> instance
+        /// Starts a new <see cref="PipelineBuilder"/> pipeline from the input <see cref="IGraphicsEffectSource"/> instance
         /// </summary>
         /// <param name="factory">A <see cref="Func{TResult}"/> that synchronously returns a <see cref="IGraphicsEffectSource"/> instance to start the pipeline</param>
         [Pure, NotNull]
-        public static CompositionBrushBuilder FromEffect(Func<IGraphicsEffectSource> factory) => new CompositionBrushBuilder(() => Task.FromResult(factory()));
+        public static PipelineBuilder FromEffect(Func<IGraphicsEffectSource> factory) => new PipelineBuilder(() => Task.FromResult(factory()));
 
         /// <summary>
-        /// Starts a new <see cref="CompositionBrushBuilder"/> pipeline from the input <see cref="IGraphicsEffectSource"/> instance
+        /// Starts a new <see cref="PipelineBuilder"/> pipeline from the input <see cref="IGraphicsEffectSource"/> instance
         /// </summary>
         /// <param name="factory">A <see cref="Func{TResult}"/> that asynchronously returns a <see cref="IGraphicsEffectSource"/> instance to start the pipeline</param>
         [Pure, NotNull]
-        public static CompositionBrushBuilder FromEffect(Func<Task<IGraphicsEffectSource>> factory) => new CompositionBrushBuilder(factory);
+        public static PipelineBuilder FromEffect(Func<Task<IGraphicsEffectSource>> factory) => new PipelineBuilder(factory);
 
         /// <summary>
-        /// Starts a new <see cref="CompositionBrushBuilder"/> pipeline from a Win2D image
+        /// Starts a new <see cref="PipelineBuilder"/> pipeline from a Win2D image
         /// </summary>
         /// <param name="uri">The path for the image to load</param>
         /// <param name="dpiMode">Indicates the desired DPI mode to use when loading the image</param>
         /// <param name="cache">The cache mode to use to load the image</param>
         [Pure, NotNull]
-        public static CompositionBrushBuilder FromImage([NotNull] Uri uri, DpiMode dpiMode = DpiMode.DisplayDpiWith96AsLowerBound, CacheMode cache = CacheMode.Default)
+        public static PipelineBuilder FromImage([NotNull] Uri uri, DpiMode dpiMode = DpiMode.DisplayDpiWith96AsLowerBound, CacheMode cache = CacheMode.Default)
         {
-            return new CompositionBrushBuilder(() => Win2DImageHelper.LoadImageAsync(Window.Current.Compositor, uri, dpiMode, cache).ContinueWith(t => t.Result as CompositionBrush));
+            return new PipelineBuilder(() => Win2DImageHelper.LoadImageAsync(Window.Current.Compositor, uri, dpiMode, cache).ContinueWith(t => t.Result as CompositionBrush));
         }
 
         /// <summary>
-        /// Starts a new <see cref="CompositionBrushBuilder"/> pipeline from a Win2D image tiled to cover the available space
+        /// Starts a new <see cref="PipelineBuilder"/> pipeline from a Win2D image tiled to cover the available space
         /// </summary>
         /// <param name="uri">The path for the image to load</param>
         /// <param name="dpiMode">Indicates the desired DPI mode to use when loading the image</param>
         /// <param name="cache">The cache mode to use to load the image</param>
         [Pure, NotNull]
-        public static CompositionBrushBuilder FromTiles([NotNull] Uri uri, DpiMode dpiMode = DpiMode.DisplayDpiWith96AsLowerBound, CacheMode cache = CacheMode.Default)
+        public static PipelineBuilder FromTiles([NotNull] Uri uri, DpiMode dpiMode = DpiMode.DisplayDpiWith96AsLowerBound, CacheMode cache = CacheMode.Default)
         {
-            CompositionBrushBuilder image = FromImage(uri, dpiMode, cache);
+            PipelineBuilder image = FromImage(uri, dpiMode, cache);
 
             async Task<IGraphicsEffectSource> Factory() => new BorderEffect
             {
@@ -204,17 +204,17 @@ namespace UICompositionAnimations.Behaviours
                 Source = await image.SourceProducer()
             };
 
-            return new CompositionBrushBuilder(image, Factory);
+            return new PipelineBuilder(image, Factory);
         }
 
         /// <summary>
-        /// Starts a new <see cref="CompositionBrushBuilder"/> pipeline from the <see cref="CompositionBrush"/> returned by <see cref="Compositor.CreateBackdropBrush"/> on the input <see cref="UIElement"/>
+        /// Starts a new <see cref="PipelineBuilder"/> pipeline from the <see cref="CompositionBrush"/> returned by <see cref="Compositor.CreateBackdropBrush"/> on the input <see cref="UIElement"/>
         /// </summary>
         /// <param name="element">The source <see cref="UIElement"/> to use to create the pipeline</param>
         [Pure, NotNull]
-        public static CompositionBrushBuilder FromUIElement([NotNull] UIElement element)
+        public static PipelineBuilder FromUIElement([NotNull] UIElement element)
         {
-            return new CompositionBrushBuilder(() => Task.FromResult(element.GetVisual().Compositor.CreateBackdropBrush().To<CompositionBrush>()));
+            return new PipelineBuilder(() => Task.FromResult(element.GetVisual().Compositor.CreateBackdropBrush().To<CompositionBrush>()));
         }
 
         #endregion
@@ -222,14 +222,14 @@ namespace UICompositionAnimations.Behaviours
         #region Prebuilt pipelines
 
         /// <summary>
-        /// Returns a new <see cref="CompositionBrushBuilder"/> instance that implements the host backdrop acrylic effect
+        /// Returns a new <see cref="PipelineBuilder"/> instance that implements the host backdrop acrylic effect
         /// </summary>
         /// <param name="tint">The tint color to use</param>
         /// <param name="mix">The amount of tint to apply over the current effect</param>
         /// <param name="noiseUri">The <see cref="Uri"/> for the noise texture to load for the acrylic effect</param>
         /// <param name="cache">The cache mode to use to load the image</param>
         [Pure, NotNull]
-        public static CompositionBrushBuilder FromHostBackdropAcrylic(Color tint, float mix, [NotNull] Uri noiseUri, CacheMode cache = CacheMode.Default)
+        public static PipelineBuilder FromHostBackdropAcrylic(Color tint, float mix, [NotNull] Uri noiseUri, CacheMode cache = CacheMode.Default)
         {
             return FromHostBackdropBrush()
                 .Effect(source => new LuminanceToAlphaEffect { Source = source })
@@ -240,7 +240,7 @@ namespace UICompositionAnimations.Behaviours
         }
 
         /// <summary>
-        /// Returns a new <see cref="CompositionBrushBuilder"/> instance that implements the host backdrop acrylic effect
+        /// Returns a new <see cref="PipelineBuilder"/> instance that implements the host backdrop acrylic effect
         /// </summary>
         /// <param name="tint">The tint color to use</param>
         /// <param name="tintAnimation">The animation to apply on the tint color of the effect</param>
@@ -248,7 +248,7 @@ namespace UICompositionAnimations.Behaviours
         /// <param name="noiseUri">The <see cref="Uri"/> for the noise texture to load for the acrylic effect</param>
         /// <param name="cache">The cache mode to use to load the image</param>
         [Pure, NotNull]
-        public static CompositionBrushBuilder FromHostBackdropAcrylic(Color tint, float mix, out EffectAnimation tintAnimation, [NotNull] Uri noiseUri, CacheMode cache = CacheMode.Default)
+        public static PipelineBuilder FromHostBackdropAcrylic(Color tint, float mix, out EffectAnimation tintAnimation, [NotNull] Uri noiseUri, CacheMode cache = CacheMode.Default)
         {
             return FromHostBackdropBrush()
                 .Effect(source => new LuminanceToAlphaEffect { Source = source })
@@ -259,7 +259,7 @@ namespace UICompositionAnimations.Behaviours
         }
 
         /// <summary>
-        /// Returns a new <see cref="CompositionBrushBuilder"/> instance that implements the in-app backdrop acrylic effect
+        /// Returns a new <see cref="PipelineBuilder"/> instance that implements the in-app backdrop acrylic effect
         /// </summary>
         /// <param name="tint">The tint color to use</param>
         /// <param name="mix">The amount of tint to apply over the current effect</param>
@@ -267,7 +267,7 @@ namespace UICompositionAnimations.Behaviours
         /// <param name="noiseUri">The <see cref="Uri"/> for the noise texture to load for the acrylic effect</param>
         /// <param name="cache">The cache mode to use to load the image</param>
         [Pure, NotNull]
-        public static CompositionBrushBuilder FromBackdropAcrylic(Color tint, float mix, float blur, [NotNull] Uri noiseUri, CacheMode cache = CacheMode.Default)
+        public static PipelineBuilder FromBackdropAcrylic(Color tint, float mix, float blur, [NotNull] Uri noiseUri, CacheMode cache = CacheMode.Default)
         {
             return FromBackdropBrush()
                 .Tint(tint, mix)
@@ -276,7 +276,7 @@ namespace UICompositionAnimations.Behaviours
         }
 
         /// <summary>
-        /// Returns a new <see cref="CompositionBrushBuilder"/> instance that implements the in-app backdrop acrylic effect
+        /// Returns a new <see cref="PipelineBuilder"/> instance that implements the in-app backdrop acrylic effect
         /// </summary>
         /// <param name="tint">The tint color to use</param>
         /// <param name="mix">The amount of tint to apply over the current effect</param>
@@ -285,7 +285,7 @@ namespace UICompositionAnimations.Behaviours
         /// <param name="noiseUri">The <see cref="Uri"/> for the noise texture to load for the acrylic effect</param>
         /// <param name="cache">The cache mode to use to load the image</param>
         [Pure, NotNull]
-        public static CompositionBrushBuilder FromBackdropAcrylic(
+        public static PipelineBuilder FromBackdropAcrylic(
             Color tint, float mix, out EffectAnimation tintAnimation,
             float blur,
             [NotNull] Uri noiseUri, CacheMode cache = CacheMode.Default)
@@ -297,7 +297,7 @@ namespace UICompositionAnimations.Behaviours
         }
 
         /// <summary>
-        /// Returns a new <see cref="CompositionBrushBuilder"/> instance that implements the in-app backdrop acrylic effect
+        /// Returns a new <see cref="PipelineBuilder"/> instance that implements the in-app backdrop acrylic effect
         /// </summary>
         /// <param name="tint">The tint color to use</param>
         /// <param name="mix">The amount of tint to apply over the current effect</param>
@@ -306,7 +306,7 @@ namespace UICompositionAnimations.Behaviours
         /// <param name="noiseUri">The <see cref="Uri"/> for the noise texture to load for the acrylic effect</param>
         /// <param name="cache">The cache mode to use to load the image</param>
         [Pure, NotNull]
-        public static CompositionBrushBuilder FromBackdropAcrylic(
+        public static PipelineBuilder FromBackdropAcrylic(
             Color tint, float mix,
             float blur, out EffectAnimation blurAnimation,
             [NotNull] Uri noiseUri, CacheMode cache = CacheMode.Default)
@@ -318,7 +318,7 @@ namespace UICompositionAnimations.Behaviours
         }
 
         /// <summary>
-        /// Returns a new <see cref="CompositionBrushBuilder"/> instance that implements the in-app backdrop acrylic effect
+        /// Returns a new <see cref="PipelineBuilder"/> instance that implements the in-app backdrop acrylic effect
         /// </summary>
         /// <param name="tint">The tint color to use</param>
         /// <param name="mix">The amount of tint to apply over the current effect</param>
@@ -328,7 +328,7 @@ namespace UICompositionAnimations.Behaviours
         /// <param name="noiseUri">The <see cref="Uri"/> for the noise texture to load for the acrylic effect</param>
         /// <param name="cache">The cache mode to use to load the image</param>
         [Pure, NotNull]
-        public static CompositionBrushBuilder FromBackdropAcrylic(
+        public static PipelineBuilder FromBackdropAcrylic(
             Color tint, float mix, out EffectAnimation tintAnimation,
             float blur, out EffectAnimation blurAnimation,
             [NotNull] Uri noiseUri, CacheMode cache = CacheMode.Default)
@@ -346,13 +346,13 @@ namespace UICompositionAnimations.Behaviours
         /// <summary>
         /// Blends two pipelines using a <see cref="BlendEffect"/> instance with the specified mode
         /// </summary>
-        /// <param name="pipeline">The second <see cref="CompositionBrushBuilder"/> instance to blend</param>
+        /// <param name="pipeline">The second <see cref="PipelineBuilder"/> instance to blend</param>
         /// <param name="mode">The desired <see cref="BlendEffectMode"/> to use to blend the input pipelines</param>
         /// <param name="sorting">The sorting mode to use with the two input pipelines</param>
         [Pure, NotNull]
-        public CompositionBrushBuilder Blend([NotNull] CompositionBrushBuilder pipeline, BlendEffectMode mode, Placement sorting = Placement.Foreground)
+        public PipelineBuilder Blend([NotNull] PipelineBuilder pipeline, BlendEffectMode mode, Placement sorting = Placement.Foreground)
         {
-            (var foreground, var background) = sorting == Placement.Foreground ? (this, pipeline) : (pipeline, this);
+            var (foreground, background) = sorting == Placement.Foreground ? (this, pipeline) : (pipeline, this);
 
             async Task<IGraphicsEffectSource> Factory() => new BlendEffect
             {
@@ -361,20 +361,20 @@ namespace UICompositionAnimations.Behaviours
                 Mode = mode
             };
 
-            return new CompositionBrushBuilder(Factory, foreground, background);
+            return new PipelineBuilder(Factory, foreground, background);
         }
 
         /// <summary>
         /// Blends two pipelines using an <see cref="CrossFadeEffect"/> instance
         /// </summary>
-        /// <param name="pipeline">The second <see cref="CompositionBrushBuilder"/> instance to blend</param>
+        /// <param name="pipeline">The second <see cref="PipelineBuilder"/> instance to blend</param>
         /// <param name="factor">The cross fade factor to blend the input effects</param>
         /// <param name="sorting">The sorting mode to use with the two input pipelines</param>
         [Pure, NotNull]
-        public CompositionBrushBuilder Mix([NotNull] CompositionBrushBuilder pipeline, float factor = 0.5f, Placement sorting = Placement.Foreground)
+        public PipelineBuilder Mix([NotNull] PipelineBuilder pipeline, float factor = 0.5f, Placement sorting = Placement.Foreground)
         {
             if (factor < 0 || factor > 1) throw new ArgumentOutOfRangeException(nameof(factor), "The factor must be in the [0,1] range");
-            (var foreground, var background) = sorting == Placement.Foreground ? (this, pipeline) : (pipeline, this);
+            var (foreground, background) = sorting == Placement.Foreground ? (this, pipeline) : (pipeline, this);
 
             async Task<IGraphicsEffectSource> Factory() => new CrossFadeEffect
             {
@@ -383,22 +383,22 @@ namespace UICompositionAnimations.Behaviours
                 Source2 = await background.SourceProducer()
             };
 
-            return new CompositionBrushBuilder(Factory, foreground, background);
+            return new PipelineBuilder(Factory, foreground, background);
         }
 
         /// <summary>
         /// Blends two pipelines using an <see cref="CrossFadeEffect"/> instance
         /// </summary>
-        /// <param name="pipeline">The second <see cref="CompositionBrushBuilder"/> instance to blend</param>
+        /// <param name="pipeline">The second <see cref="PipelineBuilder"/> instance to blend</param>
         /// <param name="factor">The cross fade factor to blend the input effects</param>
         /// <param name="animation">The optional blur animation for the effect</param>
         /// <param name="sorting">The sorting mode to use with the two input pipelines</param>
         /// <remarks>Note that each pipeline can only contain a single instance of any of the built-in effects with animation support</remarks>
         [Pure, NotNull]
-        public CompositionBrushBuilder Mix([NotNull] CompositionBrushBuilder pipeline, float factor, out EffectAnimation animation, Placement sorting = Placement.Foreground)
+        public PipelineBuilder Mix([NotNull] PipelineBuilder pipeline, float factor, out EffectAnimation animation, Placement sorting = Placement.Foreground)
         {
             if (factor < 0 || factor > 1) throw new ArgumentOutOfRangeException(nameof(factor), "The factor must be in the [0,1] range");
-            (var foreground, var background) = sorting == Placement.Foreground ? (this, pipeline) : (pipeline, this);
+            var (foreground, background) = sorting == Placement.Foreground ? (this, pipeline) : (pipeline, this);
 
             async Task<IGraphicsEffectSource> Factory() => new CrossFadeEffect
             {
@@ -414,7 +414,7 @@ namespace UICompositionAnimations.Behaviours
                 return brush.StartAnimationAsync("Fade.CrossFade", value, TimeSpan.FromMilliseconds(ms));
             };
 
-            return new CompositionBrushBuilder(Factory, foreground, background, new[] { "Fade.CrossFade" });
+            return new PipelineBuilder(Factory, foreground, background, new[] { "Fade.CrossFade" });
         }
 
         /// <summary>
@@ -425,14 +425,14 @@ namespace UICompositionAnimations.Behaviours
         /// <param name="animations">The list of optional animatable properties in the returned effect</param>
         /// <param name="initializers">The list of source parameters that require deferred initialization (see <see cref="CompositionEffectSourceParameter"/> for more info)</param>
         [Pure, NotNull]
-        public CompositionBrushBuilder Merge(
+        public PipelineBuilder Merge(
             [NotNull] Func<IGraphicsEffectSource, IGraphicsEffectSource, IGraphicsEffectSource> factory,
-            [NotNull] CompositionBrushBuilder background,
-            IEnumerable<string> animations = null, IEnumerable<CompositionSourceInitializer> initializers = null)
+            [NotNull] PipelineBuilder background,
+            IEnumerable<string> animations = null, IEnumerable<BrushProvider> initializers = null)
         {
             async Task<IGraphicsEffectSource> Factory() => factory(await SourceProducer(), await background.SourceProducer());
 
-            return new CompositionBrushBuilder(Factory, this, background, animations?.ToArray(), initializers?.ToDictionary(item => item.Name, item => item.Initializer));
+            return new PipelineBuilder(Factory, this, background, animations?.ToArray(), initializers?.ToDictionary(item => item.Name, item => item.Initializer));
         }
 
         /// <summary>
@@ -443,14 +443,14 @@ namespace UICompositionAnimations.Behaviours
         /// <param name="animations">The list of optional animatable properties in the returned effect</param>
         /// <param name="initializers">The list of source parameters that require deferred initialization (see <see cref="CompositionEffectSourceParameter"/> for more info)</param>
         [Pure, NotNull]
-        public CompositionBrushBuilder Merge(
+        public PipelineBuilder Merge(
             [NotNull] Func<IGraphicsEffectSource, IGraphicsEffectSource, Task<IGraphicsEffectSource>> factory,
-            [NotNull] CompositionBrushBuilder background,
-            IEnumerable<string> animations = null, IEnumerable<CompositionSourceInitializer> initializers = null)
+            [NotNull] PipelineBuilder background,
+            IEnumerable<string> animations = null, IEnumerable<BrushProvider> initializers = null)
         {
             async Task<IGraphicsEffectSource> Factory() => await factory(await SourceProducer(), await background.SourceProducer());
 
-            return new CompositionBrushBuilder(Factory, this, background, animations?.ToArray(), initializers?.ToDictionary(item => item.Name, item => item.Initializer));
+            return new PipelineBuilder(Factory, this, background, animations?.ToArray(), initializers?.ToDictionary(item => item.Name, item => item.Initializer));
         }
 
         #endregion
@@ -464,7 +464,7 @@ namespace UICompositionAnimations.Behaviours
         /// <param name="mode">The <see cref="EffectBorderMode"/> parameter for the effect, defaults to <see cref="EffectBorderMode.Hard"/></param>
         /// <param name="optimization">The <see cref="EffectOptimization"/> parameter to use, defaults to <see cref="EffectOptimization.Balanced"/></param>
         [Pure, NotNull]
-        public CompositionBrushBuilder Blur(float blur, EffectBorderMode mode = EffectBorderMode.Hard, EffectOptimization optimization = EffectOptimization.Balanced)
+        public PipelineBuilder Blur(float blur, EffectBorderMode mode = EffectBorderMode.Hard, EffectOptimization optimization = EffectOptimization.Balanced)
         {
             // Blur effect
             async Task<IGraphicsEffectSource> Factory() => new GaussianBlurEffect
@@ -475,7 +475,7 @@ namespace UICompositionAnimations.Behaviours
                 Source = await SourceProducer()
             };
 
-            return new CompositionBrushBuilder(this, Factory);
+            return new PipelineBuilder(this, Factory);
         }
 
         /// <summary>
@@ -487,7 +487,7 @@ namespace UICompositionAnimations.Behaviours
         /// <param name="optimization">The <see cref="EffectOptimization"/> parameter to use, defaults to <see cref="EffectOptimization.Balanced"/></param>
         /// <remarks>Note that each pipeline can only contain a single instance of any of the built-in effects with animation support</remarks>
         [Pure, NotNull]
-        public CompositionBrushBuilder Blur(float blur, out EffectAnimation animation, EffectBorderMode mode = EffectBorderMode.Hard, EffectOptimization optimization = EffectOptimization.Balanced)
+        public PipelineBuilder Blur(float blur, out EffectAnimation animation, EffectBorderMode mode = EffectBorderMode.Hard, EffectOptimization optimization = EffectOptimization.Balanced)
         {
             // Blur effect
             async Task<IGraphicsEffectSource> Factory() => new GaussianBlurEffect
@@ -501,7 +501,7 @@ namespace UICompositionAnimations.Behaviours
 
             animation = (brush, value, ms) => brush.StartAnimationAsync("Blur.BlurAmount", value, TimeSpan.FromMilliseconds(ms));
 
-            return new CompositionBrushBuilder(this, Factory, new[] { "Blur.BlurAmount" });
+            return new PipelineBuilder(this, Factory, new[] { "Blur.BlurAmount" });
         }
 
         /// <summary>
@@ -509,7 +509,7 @@ namespace UICompositionAnimations.Behaviours
         /// </summary>
         /// <param name="saturation">The saturation amount for the new effect</param>
         [Pure, NotNull]
-        public CompositionBrushBuilder Saturation(float saturation)
+        public PipelineBuilder Saturation(float saturation)
         {
             if (saturation < 0 || saturation > 1) throw new ArgumentOutOfRangeException(nameof(saturation), "The saturation must be in the [0,1] range");
             async Task<IGraphicsEffectSource> Factory() => new SaturationEffect
@@ -518,7 +518,7 @@ namespace UICompositionAnimations.Behaviours
                 Source = await SourceProducer()
             };
 
-            return new CompositionBrushBuilder(this, Factory);
+            return new PipelineBuilder(this, Factory);
         }
 
         /// <summary>
@@ -528,7 +528,7 @@ namespace UICompositionAnimations.Behaviours
         /// <param name="animation">The optional saturation animation for the effect</param>
         /// <remarks>Note that each pipeline can only contain a single instance of any of the built-in effects with animation support</remarks>
         [Pure, NotNull]
-        public CompositionBrushBuilder Saturation(float saturation, out EffectAnimation animation)
+        public PipelineBuilder Saturation(float saturation, out EffectAnimation animation)
         {
             if (saturation < 0 || saturation > 1) throw new ArgumentOutOfRangeException(nameof(saturation), "The saturation must be in the [0,1] range");
             async Task<IGraphicsEffectSource> Factory() => new SaturationEffect
@@ -544,7 +544,7 @@ namespace UICompositionAnimations.Behaviours
                 return brush.StartAnimationAsync("Saturation.Saturation", value, TimeSpan.FromMilliseconds(ms));
             };
 
-            return new CompositionBrushBuilder(this, Factory, new[] { "Saturation.Saturation" });
+            return new PipelineBuilder(this, Factory, new[] { "Saturation.Saturation" });
         }
 
         /// <summary>
@@ -552,7 +552,7 @@ namespace UICompositionAnimations.Behaviours
         /// </summary>
         /// <param name="opacity">The opacity value to apply to the pipeline</param>
         [Pure, NotNull]
-        public CompositionBrushBuilder Opacity(float opacity)
+        public PipelineBuilder Opacity(float opacity)
         {
             if (opacity < 0 || opacity > 1) throw new ArgumentOutOfRangeException(nameof(opacity), "The opacity must be in the [0,1] range");
             async Task<IGraphicsEffectSource> Factory() => new OpacityEffect
@@ -561,7 +561,7 @@ namespace UICompositionAnimations.Behaviours
                 Source = await SourceProducer()
             };
 
-            return new CompositionBrushBuilder(this, Factory);
+            return new PipelineBuilder(this, Factory);
         }
 
         /// <summary>
@@ -571,7 +571,7 @@ namespace UICompositionAnimations.Behaviours
         /// <param name="animation">The optional opacity animation for the effect</param>
         /// <remarks>Note that each pipeline can only contain a single instance of any of the built-in effects with animation support</remarks>
         [Pure, NotNull]
-        public CompositionBrushBuilder Opacity(float opacity, out EffectAnimation animation)
+        public PipelineBuilder Opacity(float opacity, out EffectAnimation animation)
         {
             if (opacity < 0 || opacity > 1) throw new ArgumentOutOfRangeException(nameof(opacity), "The opacity must be in the [0,1] range");
             async Task<IGraphicsEffectSource> Factory() => new OpacityEffect
@@ -587,7 +587,7 @@ namespace UICompositionAnimations.Behaviours
                 return brush.StartAnimationAsync("Opacity.Opacity", value, TimeSpan.FromMilliseconds(ms));
             };
 
-            return new CompositionBrushBuilder(this, Factory, new[] { "Opacity.Opacity" });
+            return new PipelineBuilder(this, Factory, new[] { "Opacity.Opacity" });
         }
 
         /// <summary>
@@ -596,7 +596,7 @@ namespace UICompositionAnimations.Behaviours
         /// <param name="color">The tint color to use</param>
         /// <param name="mix">The amount of tint to apply over the current effect</param>
         [Pure, NotNull]
-        public CompositionBrushBuilder Tint(Color color, float mix) => FromColor(color).Mix(this, mix);
+        public PipelineBuilder Tint(Color color, float mix) => FromColor(color).Mix(this, mix);
 
         /// <summary>
         /// Applies a tint color on the current pipeline
@@ -606,7 +606,7 @@ namespace UICompositionAnimations.Behaviours
         /// <param name="animation">The optional tint animation for the effect</param>
         /// <remarks>Note that each pipeline can only contain a single instance of any of the built-in effects with animation support</remarks>
         [Pure, NotNull]
-        public CompositionBrushBuilder Tint(Color color, float mix, out EffectAnimation animation) => FromColor(color).Mix(this, mix, out animation);
+        public PipelineBuilder Tint(Color color, float mix, out EffectAnimation animation) => FromColor(color).Mix(this, mix, out animation);
 
         #endregion
 
@@ -619,11 +619,11 @@ namespace UICompositionAnimations.Behaviours
         /// <param name="animations">The list of optional animatable properties in the returned effect</param>
         /// <param name="initializers">The list of source parameters that require deferred initialization (see <see cref="CompositionEffectSourceParameter"/> for more info)</param>
         [Pure, NotNull]
-        public CompositionBrushBuilder Effect([NotNull] Func<IGraphicsEffectSource, IGraphicsEffectSource> factory, IEnumerable<string> animations = null, IEnumerable<CompositionSourceInitializer> initializers = null)
+        public PipelineBuilder Effect([NotNull] Func<IGraphicsEffectSource, IGraphicsEffectSource> factory, IEnumerable<string> animations = null, IEnumerable<BrushProvider> initializers = null)
         {
             async Task<IGraphicsEffectSource> Factory() => factory(await SourceProducer());
 
-            return new CompositionBrushBuilder(this, Factory, animations?.ToArray(), initializers?.ToDictionary(item => item.Name, item => item.Initializer));
+            return new PipelineBuilder(this, Factory, animations?.ToArray(), initializers?.ToDictionary(item => item.Name, item => item.Initializer));
         }
 
         /// <summary>
@@ -633,11 +633,11 @@ namespace UICompositionAnimations.Behaviours
         /// <param name="animations">The list of optional animatable properties in the returned effect</param>
         /// <param name="initializers">The list of source parameters that require deferred initialization (see <see cref="CompositionEffectSourceParameter"/> for more info)</param>
         [Pure, NotNull]
-        public CompositionBrushBuilder Effect([NotNull] Func<IGraphicsEffectSource, Task<IGraphicsEffectSource>> factory, IEnumerable<string> animations = null, IEnumerable<CompositionSourceInitializer> initializers = null)
+        public PipelineBuilder Effect([NotNull] Func<IGraphicsEffectSource, Task<IGraphicsEffectSource>> factory, IEnumerable<string> animations = null, IEnumerable<BrushProvider> initializers = null)
         {
             async Task<IGraphicsEffectSource> Factory() => await factory(await SourceProducer());
 
-            return new CompositionBrushBuilder(this, Factory, animations?.ToArray(), initializers?.ToDictionary(item => item.Name, item => item.Initializer));
+            return new PipelineBuilder(this, Factory, animations?.ToArray(), initializers?.ToDictionary(item => item.Name, item => item.Initializer));
         }
 
         #endregion

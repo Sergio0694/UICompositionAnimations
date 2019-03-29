@@ -16,6 +16,6 @@ namespace UICompositionAnimations.Brushes
         public Uri TextureUri { get; set; }
 
         /// <inheritdoc/>
-        protected override CompositionBrushBuilder OnBrushRequested() => CompositionBrushBuilder.FromTiles(TextureUri);
+        protected override PipelineBuilder OnBrushRequested() => PipelineBuilder.FromTiles(TextureUri);
     }
 }
