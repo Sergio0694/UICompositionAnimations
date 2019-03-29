@@ -177,6 +177,18 @@ namespace UICompositionAnimations.Behaviours
         /// <summary>
         /// Starts a new <see cref="PipelineBuilder"/> pipeline from a Win2D image
         /// </summary>
+        /// <param name="relativePath">The relative path for the image to load (eg. "/Assets/image.png")</param>
+        /// <param name="dpiMode">Indicates the desired DPI mode to use when loading the image</param>
+        /// <param name="cache">The cache mode to use to load the image</param>
+        [Pure, NotNull]
+        public static PipelineBuilder FromImage([NotNull] string relativePath, DpiMode dpiMode = DpiMode.DisplayDpiWith96AsLowerBound, CacheMode cache = CacheMode.Default)
+        {
+            return FromImage(relativePath.ToAppxUri(), dpiMode, cache);
+        }
+
+        /// <summary>
+        /// Starts a new <see cref="PipelineBuilder"/> pipeline from a Win2D image
+        /// </summary>
         /// <param name="uri">The path for the image to load</param>
         /// <param name="dpiMode">Indicates the desired DPI mode to use when loading the image</param>
         /// <param name="cache">The cache mode to use to load the image</param>
@@ -184,6 +196,18 @@ namespace UICompositionAnimations.Behaviours
         public static PipelineBuilder FromImage([NotNull] Uri uri, DpiMode dpiMode = DpiMode.DisplayDpiWith96AsLowerBound, CacheMode cache = CacheMode.Default)
         {
             return new PipelineBuilder(() => Win2DImageHelper.LoadImageAsync(Window.Current.Compositor, uri, dpiMode, cache).ContinueWith(t => t.Result as CompositionBrush));
+        }
+
+        /// <summary>
+        /// Starts a new <see cref="PipelineBuilder"/> pipeline from a Win2D image tiled to cover the available space
+        /// </summary>
+        /// <param name="relativePath">The relative path for the image to load (eg. "/Assets/image.png")</param>
+        /// <param name="dpiMode">Indicates the desired DPI mode to use when loading the image</param>
+        /// <param name="cache">The cache mode to use to load the image</param>
+        [Pure, NotNull]
+        public static PipelineBuilder FromTiles([NotNull] string relativePath, DpiMode dpiMode = DpiMode.DisplayDpiWith96AsLowerBound, CacheMode cache = CacheMode.Default)
+        {
+            return FromTiles(relativePath.ToAppxUri(), dpiMode, cache);
         }
 
         /// <summary>
@@ -226,6 +250,19 @@ namespace UICompositionAnimations.Behaviours
         /// </summary>
         /// <param name="tint">The tint color to use</param>
         /// <param name="mix">The amount of tint to apply over the current effect</param>
+        /// <param name="noiseRelativePath">The relative path for the noise texture to load (eg. "/Assets/noise.png")</param>
+        /// <param name="cache">The cache mode to use to load the image</param>
+        [Pure, NotNull]
+        public static PipelineBuilder FromHostBackdropAcrylic(Color tint, float mix, [NotNull] string noiseRelativePath, CacheMode cache = CacheMode.Default)
+        {
+            return FromHostBackdropAcrylic(tint, mix, noiseRelativePath.ToAppxUri(), cache);
+        }
+
+        /// <summary>
+        /// Returns a new <see cref="PipelineBuilder"/> instance that implements the host backdrop acrylic effect
+        /// </summary>
+        /// <param name="tint">The tint color to use</param>
+        /// <param name="mix">The amount of tint to apply over the current effect</param>
         /// <param name="noiseUri">The <see cref="Uri"/> for the noise texture to load for the acrylic effect</param>
         /// <param name="cache">The cache mode to use to load the image</param>
         [Pure, NotNull]
@@ -237,6 +274,20 @@ namespace UICompositionAnimations.Behaviours
                 .Blend(FromHostBackdropBrush(), BlendEffectMode.Multiply)
                 .Tint(tint, mix)
                 .Blend(FromTiles(noiseUri, cache: cache), BlendEffectMode.Overlay, Placement.Background);
+        }
+
+        /// <summary>
+        /// Returns a new <see cref="PipelineBuilder"/> instance that implements the host backdrop acrylic effect
+        /// </summary>
+        /// <param name="tint">The tint color to use</param>
+        /// <param name="tintAnimation">The animation to apply on the tint color of the effect</param>
+        /// <param name="mix">The amount of tint to apply over the current effect</param>
+        /// <param name="noiseRelativePath">The relative path for the noise texture to load (eg. "/Assets/noise.png")</param>
+        /// <param name="cache">The cache mode to use to load the image</param>
+        [Pure, NotNull]
+        public static PipelineBuilder FromHostBackdropAcrylic(Color tint, float mix, out EffectAnimation tintAnimation, [NotNull] string noiseRelativePath, CacheMode cache = CacheMode.Default)
+        {
+            return FromHostBackdropAcrylic(tint, mix, out tintAnimation, noiseRelativePath.ToAppxUri(), cache);
         }
 
         /// <summary>
@@ -264,6 +315,20 @@ namespace UICompositionAnimations.Behaviours
         /// <param name="tint">The tint color to use</param>
         /// <param name="mix">The amount of tint to apply over the current effect</param>
         /// <param name="blur">The amount of blur to apply to the acrylic brush</param>
+        /// <param name="noiseRelativePath">The relative path for the noise texture to load (eg. "/Assets/noise.png")</param>
+        /// <param name="cache">The cache mode to use to load the image</param>
+        [Pure, NotNull]
+        public static PipelineBuilder FromBackdropAcrylic(Color tint, float mix, float blur, [NotNull] string noiseRelativePath, CacheMode cache = CacheMode.Default)
+        {
+            return FromBackdropAcrylic(tint, mix, blur, noiseRelativePath.ToAppxUri(), cache);
+        }
+
+        /// <summary>
+        /// Returns a new <see cref="PipelineBuilder"/> instance that implements the in-app backdrop acrylic effect
+        /// </summary>
+        /// <param name="tint">The tint color to use</param>
+        /// <param name="mix">The amount of tint to apply over the current effect</param>
+        /// <param name="blur">The amount of blur to apply to the acrylic brush</param>
         /// <param name="noiseUri">The <see cref="Uri"/> for the noise texture to load for the acrylic effect</param>
         /// <param name="cache">The cache mode to use to load the image</param>
         [Pure, NotNull]
@@ -273,6 +338,24 @@ namespace UICompositionAnimations.Behaviours
                 .Tint(tint, mix)
                 .Blur(blur)
                 .Blend(FromTiles(noiseUri, cache: cache), BlendEffectMode.Overlay, Placement.Background);
+        }
+
+        /// <summary>
+        /// Returns a new <see cref="PipelineBuilder"/> instance that implements the in-app backdrop acrylic effect
+        /// </summary>
+        /// <param name="tint">The tint color to use</param>
+        /// <param name="mix">The amount of tint to apply over the current effect</param>
+        /// <param name="tintAnimation">The animation to apply on the tint color of the effect</param>
+        /// <param name="blur">The amount of blur to apply to the acrylic brush</param>
+        /// <param name="noiseRelativePath">The relative path for the noise texture to load (eg. "/Assets/noise.png")</param>
+        /// <param name="cache">The cache mode to use to load the image</param>
+        [Pure, NotNull]
+        public static PipelineBuilder FromBackdropAcrylic(
+            Color tint, float mix, out EffectAnimation tintAnimation,
+            float blur,
+            [NotNull] string noiseRelativePath, CacheMode cache = CacheMode.Default)
+        {
+            return FromBackdropAcrylic(tint, mix, out tintAnimation, blur, noiseRelativePath.ToAppxUri(), cache);
         }
 
         /// <summary>
@@ -303,6 +386,24 @@ namespace UICompositionAnimations.Behaviours
         /// <param name="mix">The amount of tint to apply over the current effect</param>
         /// <param name="blur">The amount of blur to apply to the acrylic brush</param>
         /// <param name="blurAnimation">The animation to apply on the blur effect in the pipeline</param>
+        /// <param name="noiseRelativePath">The relative path for the noise texture to load (eg. "/Assets/noise.png")</param>
+        /// <param name="cache">The cache mode to use to load the image</param>
+        [Pure, NotNull]
+        public static PipelineBuilder FromBackdropAcrylic(
+            Color tint, float mix,
+            float blur, out EffectAnimation blurAnimation,
+            [NotNull] string noiseRelativePath, CacheMode cache = CacheMode.Default)
+        {
+            return FromBackdropAcrylic(tint, mix, blur, out blurAnimation, noiseRelativePath.ToAppxUri(), cache);
+        }
+
+        /// <summary>
+        /// Returns a new <see cref="PipelineBuilder"/> instance that implements the in-app backdrop acrylic effect
+        /// </summary>
+        /// <param name="tint">The tint color to use</param>
+        /// <param name="mix">The amount of tint to apply over the current effect</param>
+        /// <param name="blur">The amount of blur to apply to the acrylic brush</param>
+        /// <param name="blurAnimation">The animation to apply on the blur effect in the pipeline</param>
         /// <param name="noiseUri">The <see cref="Uri"/> for the noise texture to load for the acrylic effect</param>
         /// <param name="cache">The cache mode to use to load the image</param>
         [Pure, NotNull]
@@ -315,6 +416,25 @@ namespace UICompositionAnimations.Behaviours
                 .Tint(tint, mix)
                 .Blur(blur, out blurAnimation)
                 .Blend(FromTiles(noiseUri, cache: cache), BlendEffectMode.Overlay, Placement.Background);
+        }
+
+        /// <summary>
+        /// Returns a new <see cref="PipelineBuilder"/> instance that implements the in-app backdrop acrylic effect
+        /// </summary>
+        /// <param name="tint">The tint color to use</param>
+        /// <param name="mix">The amount of tint to apply over the current effect</param>
+        /// <param name="tintAnimation">The animation to apply on the tint color of the effect</param>
+        /// <param name="blur">The amount of blur to apply to the acrylic brush</param>
+        /// <param name="blurAnimation">The animation to apply on the blur effect in the pipeline</param>
+        /// <param name="noiseRelativePath">The relative path for the noise texture to load (eg. "/Assets/noise.png")</param>
+        /// <param name="cache">The cache mode to use to load the image</param>
+        [Pure, NotNull]
+        public static PipelineBuilder FromBackdropAcrylic(
+            Color tint, float mix, out EffectAnimation tintAnimation,
+            float blur, out EffectAnimation blurAnimation,
+            [NotNull] string noiseRelativePath, CacheMode cache = CacheMode.Default)
+        {
+            return FromBackdropAcrylic(tint, mix, out tintAnimation, blur, out blurAnimation, noiseRelativePath.ToAppxUri(), cache);
         }
 
         /// <summary>
