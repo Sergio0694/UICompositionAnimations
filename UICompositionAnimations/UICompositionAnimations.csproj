@@ -120,68 +120,74 @@
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Behaviours\AcrylicEffectHelper.cs" />
-    <Compile Include="Behaviours\CompositionBrushBuilder.cs" />
-    <Compile Include="Behaviours\CompositionSourceInitializer.cs" />
-    <Compile Include="Behaviours\Xaml\Effects\Abstract\ImageEffectBase.cs" />
-    <Compile Include="Behaviours\Xaml\Effects\Abstract\ValueEffectBase.cs" />
-    <Compile Include="Behaviours\Xaml\Effects\BackdropEffect.cs" />
-    <Compile Include="Behaviours\Xaml\Effects\BlendEffect.cs" />
-    <Compile Include="Behaviours\Xaml\Effects\BlurEffect.cs" />
-    <Compile Include="Behaviours\Xaml\Effects\ImageEffect.cs" />
-    <Compile Include="Behaviours\Xaml\Effects\LuminanceEffect.cs" />
-    <Compile Include="Behaviours\Xaml\Effects\OpacityEffect.cs" />
-    <Compile Include="Behaviours\Xaml\Effects\SaturationEffect.cs" />
-    <Compile Include="Behaviours\Xaml\Effects\SolidColorEffect.cs" />
-    <Compile Include="Behaviours\Xaml\Effects\TileEffect.cs" />
-    <Compile Include="Behaviours\Xaml\Effects\TintEffect.cs" />
-    <Compile Include="Behaviours\Xaml\IPipelineEffect.cs" />
-    <Compile Include="Behaviours\Xaml\PipelineBrush.cs" />
-    <Compile Include="Enums\AcrylicEffectMode.cs" />
+    <Compile Include="Animations\Abstract\AnimationBuilderBase.cs" />
+    <Compile Include="Animations\CompositionAnimationBuilder.cs" />
+    <Compile Include="Animations\Interfaces\IAnimationBuilder.cs" />
+    <Compile Include="Animations\XamlAnimationBuilder.cs" />
+    <Compile Include="AttachedProperties\ClipHelper.cs" />
+    <Compile Include="Behaviours\PipelineBuilder.cs" />
+    <Compile Include="Behaviours\BrushProvider.cs" />
+    <Compile Include="Brushes\AcrylicBrush.cs" />
+    <Compile Include="Brushes\Effects\Abstract\ImageEffectBase.cs" />
+    <Compile Include="Brushes\Effects\Abstract\ValueEffectBase.cs" />
+    <Compile Include="Brushes\Effects\BackdropEffect.cs" />
+    <Compile Include="Brushes\Effects\BlendEffect.cs" />
+    <Compile Include="Brushes\Effects\BlurEffect.cs" />
+    <Compile Include="Brushes\Effects\ImageEffect.cs" />
+    <Compile Include="Brushes\Effects\LuminanceEffect.cs" />
+    <Compile Include="Brushes\Effects\OpacityEffect.cs" />
+    <Compile Include="Brushes\Effects\SaturationEffect.cs" />
+    <Compile Include="Brushes\Effects\SolidColorEffect.cs" />
+    <Compile Include="Brushes\Effects\TileEffect.cs" />
+    <Compile Include="Brushes\Effects\TintEffect.cs" />
+    <Compile Include="Brushes\Effects\Interfaces\IPipelineEffect.cs" />
+    <Compile Include="Brushes\PipelineBrush.cs" />
     <Compile Include="Brushes\Base\XamlCompositionEffectBrushBase.cs" />
-    <Compile Include="Brushes\Cache\HostBackdropInstanceWrapper.cs" />
-    <Compile Include="Brushes\Cache\ThreadSafeCompositionCache.cs" />
-    <Compile Include="Brushes\Cache\ThreadSafeCompositionMapCache.cs" />
+    <Compile Include="Helpers\Cache\HostBackdropInstanceWrapper.cs" />
+    <Compile Include="Helpers\Cache\ThreadSafeCompositionCache.cs" />
+    <Compile Include="Helpers\Cache\ThreadSafeCompositionMapCache.cs" />
     <Compile Include="Brushes\NoiseTextureBrush.cs" />
-    <Compile Include="Brushes\CustomAcrylicBrush.cs" />
-    <Compile Include="Brushes\LightingBrush.cs" />
     <Compile Include="Brushes\XamlCompositionBrush.cs" />
-    <Compile Include="CompositionExtensions.cs" />
-    <Compile Include="Composition\CompositionManager.cs" />
-    <Compile Include="Composition\CubicBeizerEasingProvider.cs" />
-    <Compile Include="Composition\ExpressionAnimationWithScalarParameter.cs" />
-    <Compile Include="Composition\Misc\CompositeRotationAnimationStartInfo.cs" />
-    <Compile Include="Enums\AcrylicBrushEffectState.cs" />
-    <Compile Include="Enums\BitmapDPIMode.cs" />
-    <Compile Include="Enums\BitmapCacheMode.cs" />
-    <Compile Include="Enums\EasingFunctionNames.cs" />
-    <Compile Include="Enums\EffectPlacement.cs" />
-    <Compile Include="Enums\ImplicitAnimationType.cs" />
-    <Compile Include="Enums\MarginSide.cs" />
-    <Compile Include="Helpers\AsyncMutex.cs" />
-    <Compile Include="Helpers\ColorConverter.cs" />
+    <Compile Include="Enums\DpiMode.cs" />
+    <Compile Include="Enums\CacheMode.cs" />
+    <Compile Include="Enums\Easing.cs" />
+    <Compile Include="Enums\FrameworkLayer.cs" />
+    <Compile Include="Enums\Placement.cs" />
+    <Compile Include="Enums\AnimationType.cs" />
+    <Compile Include="Enums\Side.cs" />
+    <Compile Include="Extensions\System\Collections.Generic\GenericExtensions.cs" />
+    <Compile Include="Extensions\System\Threading.Tasks\TaskCompletionSource.cs" />
+    <Compile Include="Extensions\System\BaseExtensions.cs" />
+    <Compile Include="Extensions\System\Unit.cs" />
+    <Compile Include="Extensions\EnumExtensions.cs" />
+    <Compile Include="Extensions\Windows.UI\Composition\CompositionExtensions.cs" />
+    <Compile Include="Extensions\Windows.UI\Composition\CompositorExtensions.cs" />
+    <Compile Include="Extensions\Windows.UI\Composition\ScalarExpressionAnimation.cs" />
+    <Compile Include="Extensions\Windows.UI\Core\DispatcherExtensions.cs" />
+    <Compile Include="Extensions\System\Threading.Tasks\AsyncMutex.cs" />
+    <Compile Include="Extensions\Windows.UI\Xaml\Media\Animation\StoryboardExtensions.cs" />
+    <Compile Include="Extensions\Windows.UI\Xaml\Media\Animation\TimelineExtensions.cs" />
+    <Compile Include="Extensions\Windows.UI\Xaml\Media\SolidColorBrushExtensions.cs" />
+    <Compile Include="Extensions\Windows.UI\Xaml\DependencyObjectExtensions.cs" />
+    <Compile Include="Extensions\Windows.UI\Xaml\ScrollViewerExtensions.cs" />
+    <Compile Include="Extensions\Windows.UI\Xaml\UIElementExtensions.cs" />
+    <Compile Include="Extensions\Windows.UI\Xaml\FrameworkElementExtensions.cs" />
     <Compile Include="Helpers\DispatcherHelper.cs" />
-    <Compile Include="Helpers\Extensions.cs" />
     <Compile Include="Helpers\PointerEvents\ControlAttachedHandlersInfo.cs" />
     <Compile Include="Helpers\PointerEvents\HandlersRemovalResult.cs" />
     <Compile Include="Helpers\PointerEvents\PointerHandlerInfo.cs" />
     <Compile Include="Helpers\Win2DImageHelper.cs" />
     <Compile Include="Helpers\PointerEvents\PointerHelper.cs" />
-    <Compile Include="Lights\LightsSourceHelper.cs" />
-    <Compile Include="Lights\PointerPositionSpotLight.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Enums\TranslationAxis.cs" />
-    <Compile Include="XAMLTransformExtensions.cs" />
-    <Compile Include="XAMLTransform\EasingFunctionBaseProvider.cs" />
-    <Compile Include="XAMLTransform\XAMLTransformToolkit.cs" />
+    <Compile Include="Enums\Axis.cs" />
     <EmbeddedResource Include="Properties\UICompositionAnimations.rd.xml" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="JetBrains.Annotations">
-      <Version>2018.3.0</Version>
+      <Version>2019.1.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
-      <Version>6.1.9</Version>
+      <Version>6.2.8</Version>
     </PackageReference>
     <PackageReference Include="Win2D.uwp">
       <Version>1.23.0</Version>

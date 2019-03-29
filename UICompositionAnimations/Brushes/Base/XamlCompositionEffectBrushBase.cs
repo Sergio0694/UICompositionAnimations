@@ -6,7 +6,7 @@ using UICompositionAnimations.Behaviours;
 namespace UICompositionAnimations.Brushes.Base
 {
     /// <summary>
-    /// A custom <see cref="XamlCompositionBrushBase"/> <see langword="class"/> that's ready to be used with a custom <see cref="CompositionBrushBuilder"/> pipeline.
+    /// A custom <see cref="XamlCompositionBrushBase"/> <see langword="class"/> that's ready to be used with a custom <see cref="PipelineBuilder"/> pipeline.
     /// </summary>
     [PublicAPI]
     public abstract class XamlCompositionEffectBrushBase : XamlCompositionBrushBase
@@ -16,11 +16,11 @@ namespace UICompositionAnimations.Brushes.Base
         private readonly AsyncMutex ConnectedMutex = new AsyncMutex();
 
         /// <summary>
-        /// A method that builds and returns the <see cref="CompositionBrushBuilder"/> pipeline to use in the current instance.<para/>
+        /// A method that builds and returns the <see cref="PipelineBuilder"/> pipeline to use in the current instance.<para/>
         /// This method can also be used to store any needed <see cref="EffectAnimation"/> instances in local fields, for later use (they will need to be called upon <see cref="XamlCompositionBrushBase.CompositionBrush"/>).
         /// </summary>
         [MustUseReturnValue, NotNull]
-        protected abstract CompositionBrushBuilder OnBrushRequested();
+        protected abstract PipelineBuilder OnBrushRequested();
 
         /// <inheritdoc/>
         protected override async void OnConnected()

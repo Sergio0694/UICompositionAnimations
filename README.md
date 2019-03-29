@@ -19,7 +19,6 @@ It also has a collection of helper methods to load Win2D images, dispatch code t
 - [Quick start](#quick-start)
   - [Animations](#animations) 
   - [`UI.Composition` effects](#uicomposition-effects)
-  - [Reveal highlight effect](#reveal-highlight-effect)
 - [Misc](#misc)
 - [Requirements](#requirements)
 
@@ -37,108 +36,60 @@ More details available [here](https://www.nuget.org/packages/UICompositionAnimat
 
 ## Animations
 
-The package exposes synchronous and asynchronous APIs (from the `CompositionExtensions` and `XAMLTransformExtensions` classes) to quickly setup and start animations. There are different kinds of available animation types to choose from:
-- **Fade** (Opacity)
-- **Slide** (Translation)
-- **Scale**
-- **Color** (for a `SolidColorBrush` object)
+The available animation APIs use the fluent pattern and support combining multiple animations togetger. The main entry point is the ` UIElementExtensions.Animation` method, that returns an `IAnimationBuilder` object targeting the input `UIElement`. This object exposes all the available animation APIs.
 
-The library also has APIs to automatically combine different kinds of animations, like Fade + Slide or Fade + Scale, and various helper methods to change UI-related parameters of a target object. Here are some animation exaples:
-
-#### Synchronous fade animation
+You can use it like this:
 
 ```C#
-MyControl.StartCompositionFadeAnimation(
-  null, // Using null will make the fade animation start from the current value
-  1, // End opacity
-  200, // Duration in ms
-  null, // Optional delay in ms
-  EasingFunctionNames.CircleEaseOut, // Easing function,
-  () => Foo()); // Optional callback
+MyControl.Animation()
+         .Opacity(0)
+         .Translation(Axis.X, 60)
+         .Duration(250)
+         .Start();
 ```
 
-#### Asynchronous fade and scale animation
+It is also possible to set an initial delay, and to wait for the animation to be completed. Also, should you need to do so in a particular situation, it is also possible to choose between the `Windows.UI.Composition` and `Windows.UI.Xaml.Media.Animation` APIs to run the animations. To toggle between the two, just pass a `FrameworkLayer` value to the `Animation` method. Furthermore, each animation API has two overloads: one that just takes the target value, and one that also sets the initial value for the animation. It is also possible to specify an easing function for each individual animation. Here is another, more complex example:
 
 ```C#
-await MyControl.StartCompositionFadeScaleAnimationAsync(
-  null, // Initial opacity (use current value)
-  1, // Target opacity
-  1.1f, // Initial scale
-  1, // End scale
-  250, // Animation duration
-  null, // Optional scale animation duration (if null, the base animation duration will be used)
-  null, // Optional delay
-  EasingFunctionNames.Linear); // Easing function
+await MyControl.Animation(FrameworkLayer.Xaml)
+               .Opacity(0, 1, Easing.CircleEaseOut)
+               .Scale(1.2, 1, Easing.QuadratincEaseInOut)
+               .Duration(500)
+               .Delay(250)
+               .StartAsync();
 ```
 
 ## `UI.Composition` effects
 
-The library provides several ways to use `UI.Composition` effects. There are ready to use XAML brushes, a `CompositionBrushBuilder` class to create complex composition effect pipelines, an `AttachedCompositionEffectsFactory` class that provides an alternative way to attach commonly used effects to visual elements, and much more.
+The library provides several ways to use `UI.Composition` effects: there are both ready to use XAML brushes (like a customizable acrylic brush), a `CompositionBrushBuilder` class to create complex composition effect pipelines, and more.
 
-#### Declare a shared acrylic brush in XAML
+#### Declare an acrylic brush in XAML
 
 ```XAML
-<ResourceDictionary
-  ...
-  xmlns:brushes="using:UICompositionAnimations.Brushes">
+xmlns:brushes="using:UICompositionAnimations.Brushes">
   
-  <!--The acrylic brush to use in the app-->
-  <brushes:CustomAcrylicBrush
-      x:Key="InAppGrayAcrylicBrush"
-      Mode="HostBackdrop"
-      BlurAmount="8"
-      Tint="#FF222222"
-      TintMix="0.6"
-      NoiseTextureUri="/Assets/Misc/noise.png"/>
-  ...
-</ResourceDictionary/>
+<!--The acrylic brush to use in the app-->
+<brushes:AcrylicBrush
+    x:Key="InAppGrayAcrylicBrush"
+    Source="HostBackdrop"
+    BlurAmount="8"
+    Tint="#FF222222"
+    TintMix="0.6"
+    NoiseTextureUri="/Assets/Misc/noise.png"/>
 ```
 
 **Note**: the `NoiseTextureUri` parameter must be set to a .png image with a noise texture. It is up to the developer to create his own noise texture and to import it into the app. An easy plugin to create one is [NoiseChoice](https://forums.getpaint.net/topic/22500-red-ochre-plug-in-pack-v9-updated-30th-july-2014/) for [Paint.NET](https://www.getpaint.net/).
 
-#### Create and assign an acrylic brush in C#
-
-```C#
-control.Background = CompositionBrushBuilder.FromHostBackdropAcrylic(Colors.DarkOrange, 0.6f, new Uri("ms-appx:///Assets/noise.png")).AsBrush();
-```
-
-#### Build an acrylic effect pipeline from scratch:
-
-```C#
-Brush brush = CompositionBrushBuilder.FromHostBackdropBrush()
-    .Effect(source => new LuminanceToAlphaEffect { Source = source })
-    .Opacity(0.4f)
-    .Blend(CompositionBrushBuilder.FromHostBackdropBrush(), BlendEffectMode.Multiply)
-    .Tint(Color.FromArgb(0xFF, 0x14, 0x14, 0x14), 0.8f)
-    .Blend(CompositionBrushBuilder.FromTiles(new Uri("ms-appx:///Assets/noise.png")), BlendEffectMode.Overlay, EffectPlacement.Background)
-    .AsBrush();
-```
-
-The `CompositionBrushBuilder` class can also be used to quickly implement custom XAML brushes with an arbitrary effects pipeline. To do so, just inherit from `XamlCompositionEffectBrushBase` and setup your own effects pipeline in the `OnBrushRequested` method.
-
-#### Get a custom effect that can be animated:
-
-```C#
-// Build the effects pipeline
-XamlCompositionBrush acrylic = CompositionBrushBuilder.FromHostBackdropAcrylic(Colors.Orange, 0.6f, new Uri("ms-appx:///Assets/noise.png"))
-    .Saturation(1, out EffectAnimation animation)
-    .AsBrush();
-acrylic.Bind(animation, out XamlEffectAnimation saturation); // Bind the effect animation to the target brush
-
-// Later on, when needed
-saturation(0.2f, 250); // Animate the opacity to 0.2 in 250ms
-```
-
 #### Create custom effects in XAML:
 
-Using the APIs in `UICompositionAnimations.Behaviours.Xaml` it is also possible to build complex Composition/Win2D pipelines directly from XAML, in a declarative way. This is how to define a custom host backdrop acrylic brush:
+Using the APIs in `UICompositionAnimations.Brushes.Effects` it is also possible to build complex Composition/Win2D pipelines directly from XAML, in a declarative way. This is how to define a custom host backdrop acrylic brush:
 
 ```xml
-xmlns:xaml="using:UICompositionAnimations.Behaviours.Xaml"
-xmlns:effects="using:UICompositionAnimations.Behaviours.Xaml.Effects"
+xmlns:brushes="using:UICompositionAnimations.Brushes"
+xmlns:effects="using:UICompositionAnimations.Brushes.Effects"
 
-<xaml:PipelineBrush>
-    <xaml:PipelineBrush.Effects>
+<brushes:PipelineBrush>
+    <brushes:PipelineBrush.Effects>
         <effects:BackdropEffect Source="HostBackdrop"/>
         <effects:LuminanceEffect/>
         <effects:OpacityEffect Value="0.4"/>
@@ -153,62 +104,51 @@ xmlns:effects="using:UICompositionAnimations.Behaviours.Xaml.Effects"
                 <effects:TileEffect Uri="/Assets/noise_high.png"/>
             </effects:BlendEffect.Input>
         </effects:BlendEffect>
-    </xaml:PipelineBrush.Effects>
-</xaml:PipelineBrush>
+    </brushes:PipelineBrush.Effects>
+</brushes:PipelineBrush>
 ```
 
-## Reveal highlight effect
-
-Part of the Fluent Design System introduced with Windows 10 Fall Creators Update, this effect can actually already be used with Windows 10 Creators Update (build 15063.x). The library exposes APIs to easily use the effect in an application.
-
-#### Setup the lights
+#### Create and assign an acrylic brush in C#
 
 ```C#
-// In App.xaml.cs, before loading the application UI
-LightsSourceHelper.Initialize(
-    () => new PointerPositionSpotLight { Shade = 0x60 }, // Example light
-    () => new PointerPositionSpotLight
-    {
-        IdAppendage = "[Wide]", // This ID is used to specify the target brushes for the specific light
-        Z = 30,
-        Shade = 0x10
-    }); // It is possible to add an arbitrary number of lights here
-Window.Current.Content = new Frame(); // Sample UI initialization
-LightsSourceHelper.SetIsLightsContainer(Window.Current.Content, true); // Assign the lights to the app main UI
+control.Background = PipelineBuilder.FromHostBackdropAcrylic(Colors.DarkOrange, 0.6f, new Uri("ms-appx:///Assets/noise.png"))
+                                    .AsBrush();
 ```
 
-#### Setup the target brushes for the lights
-
-````XAML
-<ResourceDictionary
-    ...
-    xmlns:brushes="using:UICompositionAnimations.Brushes"
-    xmlns:lights="using:UICompositionAnimations.Lights">
-    <brushes:LightingBrush
-            x:Key="BorderLightBrush"
-            lights:PointerPositionSpotLight.IsTarget="True"/>
-    <brushes:LightingBrush x:Key="BorderWideLightBrush"/>
-    ...
-</ResourceDictionary/>
-````
+#### Build an acrylic effect pipeline from scratch:
 
 ```C#
-// Since the second light has a special ID, it is necessary to manually set its target brush
-LightingBrush brush = Application.Current.Resources["BorderWideLightBrush"] as LightingBrush;
-XamlLight.AddTargetBrush($"{PointerPositionSpotLight.GetIdStatic()}[Wide]", brush);
+Brush brush = PipelineBuilder.FromHostBackdropBrush()
+                             .Effect(source => new LuminanceToAlphaEffect { Source = source })
+                             .Opacity(0.4f)
+                             .Blend(CompositionBrushBuilder.FromHostBackdropBrush(), BlendEffectMode.Multiply)
+                             .Tint(Color.FromArgb(0xFF, 0x14, 0x14, 0x14), 0.8f)
+                             .Blend(CompositionBrushBuilder.FromTiles(new Uri("ms-appx:///Assets/noise.png")), BlendEffectMode.Overlay, Placement.Background)
+                             .AsBrush();
 ```
 
-At this point we have a series of lights, each targeting an arbitrary number of brushes. The library takes care of managing the pointer events for the lights as well. It is now possible to use those brushes in any `UIElement` to see the reveal highlight effect in action.
+The `PipelineBuilder` class can also be used to quickly implement custom XAML brushes with an arbitrary effects pipeline. To do so, just inherit from `XamlCompositionEffectBrushBase` and setup your own effects pipeline in the `OnBrushRequested` method.
 
-**Note**: the lights only work on `UIElement`s in their visual tree. This means that in order for the `LightingBrush` objects to work correctly in popups or flyouts, the lights must be added to their visual tree too. To do this, just call the `LightsSourceHelper.SetIsLightsContainer` method on the root element of the new object being displayed (for example, the root `Grid` inside a new `Popup`).
+#### Get a custom effect that can be animated:
+
+```C#
+// Build the effects pipeline
+XamlCompositionBrush acrylic = PipelineBuilder.FromHostBackdropAcrylic(Colors.Orange, 0.6f, new Uri("ms-appx:///Assets/noise.png"))
+                                              .Saturation(1, out EffectAnimation animation)
+                                              .AsBrush();
+acrylic.Bind(animation, out XamlEffectAnimation saturation); // Bind the effect animation to the target brush
+
+// Later on, when needed
+saturation(0.2f, 250); // Animate the opacity to 0.2 in 250ms
+```
 
 # Misc
 
 Many utility methods are also available, here are some useful classes:
-- `XAMLTransformToolkit`: exposes methods to manually create, start and wait for `DoubleAnimation`(s) and `Storyboard`(s), as well as for quickly assigning a certain `RenderTransform` object to a `UIElement`.
 - `DispatcherHelper`: exposes methods to easily execute code on the UI thread or on a target `CoreDispatcher` object
 - `Win2DImageHelper`: exposes APIs to quickly load a Win2D image on a `CompositionSurfaceBrush` object
 - `PointerHelper`: exposes APIs to quickly setup pointer event handlers for `UIElement`s
+- `AsyncMutex`: an async mutex included into `System.Threading.Tasks` that can be used to asynchronously acquire a lock with a `using` block.
 
 # Requirements
 At least Windows 10 April Update (17134.x)

@@ -15,14 +15,15 @@ using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.UI;
 using Microsoft.Graphics.Canvas.UI.Composition;
 using Microsoft.Graphics.Canvas.UI.Xaml;
-using UICompositionAnimations.Brushes.Cache;
 using UICompositionAnimations.Enums;
+using UICompositionAnimations.Helpers.Cache;
 
 namespace UICompositionAnimations.Helpers
 {
     /// <summary>
-    /// A helper classe that loads Win2D images and manages an internal cache of <see cref="CompositionBrush"/> objects with the loaded images
+    /// A helper <see langword="class"/> that loads Win2D images and manages an internal cache of <see cref="CompositionBrush"/> instances with the loaded images
     /// </summary>
+    [PublicAPI]
     public static class Win2DImageHelper
     {
         /// <summary>
@@ -48,9 +49,8 @@ namespace UICompositionAnimations.Helpers
         /// <param name="uri">The path to the image to load</param>
         /// <param name="dpiMode">Indicates the desired DPI mode to use when loading the image</param>
         /// <param name="cache">Indicates the cache option to use to load the image</param>
-        [PublicAPI]
         [Pure, ItemCanBeNull]
-        public static Task<CompositionSurfaceBrush> LoadImageAsync([NotNull] Uri uri, BitmapDPIMode dpiMode, BitmapCacheMode cache = BitmapCacheMode.Default)
+        public static Task<CompositionSurfaceBrush> LoadImageAsync([NotNull] Uri uri, DpiMode dpiMode, CacheMode cache = CacheMode.Default)
         {
             return LoadImageAsync(Window.Current.Compositor, uri, dpiMode, cache);
         }
@@ -62,9 +62,8 @@ namespace UICompositionAnimations.Helpers
         /// <param name="uri">The path to the image to load</param>
         /// <param name="dpiMode">Indicates the desired DPI mode to use when loading the image</param>
         /// <param name="cache">Indicates the cache option to use to load the image</param>
-        [PublicAPI]
         [Pure, ItemCanBeNull]
-        public static Task<CompositionSurfaceBrush> LoadImageAsync([NotNull] this CanvasControl canvas, [NotNull] Uri uri, BitmapDPIMode dpiMode, BitmapCacheMode cache = BitmapCacheMode.Default)
+        public static Task<CompositionSurfaceBrush> LoadImageAsync([NotNull] this CanvasControl canvas, [NotNull] Uri uri, DpiMode dpiMode, CacheMode cache = CacheMode.Default)
         {
             return LoadImageAsync(Window.Current.Compositor, canvas, uri, dpiMode, cache);
         }
@@ -73,8 +72,7 @@ namespace UICompositionAnimations.Helpers
         /// Clears the internal cache of Win2D images
         /// </summary>
         /// <returns>A sequence of the <see cref="CompositionBrush"/> objects that were present in the cache</returns>
-        /// <remarks>The returned items should be manually disposed once checked that they are no longer being used in other effect pipelines</remarks>
-        [PublicAPI]
+        /// <remarks>The returned items should be manually disposed after checking that they are no longer in use in other effect pipelines</remarks>
         [MustUseReturnValue, ItemNotNull]
         public static async Task<IReadOnlyList<CompositionBrush>> ClearCacheAsync()
         {
@@ -95,8 +93,10 @@ namespace UICompositionAnimations.Helpers
         /// <param name="uri">The path to the image to load</param>
         /// <param name="dpiMode">Indicates the desired DPI mode to use when loading the image</param>
         [ItemNotNull]
-        private static async Task<CompositionSurfaceBrush> LoadSurfaceBrushAsync([NotNull] ICanvasResourceCreator creator,
-            [NotNull] Compositor compositor, [NotNull] CanvasDevice canvasDevice, [NotNull] Uri uri, BitmapDPIMode dpiMode)
+        private static async Task<CompositionSurfaceBrush> LoadSurfaceBrushAsync(
+            [NotNull] ICanvasResourceCreator creator,
+            [NotNull] Compositor compositor, [NotNull] CanvasDevice canvasDevice,
+            [NotNull] Uri uri, DpiMode dpiMode)
         {
             CanvasBitmap bitmap = null;
             try
@@ -106,16 +106,16 @@ namespace UICompositionAnimations.Helpers
                 float dpi = display.LogicalDpi;
                 switch (dpiMode)
                 {
-                    case BitmapDPIMode.UseSourceDPI:
+                    case DpiMode.UseSourceDpi:
                         bitmap = await CanvasBitmap.LoadAsync(creator, uri);
                         break;
-                    case BitmapDPIMode.Default96DPI:
+                    case DpiMode.Default96Dpi:
                         bitmap = await CanvasBitmap.LoadAsync(creator, uri, 96);
                         break;
-                    case BitmapDPIMode.CopyDisplayDPISetting:
+                    case DpiMode.DisplayDpi:
                         bitmap = await CanvasBitmap.LoadAsync(creator, uri, dpi);
                         break;
-                    case BitmapDPIMode.CopyDisplayDPISettingsWith96AsLowerBound:
+                    case DpiMode.DisplayDpiWith96AsLowerBound:
                         bitmap = await CanvasBitmap.LoadAsync(creator, uri, dpi >= 96 ? dpi : 96);
                         break;
                     default:
@@ -169,7 +169,10 @@ namespace UICompositionAnimations.Helpers
         /// <param name="dpiMode">Indicates the desired DPI mode to use when loading the image</param>
         /// <param name="cache">Indicates the cache option to use to load the image</param>
         [ItemCanBeNull]
-        internal static async Task<CompositionSurfaceBrush> LoadImageAsync([NotNull] Compositor compositor, [NotNull] CanvasControl canvas, [NotNull] Uri uri, BitmapDPIMode dpiMode, BitmapCacheMode cache)
+        internal static async Task<CompositionSurfaceBrush> LoadImageAsync(
+            [NotNull] Compositor compositor,
+            [NotNull] CanvasControl canvas,
+            [NotNull] Uri uri, DpiMode dpiMode, CacheMode cache)
         {
             TaskCompletionSource<CompositionSurfaceBrush> tcs = new TaskCompletionSource<CompositionSurfaceBrush>();
 
@@ -214,7 +217,7 @@ namespace UICompositionAnimations.Helpers
             // Lock the semaphore and check the cache first
             using (await Win2DMutex.LockAsync())
             {
-                if (cache == BitmapCacheMode.Default && Cache.TryGetInstance(uri, out CompositionSurfaceBrush cached)) return cached;
+                if (cache == CacheMode.Default && Cache.TryGetInstance(uri, out CompositionSurfaceBrush cached)) return cached;
 
                 // Load the image
                 canvas.CreateResources += Canvas_CreateResources;
@@ -239,8 +242,8 @@ namespace UICompositionAnimations.Helpers
                 // Cache when needed and return the result
                 if (brush != null)
                 {
-                    if (cache == BitmapCacheMode.Default) Cache.Add(uri, brush);
-                    else if (cache == BitmapCacheMode.Overwrite) Cache.Overwrite(uri, brush);
+                    if (cache == CacheMode.Default) Cache.Add(uri, brush);
+                    else if (cache == CacheMode.Overwrite) Cache.Overwrite(uri, brush);
                 }
                 return brush;
             }
@@ -254,21 +257,13 @@ namespace UICompositionAnimations.Helpers
         /// <param name="dpiMode">Indicates the desired DPI mode to use when loading the image</param>
         /// <param name="cache">Indicates the cache option to use to load the image</param>
         [ItemCanBeNull]
-        internal static async Task<CompositionSurfaceBrush> LoadImageAsync([NotNull] Compositor compositor, [NotNull] Uri uri, BitmapDPIMode dpiMode, BitmapCacheMode cache)
+        internal static async Task<CompositionSurfaceBrush> LoadImageAsync([NotNull] Compositor compositor, [NotNull] Uri uri, DpiMode dpiMode, CacheMode cache)
         {
-            // Fix the Uri if it has been generated by the XAML designer
-            if (uri.Scheme.Equals("ms-resource"))
-            {
-                string path = uri.AbsolutePath.StartsWith("/Files")
-                    ? uri.AbsolutePath.Replace("/Files", string.Empty)
-                    : uri.AbsolutePath;
-                uri = new Uri($"ms-appx://{path}");
-            }
-
             // Lock and check the cache first
             using (await Win2DMutex.LockAsync())
             {
-                if (cache == BitmapCacheMode.Default && Cache.TryGetInstance(uri, out CompositionSurfaceBrush cached)) return cached;
+                uri = uri.ToAppxUri();
+                if (cache == CacheMode.Default && Cache.TryGetInstance(uri, out CompositionSurfaceBrush cached)) return cached;
 
                 // Load the image
                 CompositionSurfaceBrush brush;
@@ -287,8 +282,8 @@ namespace UICompositionAnimations.Helpers
                 // Cache when needed and return the result
                 if (brush != null)
                 {
-                    if (cache == BitmapCacheMode.Default) Cache.Add(uri, brush);
-                    else if (cache == BitmapCacheMode.Overwrite) Cache.Overwrite(uri, brush);
+                    if (cache == CacheMode.Default) Cache.Add(uri, brush);
+                    else if (cache == CacheMode.Overwrite) Cache.Overwrite(uri, brush);
                 }
                 return brush;
             }
