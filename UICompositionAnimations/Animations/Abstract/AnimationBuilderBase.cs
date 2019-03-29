@@ -167,6 +167,37 @@ namespace UICompositionAnimations.Animations.Abstract
         [MustUseReturnValue, NotNull]
         protected abstract IAnimationBuilder OnClip(Side side, double? from, double to, Easing ease);
 
+        /// <inheritdoc/>
+        public IAnimationBuilder Size(Axis axis, double to, Easing ease = Easing.Linear) => OnSize(axis, null, to, ease);
+
+        /// <inheritdoc/>
+        public IAnimationBuilder Size(Axis axis, double from, double to, Easing ease = Easing.Linear) => OnSize(axis, from, to, ease);
+
+        /// <summary>
+        /// Schedules a size animation on a single axis
+        /// </summary>
+        /// <param name="axis">The target axis to animate</param>
+        /// <param name="from">The optional starting value</param>
+        /// <param name="to">The target value</param>
+        /// <param name="ease">The easing function to use for the size animation</param>
+        [MustUseReturnValue, NotNull]
+        protected abstract IAnimationBuilder OnSize(Axis axis, double? from, double to, Easing ease);
+
+        /// <inheritdoc/>
+        public IAnimationBuilder Size(Vector2 to, Easing ease = Easing.Linear) => OnSize(null, to, ease);
+
+        /// <inheritdoc/>
+        public IAnimationBuilder Size(Vector2 from, Vector2 to, Easing ease = Easing.Linear) => OnSize(from, to, ease);
+
+        /// <summary>
+        /// Schedules a 2D size animation
+        /// </summary>
+        /// <param name="from">The optional starting position</param>
+        /// <param name="to">The target position</param>
+        /// <param name="ease">The easing function to use for the size animation</param>
+        [MustUseReturnValue, NotNull]
+        protected abstract IAnimationBuilder OnSize(Vector2? from, Vector2 to, Easing ease = Easing.Linear);
+
         #endregion
 
         /// <inheritdoc/>

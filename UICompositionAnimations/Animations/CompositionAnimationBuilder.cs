@@ -29,92 +29,19 @@ namespace UICompositionAnimations.Animations
         }
 
         /// <inheritdoc/>
-        protected override IAnimationBuilder OnOpacity(double? from, double to, Easing ease)
-        {
-            AnimationFactories.Add(duration =>
-            {
-                TargetVisual.StopAnimation(nameof(Visual.Opacity));
-                CompositionEasingFunction easingFunction = TargetVisual.GetEasingFunction(ease);
-                ScalarKeyFrameAnimation animation = TargetVisual.Compositor.CreateScalarKeyFrameAnimation((float?)from, (float)to, duration, null, easingFunction);
-                TargetVisual.StartAnimation(nameof(Visual.Opacity), animation);
-            });
-
-            return this;
-        }
+        protected override IAnimationBuilder OnOpacity(double? from, double to, Easing ease) => OnScalarAnimation(nameof(Visual.Opacity), from, to, ease);
 
         /// <inheritdoc/>
-        protected override IAnimationBuilder OnTranslation(Axis axis, double? from, double to, Easing ease)
-        {
-            AnimationFactories.Add(duration =>
-            {
-                // Stop the animation and get the easing function
-                string property = $"Translation.{axis}";
-                TargetVisual.StopAnimation(property);
-                CompositionEasingFunction easingFunction = TargetVisual.GetEasingFunction(ease);
-
-                // Create and return the animation
-                ScalarKeyFrameAnimation animation = TargetVisual.Compositor.CreateScalarKeyFrameAnimation((float?)from, (float)to, duration, null, easingFunction);
-                TargetVisual.StartAnimation(property, animation);
-            });
-
-            return this;
-        }
+        protected override IAnimationBuilder OnTranslation(Axis axis, double? from, double to, Easing ease) => OnScalarAnimation($"Translation.{axis}", from, to, ease);
 
         /// <inheritdoc/>
-        protected override IAnimationBuilder OnTranslation(Vector2? from, Vector2 to, Easing ease = Easing.Linear)
-        {
-            AnimationFactories.Add(duration =>
-            {
-                // Stop the animation and get the easing function
-                TargetVisual.StopAnimation("Translation");
-                CompositionEasingFunction easingFunction = TargetVisual.GetEasingFunction(ease);
-
-                // Create and return the animation
-                Vector3? from3 = from == null ? default : new Vector3(from.Value, 0);
-                Vector3 to3 = new Vector3(to, 0);
-                Vector3KeyFrameAnimation animation = TargetVisual.Compositor.CreateVector3KeyFrameAnimation(from3, to3, duration, null, easingFunction);
-                TargetVisual.StartAnimation("Translation", animation);
-            });
-
-            return this;
-        }
+        protected override IAnimationBuilder OnTranslation(Vector2? from, Vector2 to, Easing ease = Easing.Linear) => OnVector3Animation("Translation", from, to, ease);
 
         /// <inheritdoc/>
-        protected override IAnimationBuilder OnOffset(Axis axis, double? from, double to, Easing ease)
-        {
-            AnimationFactories.Add(duration =>
-            {
-                // Stop the animation and get the easing function
-                string property = $"{nameof(Visual.Offset)}.{axis}";
-                TargetVisual.StopAnimation(property);
-                CompositionEasingFunction easingFunction = TargetVisual.GetEasingFunction(ease);
-
-                // Create and return the animation
-                ScalarKeyFrameAnimation animation = TargetVisual.Compositor.CreateScalarKeyFrameAnimation((float?)from, (float)to, duration, null, easingFunction);
-                TargetVisual.StartAnimation(property, animation);
-            });
-
-            return this;
-        }
+        protected override IAnimationBuilder OnOffset(Axis axis, double? from, double to, Easing ease) => OnScalarAnimation($"{nameof(Visual.Offset)}.{axis}", from, to, ease);
 
         /// <inheritdoc/>
-        protected override IAnimationBuilder OnOffset(Vector2? from, Vector2 to, Easing ease = Easing.Linear)
-        {
-            AnimationFactories.Add(duration =>
-            {
-                // Stop the animation and get the easing function
-                TargetVisual.StopAnimation(nameof(Visual.Offset));
-                CompositionEasingFunction easingFunction = TargetVisual.GetEasingFunction(ease);
-
-                // Create and return the animation
-                Vector3? from3 = from == null ? default : new Vector3(from.Value, 0);
-                Vector3 to3 = new Vector3(to, 0);
-                Vector3KeyFrameAnimation animation = TargetVisual.Compositor.CreateVector3KeyFrameAnimation(from3, to3, duration, null, easingFunction);
-                TargetVisual.StartAnimation(nameof(Visual.Offset), animation);
-            });
-
-            return this;
-        }
+        protected override IAnimationBuilder OnOffset(Vector2? from, Vector2 to, Easing ease = Easing.Linear) => OnVector3Animation(nameof(Visual.Offset), from, to, ease);
 
         /// <inheritdoc/>
         protected override IAnimationBuilder OnScale(double? from, double to, Easing ease)
@@ -124,20 +51,9 @@ namespace UICompositionAnimations.Animations
             element.GetVisual().CenterPoint = new Vector3((float)(element.ActualWidth / 2), (float)(element.ActualHeight / 2), 0);
 
             // Add the scale animation
-            AnimationFactories.Add(duration =>
-            {
-                // Stop the animation and get the easing function
-                TargetVisual.StopAnimation(nameof(Visual.Scale));
-                CompositionEasingFunction easingFunction = TargetVisual.GetEasingFunction(ease);
-
-                // Create and return the animation
-                Vector3? from3 = from == null ? default : new Vector3((float)from.Value, (float)from.Value, 0);
-                Vector3 to3 = new Vector3((float)to, (float)to, 0);
-                Vector3KeyFrameAnimation animation = TargetVisual.Compositor.CreateVector3KeyFrameAnimation(from3, to3, duration, null, easingFunction);
-                TargetVisual.StartAnimation(nameof(Visual.Scale), animation);
-            });
-
-            return this;
+            Vector2? from2 = from == null ? default(Vector2?) : new Vector2((float)from.Value, (float)from.Value);
+            Vector2 to2 = new Vector2((float)to, (float)to);
+            return OnVector3Animation(nameof(Visual.Scale), from2, to2, ease);
         }
 
         /// <inheritdoc/>
@@ -148,15 +64,7 @@ namespace UICompositionAnimations.Animations
             element.GetVisual().CenterPoint = new Vector3((float)(element.ActualWidth / 2), (float)(element.ActualHeight / 2), 0);
 
             // Add the rotation animation
-            AnimationFactories.Add(duration =>
-            {
-                TargetVisual.StopAnimation(nameof(Visual.RotationAngleInDegrees));
-                CompositionEasingFunction easingFunction = TargetVisual.GetEasingFunction(ease);
-                ScalarKeyFrameAnimation animation = TargetVisual.Compositor.CreateScalarKeyFrameAnimation((float?)from, (float)to, duration, null, easingFunction);
-                TargetVisual.StartAnimation(nameof(Visual.RotationAngleInDegrees), animation);
-            });
-
-            return this;
+            return OnScalarAnimation(nameof(Visual.RotationAngleInDegrees), from, to, ease);
         }
 
         /// <inheritdoc/>
@@ -181,6 +89,62 @@ namespace UICompositionAnimations.Animations
                 // Create and return the animation
                 ScalarKeyFrameAnimation animation = clip.Compositor.CreateScalarKeyFrameAnimation((float?)from, (float)to, duration, null, easingFunction);
                 clip.StartAnimation(property, animation);
+            });
+
+            return this;
+        }
+
+        /// <inheritdoc/>
+        protected override IAnimationBuilder OnSize(Axis axis, double? from, double to, Easing ease) => OnScalarAnimation($"{nameof(Visual.Size)}.{axis}", from, to, ease);
+
+        /// <inheritdoc/>
+        protected override IAnimationBuilder OnSize(Vector2? from, Vector2 to, Easing ease = Easing.Linear) => OnVector3Animation(nameof(Visual.Size), from, to, ease);
+
+        /// <summary>
+        /// Schedules a scalar animation targeting the current <see cref="Visual"/> item
+        /// </summary>
+        /// <param name="property">The target <see cref="Visual"/> property to animate</param>
+        /// <param name="from">The optional starting value for the scalar animation</param>
+        /// <param name="to">The target value for the scalar animation</param>
+        /// <param name="ease">The easing function to use for the scalar animation</param>
+        [MustUseReturnValue, NotNull]
+        private IAnimationBuilder OnScalarAnimation(string property, double? from, double to, Easing ease)
+        {
+            AnimationFactories.Add(duration =>
+            {
+                // Stop the animation and get the easing function
+                TargetVisual.StopAnimation(property);
+                CompositionEasingFunction easingFunction = TargetVisual.GetEasingFunction(ease);
+
+                // Create and return the animation
+                ScalarKeyFrameAnimation animation = TargetVisual.Compositor.CreateScalarKeyFrameAnimation((float?)from, (float)to, duration, null, easingFunction);
+                TargetVisual.StartAnimation(property, animation);
+            });
+
+            return this;
+        }
+
+        /// <summary>
+        /// Schedules a vector animation targeting the current <see cref="Visual"/> item
+        /// </summary>
+        /// <param name="property">The target <see cref="Visual"/> property to animate</param>
+        /// <param name="from">The optional starting value for the vector animation</param>
+        /// <param name="to">The target value for the vector animation</param>
+        /// <param name="ease">The easing function to use for the vector animation</param>
+        [MustUseReturnValue, NotNull]
+        private IAnimationBuilder OnVector3Animation(string property, Vector2? from, Vector2 to, Easing ease)
+        {
+            AnimationFactories.Add(duration =>
+            {
+                // Stop the animation and get the easing function
+                TargetVisual.StopAnimation(property);
+                CompositionEasingFunction easingFunction = TargetVisual.GetEasingFunction(ease);
+
+                // Create and return the animation
+                Vector3? from3 = from == null ? default(Vector3?) : new Vector3(from.Value, 0);
+                Vector3 to3 = new Vector3(to, 0);
+                Vector3KeyFrameAnimation animation = TargetVisual.Compositor.CreateVector3KeyFrameAnimation(from3, to3, duration, null, easingFunction);
+                TargetVisual.StartAnimation(property, animation);
             });
 
             return this;

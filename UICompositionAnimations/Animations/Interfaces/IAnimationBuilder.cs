@@ -155,6 +155,42 @@ namespace UICompositionAnimations.Animations.Interfaces
         IAnimationBuilder Clip(Side side, double from, double to, Easing ease = Easing.Linear);
 
         /// <summary>
+        /// Schedules a size animation
+        /// </summary>
+        /// <param name="axis">The size axis to animate</param>
+        /// <param name="to">The target size value to animate to</param>
+        /// <param name="ease">The easing function to use for the size animation</param>
+        [MustUseReturnValue, NotNull]
+        IAnimationBuilder Size(Axis axis, double to, Easing ease = Easing.Linear);
+
+        /// <summary>
+        /// Schedules a size animation
+        /// </summary>
+        /// <param name="axis">The size axis to animate</param>
+        /// <param name="from">The initial size value to animate from</param>
+        /// <param name="to">The target size value to animate to</param>
+        /// <param name="ease">The easing function to use for the size animation</param>
+        [MustUseReturnValue, NotNull]
+        IAnimationBuilder Size(Axis axis, double from, double to, Easing ease = Easing.Linear);
+
+        /// <summary>
+        /// Schedules a size animation
+        /// </summary>
+        /// <param name="to">The target size position to animate to</param>
+        /// <param name="ease">The easing function to use for the size animation</param>
+        [MustUseReturnValue, NotNull]
+        IAnimationBuilder Size(Vector2 to, Easing ease = Easing.Linear);
+
+        /// <summary>
+        /// Schedules a size animation
+        /// </summary>
+        /// <param name="from">The initial size position to animate from</param>
+        /// <param name="to">The target size position to animate to</param>
+        /// <param name="ease">The easing function to use for the size animation</param>
+        [MustUseReturnValue, NotNull]
+        IAnimationBuilder Size(Vector2 from, Vector2 to, Easing ease = Easing.Linear);
+
+        /// <summary>
         /// Sets the duration of the animation
         /// </summary>
         /// <param name="ms">The animation duration, in milliseconds</param>

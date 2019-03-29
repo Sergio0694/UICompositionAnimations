@@ -77,7 +77,37 @@ namespace UICompositionAnimations.Animations
         }
 
         /// <inheritdoc/>
-        protected override IAnimationBuilder OnClip(Side side, double? @from, double to, Easing ease) => throw new NotSupportedException("Can't animate the clip property from XAML");
+        protected override IAnimationBuilder OnClip(Side side, double? from, double to, Easing ease) => throw new NotSupportedException("Can't animate the clip property from XAML");
+
+        /// <inheritdoc/>
+        protected override IAnimationBuilder OnSize(Axis axis, double? from, double to, Easing ease)
+        {
+            if (!(TargetElement is FrameworkElement element)) throw new InvalidOperationException("Can't animate the size of an item that's not a framework element");
+            AnimationFactories.Add(duration =>
+            {
+                switch (axis)
+                {
+                    case Axis.X: return TargetElement.CreateDoubleAnimation(nameof(FrameworkElement.Width), double.IsNaN(element.Width) ? element.ActualWidth : from, to, duration, ease, true);
+                    case Axis.Y: return TargetElement.CreateDoubleAnimation(nameof(FrameworkElement.Height), double.IsNaN(element.Height) ? element.ActualHeight : from, to, duration, ease, true);
+                    default: throw new ArgumentException($"Invalid axis: {axis}", nameof(axis));
+                }
+            });
+
+            return this;
+        }
+
+        /// <inheritdoc/>
+        protected override IAnimationBuilder OnSize(Vector2? from, Vector2 to, Easing ease = Easing.Linear)
+        {
+            if (!(TargetElement is FrameworkElement element)) throw new InvalidOperationException("Can't animate the size of an item that's not a framework element");
+            double?
+                fromX = double.IsNaN(element.Width) ? (double?)element.ActualWidth : from?.X,
+                fromY = double.IsNaN(element.Height) ? (double?)element.ActualHeight : from?.Y;
+            AnimationFactories.Add(duration => TargetTransform.CreateDoubleAnimation(nameof(FrameworkElement.Width), fromX, to.X, duration, ease, true));
+            AnimationFactories.Add(duration => TargetTransform.CreateDoubleAnimation(nameof(FrameworkElement.Height), fromY, to.Y, duration, ease, true));
+
+            return this;
+        }
 
         /// <summary>
         /// Gets the <see cref="Windows.UI.Xaml.Media.Animation.Storyboard"/> represented by the current instance
