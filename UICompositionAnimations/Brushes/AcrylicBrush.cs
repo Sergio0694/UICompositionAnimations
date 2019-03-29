@@ -17,12 +17,6 @@ namespace UICompositionAnimations.Brushes
         public AcrylicBackgroundSource Source { get; set; }
 
         /// <summary>
-        /// Gets or sets the duration of the optional animation played when changing the <see cref="BlurAmount"/> property
-        /// </summary>
-        /// <remarks>This property is ignored when the active mode is <see cref="AcrylicBackgroundSource.HostBackdrop"/></remarks>
-        public int BlurAnimationDuration { get; set; }
-
-        /// <summary>
         /// Gets or sets the blur amount for the effect
         /// </summary>
         /// <remarks>This property is ignored when the active mode is <see cref="AcrylicBackgroundSource.HostBackdrop"/></remarks>
