@@ -11,7 +11,7 @@
     <license type="expression">GPL-3.0-only</license>
     <licenseUrl>https://github.com/Sergio0694/UICompositionAnimations/blob/master/LICENSE.md</licenseUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <releaseNotes>New Composition/Win2D XAML APIs</releaseNotes>
+    <releaseNotes>Backported new animation APIs</releaseNotes>
     <copyright>Copyright 2019</copyright>
     <tags>uwp composition animations xaml csharp windows winrt universal app ui win2d graphics</tags>
   </metadata>

@@ -120,6 +120,10 @@
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Animations\Abstract\AnimationBuilderBase.cs" />
+    <Compile Include="Animations\CompositionAnimationBuilder.cs" />
+    <Compile Include="Animations\Interfaces\IAnimationBuilder.cs" />
+    <Compile Include="Animations\XamlAnimationBuilder.cs" />
     <Compile Include="Behaviours\AttachedCompositionEffectFactory.cs" />
     <Compile Include="Behaviours\AcrylicEffectHelper.cs" />
     <Compile Include="Behaviours\CompositionBrushBuilder.cs" />
@@ -163,6 +167,7 @@
     <Compile Include="Enums\BitmapDPIMode.cs" />
     <Compile Include="Enums\BitmapCacheMode.cs" />
     <Compile Include="Enums\EasingFunctionNames.cs" />
+    <Compile Include="Enums\FrameworkLayer.cs" />
     <Compile Include="Enums\ImplicitAnimationType.cs" />
     <Compile Include="Enums\MarginSide.cs" />
     <Compile Include="Helpers\ApiInformationHelper.cs" />
@@ -173,6 +178,7 @@
     <Compile Include="Helpers\PointerEvents\ControlAttachedHandlersInfo.cs" />
     <Compile Include="Helpers\PointerEvents\HandlersRemovalResult.cs" />
     <Compile Include="Helpers\PointerEvents\PointerHandlerInfo.cs" />
+    <Compile Include="Helpers\UIElementExtensions.cs" />
     <Compile Include="Helpers\Win2DImageHelper.cs" />
     <Compile Include="Helpers\PointerEvents\PointerHelper.cs" />
     <Compile Include="Lights\LightsSourceHelper.cs" />
