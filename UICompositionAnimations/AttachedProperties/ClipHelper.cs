@@ -13,23 +13,17 @@ namespace UICompositionAnimations.AttachedProperties
     public sealed class UIElementProperties
     {
         /// <summary>
-        /// Gets the value of the attached property
+        /// Gets the value of <see cref="ClipToBoundsProperty"/>
         /// </summary>
         /// <param name="element">The <see cref="UIElement"/> to read the property value from</param>
-        public static bool GetClipToBounds(UIElement element)
-        {
-            return element.GetValue(ClipToBoundsProperty).To<bool>();
-        }
+        public static bool GetClipToBounds(UIElement element) => element.GetValue(ClipToBoundsProperty).To<bool>();
 
         /// <summary>
-        /// Sets the value of the attached property
+        /// Sets the value of <see cref="ClipToBoundsProperty"/>
         /// </summary>
         /// <param name="element">The <see cref="UIElement"/> to set the property to</param>
         /// <param name="value">The new value of the attached property</param>
-        public static void SetClipToBounds(UIElement element, bool value)
-        {
-            element.SetValue(ClipToBoundsProperty, value);
-        }
+        public static void SetClipToBounds(UIElement element, bool value) => element.SetValue(ClipToBoundsProperty, value);
 
         /// <summary>
         /// A property that indicates whether or not the contents of the target <see cref="UIElement"/> should always be clipped to their parent's bounds
