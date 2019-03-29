@@ -143,6 +143,7 @@
     <Compile Include="Brushes\Effects\Interfaces\IPipelineEffect.cs" />
     <Compile Include="Brushes\PipelineBrush.cs" />
     <Compile Include="Brushes\Base\XamlCompositionEffectBrushBase.cs" />
+    <Compile Include="Extensions\System\UriExtensions.cs" />
     <Compile Include="Helpers\Cache\HostBackdropInstanceWrapper.cs" />
     <Compile Include="Helpers\Cache\ThreadSafeCompositionCache.cs" />
     <Compile Include="Helpers\Cache\ThreadSafeCompositionMapCache.cs" />
