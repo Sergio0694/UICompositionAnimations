@@ -10,7 +10,7 @@ namespace UICompositionAnimations.AttachedProperties
     /// A <see langword="class"/> with an attached property to set a composition clip to <see cref="UIElement"/> instances
     /// </summary>
     [PublicAPI]
-    public sealed class UIElementProperties
+    public sealed class ClipHelper
     {
         /// <summary>
         /// Gets the value of <see cref="ClipToBoundsProperty"/>
@@ -31,7 +31,7 @@ namespace UICompositionAnimations.AttachedProperties
         public static readonly DependencyProperty ClipToBoundsProperty = DependencyProperty.RegisterAttached(
             "ClipToBounds",
             typeof(bool),
-            typeof(UIElementProperties),
+            typeof(ClipHelper),
             new PropertyMetadata(false, OnClipToBoundsPropertyChanged));
 
         private static void OnClipToBoundsPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
