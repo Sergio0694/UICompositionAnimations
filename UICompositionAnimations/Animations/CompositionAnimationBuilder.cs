@@ -51,7 +51,7 @@ namespace UICompositionAnimations.Animations
             element.GetVisual().CenterPoint = new Vector3((float)(element.ActualWidth / 2), (float)(element.ActualHeight / 2), 0);
 
             // Add the scale animation
-            Vector2? from2 = from == null ? default : new Vector2((float)from.Value, (float)from.Value);
+            Vector2? from2 = from == null ? default(Vector2?) : new Vector2((float)from.Value, (float)from.Value);
             Vector2 to2 = new Vector2((float)to, (float)to);
             return OnVector3Animation(nameof(Visual.Scale), from2, to2, ease);
         }
@@ -141,7 +141,7 @@ namespace UICompositionAnimations.Animations
                 CompositionEasingFunction easingFunction = TargetVisual.GetEasingFunction(ease);
 
                 // Create and return the animation
-                Vector3? from3 = from == null ? default : new Vector3(from.Value, 0);
+                Vector3? from3 = from == null ? default(Vector3?) : new Vector3(from.Value, 0);
                 Vector3 to3 = new Vector3(to, 0);
                 Vector3KeyFrameAnimation animation = TargetVisual.Compositor.CreateVector3KeyFrameAnimation(from3, to3, duration, null, easingFunction);
                 TargetVisual.StartAnimation(property, animation);
