@@ -85,12 +85,13 @@ namespace UICompositionAnimations.Animations
             AnimationFactories.Add(duration =>
             {
                 // Stop the animation and get the easing function
-                TargetVisual.StopAnimation(nameof(Visual.Offset));
+                string property = $"{nameof(Visual.Offset)}.{axis}";
+                TargetVisual.StopAnimation(property);
                 CompositionEasingFunction easingFunction = TargetVisual.GetEasingFunction(ease);
 
                 // Create and return the animation
                 ScalarKeyFrameAnimation animation = TargetVisual.Compositor.CreateScalarKeyFrameAnimation((float?)from, (float)to, duration, null, easingFunction);
-                TargetVisual.StartAnimation(nameof(Visual.Offset), animation);
+                TargetVisual.StartAnimation(property, animation);
             });
 
             return this;
