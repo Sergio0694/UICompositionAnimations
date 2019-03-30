@@ -7,8 +7,8 @@
     <ProjectGuid>{D92746C3-045E-44F8-90CE-0451EDB2D40E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>UICompositionAnimations</RootNamespace>
-    <AssemblyName>UICompositionAnimations</AssemblyName>
+    <RootNamespace>UICompositionAnimationsLegacy</RootNamespace>
+    <AssemblyName>UICompositionAnimationsLegacy</AssemblyName>
     <DefaultLanguage>it-IT</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
     <TargetPlatformVersion>10.0.16299.0</TargetPlatformVersion>
@@ -26,7 +26,7 @@
     <DefineConstants>DEBUG;TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Debug\UICompositionAnimations.XML</DocumentationFile>
+    <DocumentationFile>bin\Debug\UICompositionAnimationsLegacy.xml</DocumentationFile>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -37,7 +37,7 @@
     <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Release\UICompositionAnimations.XML</DocumentationFile>
+    <DocumentationFile>bin\Release\UICompositionAnimationsLegacy.xml</DocumentationFile>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
@@ -62,7 +62,7 @@
     <PlatformTarget>x86</PlatformTarget>
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <ErrorReport>prompt</ErrorReport>
-    <DocumentationFile>bin\x86\Release\UICompositionAnimations.XML</DocumentationFile>
+    <DocumentationFile>bin\x86\Release\UICompositionAnimationsLegacy.xml</DocumentationFile>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|ARM'">
@@ -87,7 +87,7 @@
     <PlatformTarget>ARM</PlatformTarget>
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <ErrorReport>prompt</ErrorReport>
-    <DocumentationFile>bin\ARM\Release\UICompositionAnimations.XML</DocumentationFile>
+    <DocumentationFile>bin\ARM\Release\UICompositionAnimationsLegacy.xml</DocumentationFile>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
@@ -112,7 +112,7 @@
     <PlatformTarget>x64</PlatformTarget>
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <ErrorReport>prompt</ErrorReport>
-    <DocumentationFile>bin\x64\Release\UICompositionAnimations.XML</DocumentationFile>
+    <DocumentationFile>bin\x64\Release\UICompositionAnimationsLegacy.xml</DocumentationFile>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <ItemGroup>
