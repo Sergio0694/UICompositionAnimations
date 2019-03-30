@@ -88,7 +88,7 @@ namespace UICompositionAnimations.Animations.Abstract
         /// <param name="to">The target position</param>
         /// <param name="ease">The easing function to use for the translation animation</param>
         [MustUseReturnValue, NotNull]
-        protected abstract IAnimationBuilder OnTranslation(Vector2? from, Vector2 to, Easing ease = Easing.Linear);
+        protected abstract IAnimationBuilder OnTranslation(Vector2? from, Vector2 to, Easing ease);
 
         /// <inheritdoc/>
         public IAnimationBuilder Offset(Axis axis, double to, Easing ease = Easing.Linear) => OnOffset(axis, null, to, ease);
@@ -119,7 +119,7 @@ namespace UICompositionAnimations.Animations.Abstract
         /// <param name="to">The target position</param>
         /// <param name="ease">The easing function to use for the offset animation</param>
         [MustUseReturnValue, NotNull]
-        protected abstract IAnimationBuilder OnOffset(Vector2? from, Vector2 to, Easing ease = Easing.Linear);
+        protected abstract IAnimationBuilder OnOffset(Vector2? from, Vector2 to, Easing ease);
 
         /// <inheritdoc/>
         public IAnimationBuilder Scale(double to, Easing ease = Easing.Linear) => OnScale(null, to, ease);
