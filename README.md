@@ -53,7 +53,7 @@ It is also possible to set an initial delay, and to wait for the animation to be
 ```C#
 await MyControl.Animation(FrameworkLayer.Xaml)
                .Opacity(0, 1, Easing.CircleEaseOut)
-               .Scale(1.2, 1, Easing.QuadratincEaseInOut)
+               .Scale(1.2, 1, Easing.QuadraticEaseInOut)
                .Duration(500)
                .Delay(250)
                .StartAsync();
