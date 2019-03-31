@@ -3,9 +3,9 @@ using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Hosting;
 using JetBrains.Annotations;
-using UICompositionAnimations.Helpers;
+using UICompositionAnimationsLegacy.Helpers;
 
-namespace UICompositionAnimations.Behaviours.Effects
+namespace UICompositionAnimationsLegacy.Behaviours.Effects
 {
     /// <summary>
     /// An base class for an attached composition effect

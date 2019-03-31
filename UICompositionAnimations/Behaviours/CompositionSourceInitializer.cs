@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Windows.UI.Composition;
 using JetBrains.Annotations;
 
-namespace UICompositionAnimations.Behaviours
+namespace UICompositionAnimationsLegacy.Behaviours
 {
     /// <summary>
     /// A simple container <see langword="class"/> used to store info on a custom composition effect to create

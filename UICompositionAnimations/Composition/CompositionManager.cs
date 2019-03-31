@@ -4,7 +4,7 @@ using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using JetBrains.Annotations;
 
-namespace UICompositionAnimations.Composition
+namespace UICompositionAnimationsLegacy.Composition
 {
     /// <summary>
     /// Create composition animations using this class

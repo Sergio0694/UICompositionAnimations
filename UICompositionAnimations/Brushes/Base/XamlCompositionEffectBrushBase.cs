@@ -1,9 +1,9 @@
-﻿using System.Threading.Tasks;
-using Windows.UI.Xaml.Media;
+﻿using Windows.UI.Xaml.Media;
 using JetBrains.Annotations;
-using UICompositionAnimations.Behaviours;
+using UICompositionAnimationsLegacy.Behaviours;
+using UICompositionAnimationsLegacy.Helpers;
 
-namespace UICompositionAnimations.Brushes.Base
+namespace UICompositionAnimationsLegacy.Brushes.Base
 {
     /// <summary>
     /// A custom <see cref="XamlCompositionBrushBase"/> <see langword="class"/> that's ready to be used with a custom <see cref="CompositionBrushBuilder"/> pipeline.

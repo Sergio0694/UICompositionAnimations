@@ -1,8 +1,8 @@
 ﻿using System;
 using Windows.UI.Xaml.Media.Animation;
-using UICompositionAnimations.Enums;
+using UICompositionAnimationsLegacy.Enums;
 
-namespace UICompositionAnimations.XAMLTransform
+namespace UICompositionAnimationsLegacy.XAMLTransform
 {
     /// <summary>
     /// A simple class that creates the desired XAML transform easing function

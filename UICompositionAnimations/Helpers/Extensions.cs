@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Windows.Foundation;
 using JetBrains.Annotations;
 
-namespace UICompositionAnimations.Helpers
+namespace UICompositionAnimationsLegacy.Helpers
 {
     /// <summary>
     /// A misc extensions class

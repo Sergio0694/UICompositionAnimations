@@ -2,9 +2,9 @@
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using JetBrains.Annotations;
-using UICompositionAnimations.Helpers;
+using UICompositionAnimationsLegacy.Helpers;
 
-namespace UICompositionAnimations.Composition
+namespace UICompositionAnimationsLegacy.Composition
 {
     /// <summary>
     /// A simple wrapper class around an <see cref="ExpressionAnimation"/> instance with a custom parameter

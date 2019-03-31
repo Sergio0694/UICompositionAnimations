@@ -1,20 +1,20 @@
 ﻿using System;
-using System.Threading.Tasks;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Hosting;
 using System.Numerics;
+using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Composition;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using JetBrains.Annotations;
-using UICompositionAnimations.Composition;
-using UICompositionAnimations.Composition.Misc;
-using UICompositionAnimations.Enums;
-using UICompositionAnimations.Helpers;
+using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Shapes;
+using JetBrains.Annotations;
+using UICompositionAnimationsLegacy.Composition;
+using UICompositionAnimationsLegacy.Composition.Misc;
+using UICompositionAnimationsLegacy.Enums;
+using UICompositionAnimationsLegacy.Helpers;
 
-namespace UICompositionAnimations
+namespace UICompositionAnimationsLegacy
 {
     /// <summary>
     /// A static class that wraps the animation methods in the Windows.UI.Composition namespace

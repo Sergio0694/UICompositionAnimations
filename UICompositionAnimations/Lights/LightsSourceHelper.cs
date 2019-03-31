@@ -5,10 +5,10 @@ using Windows.ApplicationModel;
 using Windows.Devices.Input;
 using Windows.UI.Xaml;
 using JetBrains.Annotations;
-using UICompositionAnimations.Helpers;
-using UICompositionAnimations.Helpers.PointerEvents;
+using UICompositionAnimationsLegacy.Helpers;
+using UICompositionAnimationsLegacy.Helpers.PointerEvents;
 
-namespace UICompositionAnimations.Lights
+namespace UICompositionAnimationsLegacy.Lights
 {
     /// <summary>
     /// A class that contains an attached property to register a target <see cref="UIElement"/> as a lights container

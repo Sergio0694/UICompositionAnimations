@@ -1,4 +1,4 @@
-﻿namespace UICompositionAnimations.Behaviours.Misc
+﻿namespace UICompositionAnimationsLegacy.Behaviours.Misc
 {
     /// <summary>
     /// Indicates the direction of a ready to use composition animation

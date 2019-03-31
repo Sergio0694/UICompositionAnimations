@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Numerics;
-using Windows.UI.Composition;
-using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml;
 using JetBrains.Annotations;
-using UICompositionAnimations.Animations;
-using UICompositionAnimations.Animations.Interfaces;
-using UICompositionAnimations.Enums;
+using UICompositionAnimationsLegacy.Animations;
+using UICompositionAnimationsLegacy.Animations.Interfaces;
+using UICompositionAnimationsLegacy.Enums;
 
-namespace Windows.UI.Xaml
+namespace UICompositionAnimationsLegacy.Helpers
 {
     /// <summary>
     /// An extension <see langword="class"/> for the <see cref="UIElement"/> <see langword="class"/>

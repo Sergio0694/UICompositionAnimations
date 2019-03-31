@@ -2,9 +2,9 @@
 using System.Numerics;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
-using UICompositionAnimations.Enums;
+using UICompositionAnimationsLegacy.Enums;
 
-namespace UICompositionAnimations.Animations.Interfaces
+namespace UICompositionAnimationsLegacy.Animations.Interfaces
 {
     /// <summary>
     /// An <see langword="interface"/> that represents an animation builder that uses a specific set of APIs

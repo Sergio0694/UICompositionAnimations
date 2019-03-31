@@ -3,7 +3,7 @@ using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using JetBrains.Annotations;
 
-namespace UICompositionAnimations.Behaviours.Effects
+namespace UICompositionAnimationsLegacy.Behaviours.Effects
 {
     /// <summary>
     /// A custom acrylic brush effect that can quickly toggle between different sources (in-app blur or host backdrop effect)

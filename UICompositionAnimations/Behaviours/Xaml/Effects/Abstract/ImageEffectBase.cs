@@ -1,7 +1,7 @@
 ﻿using System;
-using UICompositionAnimations.Enums;
+using UICompositionAnimationsLegacy.Enums;
 
-namespace UICompositionAnimations.Behaviours.Xaml.Effects.Abstract
+namespace UICompositionAnimationsLegacy.Behaviours.Xaml.Effects.Abstract
 {
     /// <summary>
     /// An image based effect that loads an image at the specified location

@@ -3,9 +3,9 @@ using System.Threading.Tasks;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using JetBrains.Annotations;
-using UICompositionAnimations.Behaviours.Misc;
+using UICompositionAnimationsLegacy.Behaviours.Misc;
 
-namespace UICompositionAnimations.Behaviours.Effects.Base
+namespace UICompositionAnimationsLegacy.Behaviours.Effects.Base
 {
     /// <summary>
     /// An base class for an attached composition effect that supports a ready to use animation with fixed states

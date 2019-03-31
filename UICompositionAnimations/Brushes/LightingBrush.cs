@@ -1,11 +1,11 @@
-﻿using Microsoft.Graphics.Canvas.Effects;
-using Windows.UI.Composition;
+﻿using Windows.UI.Composition;
 using Windows.UI.Composition.Effects;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
-using UICompositionAnimations.Helpers;
+using Microsoft.Graphics.Canvas.Effects;
+using UICompositionAnimationsLegacy.Helpers;
 
-namespace UICompositionAnimations.Brushes
+namespace UICompositionAnimationsLegacy.Brushes
 {
     /// <summary>
     /// A custom XAML brush that includes a lighting effect

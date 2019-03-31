@@ -10,12 +10,12 @@ using Windows.UI.Xaml;
 using JetBrains.Annotations;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
-using UICompositionAnimations.Brushes;
-using UICompositionAnimations.Brushes.Cache;
-using UICompositionAnimations.Enums;
-using UICompositionAnimations.Helpers;
+using UICompositionAnimationsLegacy.Brushes;
+using UICompositionAnimationsLegacy.Brushes.Cache;
+using UICompositionAnimationsLegacy.Enums;
+using UICompositionAnimationsLegacy.Helpers;
 
-namespace UICompositionAnimations.Behaviours
+namespace UICompositionAnimationsLegacy.Behaviours
 {
     /// <summary>
     /// A <see langword="delegate"/> that represents a custom effect animation that can be applied to a <see cref="CompositionBrush"/>

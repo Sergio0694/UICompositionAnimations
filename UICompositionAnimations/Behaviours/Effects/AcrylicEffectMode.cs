@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace UICompositionAnimations.Behaviours.Effects
+namespace UICompositionAnimationsLegacy.Behaviours.Effects
 {
     /// <summary>
     /// Indicates the UI mode for an acrylic effect brush

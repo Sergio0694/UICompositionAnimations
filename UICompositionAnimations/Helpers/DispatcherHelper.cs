@@ -4,7 +4,7 @@ using Windows.ApplicationModel.Core;
 using Windows.UI.Core;
 using JetBrains.Annotations;
 
-namespace UICompositionAnimations.Helpers
+namespace UICompositionAnimationsLegacy.Helpers
 {
     /// <summary>
     /// A static class that manages the UI dispatching from background threads

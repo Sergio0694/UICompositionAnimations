@@ -1,7 +1,10 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System;
+using System.Runtime.CompilerServices;
+using System.Threading;
+using System.Threading.Tasks;
 using JetBrains.Annotations;
 
-namespace System.Threading.Tasks
+namespace UICompositionAnimationsLegacy.Helpers
 {
     /// <summary>
     /// An <see langword="async"/> <see cref="AsyncMutex"/> implementation that can be easily used inside a <see langword="using"/> block

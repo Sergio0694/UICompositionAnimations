@@ -1,4 +1,4 @@
-﻿namespace UICompositionAnimations.Enums
+﻿namespace UICompositionAnimationsLegacy.Enums
 {
     /// <summary>
     /// Indicates a side to animate in the margin of a given element

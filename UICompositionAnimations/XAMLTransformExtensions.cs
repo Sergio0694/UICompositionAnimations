@@ -5,11 +5,11 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 using JetBrains.Annotations;
-using UICompositionAnimations.Enums;
-using UICompositionAnimations.Helpers;
-using UICompositionAnimations.XAMLTransform;
+using UICompositionAnimationsLegacy.Enums;
+using UICompositionAnimationsLegacy.Helpers;
+using UICompositionAnimationsLegacy.XAMLTransform;
 
-namespace UICompositionAnimations
+namespace UICompositionAnimationsLegacy
 {
     /// <summary>
     /// A static class that wraps the animation methods in the Windows.UI.Xaml.Media.Animation namespace

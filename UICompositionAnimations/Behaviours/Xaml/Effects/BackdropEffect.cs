@@ -1,6 +1,6 @@
 ﻿using Windows.UI.Xaml.Media;
 
-namespace UICompositionAnimations.Behaviours.Xaml.Effects
+namespace UICompositionAnimationsLegacy.Behaviours.Xaml.Effects
 {
     /// <summary>
     /// A backdrop effect that can sample from a specified source

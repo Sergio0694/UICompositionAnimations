@@ -1,7 +1,7 @@
 ﻿using System;
 using JetBrains.Annotations;
 
-namespace UICompositionAnimations.Behaviours.Misc
+namespace UICompositionAnimationsLegacy.Behaviours.Misc
 {
     /// <summary>
     /// A class that stores the parameters for two different states for a pre-defined composition animation

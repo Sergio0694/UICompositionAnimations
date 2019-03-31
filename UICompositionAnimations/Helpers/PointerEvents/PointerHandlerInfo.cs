@@ -2,7 +2,7 @@
 using Windows.UI.Xaml.Input;
 using JetBrains.Annotations;
 
-namespace UICompositionAnimations.Helpers.PointerEvents
+namespace UICompositionAnimationsLegacy.Helpers.PointerEvents
 {
     /// <summary>
     /// A small class that holds the necessary information to remove a single pointer handler from a target control

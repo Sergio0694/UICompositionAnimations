@@ -1,5 +1,4 @@
 ﻿using System;
-using Windows.ApplicationModel;
 using Windows.ApplicationModel.Resources.Core;
 using Windows.Foundation.Collections;
 using Windows.Foundation.Metadata;
@@ -9,7 +8,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 
-namespace UICompositionAnimations.Helpers
+namespace UICompositionAnimationsLegacy.Helpers
 {
     /// <summary>
     /// A static class that provides useful information on the available APIs

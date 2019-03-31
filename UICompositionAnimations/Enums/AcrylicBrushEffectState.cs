@@ -1,4 +1,4 @@
-﻿namespace UICompositionAnimations.Enums
+﻿namespace UICompositionAnimationsLegacy.Enums
 {
     /// <summary>
     /// Indicates the internal state of the acrylic brush

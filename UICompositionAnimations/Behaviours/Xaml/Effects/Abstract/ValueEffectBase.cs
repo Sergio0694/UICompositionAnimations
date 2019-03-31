@@ -1,4 +1,4 @@
-﻿namespace UICompositionAnimations.Behaviours.Xaml.Effects.Abstract
+﻿namespace UICompositionAnimationsLegacy.Behaviours.Xaml.Effects.Abstract
 {
     /// <summary>
     /// A base <see langword="class"/> for an effect that exposes a single <see cref="float"/> parameter

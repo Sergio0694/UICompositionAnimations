@@ -5,10 +5,10 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 using JetBrains.Annotations;
-using UICompositionAnimations.Enums;
-using UICompositionAnimations.Helpers;
+using UICompositionAnimationsLegacy.Enums;
+using UICompositionAnimationsLegacy.Helpers;
 
-namespace UICompositionAnimations.XAMLTransform
+namespace UICompositionAnimationsLegacy.XAMLTransform
 {
     /// <summary>
     /// A toolkit with some extensions for XAML animations and some useful methods

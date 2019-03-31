@@ -1,6 +1,6 @@
 ﻿using Windows.UI;
 
-namespace UICompositionAnimations.Behaviours.Xaml.Effects
+namespace UICompositionAnimationsLegacy.Behaviours.Xaml.Effects
 {
     /// <summary>
     /// A tint effect with a customizable opacity

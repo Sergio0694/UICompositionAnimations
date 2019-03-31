@@ -1,4 +1,4 @@
-﻿namespace UICompositionAnimations.Behaviours.Xaml.Effects
+﻿namespace UICompositionAnimationsLegacy.Behaviours.Xaml.Effects
 {
     /// <summary>
     /// A luminance effect which directly replicates <see cref="Microsoft.Graphics.Canvas.Effects.LuminanceToAlphaEffect"/>

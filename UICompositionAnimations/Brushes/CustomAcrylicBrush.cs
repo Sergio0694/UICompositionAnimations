@@ -2,21 +2,21 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Windows.ApplicationModel;
 using Windows.Graphics.Effects;
 using Windows.UI;
-using Microsoft.Graphics.Canvas.Effects;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 using JetBrains.Annotations;
-using UICompositionAnimations.Behaviours;
-using UICompositionAnimations.Behaviours.Effects;
-using UICompositionAnimations.Brushes.Cache;
-using UICompositionAnimations.Enums;
-using UICompositionAnimations.Helpers;
-using Windows.ApplicationModel;
+using Microsoft.Graphics.Canvas.Effects;
+using UICompositionAnimationsLegacy.Behaviours;
+using UICompositionAnimationsLegacy.Behaviours.Effects;
+using UICompositionAnimationsLegacy.Brushes.Cache;
+using UICompositionAnimationsLegacy.Enums;
+using UICompositionAnimationsLegacy.Helpers;
 
-namespace UICompositionAnimations.Brushes
+namespace UICompositionAnimationsLegacy.Brushes
 {
     /// <summary>
     /// A custom XAML brush that includes an acrylic effect that blurs the in-app content

@@ -7,12 +7,12 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 using JetBrains.Annotations;
-using UICompositionAnimations.Animations.Abstract;
-using UICompositionAnimations.Animations.Interfaces;
-using UICompositionAnimations.Enums;
-using UICompositionAnimations.XAMLTransform;
+using UICompositionAnimationsLegacy.Animations.Abstract;
+using UICompositionAnimationsLegacy.Animations.Interfaces;
+using UICompositionAnimationsLegacy.Enums;
+using UICompositionAnimationsLegacy.XAMLTransform;
 
-namespace UICompositionAnimations.Animations
+namespace UICompositionAnimationsLegacy.Animations
 {
     /// <summary>
     /// A <see langword="class"/> that implements the <see cref="IAnimationBuilder"/> <see langword="interface"/> using composition APIs

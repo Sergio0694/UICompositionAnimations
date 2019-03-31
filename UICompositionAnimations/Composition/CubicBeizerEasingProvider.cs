@@ -2,9 +2,9 @@
 using System.Numerics;
 using Windows.UI.Composition;
 using JetBrains.Annotations;
-using UICompositionAnimations.Enums;
+using UICompositionAnimationsLegacy.Enums;
 
-namespace UICompositionAnimations.Composition
+namespace UICompositionAnimationsLegacy.Composition
 {
     /// <summary>
     /// A static class that generates a CubicBeizer curve from an input easing function name

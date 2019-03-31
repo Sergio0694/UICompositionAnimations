@@ -10,13 +10,13 @@ using Windows.UI.Xaml.Hosting;
 using JetBrains.Annotations;
 using Microsoft.Graphics.Canvas.Effects;
 using Microsoft.Graphics.Canvas.UI.Xaml;
-using UICompositionAnimations.Behaviours.Effects;
-using UICompositionAnimations.Behaviours.Misc;
-using UICompositionAnimations.Composition;
-using UICompositionAnimations.Enums;
-using UICompositionAnimations.Helpers;
+using UICompositionAnimationsLegacy.Behaviours.Effects;
+using UICompositionAnimationsLegacy.Behaviours.Misc;
+using UICompositionAnimationsLegacy.Composition;
+using UICompositionAnimationsLegacy.Enums;
+using UICompositionAnimationsLegacy.Helpers;
 
-namespace UICompositionAnimations.Behaviours
+namespace UICompositionAnimationsLegacy.Behaviours
 {
     /// <summary>
     /// A static class that manages the creation of attached composition effects

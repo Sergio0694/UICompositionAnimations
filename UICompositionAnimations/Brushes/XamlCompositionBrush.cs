@@ -1,9 +1,9 @@
 ﻿using System;
 using JetBrains.Annotations;
-using UICompositionAnimations.Behaviours;
-using UICompositionAnimations.Brushes.Base;
+using UICompositionAnimationsLegacy.Behaviours;
+using UICompositionAnimationsLegacy.Brushes.Base;
 
-namespace UICompositionAnimations.Brushes
+namespace UICompositionAnimationsLegacy.Brushes
 {
     /// <summary>
     /// A simple <see langword="class"/> that can be used to quickly create XAML brushes from arbitrary <see cref="CompositionBrushBuilder"/> pipelines

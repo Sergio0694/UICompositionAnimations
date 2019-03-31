@@ -1,13 +1,13 @@
 ﻿using System;
-using UICompositionAnimations.Helpers;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 using JetBrains.Annotations;
+using UICompositionAnimationsLegacy.Helpers;
 
-namespace UICompositionAnimations.Lights
+namespace UICompositionAnimationsLegacy.Lights
 {
     /// <summary>
     /// An attached XAML property to enable the <see cref="Brushes.LightingBrush"/> XAML brush

@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Windows.UI.Composition;
 using JetBrains.Annotations;
+using UICompositionAnimationsLegacy.Helpers;
 
-namespace UICompositionAnimations.Brushes.Cache
+namespace UICompositionAnimationsLegacy.Brushes.Cache
 {
     /// <summary>
     /// A <see langword="class"/> used to cache reusable <see cref="CompositionObject"/> instances

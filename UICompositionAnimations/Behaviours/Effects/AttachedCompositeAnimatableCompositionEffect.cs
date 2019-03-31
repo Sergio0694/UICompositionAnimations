@@ -5,10 +5,10 @@ using System.Threading.Tasks;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using JetBrains.Annotations;
-using UICompositionAnimations.Behaviours.Effects.Base;
-using UICompositionAnimations.Behaviours.Misc;
+using UICompositionAnimationsLegacy.Behaviours.Effects.Base;
+using UICompositionAnimationsLegacy.Behaviours.Misc;
 
-namespace UICompositionAnimations.Behaviours.Effects
+namespace UICompositionAnimationsLegacy.Behaviours.Effects
 {
     /// <summary>
     /// An attached composition effect that supports multiple in/out animations

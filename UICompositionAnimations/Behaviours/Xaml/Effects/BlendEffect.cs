@@ -2,7 +2,7 @@
 using JetBrains.Annotations;
 using Microsoft.Graphics.Canvas.Effects;
 
-namespace UICompositionAnimations.Behaviours.Xaml.Effects
+namespace UICompositionAnimationsLegacy.Behaviours.Xaml.Effects
 {
     /// <summary>
     /// A blend effect that merges the current pipeline with an input one

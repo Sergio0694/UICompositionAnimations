@@ -8,10 +8,10 @@ using JetBrains.Annotations;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
 using Microsoft.Graphics.Canvas.UI.Xaml;
-using UICompositionAnimations.Enums;
-using UICompositionAnimations.Helpers;
+using UICompositionAnimationsLegacy.Enums;
+using UICompositionAnimationsLegacy.Helpers;
 
-namespace UICompositionAnimations.Behaviours
+namespace UICompositionAnimationsLegacy.Behaviours
 {
     /// <summary>
     /// An helper class that manages the tint and noise layers on the custom acrylic brush effect

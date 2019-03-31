@@ -1,4 +1,4 @@
-﻿namespace UICompositionAnimations.Enums
+﻿namespace UICompositionAnimationsLegacy.Enums
 {
     /// <summary>
     /// Indicates the DPI mode to use to load an image

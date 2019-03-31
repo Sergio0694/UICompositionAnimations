@@ -2,7 +2,7 @@
 using Windows.UI.Xaml;
 using JetBrains.Annotations;
 
-namespace UICompositionAnimations.Helpers.PointerEvents
+namespace UICompositionAnimationsLegacy.Helpers.PointerEvents
 {
     /// <summary>
     /// A small class that contains all the needed information on a series of pointer handlers added to a target <see cref="UIElement"/>

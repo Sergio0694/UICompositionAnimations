@@ -1,6 +1,6 @@
-﻿using UICompositionAnimations.Behaviours.Xaml.Effects.Abstract;
+﻿using UICompositionAnimationsLegacy.Behaviours.Xaml.Effects.Abstract;
 
-namespace UICompositionAnimations.Behaviours.Xaml.Effects
+namespace UICompositionAnimationsLegacy.Behaviours.Xaml.Effects
 {
     /// <summary>
     /// A saturation effect

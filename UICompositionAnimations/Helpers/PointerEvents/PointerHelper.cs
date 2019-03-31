@@ -4,7 +4,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Input;
 using JetBrains.Annotations;
 
-namespace UICompositionAnimations.Helpers.PointerEvents
+namespace UICompositionAnimationsLegacy.Helpers.PointerEvents
 {
     /// <summary>
     /// A static class with some extension methods to manage different pointer states

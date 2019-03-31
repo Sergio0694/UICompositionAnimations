@@ -4,10 +4,10 @@ using System.Numerics;
 using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using JetBrains.Annotations;
-using UICompositionAnimations.Animations.Interfaces;
-using UICompositionAnimations.Enums;
+using UICompositionAnimationsLegacy.Animations.Interfaces;
+using UICompositionAnimationsLegacy.Enums;
 
-namespace UICompositionAnimations.Animations.Abstract
+namespace UICompositionAnimationsLegacy.Animations.Abstract
 {
     /// <summary>
     /// An <see langword="abstract"/> <see langword="class"/> used as base by all the animation builder classes

@@ -2,7 +2,7 @@
 using Windows.UI.Composition;
 using JetBrains.Annotations;
 
-namespace UICompositionAnimations.Brushes.Cache
+namespace UICompositionAnimationsLegacy.Brushes.Cache
 {
     /// <summary>
     /// A simple class that holds information on a <see cref="CompositionBackdropBrush"/> instance and its effects pipeline

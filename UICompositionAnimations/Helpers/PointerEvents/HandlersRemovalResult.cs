@@ -1,4 +1,4 @@
-﻿namespace UICompositionAnimations.Helpers.PointerEvents
+﻿namespace UICompositionAnimationsLegacy.Helpers.PointerEvents
 {
     /// <summary>
     /// Indicates a result when trying to remove some pointer handlers from a target control

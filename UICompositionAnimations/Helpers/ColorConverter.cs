@@ -2,7 +2,7 @@
 using System.Linq;
 using Windows.UI;
 
-namespace UICompositionAnimations.Helpers
+namespace UICompositionAnimationsLegacy.Helpers
 {
     /// <summary>
     /// A simple class that contains some color managment methods

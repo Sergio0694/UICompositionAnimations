@@ -1,4 +1,4 @@
-﻿namespace UICompositionAnimations.Composition.Misc
+﻿namespace UICompositionAnimationsLegacy.Composition.Misc
 {
     /// <summary>
     /// A simple struct that keeps track of the initial values for a rotation animation

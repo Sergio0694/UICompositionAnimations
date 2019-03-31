@@ -1,6 +1,6 @@
 ﻿using JetBrains.Annotations;
 
-namespace UICompositionAnimations.Enums
+namespace UICompositionAnimationsLegacy.Enums
 {
     /// <summary>
     /// An <see langword="enum"/> that indicates the framework layer to target in a specific animation
