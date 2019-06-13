@@ -35,9 +35,9 @@ namespace Windows.UI.Xaml
                 From = from,
                 To = to,
                 Duration = duration,
-                EnableDependentAnimation = enableDependecyAnimations
+                EnableDependentAnimation = enableDependecyAnimations,
+                EasingFunction = easing.ToEasingFunction()
             };
-            if (easing != Easing.Linear) animation.EasingFunction = easing.ToEasingFunction();
             Storyboard.SetTarget(animation, target);
             Storyboard.SetTargetProperty(animation, property);
             return animation;

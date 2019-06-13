@@ -47,7 +47,7 @@ namespace UICompositionAnimations.Animations
         }
 
         /// <inheritdoc/>
-        protected override IAnimationBuilder OnTranslation(Vector2? from, Vector2 to, Easing ease = Easing.Linear)
+        protected override IAnimationBuilder OnTranslation(Vector2? from, Vector2 to, Easing ease)
         {
             AnimationFactories.Add(duration => TargetTransform.CreateDoubleAnimation(nameof(CompositeTransform.TranslateX), from?.X, to.X, duration, ease));
             AnimationFactories.Add(duration => TargetTransform.CreateDoubleAnimation(nameof(CompositeTransform.TranslateY), from?.Y, to.Y, duration, ease));
@@ -57,7 +57,7 @@ namespace UICompositionAnimations.Animations
 
         protected override IAnimationBuilder OnOffset(Axis axis, double? from, double to, Easing ease) => throw new NotSupportedException("Can't animate the offset property from XAML");
 
-        protected override IAnimationBuilder OnOffset(Vector2? from, Vector2 to, Easing ease = Easing.Linear) => throw new NotSupportedException("Can't animate the offset property from XAML");
+        protected override IAnimationBuilder OnOffset(Vector2? from, Vector2 to, Easing ease) => throw new NotSupportedException("Can't animate the offset property from XAML");
 
         /// <inheritdoc/>
         protected override IAnimationBuilder OnScale(double? from, double to, Easing ease)

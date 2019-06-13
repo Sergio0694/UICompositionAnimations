@@ -1,5 +1,6 @@
 ﻿using System;
 using Windows.UI.Xaml.Media.Animation;
+using JetBrains.Annotations;
 using UICompositionAnimations.Enums;
 
 namespace UICompositionAnimations.Extensions
@@ -13,6 +14,7 @@ namespace UICompositionAnimations.Extensions
         /// Converts an easing value to the right easing function
         /// </summary>
         /// <param name="ease">The desired easing function</param>
+        [Pure, CanBeNull]
         public static EasingFunctionBase ToEasingFunction(this Easing ease)
         {
             switch (ease)

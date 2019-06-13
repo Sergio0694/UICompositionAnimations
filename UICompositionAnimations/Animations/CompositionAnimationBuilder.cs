@@ -35,13 +35,13 @@ namespace UICompositionAnimations.Animations
         protected override IAnimationBuilder OnTranslation(Axis axis, double? from, double to, Easing ease) => OnScalarAnimation($"Translation.{axis}", from, to, ease);
 
         /// <inheritdoc/>
-        protected override IAnimationBuilder OnTranslation(Vector2? from, Vector2 to, Easing ease = Easing.Linear) => OnVector3Animation("Translation", from, to, ease);
+        protected override IAnimationBuilder OnTranslation(Vector2? from, Vector2 to, Easing ease) => OnVector3Animation("Translation", from, to, ease);
 
         /// <inheritdoc/>
         protected override IAnimationBuilder OnOffset(Axis axis, double? from, double to, Easing ease) => OnScalarAnimation($"{nameof(Visual.Offset)}.{axis}", from, to, ease);
 
         /// <inheritdoc/>
-        protected override IAnimationBuilder OnOffset(Vector2? from, Vector2 to, Easing ease = Easing.Linear) => OnVector3Animation(nameof(Visual.Offset), from, to, ease);
+        protected override IAnimationBuilder OnOffset(Vector2? from, Vector2 to, Easing ease) => OnVector3Animation(nameof(Visual.Offset), from, to, ease);
 
         /// <inheritdoc/>
         protected override IAnimationBuilder OnScale(double? from, double to, Easing ease)

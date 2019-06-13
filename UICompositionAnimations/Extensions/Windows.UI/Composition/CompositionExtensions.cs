@@ -184,6 +184,7 @@ namespace Windows.UI.Composition
         /// <param name="source">The source <see cref="CompositionObject"/> instance</param>
         /// <param name="dispatcher">The resulting <see cref="CoreDispatcher"/>, if existing</param>
         [MustUseReturnValue]
+        [ContractAnnotation("=> true, dispatcher: notnull; => false, dispatcher: null")]
         public static bool TryGetDispatcher([NotNull] this CompositionObject source, out CoreDispatcher dispatcher)
         {
             try
