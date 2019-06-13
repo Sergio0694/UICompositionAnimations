@@ -45,6 +45,7 @@ namespace Windows.UI.Xaml
         /// <param name="blurRadius">The optional explicit <see cref="DropShadow"/> blur radius</param>
         /// <param name="maskElement">The optional <see cref="UIElement"/> to use to create an alpha mask for the <see cref="DropShadow"/></param>
         /// <returns>The <see cref="SpriteVisual"/> that hosts the <see cref="DropShadow"/></returns>
+        [NotNull]
         public static SpriteVisual AttachVisualShadow(
             [NotNull] this FrameworkElement element, [NotNull] UIElement target,
             bool apply,

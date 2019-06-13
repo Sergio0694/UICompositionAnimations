@@ -11,9 +11,22 @@ namespace System
         /// <summary>
         /// Performs a direct cast on the given <see cref="object"/>
         /// </summary>
+        /// <typeparam name="T">The target type to return</typeparam>
+        /// <param name="o">The input <see cref="object"/> to cast</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         [Pure]
+        [ContractAnnotation("null => null; notnull => notnull")]
         public static T To<T>(this object o) => (T)o;
+
+        /// <summary>
+        /// Performs a safe cast to the specified type
+        /// </summary>
+        /// <typeparam name="TTo">The target type to return, if possible</typeparam>
+        /// <param name="o">The input <see cref="object"/> to try to convert</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [Pure]
+        [ContractAnnotation("null => null; notnull => canbenull")]
+        public static TTo As<TTo>([CanBeNull] this object o) where TTo : class => o as TTo;
 
         /// <summary>
         /// Converts an angle in radians to degrees

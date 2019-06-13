@@ -20,6 +20,7 @@ namespace Windows.UI.Xaml
         /// Returns the Visual object for a given UIElement
         /// </summary>
         /// <param name="element">The source UIElement</param>
+        [Pure, NotNull]
         public static Visual GetVisual([NotNull] this UIElement element) => ElementCompositionPreview.GetElementVisual(element);
 
         #region Animations
@@ -110,8 +111,8 @@ namespace Windows.UI.Xaml
         /// <typeparam name="T">The desired <see cref="Transform"/> type</typeparam>
         /// <param name="element">The target <see cref="UIElement"/> to modify</param>
         /// <param name="reset">If <see langword="true"/>, a new <see cref="Transform"/> instance will always be created and assigned to the <see cref="UIElement"/></param>
-        /// <returns></returns>
-        public static T GetTransform<T>(this UIElement element, bool reset = true) where T : Transform, new()
+        [MustUseReturnValue, NotNull]
+        public static T GetTransform<T>([NotNull] this UIElement element, bool reset = true) where T : Transform, new()
         {
             // Return the existing transform object, if it exists
             if (element.RenderTransform is T && !reset) return element.RenderTransform.To<T>();
