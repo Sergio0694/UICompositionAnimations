@@ -22,12 +22,28 @@ namespace UICompositionAnimations.Brushes.Base
         [MustUseReturnValue, NotNull]
         protected abstract PipelineBuilder OnBrushRequested();
 
+        private bool _IsEnabled = true;
+
+        /// <summary>
+        /// Gest or sets whether or not the current brush is using the provided pipeline, or the fallback color
+        /// </summary>
+        public bool IsEnabled
+        {
+            get => _IsEnabled;
+            set => OnEnabledToggled(value);
+        }
+
         /// <inheritdoc/>
         protected override async void OnConnected()
         {
             using (await ConnectedMutex.LockAsync())
+            {
                 if (CompositionBrush == null)
-                    CompositionBrush = await OnBrushRequested().BuildAsync();
+                {
+                    if (_IsEnabled) CompositionBrush = await OnBrushRequested().BuildAsync();
+                    else CompositionBrush = await PipelineBuilder.FromColor(FallbackColor).BuildAsync();
+                }
+            }
             base.OnConnected();
         }
 
@@ -43,6 +59,25 @@ namespace UICompositionAnimations.Brushes.Base
                 }
             }
             base.OnDisconnected();
+        }
+
+        /// <summary>
+        /// Updates the <see cref="XamlCompositionBrushBase.CompositionBrush"/> property depending on the input value
+        /// </summary>
+        /// <param name="value">The new value being set to the <see cref="IsEnabled"/> property</param>
+        protected async void OnEnabledToggled(bool value)
+        {
+            using (await ConnectedMutex.LockAsync())
+            {
+                if (_IsEnabled == value) return;
+                _IsEnabled = value;
+
+                if (CompositionBrush != null)
+                {
+                    if (_IsEnabled) CompositionBrush = await OnBrushRequested().BuildAsync();
+                    else CompositionBrush = await PipelineBuilder.FromColor(FallbackColor).BuildAsync();
+                }
+            }
         }
     }
 }

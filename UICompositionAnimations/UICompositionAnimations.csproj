@@ -130,6 +130,7 @@
     <Compile Include="Brushes\AcrylicBrush.cs" />
     <Compile Include="Brushes\Effects\Abstract\ImageEffectBase.cs" />
     <Compile Include="Brushes\Effects\Abstract\ValueEffectBase.cs" />
+    <Compile Include="Brushes\Effects\AcrylicEffect.cs" />
     <Compile Include="Brushes\Effects\BackdropEffect.cs" />
     <Compile Include="Brushes\Effects\BlendEffect.cs" />
     <Compile Include="Brushes\Effects\BlurEffect.cs" />
