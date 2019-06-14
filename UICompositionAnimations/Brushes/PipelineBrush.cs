@@ -31,6 +31,13 @@ namespace UICompositionAnimations.Brushes
                     case SolidColorEffect color: return PipelineBuilder.FromColor(color.Color);
                     case ImageEffect image: return PipelineBuilder.FromImage(image.Uri, image.DPIMode, image.CacheMode);
                     case TileEffect tile: return PipelineBuilder.FromTiles(tile.Uri, tile.DPIMode, tile.CacheMode);
+                    case AcrylicEffect acrylic:
+                        switch (acrylic.Source)
+                        {
+                            case AcrylicBackgroundSource.Backdrop: return PipelineBuilder.FromBackdropAcrylic(acrylic.Tint, (float)acrylic.TintMix, (float)acrylic.BlurAmount, acrylic.TextureUri);
+                            case AcrylicBackgroundSource.HostBackdrop: return PipelineBuilder.FromHostBackdropAcrylic(acrylic.Tint, (float)acrylic.TintMix, acrylic.TextureUri);
+                            default: throw new ArgumentOutOfRangeException(nameof(acrylic.Source), $"Invalid acrylic source: {acrylic.Source}");
+                        }
                     default: throw new ArgumentException($"Invalid initial pipeline effect: {effect.GetType()}");
                 }
             }
