@@ -60,8 +60,7 @@ namespace UICompositionAnimations.Behaviours
         {
             string
                 guid = Guid.NewGuid().ToString("N"),
-                replaced = Regex.Replace(guid, "[0-9]", "_"),
-                id = new string(replaced.ToCharArray().Select((c, i) => c == '_' ? char.ToUpper((char)('a' + i % 26)) : c).ToArray());
+                id = Regex.Replace(guid, @"\d", m => ((char)('g' + m.Value[0] - '0')).ToString());
             SourceProducer = () => Task.FromResult(new CompositionEffectSourceParameter(id).To<IGraphicsEffectSource>());
             LazyParameters = new Dictionary<string, Func<Task<CompositionBrush>>> { { id, factory } };
             AnimationProperties = new string[0];
