@@ -75,7 +75,7 @@ xmlns:brushes="using:UICompositionAnimations.Brushes">
     BlurAmount="8"
     Tint="#FF222222"
     TintMix="0.6"
-    NoiseTextureUri="/Assets/Misc/noise.png"/>
+    TextureUri="/Assets/Misc/noise.png"/>
 ```
 
 **Note**: the `NoiseTextureUri` parameter must be set to a .png image with a noise texture. It is up to the developer to create his own noise texture and to import it into the app. An easy plugin to create one is [NoiseChoice](https://forums.getpaint.net/topic/22500-red-ochre-plug-in-pack-v9-updated-30th-july-2014/) for [Paint.NET](https://www.getpaint.net/).
@@ -121,9 +121,9 @@ control.Background = PipelineBuilder.FromHostBackdropAcrylic(Colors.DarkOrange, 
 Brush brush = PipelineBuilder.FromHostBackdropBrush()
                              .Effect(source => new LuminanceToAlphaEffect { Source = source })
                              .Opacity(0.4f)
-                             .Blend(CompositionBrushBuilder.FromHostBackdropBrush(), BlendEffectMode.Multiply)
+                             .Blend(PipelineBuilder.FromHostBackdropBrush(), BlendEffectMode.Multiply)
                              .Tint(Color.FromArgb(0xFF, 0x14, 0x14, 0x14), 0.8f)
-                             .Blend(CompositionBrushBuilder.FromTiles(new Uri("ms-appx:///Assets/noise.png")), BlendEffectMode.Overlay, Placement.Background)
+                             .Blend(PipelineBuilder.FromTiles("/Assets/noise.png".ToAppxUri()), BlendEffectMode.Overlay, Placement.Background)
                              .AsBrush();
 ```
 
