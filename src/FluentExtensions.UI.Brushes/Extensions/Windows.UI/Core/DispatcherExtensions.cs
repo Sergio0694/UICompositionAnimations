@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using JetBrains.Annotations;
 
 namespace Windows.UI.Core
 {
@@ -14,7 +13,7 @@ namespace Windows.UI.Core
         /// </summary>
         /// <param name="dispatcher">The target dispatcher to use to schedule the callback execution</param>
         /// <param name="callback">The action to execute on the UI thread</param>
-        public static void Run([NotNull] this CoreDispatcher dispatcher, [NotNull] Action callback)
+        public static void Run(this CoreDispatcher dispatcher, Action callback)
         {
             if (dispatcher.HasThreadAccess) callback();
             else _ = dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => callback());
@@ -25,7 +24,7 @@ namespace Windows.UI.Core
         /// </summary>
         /// <param name="dispatcher">The target dispatcher to use to schedule the callback execution</param>
         /// <param name="asyncCallback">The action to execute on the UI thread</param>
-        public static void Run([NotNull] this CoreDispatcher dispatcher, [NotNull] Func<Task> asyncCallback)
+        public static void Run(this CoreDispatcher dispatcher, Func<Task> asyncCallback)
         {
             if (dispatcher.HasThreadAccess) asyncCallback();
             else _ = dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => asyncCallback());
@@ -36,7 +35,7 @@ namespace Windows.UI.Core
         /// </summary>
         /// <param name="dispatcher">The target dispatcher to use to schedule the callback execution</param>
         /// <param name="callback">The action to execute on the UI thread</param>
-        public static async Task RunAsync([NotNull] this CoreDispatcher dispatcher, [NotNull] Action callback)
+        public static async Task RunAsync(this CoreDispatcher dispatcher, Action callback)
         {
             if (dispatcher.HasThreadAccess) callback();
             else
@@ -56,7 +55,7 @@ namespace Windows.UI.Core
         /// </summary>
         /// <param name="dispatcher">The target dispatcher to use to schedule the callback execution</param>
         /// <param name="asyncCallback">The action to execute on the UI thread</param>
-        public static Task RunAsync([NotNull] this CoreDispatcher dispatcher, [NotNull] Func<Task> asyncCallback)
+        public static Task RunAsync(this CoreDispatcher dispatcher, Func<Task> asyncCallback)
         {
             if (dispatcher.HasThreadAccess) return asyncCallback();
             TaskCompletionSource<Task> tcs = new TaskCompletionSource<Task>();
@@ -70,7 +69,7 @@ namespace Windows.UI.Core
         /// <typeparam name="T">The return type</typeparam>
         /// <param name="dispatcher">The target dispatcher to use to schedule the callback execution</param>
         /// <param name="function">The function to execute on the UI thread</param>
-        public static Task<T> GetAsync<T>([NotNull] this CoreDispatcher dispatcher, [NotNull] Func<T> function)
+        public static Task<T> GetAsync<T>(this CoreDispatcher dispatcher, Func<T> function)
         {
             if (dispatcher.HasThreadAccess) return Task.FromResult(function());
             TaskCompletionSource<T> tcs = new TaskCompletionSource<T>();
@@ -88,7 +87,7 @@ namespace Windows.UI.Core
         /// <typeparam name="T">The return type</typeparam>
         /// <param name="dispatcher">The target dispatcher to use to schedule the callback execution</param>
         /// <param name="function">The async function to execute on the UI thread</param>
-        public static Task<T> GetAsync<T>([NotNull] this CoreDispatcher dispatcher, [NotNull] Func<Task<T>> function)
+        public static Task<T> GetAsync<T>(this CoreDispatcher dispatcher, Func<Task<T>> function)
         {
             if (dispatcher.HasThreadAccess) return function();
             TaskCompletionSource<Task<T>> tcs = new TaskCompletionSource<Task<T>>();

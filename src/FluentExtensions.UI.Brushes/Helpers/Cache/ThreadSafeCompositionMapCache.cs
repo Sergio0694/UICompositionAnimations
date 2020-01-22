@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Windows.UI.Composition;
 using Windows.UI.Core;
-using JetBrains.Annotations;
 
 namespace UICompositionAnimations.Helpers.Cache
 {
@@ -17,7 +16,6 @@ namespace UICompositionAnimations.Helpers.Cache
         /// <summary>
         /// The cache of weak references, to avoid memory leaks
         /// </summary>
-        [NotNull]
         private readonly Dictionary<TKey, List<WeakReference<TValue>>> Cache = new Dictionary<TKey, List<WeakReference<TValue>>>();
 
         /// <summary>
@@ -25,7 +23,6 @@ namespace UICompositionAnimations.Helpers.Cache
         /// </summary>
         /// <param name="key">The key to look for</param>
         /// <param name="result">The resulting value, if existing</param>
-        [MustUseReturnValue]
         public bool TryGetInstance(TKey key, out TValue result)
         {
             // Try to retrieve an valid instance from the cache

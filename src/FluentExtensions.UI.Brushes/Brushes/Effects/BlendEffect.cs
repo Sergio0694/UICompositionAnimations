@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using JetBrains.Annotations;
 using Microsoft.Graphics.Canvas.Effects;
 using UICompositionAnimations.Brushes.Effects.Interfaces;
 using UICompositionAnimations.Enums;
@@ -14,7 +13,6 @@ namespace UICompositionAnimations.Brushes.Effects
         /// <summary>
         /// Gets or sets the input pipeline to merge with the current instance
         /// </summary>
-        [NotNull, ItemNotNull]
         public IList<IPipelineEffect> Input { get; set; } = new List<IPipelineEffect>();
 
         /// <summary>

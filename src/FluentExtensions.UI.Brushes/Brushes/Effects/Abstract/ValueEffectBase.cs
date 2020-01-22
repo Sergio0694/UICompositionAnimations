@@ -1,5 +1,7 @@
 ﻿using UICompositionAnimations.Brushes.Effects.Interfaces;
 
+#nullable enable
+
 namespace UICompositionAnimations.Brushes.Effects.Abstract
 {
     /// <summary>

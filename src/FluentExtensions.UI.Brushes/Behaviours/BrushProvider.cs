@@ -1,29 +1,33 @@
 ﻿using System;
+using System.Diagnostics.Contracts;
 using System.Threading.Tasks;
 using Windows.UI.Composition;
-using JetBrains.Annotations;
+
+#nullable enable
 
 namespace UICompositionAnimations.Behaviours
 {
     /// <summary>
     /// A simple container <see langword="class"/> used to store info on a custom composition effect to create
     /// </summary>
-    [PublicAPI]
     public sealed class BrushProvider
     {
         /// <summary>
+        /// Gets the name of the target <see cref="CompositionEffectSourceParameter"/>
+        /// </summary>
+        internal string Name { get; }
+
+        /// <summary>
         /// Gets the stored effect initializer
         /// </summary>
-        [NotNull]
         internal Func<Task<CompositionBrush>> Initializer { get; }
 
         /// <summary>
-        /// Gets the name of the target <see cref="CompositionEffectSourceParameter"/>
+        /// Creates a new <see cref="BrushProvider"/> instance with the specified parameters
         /// </summary>
-        [NotNull]
-        internal string Name { get; }
-
-        private BrushProvider([NotNull] string name, [NotNull] Func<Task<CompositionBrush>> initializer)
+        /// <param name="name">The name of the target <see cref="CompositionEffectSourceParameter"/></param>
+        /// <param name="initializer">The stored effect initializer</param>
+        private BrushProvider(string name, Func<Task<CompositionBrush>> initializer)
         {
             Name = name;
             Initializer = initializer;
@@ -34,15 +38,15 @@ namespace UICompositionAnimations.Behaviours
         /// </summary>
         /// <param name="name">The target effect name</param>
         /// <param name="initializer">A <see cref="Func{TResult}"/> instance that will produce the <see cref="CompositionBrush"/> to use to initialize the effect</param>
-        [Pure, NotNull]
-        public static BrushProvider New([NotNull] string name, [NotNull] Func<CompositionBrush> initializer) => new BrushProvider(name, () => Task.FromResult(initializer()));
+        [Pure]
+        public static BrushProvider New(string name, Func<CompositionBrush> initializer) => new BrushProvider(name, () => Task.FromResult(initializer()));
 
         /// <summary>
         /// Creates a new instance with the info on a given <see cref="CompositionEffectSourceParameter"/> to initialize
         /// </summary>
         /// <param name="name">The target effect name</param>
         /// <param name="initializer">An asynchronous <see cref="Func{TResult}"/> instance that will produce the <see cref="CompositionBrush"/> to use to initialize the effect</param>
-        [Pure, NotNull]
-        public static BrushProvider New([NotNull] string name, [NotNull] Func<Task<CompositionBrush>> initializer) => new BrushProvider(name, initializer);
+        [Pure]
+        public static BrushProvider New(string name, Func<Task<CompositionBrush>> initializer) => new BrushProvider(name, initializer);
     }
 }

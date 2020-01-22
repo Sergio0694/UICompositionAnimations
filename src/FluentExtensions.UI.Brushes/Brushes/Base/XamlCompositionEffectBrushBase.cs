@@ -1,25 +1,25 @@
 ﻿using System.Threading.Tasks;
 using Windows.UI.Xaml.Media;
-using JetBrains.Annotations;
 using UICompositionAnimations.Behaviours;
+
+#nullable enable
 
 namespace UICompositionAnimations.Brushes.Base
 {
     /// <summary>
-    /// A custom <see cref="XamlCompositionBrushBase"/> <see langword="class"/> that's ready to be used with a custom <see cref="PipelineBuilder"/> pipeline.
+    /// A custom <see cref="XamlCompositionBrushBase"/> <see langword="class"/> that's ready to be used with a custom <see cref="PipelineBuilder"/> pipeline
     /// </summary>
-    [PublicAPI]
     public abstract class XamlCompositionEffectBrushBase : XamlCompositionBrushBase
     {
-        // Initialization mutex
-        [NotNull]
+        /// <summary>
+        /// The initialization <see cref="AsyncMutex"/> instance
+        /// </summary>
         private readonly AsyncMutex ConnectedMutex = new AsyncMutex();
 
         /// <summary>
         /// A method that builds and returns the <see cref="PipelineBuilder"/> pipeline to use in the current instance.<para/>
         /// This method can also be used to store any needed <see cref="EffectAnimation"/> instances in local fields, for later use (they will need to be called upon <see cref="XamlCompositionBrushBase.CompositionBrush"/>).
         /// </summary>
-        [MustUseReturnValue, NotNull]
         protected abstract PipelineBuilder OnBrushRequested();
 
         private bool _IsEnabled = true;
@@ -44,6 +44,7 @@ namespace UICompositionAnimations.Brushes.Base
                     else CompositionBrush = await PipelineBuilder.FromColor(FallbackColor).BuildAsync();
                 }
             }
+
             base.OnConnected();
         }
 
@@ -58,6 +59,7 @@ namespace UICompositionAnimations.Brushes.Base
                     CompositionBrush = null;
                 }
             }
+
             base.OnDisconnected();
         }
 

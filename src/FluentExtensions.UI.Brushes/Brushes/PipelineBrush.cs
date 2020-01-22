@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Windows.UI.Xaml.Media;
-using JetBrains.Annotations;
 using UICompositionAnimations.Behaviours;
 using UICompositionAnimations.Brushes.Base;
 using UICompositionAnimations.Brushes.Effects;
@@ -70,7 +69,6 @@ namespace UICompositionAnimations.Brushes
         /// <summary>
         /// Gets or sets the collection of effects to use in the current pipeline
         /// </summary>
-        [NotNull, ItemNotNull]
         public IList<IPipelineEffect> Effects { get; set; } = new List<IPipelineEffect>();
     }
 }

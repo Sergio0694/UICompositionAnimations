@@ -1,11 +1,8 @@
-﻿using JetBrains.Annotations;
-
-namespace UICompositionAnimations.Enums
+﻿namespace UICompositionAnimations.Enums
 {
     /// <summary>
     /// Indicates the cache mode to use when loading a Win2D image
     /// </summary>
-    [PublicAPI]
     public enum CacheMode
     {
         /// <summary>

@@ -1,5 +1,7 @@
-﻿using System.Runtime.CompilerServices;
-using JetBrains.Annotations;
+﻿using System.Diagnostics.Contracts;
+using System.Runtime.CompilerServices;
+
+#nullable enable
 
 namespace System
 {
@@ -15,7 +17,6 @@ namespace System
         /// <param name="o">The input <see cref="object"/> to cast</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         [Pure]
-        [ContractAnnotation("null => null; notnull => notnull")]
         public static T To<T>(this object o) => (T)o;
 
         /// <summary>
@@ -25,8 +26,7 @@ namespace System
         /// <param name="o">The input <see cref="object"/> to try to convert</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         [Pure]
-        [ContractAnnotation("null => null; notnull => canbenull")]
-        public static TTo As<TTo>([CanBeNull] this object o) where TTo : class => o as TTo;
+        public static TTo? As<TTo>(this object? o) where TTo : class => o as TTo;
 
         /// <summary>
         /// Converts an angle in radians to degrees

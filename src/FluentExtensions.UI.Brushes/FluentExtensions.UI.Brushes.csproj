@@ -142,15 +142,9 @@
     <Compile Include="Brushes\NoiseTextureBrush.cs" />
     <Compile Include="Brushes\PipelineBrush.cs" />
     <Compile Include="Brushes\XamlCompositionBrush.cs" />
-    <Compile Include="Enums\AnimationType.cs" />
-    <Compile Include="Enums\Axis.cs" />
     <Compile Include="Enums\CacheMode.cs" />
     <Compile Include="Enums\DpiMode.cs" />
-    <Compile Include="Enums\Easing.cs" />
-    <Compile Include="Enums\FrameworkLayer.cs" />
     <Compile Include="Enums\Placement.cs" />
-    <Compile Include="Enums\Side.cs" />
-    <Compile Include="Extensions\EnumExtensions.cs" />
     <Compile Include="Extensions\System\BaseExtensions.cs" />
     <Compile Include="Extensions\System\Collections.Generic\GenericExtensions.cs" />
     <Compile Include="Extensions\System\Threading.Tasks\AsyncMutex.cs" />
@@ -158,32 +152,16 @@
     <Compile Include="Extensions\System\Unit.cs" />
     <Compile Include="Extensions\System\UriExtensions.cs" />
     <Compile Include="Extensions\Windows.UI\Composition\CompositionExtensions.cs" />
-    <Compile Include="Extensions\Windows.UI\Composition\CompositorExtensions.cs" />
-    <Compile Include="Extensions\Windows.UI\Composition\ScalarExpressionAnimation.cs" />
+    <Compile Include="Extensions\Windows.UI\Composition\CompositionObjectExtensions.cs" />
     <Compile Include="Extensions\Windows.UI\Core\DispatcherExtensions.cs" />
-    <Compile Include="Extensions\Windows.UI\Xaml\DependencyObjectExtensions.cs" />
-    <Compile Include="Extensions\Windows.UI\Xaml\FrameworkElementExtensions.cs" />
-    <Compile Include="Extensions\Windows.UI\Xaml\Media\Animation\StoryboardExtensions.cs" />
-    <Compile Include="Extensions\Windows.UI\Xaml\Media\Animation\TimelineExtensions.cs" />
-    <Compile Include="Extensions\Windows.UI\Xaml\Media\SolidColorBrushExtensions.cs" />
-    <Compile Include="Extensions\Windows.UI\Xaml\ScrollViewerExtensions.cs" />
-    <Compile Include="Extensions\Windows.UI\Xaml\UIElementExtensions.cs" />
-    <Compile Include="Helpers\Cache\HostBackdropInstanceWrapper.cs" />
     <Compile Include="Helpers\Cache\ThreadSafeCompositionCache.cs" />
     <Compile Include="Helpers\Cache\ThreadSafeCompositionMapCache.cs" />
     <Compile Include="Helpers\DispatcherHelper.cs" />
-    <Compile Include="Helpers\PointerEvents\ControlAttachedHandlersInfo.cs" />
-    <Compile Include="Helpers\PointerEvents\HandlersRemovalResult.cs" />
-    <Compile Include="Helpers\PointerEvents\PointerHandlerInfo.cs" />
-    <Compile Include="Helpers\PointerEvents\PointerHelper.cs" />
     <Compile Include="Helpers\Win2DImageHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Properties\FluentExtensions.UI.Brushes.rd.xml" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="JetBrains.Annotations">
-      <Version>2019.1.3</Version>
-    </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.2.9</Version>
     </PackageReference>
