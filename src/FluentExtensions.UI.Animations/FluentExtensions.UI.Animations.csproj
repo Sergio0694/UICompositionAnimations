@@ -135,6 +135,7 @@
     <Compile Include="Extensions\Windows.UI.Xaml.Media.Animation\StoryboardExtensions.cs" />
     <Compile Include="Extensions\Windows.UI.Xaml.Media.Animation\TimelineExtensions.cs" />
     <Compile Include="Extensions\Windows.UI.Xaml\DependencyObjectExtensions.cs" />
+    <Compile Include="Extensions\Windows.UI.Xaml\ScrollViewerExtensions.cs" />
     <Compile Include="Extensions\Windows.UI.Xaml\UIElementExtensions.cs" />
     <Compile Include="Interfaces\IAnimationBuilder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
