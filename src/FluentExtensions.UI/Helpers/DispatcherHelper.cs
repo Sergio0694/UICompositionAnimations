@@ -3,7 +3,9 @@ using System.Threading.Tasks;
 using Windows.ApplicationModel.Core;
 using Windows.UI.Core;
 
-namespace UICompositionAnimations.Helpers
+#nullable enable
+
+namespace FluentExtensions.UI.Helpers
 {
     /// <summary>
     /// A <see langword="static"/> <see langword="class"/> that manages the UI dispatching from background threads

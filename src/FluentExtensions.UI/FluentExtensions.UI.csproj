@@ -122,6 +122,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AttachedProperties\ClipHelper.cs" />
+    <Compile Include="Extensions\Windows.UI.Core\DispatcherExtensions.cs" />
+    <Compile Include="Helpers\DispatcherHelper.cs" />
     <Compile Include="MarkupExtensions\FontIconExtension.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Properties\FluentExtensions.UI.rd.xml" />

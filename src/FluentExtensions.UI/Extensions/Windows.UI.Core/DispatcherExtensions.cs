@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
 
+#nullable enable
+
 namespace Windows.UI.Core
 {
     /// <summary>
@@ -40,12 +42,14 @@ namespace Windows.UI.Core
             if (dispatcher.HasThreadAccess) callback();
             else
             {
-                TaskCompletionSource<object> tcs = new TaskCompletionSource<object>();
+                TaskCompletionSource<object?> tcs = new TaskCompletionSource<object?>();
+
                 _ = dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                 {
                     callback();
                     tcs.SetResult(null);
                 });
+
                 await tcs.Task;
             }
         }
@@ -58,8 +62,11 @@ namespace Windows.UI.Core
         public static Task RunAsync(this CoreDispatcher dispatcher, Func<Task> asyncCallback)
         {
             if (dispatcher.HasThreadAccess) return asyncCallback();
+
             TaskCompletionSource<Task> tcs = new TaskCompletionSource<Task>();
+
             _ = dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => tcs.SetResult(asyncCallback()));
+
             return tcs.Task.Unwrap();
         }
 
@@ -72,12 +79,15 @@ namespace Windows.UI.Core
         public static Task<T> GetAsync<T>(this CoreDispatcher dispatcher, Func<T> function)
         {
             if (dispatcher.HasThreadAccess) return Task.FromResult(function());
+
             TaskCompletionSource<T> tcs = new TaskCompletionSource<T>();
+
             _ = dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
                 T result = function();
                 tcs.SetResult(result);
             });
+
             return tcs.Task;
         }
 
@@ -90,8 +100,11 @@ namespace Windows.UI.Core
         public static Task<T> GetAsync<T>(this CoreDispatcher dispatcher, Func<Task<T>> function)
         {
             if (dispatcher.HasThreadAccess) return function();
+
             TaskCompletionSource<Task<T>> tcs = new TaskCompletionSource<Task<T>>();
+
             _ = dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => tcs.SetResult(function()));
+
             return tcs.Task.Unwrap();
         }
     }

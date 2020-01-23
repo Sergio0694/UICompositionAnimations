@@ -153,10 +153,8 @@
     <Compile Include="Extensions\System\UriExtensions.cs" />
     <Compile Include="Extensions\Windows.UI\Composition\CompositionExtensions.cs" />
     <Compile Include="Extensions\Windows.UI\Composition\CompositionObjectExtensions.cs" />
-    <Compile Include="Extensions\Windows.UI\Core\DispatcherExtensions.cs" />
     <Compile Include="Helpers\Cache\ThreadSafeCompositionCache.cs" />
     <Compile Include="Helpers\Cache\ThreadSafeCompositionMapCache.cs" />
-    <Compile Include="Helpers\DispatcherHelper.cs" />
     <Compile Include="Helpers\Win2DImageHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Properties\FluentExtensions.UI.Brushes.rd.xml" />
