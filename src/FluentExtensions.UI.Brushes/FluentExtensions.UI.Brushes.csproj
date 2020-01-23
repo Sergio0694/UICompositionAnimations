@@ -145,11 +145,8 @@
     <Compile Include="Enums\CacheMode.cs" />
     <Compile Include="Enums\DpiMode.cs" />
     <Compile Include="Enums\Placement.cs" />
-    <Compile Include="Extensions\System\BaseExtensions.cs" />
     <Compile Include="Extensions\System\Collections.Generic\GenericExtensions.cs" />
     <Compile Include="Extensions\System\Threading.Tasks\AsyncMutex.cs" />
-    <Compile Include="Extensions\System\Threading.Tasks\TaskCompletionSource.cs" />
-    <Compile Include="Extensions\System\Unit.cs" />
     <Compile Include="Extensions\System\UriExtensions.cs" />
     <Compile Include="Extensions\Windows.UI\Composition\CompositionBrushExtensions.cs" />
     <Compile Include="Extensions\Windows.UI\Composition\CompositionObjectExtensions.cs" />

@@ -59,7 +59,7 @@ namespace UICompositionAnimations.Behaviours
             string
                 guid = Guid.NewGuid().ToString("N"),
                 id = Regex.Replace(guid, @"\d", m => ((char)('g' + m.Value[0] - '0')).ToString());
-            SourceProducer = () => Task.FromResult(new CompositionEffectSourceParameter(id).To<IGraphicsEffectSource>());
+            SourceProducer = () => Task.FromResult<IGraphicsEffectSource>(new CompositionEffectSourceParameter(id));
             LazyParameters = new Dictionary<string, Func<Task<CompositionBrush>>> { { id, factory } };
             AnimationProperties = new string[0];
         }
@@ -150,7 +150,7 @@ namespace UICompositionAnimations.Behaviours
         /// </summary>
         /// <param name="color">The desired color for the initial <see cref="CompositionBrush"/></param>
         [Pure]
-        public static PipelineBuilder FromColor(Color color) => new PipelineBuilder(() => Task.FromResult(new ColorSourceEffect { Color = color }.To<IGraphicsEffectSource>()));
+        public static PipelineBuilder FromColor(Color color) => new PipelineBuilder(() => Task.FromResult<IGraphicsEffectSource>(new ColorSourceEffect { Color = color }));
 
         /// <summary>
         /// Starts a new <see cref="PipelineBuilder"/> pipeline from the input <see cref="CompositionBrush"/> instance
@@ -201,7 +201,7 @@ namespace UICompositionAnimations.Behaviours
         [Pure]
         public static PipelineBuilder FromImage(Uri uri, DpiMode dpiMode = DpiMode.DisplayDpiWith96AsLowerBound, CacheMode cache = CacheMode.Default)
         {
-            return new PipelineBuilder(() => Win2DImageHelper.LoadImageAsync(Window.Current.Compositor, uri, dpiMode, cache).ContinueWith(t => t.Result as CompositionBrush));
+            return new PipelineBuilder(async () => (await Win2DImageHelper.LoadImageAsync(Window.Current.Compositor, uri, dpiMode, cache))!);
         }
 
         /// <summary>
@@ -244,7 +244,7 @@ namespace UICompositionAnimations.Behaviours
         [Pure]
         public static PipelineBuilder FromUIElement(UIElement element)
         {
-            return new PipelineBuilder(() => Task.FromResult(ElementCompositionPreview.GetElementVisual(element).Compositor.CreateBackdropBrush().To<CompositionBrush>()));
+            return new PipelineBuilder(() => Task.FromResult<CompositionBrush>(ElementCompositionPreview.GetElementVisual(element).Compositor.CreateBackdropBrush()));
         }
 
         #endregion
@@ -767,7 +767,10 @@ namespace UICompositionAnimations.Behaviours
         /// <param name="animations">The list of optional animatable properties in the returned effect</param>
         /// <param name="initializers">The list of source parameters that require deferred initialization (see <see cref="CompositionEffectSourceParameter"/> for more info)</param>
         [Pure]
-        public PipelineBuilder Effect(Func<IGraphicsEffectSource, IGraphicsEffectSource> factory, IEnumerable<string>? animations = null, IEnumerable<BrushProvider>? initializers = null)
+        public PipelineBuilder Effect(
+            Func<IGraphicsEffectSource, IGraphicsEffectSource> factory,
+            IEnumerable<string>? animations = null,
+            IEnumerable<BrushProvider>? initializers = null)
         {
             async Task<IGraphicsEffectSource> Factory() => factory(await SourceProducer());
 
@@ -781,7 +784,10 @@ namespace UICompositionAnimations.Behaviours
         /// <param name="animations">The list of optional animatable properties in the returned effect</param>
         /// <param name="initializers">The list of source parameters that require deferred initialization (see <see cref="CompositionEffectSourceParameter"/> for more info)</param>
         [Pure]
-        public PipelineBuilder Effect(Func<IGraphicsEffectSource, Task<IGraphicsEffectSource>> factory, IEnumerable<string> animations = null, IEnumerable<BrushProvider> initializers = null)
+        public PipelineBuilder Effect(
+            Func<IGraphicsEffectSource, Task<IGraphicsEffectSource>> factory,
+            IEnumerable<string>? animations = null,
+            IEnumerable<BrushProvider>? initializers = null)
         {
             async Task<IGraphicsEffectSource> Factory() => await factory(await SourceProducer());
 
