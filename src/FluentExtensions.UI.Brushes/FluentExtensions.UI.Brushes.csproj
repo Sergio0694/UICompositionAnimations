@@ -139,7 +139,7 @@
     <Compile Include="Brushes\Effects\SolidColorEffect.cs" />
     <Compile Include="Brushes\Effects\TileEffect.cs" />
     <Compile Include="Brushes\Effects\TintEffect.cs" />
-    <Compile Include="Brushes\NoiseTextureBrush.cs" />
+    <Compile Include="Brushes\TilesBrush.cs" />
     <Compile Include="Brushes\PipelineBrush.cs" />
     <Compile Include="Brushes\XamlCompositionBrush.cs" />
     <Compile Include="Enums\CacheMode.cs" />

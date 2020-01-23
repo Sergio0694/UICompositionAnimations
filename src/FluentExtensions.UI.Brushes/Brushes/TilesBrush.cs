@@ -7,7 +7,7 @@ namespace FluentExtensions.UI.Brushes.Brushes
     /// <summary>
     /// A <see cref="XamlCompositionBrush"/> that displays a tiled noise texture
     /// </summary>
-    public sealed class NoiseTextureBrush : XamlCompositionEffectBrushBase
+    public sealed class TilesBrush : XamlCompositionEffectBrushBase
     {
         /// <summary>
         /// Gets or sets the <see cref="Uri"/> to the texture to use
