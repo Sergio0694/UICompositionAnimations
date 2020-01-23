@@ -123,7 +123,7 @@
   <ItemGroup>
     <Compile Include="Behaviours\BrushProvider.cs" />
     <Compile Include="Behaviours\PipelineBuilder.cs" />
-    <Compile Include="Brushes\AcrylicBrush.cs" />
+    <Compile Include="Brushes\Xaml\AcrylicBrush.cs" />
     <Compile Include="Brushes\Base\XamlCompositionEffectBrushBase.cs" />
     <Compile Include="Brushes\Effects\Abstract\ImageEffectBase.cs" />
     <Compile Include="Brushes\Effects\Abstract\ValueEffectBase.cs" />
@@ -139,8 +139,8 @@
     <Compile Include="Brushes\Effects\SolidColorEffect.cs" />
     <Compile Include="Brushes\Effects\TileEffect.cs" />
     <Compile Include="Brushes\Effects\TintEffect.cs" />
-    <Compile Include="Brushes\TilesBrush.cs" />
-    <Compile Include="Brushes\PipelineBrush.cs" />
+    <Compile Include="Brushes\Xaml\TilesBrush.cs" />
+    <Compile Include="Brushes\Xaml\PipelineBrush.cs" />
     <Compile Include="Brushes\XamlCompositionBrush.cs" />
     <Compile Include="Enums\CacheMode.cs" />
     <Compile Include="Enums\DpiMode.cs" />

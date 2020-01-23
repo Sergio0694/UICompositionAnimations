@@ -2,7 +2,7 @@
 using FluentExtensions.UI.Brushes.Behaviours;
 using FluentExtensions.UI.Brushes.Brushes.Base;
 
-namespace FluentExtensions.UI.Brushes.Brushes
+namespace FluentExtensions.UI.Brushes.Brushes.Xaml
 {
     /// <summary>
     /// A <see cref="XamlCompositionBrush"/> that displays a tiled noise texture

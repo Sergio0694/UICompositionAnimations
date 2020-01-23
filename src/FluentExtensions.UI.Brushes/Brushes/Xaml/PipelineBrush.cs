@@ -14,7 +14,7 @@ using SaturationEffect = FluentExtensions.UI.Brushes.Brushes.Effects.SaturationE
 using TileEffect = FluentExtensions.UI.Brushes.Brushes.Effects.TileEffect;
 using TintEffect = FluentExtensions.UI.Brushes.Brushes.Effects.TintEffect;
 
-namespace FluentExtensions.UI.Brushes.Brushes
+namespace FluentExtensions.UI.Brushes.Brushes.Xaml
 {
     /// <summary>
     /// A <see cref="Brush"/> that renders a customizable Composition/Win2D effects pipeline

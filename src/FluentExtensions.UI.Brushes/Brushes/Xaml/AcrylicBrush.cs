@@ -4,7 +4,7 @@ using Windows.UI.Xaml.Media;
 using FluentExtensions.UI.Brushes.Behaviours;
 using FluentExtensions.UI.Brushes.Brushes.Base;
 
-namespace FluentExtensions.UI.Brushes.Brushes
+namespace FluentExtensions.UI.Brushes.Brushes.Xaml
 {
     /// <summary>
     /// A <see cref="XamlCompositionBrush"/> that implements an acrylic effect with customizable parameters
