@@ -151,7 +151,7 @@
     <Compile Include="Extensions\System\Threading.Tasks\TaskCompletionSource.cs" />
     <Compile Include="Extensions\System\Unit.cs" />
     <Compile Include="Extensions\System\UriExtensions.cs" />
-    <Compile Include="Extensions\Windows.UI\Composition\CompositionExtensions.cs" />
+    <Compile Include="Extensions\Windows.UI\Composition\CompositionBrushExtensions.cs" />
     <Compile Include="Extensions\Windows.UI\Composition\CompositionObjectExtensions.cs" />
     <Compile Include="Helpers\Cache\ThreadSafeCompositionCache.cs" />
     <Compile Include="Helpers\Cache\ThreadSafeCompositionMapCache.cs" />

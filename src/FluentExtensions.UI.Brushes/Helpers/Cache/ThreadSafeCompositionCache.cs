@@ -48,7 +48,9 @@ namespace UICompositionAnimations.Helpers.Cache
         public async void Cleanup()
         {
             using (await Mutex.LockAsync())
+            {
                 Cache.RemoveAll(reference => !reference.TryGetTarget(out T target) || !target.TryGetDispatcher(out _));
+            }
         }
     }
 }

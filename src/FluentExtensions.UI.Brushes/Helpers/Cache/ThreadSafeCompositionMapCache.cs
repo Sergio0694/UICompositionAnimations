@@ -27,12 +27,16 @@ namespace UICompositionAnimations.Helpers.Cache
         {
             // Try to retrieve an valid instance from the cache
             if (Cache.TryGetValue(key, out List<WeakReference<TValue>> values))
+            {
                 foreach (WeakReference<TValue> value in values)
+                {
                     if (value.TryGetTarget(out TValue instance) && instance.TryGetDispatcher(out CoreDispatcher dispatcher) && dispatcher.HasThreadAccess)
                     {
                         result = instance;
                         return true;
                     }
+                }
+            }
 
             // Not found
             result = null;
@@ -46,8 +50,14 @@ namespace UICompositionAnimations.Helpers.Cache
         /// <param name="value">The value to add</param>
         public void Add(TKey key, TValue value)
         {
-            if (Cache.TryGetValue(key, out List<WeakReference<TValue>> list)) list.Add(new WeakReference<TValue>(value));
-            else Cache.Add(key, new List<WeakReference<TValue>> { new WeakReference<TValue>(value) });
+            if (Cache.TryGetValue(key, out List<WeakReference<TValue>> list))
+            {
+                list.Add(new WeakReference<TValue>(value));
+            }
+            else
+            {
+                Cache.Add(key, new List<WeakReference<TValue>> { new WeakReference<TValue>(value) });
+            }
         }
 
         /// <summary>
@@ -58,6 +68,7 @@ namespace UICompositionAnimations.Helpers.Cache
         public void Overwrite(TKey key, TValue value)
         {
             Cache.Remove(key);
+
             Cache.Add(key, new List<WeakReference<TValue>> { new WeakReference<TValue>(value) });
         }
 
@@ -68,6 +79,7 @@ namespace UICompositionAnimations.Helpers.Cache
         {
             foreach (List<WeakReference<TValue>> list in Cache.Values)
                 list.RemoveAll(reference => !reference.TryGetTarget(out TValue value) || !value.TryGetDispatcher(out _));
+
             foreach (TKey key in Cache.Keys.ToArray())
                 if (Cache[key].Count == 0)
                     Cache.Remove(key);
@@ -79,9 +91,11 @@ namespace UICompositionAnimations.Helpers.Cache
         public IReadOnlyList<TValue> Clear()
         {
             List<TValue> values = new List<TValue>();
+
             foreach (WeakReference<TValue> reference in Cache.Values.SelectMany(list => list))
                 if (reference.TryGetTarget(out TValue value))
                     values.Add(value);
+
             Cache.Clear();
             return values;
         }

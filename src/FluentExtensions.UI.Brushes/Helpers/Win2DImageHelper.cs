@@ -99,66 +99,54 @@ namespace UICompositionAnimations.Helpers
             Uri uri,
             DpiMode dpiMode)
         {
-            CanvasBitmap bitmap = null;
-            try
+            DisplayInformation displayInformation = DisplayInformation.GetForCurrentView();
+            float dpi = displayInformation.LogicalDpi;
+
+            // Load the bitmap with the appropriate settings
+            using CanvasBitmap bitmap = dpiMode switch
             {
-                // Load the bitmap with the appropriate settings
-                DisplayInformation display = DisplayInformation.GetForCurrentView();
-                float dpi = display.LogicalDpi;
-                switch (dpiMode)
-                {
-                    case DpiMode.UseSourceDpi:
-                        bitmap = await CanvasBitmap.LoadAsync(creator, uri);
-                        break;
-                    case DpiMode.Default96Dpi:
-                        bitmap = await CanvasBitmap.LoadAsync(creator, uri, 96);
-                        break;
-                    case DpiMode.DisplayDpi:
-                        bitmap = await CanvasBitmap.LoadAsync(creator, uri, dpi);
-                        break;
-                    case DpiMode.DisplayDpiWith96AsLowerBound:
-                        bitmap = await CanvasBitmap.LoadAsync(creator, uri, dpi >= 96 ? dpi : 96);
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException(nameof(dpiMode), "Unsupported DPI mode");
-                }
+                DpiMode.UseSourceDpi => await CanvasBitmap.LoadAsync(creator, uri),
+                DpiMode.Default96Dpi => await CanvasBitmap.LoadAsync(creator, uri, 96),
+                DpiMode.DisplayDpi => await CanvasBitmap.LoadAsync(creator, uri, dpi),
+                DpiMode.DisplayDpiWith96AsLowerBound => await CanvasBitmap.LoadAsync(creator, uri, dpi >= 96 ? dpi : 96),
+                _ => throw new ArgumentOutOfRangeException(nameof(dpiMode), dpiMode, $"Invalid DPI mode: {dpiMode}")
+            };
 
-                // Get the device and the target surface
-                CompositionGraphicsDevice device = CanvasComposition.CreateCompositionGraphicsDevice(compositor, canvasDevice);
-                CompositionDrawingSurface surface = device.CreateDrawingSurface(default, DirectXPixelFormat.B8G8R8A8UIntNormalized, DirectXAlphaMode.Premultiplied);
+            // Get the device and the target surface
+            CompositionGraphicsDevice device = CanvasComposition.CreateCompositionGraphicsDevice(compositor, canvasDevice);
+            CompositionDrawingSurface surface = device.CreateDrawingSurface(default, DirectXPixelFormat.B8G8R8A8UIntNormalized, DirectXAlphaMode.Premultiplied);
 
-                // Calculate the surface size
-                Size
-                    size = bitmap.Size,
-                    sizeInPixels = new Size(bitmap.SizeInPixels.Width, bitmap.SizeInPixels.Height);
-                CanvasComposition.Resize(surface, sizeInPixels);
+            // Calculate the surface size
+            Size
+                size = bitmap.Size,
+                sizeInPixels = new Size(bitmap.SizeInPixels.Width, bitmap.SizeInPixels.Height);
+            CanvasComposition.Resize(surface, sizeInPixels);
 
-                // Draw the image on the surface and get the resulting brush
-                using (CanvasDrawingSession session = CanvasComposition.CreateDrawingSession(surface, new Rect(0, 0, sizeInPixels.Width, sizeInPixels.Height), dpi))
-                {
-                    // Fill the target surface
-                    session.Clear(Color.FromArgb(0, 0, 0, 0));
-                    session.DrawImage(bitmap, new Rect(0, 0, size.Width, size.Height), new Rect(0, 0, size.Width, size.Height));
-                    session.EffectTileSize = new BitmapSize { Width = (uint)size.Width, Height = (uint)size.Height };
+            // Create a drawing session for the target surface
+            using CanvasDrawingSession session = CanvasComposition.CreateDrawingSession(surface, new Rect(0, 0, sizeInPixels.Width, sizeInPixels.Height), dpi);
 
-                    // Setup the effect brush to use
-                    CompositionSurfaceBrush brush = surface.Compositor.CreateSurfaceBrush(surface);
-                    brush.Stretch = CompositionStretch.None;
-                    double pixels = display.RawPixelsPerViewPixel;
-                    if (pixels > 1)
-                    {
-                        brush.Scale = new Vector2((float)(1 / pixels));
-                        brush.BitmapInterpolationMode = CompositionBitmapInterpolationMode.NearestNeighbor;
-                    }
-                    return brush;
-                }
-            }
-            finally
+            // Fill the target surface
+            session.Clear(Color.FromArgb(0, 0, 0, 0));
+            session.DrawImage(bitmap, new Rect(0, 0, size.Width, size.Height), new Rect(0, 0, size.Width, size.Height));
+            session.EffectTileSize = new BitmapSize { Width = (uint)size.Width, Height = (uint)size.Height };
+
+            // Setup the effect brush to use
+            CompositionSurfaceBrush brush = surface.Compositor.CreateSurfaceBrush(surface);
+            brush.Stretch = CompositionStretch.None;
+
+            double pixels = displayInformation.RawPixelsPerViewPixel;
+
+            // Adjust the scale if the DPI scaling is greater than 100%
+            if (pixels > 1)
             {
-                // Manual using block to allow the initial switch statement
-                bitmap?.Dispose();
-                Cache.Cleanup();
+                brush.Scale = new Vector2((float)(1 / pixels));
+                brush.BitmapInterpolationMode = CompositionBitmapInterpolationMode.NearestNeighbor;
             }
+
+            // Cleanup leftover references
+            Cache.Cleanup();
+
+            return brush;
         }
 
         /// <summary>
@@ -176,10 +164,10 @@ namespace UICompositionAnimations.Helpers
             DpiMode dpiMode,
             CacheMode cache)
         {
-            TaskCompletionSource<CompositionSurfaceBrush> tcs = new TaskCompletionSource<CompositionSurfaceBrush>();
+            TaskCompletionSource<CompositionSurfaceBrush?> tcs = new TaskCompletionSource<CompositionSurfaceBrush?>();
 
             // Loads an image using the input CanvasDevice instance
-            async Task<CompositionSurfaceBrush> LoadImageAsync(bool shouldThrow)
+            async Task<CompositionSurfaceBrush?> LoadImageAsync(bool shouldThrow)
             {
                 // Load the image - this will only succeed when there's an available Win2D device
                 try
@@ -200,13 +188,16 @@ namespace UICompositionAnimations.Helpers
                 args.GetTrackedAction()?.Cancel();
 
                 // Load the image and notify the canvas
-                Task<CompositionSurfaceBrush> task = LoadImageAsync(false);
+                Task<CompositionSurfaceBrush?> task = LoadImageAsync(false);
                 IAsyncAction action = task.AsAsyncAction();
                 try
                 {
                     args.TrackAsyncAction(action);
-                    CompositionSurfaceBrush brush = await task;
+
+                    CompositionSurfaceBrush? brush = await task;
+
                     action.Cancel();
+
                     tcs.TrySetResult(brush);
                 }
                 catch (COMException)
@@ -234,12 +225,15 @@ namespace UICompositionAnimations.Helpers
                 }
                 catch
                 {
-                    // Win2D messed up big time
+                    // Win2D messed up big time (this should never happen)
                     tcs.TrySetResult(null);
                 }
+
                 await Task.WhenAny(tcs.Task, Task.Delay(DeviceLostRecoveryThreshold).ContinueWith(t => tcs.TrySetResult(null)));
+
                 canvas.CreateResources -= Canvas_CreateResources;
-                CompositionSurfaceBrush brush = tcs.Task.Result;
+
+                CompositionSurfaceBrush? brush = tcs.Task.Result;
 
                 // Cache when needed and return the result
                 if (brush != null)
@@ -247,6 +241,7 @@ namespace UICompositionAnimations.Helpers
                     if (cache == CacheMode.Default) Cache.Add(uri, brush);
                     else if (cache == CacheMode.Overwrite) Cache.Overwrite(uri, brush);
                 }
+
                 return brush;
             }
         }
@@ -290,6 +285,7 @@ namespace UICompositionAnimations.Helpers
                     if (cache == CacheMode.Default) Cache.Add(uri, brush);
                     else if (cache == CacheMode.Overwrite) Cache.Overwrite(uri, brush);
                 }
+
                 return brush;
             }
         }
