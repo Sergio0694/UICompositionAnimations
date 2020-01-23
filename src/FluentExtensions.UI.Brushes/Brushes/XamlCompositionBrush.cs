@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Diagnostics.Contracts;
 using System.Threading.Tasks;
-using FluentExtensions.UI.Brushes.Behaviours;
 using FluentExtensions.UI.Brushes.Brushes.Base;
+using FluentExtensions.UI.Brushes.Pipelines;
 
 namespace FluentExtensions.UI.Brushes.Brushes
 {

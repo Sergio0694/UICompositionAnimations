@@ -1,8 +1,8 @@
 ﻿using System;
 using Windows.UI;
 using Windows.UI.Xaml.Media;
-using FluentExtensions.UI.Brushes.Behaviours;
 using FluentExtensions.UI.Brushes.Brushes.Base;
+using FluentExtensions.UI.Brushes.Pipelines;
 
 namespace FluentExtensions.UI.Brushes.Brushes.Xaml
 {

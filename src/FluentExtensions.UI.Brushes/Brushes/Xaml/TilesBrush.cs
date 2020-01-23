@@ -1,6 +1,6 @@
 ﻿using System;
-using FluentExtensions.UI.Brushes.Behaviours;
 using FluentExtensions.UI.Brushes.Brushes.Base;
+using FluentExtensions.UI.Brushes.Pipelines;
 
 namespace FluentExtensions.UI.Brushes.Brushes.Xaml
 {

@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Windows.UI.Xaml.Media;
-using FluentExtensions.UI.Brushes.Behaviours;
+using FluentExtensions.UI.Brushes.Pipelines;
 
 #nullable enable
 

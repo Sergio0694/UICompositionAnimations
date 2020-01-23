@@ -18,7 +18,7 @@ using Microsoft.Graphics.Canvas.Effects;
 
 #nullable enable
 
-namespace FluentExtensions.UI.Brushes.Behaviours
+namespace FluentExtensions.UI.Brushes.Pipelines
 {
     /// <summary>
     /// A <see langword="delegate"/> that represents a custom effect animation that can be applied to a <see cref="CompositionBrush"/>

@@ -121,8 +121,8 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Behaviours\BrushProvider.cs" />
-    <Compile Include="Behaviours\PipelineBuilder.cs" />
+    <Compile Include="Pipelines\BrushProvider.cs" />
+    <Compile Include="Pipelines\PipelineBuilder.cs" />
     <Compile Include="Brushes\Xaml\AcrylicBrush.cs" />
     <Compile Include="Brushes\Base\XamlCompositionEffectBrushBase.cs" />
     <Compile Include="Brushes\Effects\Abstract\ImageEffectBase.cs" />
