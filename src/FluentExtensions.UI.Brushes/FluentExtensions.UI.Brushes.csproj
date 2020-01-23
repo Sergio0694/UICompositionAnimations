@@ -122,6 +122,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Pipelines\BrushProvider.cs" />
+    <Compile Include="Pipelines\PipelineBuilder.Prebuilt.cs" />
+    <Compile Include="Pipelines\PipelineBuilder.Effects.cs" />
+    <Compile Include="Pipelines\PipelineBuilder.Initialization.cs" />
     <Compile Include="Pipelines\PipelineBuilder.cs" />
     <Compile Include="Brushes\Xaml\AcrylicBrush.cs" />
     <Compile Include="Brushes\Base\XamlCompositionEffectBrushBase.cs" />

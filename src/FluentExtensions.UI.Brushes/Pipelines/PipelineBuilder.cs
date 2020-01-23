@@ -1,20 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
-using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Windows.Graphics.Effects;
-using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Hosting;
 using FluentExtensions.UI.Brushes.Brushes;
-using FluentExtensions.UI.Brushes.Enums;
-using FluentExtensions.UI.Brushes.Helpers;
-using FluentExtensions.UI.Brushes.Helpers.Cache;
-using Microsoft.Graphics.Canvas;
-using Microsoft.Graphics.Canvas.Effects;
 
 #nullable enable
 
@@ -31,7 +24,7 @@ namespace FluentExtensions.UI.Brushes.Pipelines
     /// <summary>
     /// A <see langword="class"/> that allows to build custom effects pipelines and create <see cref="CompositionBrush"/> instances from them
     /// </summary>
-    public sealed class PipelineBuilder
+    public sealed partial class PipelineBuilder
     {
         /// <summary>
         /// The <see cref="Func{TResult}"/> instance used to produce the output <see cref="IGraphicsEffectSource"/> for this pipeline
@@ -48,8 +41,6 @@ namespace FluentExtensions.UI.Brushes.Pipelines
         /// </summary>
         private readonly IReadOnlyDictionary<string, Func<Task<CompositionBrush>>> LazyParameters;
 
-        #region Constructors
-
         /// <summary>
         /// Constructor used to initialize a pipeline from a <see cref="CompositionBrush"/>, for example using the <see cref="Compositor.CreateBackdropBrush"/> method
         /// </summary>
@@ -59,6 +50,7 @@ namespace FluentExtensions.UI.Brushes.Pipelines
             string
                 guid = Guid.NewGuid().ToString("N"),
                 id = Regex.Replace(guid, @"\d", m => ((char)('g' + m.Value[0] - '0')).ToString());
+
             SourceProducer = () => Task.FromResult<IGraphicsEffectSource>(new CompositionEffectSourceParameter(id));
             LazyParameters = new Dictionary<string, Func<Task<CompositionBrush>>> { { id, factory } };
             AnimationProperties = new string[0];
@@ -85,7 +77,10 @@ namespace FluentExtensions.UI.Brushes.Pipelines
         /// </summary>
         /// <param name="factory">A <see cref="Func{TResult}"/> instance that will return the initial <see cref="IGraphicsEffectSource"/></param>
         private PipelineBuilder(Func<Task<IGraphicsEffectSource>> factory)
-            : this(factory, new string[0], new Dictionary<string, Func<Task<CompositionBrush>>>())
+            : this(
+                factory,
+                new string[0],
+                new Dictionary<string, Func<Task<CompositionBrush>>>())
         { }
 
         /// <summary>
@@ -99,7 +94,10 @@ namespace FluentExtensions.UI.Brushes.Pipelines
             PipelineBuilder source,
             Func<Task<IGraphicsEffectSource>> factory,
             IReadOnlyCollection<string>? animations = null, IReadOnlyDictionary<string, Func<Task<CompositionBrush>>>? lazy = null)
-            : this(factory, animations?.Merge(source.AnimationProperties) ?? source.AnimationProperties, lazy?.Merge(source.LazyParameters) ?? source.LazyParameters)
+            : this(
+                factory,
+                animations?.Merge(source.AnimationProperties) ?? source.AnimationProperties,
+                lazy?.Merge(source.LazyParameters) ?? source.LazyParameters)
         { }
 
         /// <summary>
@@ -116,687 +114,11 @@ namespace FluentExtensions.UI.Brushes.Pipelines
             PipelineBuilder b,
             IReadOnlyCollection<string>? animations = null,
             IReadOnlyDictionary<string, Func<Task<CompositionBrush>>>? lazy = null)
-            : this(factory, animations?.Merge(a.AnimationProperties.Merge(b.AnimationProperties)) ?? a.AnimationProperties.Merge(b.AnimationProperties), lazy?.Merge(a.LazyParameters.Merge(b.LazyParameters)) ?? a.LazyParameters.Merge(b.LazyParameters))
+            : this(
+                factory,
+                animations?.Merge(a.AnimationProperties.Merge(b.AnimationProperties)) ?? a.AnimationProperties.Merge(b.AnimationProperties),
+                lazy?.Merge(a.LazyParameters.Merge(b.LazyParameters)) ?? a.LazyParameters.Merge(b.LazyParameters))
         { }
-
-        #endregion
-
-        #region Initialization
-
-        /// <summary>
-        /// The cache manager for backdrop brushes
-        /// </summary>
-        private static readonly ThreadSafeCompositionCache<CompositionBrush> BackdropBrushCache = new ThreadSafeCompositionCache<CompositionBrush>();
-
-        /// <summary>
-        /// Starts a new <see cref="PipelineBuilder"/> pipeline from the <see cref="CompositionBrush"/> returned by <see cref="Compositor.CreateBackdropBrush"/>
-        /// </summary>
-        [Pure]
-        public static PipelineBuilder FromBackdropBrush() => new PipelineBuilder(() => BackdropBrushCache.TryGetInstanceAsync(Window.Current.Compositor.CreateBackdropBrush));
-
-        /// <summary>
-        /// The cache manager for host backdrop brushes
-        /// </summary>
-        private static readonly ThreadSafeCompositionCache<CompositionBrush> HostBackdropBrushCache = new ThreadSafeCompositionCache<CompositionBrush>();
-
-        /// <summary>
-        /// Starts a new <see cref="PipelineBuilder"/> pipeline from the <see cref="CompositionBrush"/> returned by <see cref="Compositor.CreateHostBackdropBrush"/>
-        /// </summary>
-        [Pure]
-        public static PipelineBuilder FromHostBackdropBrush() => new PipelineBuilder(() => HostBackdropBrushCache.TryGetInstanceAsync(Window.Current.Compositor.CreateHostBackdropBrush));
-
-        /// <summary>
-        /// Starts a new <see cref="PipelineBuilder"/> pipeline from a solid <see cref="CompositionBrush"/> with the specified color
-        /// </summary>
-        /// <param name="color">The desired color for the initial <see cref="CompositionBrush"/></param>
-        [Pure]
-        public static PipelineBuilder FromColor(Color color) => new PipelineBuilder(() => Task.FromResult<IGraphicsEffectSource>(new ColorSourceEffect { Color = color }));
-
-        /// <summary>
-        /// Starts a new <see cref="PipelineBuilder"/> pipeline from the input <see cref="CompositionBrush"/> instance
-        /// </summary>
-        /// <param name="factory">A <see cref="Func{TResult}"/> that synchronously returns a <see cref="CompositionBrush"/> instance to start the pipeline</param>
-        [Pure]
-        public static PipelineBuilder FromBrush(Func<CompositionBrush> factory) => new PipelineBuilder(() => Task.FromResult(factory()));
-
-        /// <summary>
-        /// Starts a new <see cref="PipelineBuilder"/> pipeline from the input <see cref="CompositionBrush"/> instance
-        /// </summary>
-        /// <param name="factory">A <see cref="Func{TResult}"/> that asynchronously returns a <see cref="CompositionBrush"/> instance to start the pipeline</param>
-        [Pure]
-        public static PipelineBuilder FromBrush(Func<Task<CompositionBrush>> factory) => new PipelineBuilder(factory);
-
-        /// <summary>
-        /// Starts a new <see cref="PipelineBuilder"/> pipeline from the input <see cref="IGraphicsEffectSource"/> instance
-        /// </summary>
-        /// <param name="factory">A <see cref="Func{TResult}"/> that synchronously returns a <see cref="IGraphicsEffectSource"/> instance to start the pipeline</param>
-        [Pure]
-        public static PipelineBuilder FromEffect(Func<IGraphicsEffectSource> factory) => new PipelineBuilder(() => Task.FromResult(factory()));
-
-        /// <summary>
-        /// Starts a new <see cref="PipelineBuilder"/> pipeline from the input <see cref="IGraphicsEffectSource"/> instance
-        /// </summary>
-        /// <param name="factory">A <see cref="Func{TResult}"/> that asynchronously returns a <see cref="IGraphicsEffectSource"/> instance to start the pipeline</param>
-        [Pure]
-        public static PipelineBuilder FromEffect(Func<Task<IGraphicsEffectSource>> factory) => new PipelineBuilder(factory);
-
-        /// <summary>
-        /// Starts a new <see cref="PipelineBuilder"/> pipeline from a Win2D image
-        /// </summary>
-        /// <param name="relativePath">The relative path for the image to load (eg. "/Assets/image.png")</param>
-        /// <param name="dpiMode">Indicates the desired DPI mode to use when loading the image</param>
-        /// <param name="cache">The cache mode to use to load the image</param>
-        [Pure]
-        public static PipelineBuilder FromImage(string relativePath, DpiMode dpiMode = DpiMode.DisplayDpiWith96AsLowerBound, CacheMode cache = CacheMode.Default)
-        {
-            return FromImage(relativePath.ToAppxUri(), dpiMode, cache);
-        }
-
-        /// <summary>
-        /// Starts a new <see cref="PipelineBuilder"/> pipeline from a Win2D image
-        /// </summary>
-        /// <param name="uri">The path for the image to load</param>
-        /// <param name="dpiMode">Indicates the desired DPI mode to use when loading the image</param>
-        /// <param name="cache">The cache mode to use to load the image</param>
-        [Pure]
-        public static PipelineBuilder FromImage(Uri uri, DpiMode dpiMode = DpiMode.DisplayDpiWith96AsLowerBound, CacheMode cache = CacheMode.Default)
-        {
-            return new PipelineBuilder(async () => (await Win2DImageHelper.LoadImageAsync(Window.Current.Compositor, uri, dpiMode, cache))!);
-        }
-
-        /// <summary>
-        /// Starts a new <see cref="PipelineBuilder"/> pipeline from a Win2D image tiled to cover the available space
-        /// </summary>
-        /// <param name="relativePath">The relative path for the image to load (eg. "/Assets/image.png")</param>
-        /// <param name="dpiMode">Indicates the desired DPI mode to use when loading the image</param>
-        /// <param name="cache">The cache mode to use to load the image</param>
-        [Pure]
-        public static PipelineBuilder FromTiles(string relativePath, DpiMode dpiMode = DpiMode.DisplayDpiWith96AsLowerBound, CacheMode cache = CacheMode.Default)
-        {
-            return FromTiles(relativePath.ToAppxUri(), dpiMode, cache);
-        }
-
-        /// <summary>
-        /// Starts a new <see cref="PipelineBuilder"/> pipeline from a Win2D image tiled to cover the available space
-        /// </summary>
-        /// <param name="uri">The path for the image to load</param>
-        /// <param name="dpiMode">Indicates the desired DPI mode to use when loading the image</param>
-        /// <param name="cache">The cache mode to use to load the image</param>
-        [Pure]
-        public static PipelineBuilder FromTiles(Uri uri, DpiMode dpiMode = DpiMode.DisplayDpiWith96AsLowerBound, CacheMode cache = CacheMode.Default)
-        {
-            PipelineBuilder image = FromImage(uri, dpiMode, cache);
-
-            async Task<IGraphicsEffectSource> Factory() => new BorderEffect
-            {
-                ExtendX = CanvasEdgeBehavior.Wrap,
-                ExtendY = CanvasEdgeBehavior.Wrap,
-                Source = await image.SourceProducer()
-            };
-
-            return new PipelineBuilder(image, Factory);
-        }
-
-        /// <summary>
-        /// Starts a new <see cref="PipelineBuilder"/> pipeline from the <see cref="CompositionBrush"/> returned by <see cref="Compositor.CreateBackdropBrush"/> on the input <see cref="UIElement"/>
-        /// </summary>
-        /// <param name="element">The source <see cref="UIElement"/> to use to create the pipeline</param>
-        [Pure]
-        public static PipelineBuilder FromUIElement(UIElement element)
-        {
-            return new PipelineBuilder(() => Task.FromResult<CompositionBrush>(ElementCompositionPreview.GetElementVisual(element).Compositor.CreateBackdropBrush()));
-        }
-
-        #endregion
-
-        #region Prebuilt pipelines
-
-        /// <summary>
-        /// Returns a new <see cref="PipelineBuilder"/> instance that implements the host backdrop acrylic effect
-        /// </summary>
-        /// <param name="tint">The tint color to use</param>
-        /// <param name="mix">The amount of tint to apply over the current effect</param>
-        /// <param name="noiseRelativePath">The relative path for the noise texture to load (eg. "/Assets/noise.png")</param>
-        /// <param name="cache">The cache mode to use to load the image</param>
-        [Pure]
-        public static PipelineBuilder FromHostBackdropAcrylic(Color tint, float mix, string noiseRelativePath, CacheMode cache = CacheMode.Default)
-        {
-            return FromHostBackdropAcrylic(tint, mix, noiseRelativePath.ToAppxUri(), cache);
-        }
-
-        /// <summary>
-        /// Returns a new <see cref="PipelineBuilder"/> instance that implements the host backdrop acrylic effect
-        /// </summary>
-        /// <param name="tint">The tint color to use</param>
-        /// <param name="mix">The amount of tint to apply over the current effect</param>
-        /// <param name="noiseUri">The <see cref="Uri"/> for the noise texture to load for the acrylic effect</param>
-        /// <param name="cache">The cache mode to use to load the image</param>
-        [Pure]
-        public static PipelineBuilder FromHostBackdropAcrylic(Color tint, float mix, Uri noiseUri, CacheMode cache = CacheMode.Default)
-        {
-            return FromHostBackdropBrush()
-                .Effect(source => new LuminanceToAlphaEffect { Source = source })
-                .Opacity(0.4f)
-                .Blend(FromHostBackdropBrush(), BlendEffectMode.Multiply)
-                .Tint(tint, mix)
-                .Blend(FromTiles(noiseUri, cache: cache), BlendEffectMode.Overlay, Placement.Background);
-        }
-
-        /// <summary>
-        /// Returns a new <see cref="PipelineBuilder"/> instance that implements the host backdrop acrylic effect
-        /// </summary>
-        /// <param name="tint">The tint color to use</param>
-        /// <param name="tintAnimation">The animation to apply on the tint color of the effect</param>
-        /// <param name="mix">The amount of tint to apply over the current effect</param>
-        /// <param name="noiseRelativePath">The relative path for the noise texture to load (eg. "/Assets/noise.png")</param>
-        /// <param name="cache">The cache mode to use to load the image</param>
-        [Pure]
-        public static PipelineBuilder FromHostBackdropAcrylic(Color tint, float mix, out EffectAnimation tintAnimation, string noiseRelativePath, CacheMode cache = CacheMode.Default)
-        {
-            return FromHostBackdropAcrylic(tint, mix, out tintAnimation, noiseRelativePath.ToAppxUri(), cache);
-        }
-
-        /// <summary>
-        /// Returns a new <see cref="PipelineBuilder"/> instance that implements the host backdrop acrylic effect
-        /// </summary>
-        /// <param name="tint">The tint color to use</param>
-        /// <param name="tintAnimation">The animation to apply on the tint color of the effect</param>
-        /// <param name="mix">The amount of tint to apply over the current effect</param>
-        /// <param name="noiseUri">The <see cref="Uri"/> for the noise texture to load for the acrylic effect</param>
-        /// <param name="cache">The cache mode to use to load the image</param>
-        [Pure]
-        public static PipelineBuilder FromHostBackdropAcrylic(Color tint, float mix, out EffectAnimation tintAnimation, Uri noiseUri, CacheMode cache = CacheMode.Default)
-        {
-            return FromHostBackdropBrush()
-                .Effect(source => new LuminanceToAlphaEffect { Source = source })
-                .Opacity(0.4f)
-                .Blend(FromHostBackdropBrush(), BlendEffectMode.Multiply)
-                .Tint(tint, mix, out tintAnimation)
-                .Blend(FromTiles(noiseUri, cache: cache), BlendEffectMode.Overlay, Placement.Background);
-        }
-
-        /// <summary>
-        /// Returns a new <see cref="PipelineBuilder"/> instance that implements the in-app backdrop acrylic effect
-        /// </summary>
-        /// <param name="tint">The tint color to use</param>
-        /// <param name="mix">The amount of tint to apply over the current effect</param>
-        /// <param name="blur">The amount of blur to apply to the acrylic brush</param>
-        /// <param name="noiseRelativePath">The relative path for the noise texture to load (eg. "/Assets/noise.png")</param>
-        /// <param name="cache">The cache mode to use to load the image</param>
-        [Pure]
-        public static PipelineBuilder FromBackdropAcrylic(Color tint, float mix, float blur, string noiseRelativePath, CacheMode cache = CacheMode.Default)
-        {
-            return FromBackdropAcrylic(tint, mix, blur, noiseRelativePath.ToAppxUri(), cache);
-        }
-
-        /// <summary>
-        /// Returns a new <see cref="PipelineBuilder"/> instance that implements the in-app backdrop acrylic effect
-        /// </summary>
-        /// <param name="tint">The tint color to use</param>
-        /// <param name="mix">The amount of tint to apply over the current effect</param>
-        /// <param name="blur">The amount of blur to apply to the acrylic brush</param>
-        /// <param name="noiseUri">The <see cref="Uri"/> for the noise texture to load for the acrylic effect</param>
-        /// <param name="cache">The cache mode to use to load the image</param>
-        [Pure]
-        public static PipelineBuilder FromBackdropAcrylic(Color tint, float mix, float blur, Uri noiseUri, CacheMode cache = CacheMode.Default)
-        {
-            return FromBackdropBrush()
-                .Tint(tint, mix)
-                .Blur(blur)
-                .Blend(FromTiles(noiseUri, cache: cache), BlendEffectMode.Overlay, Placement.Background);
-        }
-
-        /// <summary>
-        /// Returns a new <see cref="PipelineBuilder"/> instance that implements the in-app backdrop acrylic effect
-        /// </summary>
-        /// <param name="tint">The tint color to use</param>
-        /// <param name="mix">The amount of tint to apply over the current effect</param>
-        /// <param name="tintAnimation">The animation to apply on the tint color of the effect</param>
-        /// <param name="blur">The amount of blur to apply to the acrylic brush</param>
-        /// <param name="noiseRelativePath">The relative path for the noise texture to load (eg. "/Assets/noise.png")</param>
-        /// <param name="cache">The cache mode to use to load the image</param>
-        [Pure]
-        public static PipelineBuilder FromBackdropAcrylic(
-            Color tint,
-            float mix,
-            out EffectAnimation tintAnimation,
-            float blur,
-            string noiseRelativePath,
-            CacheMode cache = CacheMode.Default)
-        {
-            return FromBackdropAcrylic(tint, mix, out tintAnimation, blur, noiseRelativePath.ToAppxUri(), cache);
-        }
-
-        /// <summary>
-        /// Returns a new <see cref="PipelineBuilder"/> instance that implements the in-app backdrop acrylic effect
-        /// </summary>
-        /// <param name="tint">The tint color to use</param>
-        /// <param name="mix">The amount of tint to apply over the current effect</param>
-        /// <param name="tintAnimation">The animation to apply on the tint color of the effect</param>
-        /// <param name="blur">The amount of blur to apply to the acrylic brush</param>
-        /// <param name="noiseUri">The <see cref="Uri"/> for the noise texture to load for the acrylic effect</param>
-        /// <param name="cache">The cache mode to use to load the image</param>
-        [Pure]
-        public static PipelineBuilder FromBackdropAcrylic(
-            Color tint,
-            float mix,
-            out EffectAnimation tintAnimation,
-            float blur,
-            Uri noiseUri,
-            CacheMode cache = CacheMode.Default)
-        {
-            return FromBackdropBrush()
-                .Tint(tint, mix, out tintAnimation)
-                .Blur(blur)
-                .Blend(FromTiles(noiseUri, cache: cache), BlendEffectMode.Overlay, Placement.Background);
-        }
-
-        /// <summary>
-        /// Returns a new <see cref="PipelineBuilder"/> instance that implements the in-app backdrop acrylic effect
-        /// </summary>
-        /// <param name="tint">The tint color to use</param>
-        /// <param name="mix">The amount of tint to apply over the current effect</param>
-        /// <param name="blur">The amount of blur to apply to the acrylic brush</param>
-        /// <param name="blurAnimation">The animation to apply on the blur effect in the pipeline</param>
-        /// <param name="noiseRelativePath">The relative path for the noise texture to load (eg. "/Assets/noise.png")</param>
-        /// <param name="cache">The cache mode to use to load the image</param>
-        [Pure]
-        public static PipelineBuilder FromBackdropAcrylic(
-            Color tint,
-            float mix,
-            float blur,
-            out EffectAnimation blurAnimation,
-            string noiseRelativePath,
-            CacheMode cache = CacheMode.Default)
-        {
-            return FromBackdropAcrylic(tint, mix, blur, out blurAnimation, noiseRelativePath.ToAppxUri(), cache);
-        }
-
-        /// <summary>
-        /// Returns a new <see cref="PipelineBuilder"/> instance that implements the in-app backdrop acrylic effect
-        /// </summary>
-        /// <param name="tint">The tint color to use</param>
-        /// <param name="mix">The amount of tint to apply over the current effect</param>
-        /// <param name="blur">The amount of blur to apply to the acrylic brush</param>
-        /// <param name="blurAnimation">The animation to apply on the blur effect in the pipeline</param>
-        /// <param name="noiseUri">The <see cref="Uri"/> for the noise texture to load for the acrylic effect</param>
-        /// <param name="cache">The cache mode to use to load the image</param>
-        [Pure]
-        public static PipelineBuilder FromBackdropAcrylic(
-            Color tint,
-            float mix,
-            float blur,
-            out EffectAnimation blurAnimation,
-            Uri noiseUri,
-            CacheMode cache = CacheMode.Default)
-        {
-            return FromBackdropBrush()
-                .Tint(tint, mix)
-                .Blur(blur, out blurAnimation)
-                .Blend(FromTiles(noiseUri, cache: cache), BlendEffectMode.Overlay, Placement.Background);
-        }
-
-        /// <summary>
-        /// Returns a new <see cref="PipelineBuilder"/> instance that implements the in-app backdrop acrylic effect
-        /// </summary>
-        /// <param name="tint">The tint color to use</param>
-        /// <param name="mix">The amount of tint to apply over the current effect</param>
-        /// <param name="tintAnimation">The animation to apply on the tint color of the effect</param>
-        /// <param name="blur">The amount of blur to apply to the acrylic brush</param>
-        /// <param name="blurAnimation">The animation to apply on the blur effect in the pipeline</param>
-        /// <param name="noiseRelativePath">The relative path for the noise texture to load (eg. "/Assets/noise.png")</param>
-        /// <param name="cache">The cache mode to use to load the image</param>
-        [Pure]
-        public static PipelineBuilder FromBackdropAcrylic(
-            Color tint,
-            float mix,
-            out EffectAnimation tintAnimation,
-            float blur,
-            out EffectAnimation blurAnimation,
-            string noiseRelativePath,
-            CacheMode cache = CacheMode.Default)
-        {
-            return FromBackdropAcrylic(tint, mix, out tintAnimation, blur, out blurAnimation, noiseRelativePath.ToAppxUri(), cache);
-        }
-
-        /// <summary>
-        /// Returns a new <see cref="PipelineBuilder"/> instance that implements the in-app backdrop acrylic effect
-        /// </summary>
-        /// <param name="tint">The tint color to use</param>
-        /// <param name="mix">The amount of tint to apply over the current effect</param>
-        /// <param name="tintAnimation">The animation to apply on the tint color of the effect</param>
-        /// <param name="blur">The amount of blur to apply to the acrylic brush</param>
-        /// <param name="blurAnimation">The animation to apply on the blur effect in the pipeline</param>
-        /// <param name="noiseUri">The <see cref="Uri"/> for the noise texture to load for the acrylic effect</param>
-        /// <param name="cache">The cache mode to use to load the image</param>
-        [Pure]
-        public static PipelineBuilder FromBackdropAcrylic(
-            Color tint,
-            float mix,
-            out EffectAnimation tintAnimation,
-            float blur,
-            out EffectAnimation blurAnimation,
-            Uri noiseUri,
-            CacheMode cache = CacheMode.Default)
-        {
-            return FromBackdropBrush()
-                .Tint(tint, mix, out tintAnimation)
-                .Blur(blur, out blurAnimation)
-                .Blend(FromTiles(noiseUri, cache: cache), BlendEffectMode.Overlay, Placement.Background);
-        }
-
-        #endregion
-
-        #region Blends
-
-        /// <summary>
-        /// Blends two pipelines using a <see cref="BlendEffect"/> instance with the specified mode
-        /// </summary>
-        /// <param name="pipeline">The second <see cref="PipelineBuilder"/> instance to blend</param>
-        /// <param name="mode">The desired <see cref="BlendEffectMode"/> to use to blend the input pipelines</param>
-        /// <param name="sorting">The sorting mode to use with the two input pipelines</param>
-        [Pure]
-        public PipelineBuilder Blend(PipelineBuilder pipeline, BlendEffectMode mode, Placement sorting = Placement.Foreground)
-        {
-            var (foreground, background) = sorting == Placement.Foreground ? (this, pipeline) : (pipeline, this);
-
-            async Task<IGraphicsEffectSource> Factory() => new BlendEffect
-            {
-                Foreground = await foreground.SourceProducer(),
-                Background = await background.SourceProducer(),
-                Mode = mode
-            };
-
-            return new PipelineBuilder(Factory, foreground, background);
-        }
-
-        /// <summary>
-        /// Blends two pipelines using an <see cref="CrossFadeEffect"/> instance
-        /// </summary>
-        /// <param name="pipeline">The second <see cref="PipelineBuilder"/> instance to blend</param>
-        /// <param name="factor">The cross fade factor to blend the input effects</param>
-        /// <param name="sorting">The sorting mode to use with the two input pipelines</param>
-        [Pure]
-        public PipelineBuilder Mix(PipelineBuilder pipeline, float factor = 0.5f, Placement sorting = Placement.Foreground)
-        {
-            if (factor < 0 || factor > 1) throw new ArgumentOutOfRangeException(nameof(factor), "The factor must be in the [0,1] range");
-            var (foreground, background) = sorting == Placement.Foreground ? (this, pipeline) : (pipeline, this);
-
-            async Task<IGraphicsEffectSource> Factory() => new CrossFadeEffect
-            {
-                CrossFade = factor,
-                Source1 = await foreground.SourceProducer(),
-                Source2 = await background.SourceProducer()
-            };
-
-            return new PipelineBuilder(Factory, foreground, background);
-        }
-
-        /// <summary>
-        /// Blends two pipelines using an <see cref="CrossFadeEffect"/> instance
-        /// </summary>
-        /// <param name="pipeline">The second <see cref="PipelineBuilder"/> instance to blend</param>
-        /// <param name="factor">The cross fade factor to blend the input effects</param>
-        /// <param name="animation">The optional blur animation for the effect</param>
-        /// <param name="sorting">The sorting mode to use with the two input pipelines</param>
-        /// <remarks>Note that each pipeline can only contain a single instance of any of the built-in effects with animation support</remarks>
-        [Pure]
-        public PipelineBuilder Mix(PipelineBuilder pipeline, float factor, out EffectAnimation animation, Placement sorting = Placement.Foreground)
-        {
-            if (factor < 0 || factor > 1) throw new ArgumentOutOfRangeException(nameof(factor), "The factor must be in the [0,1] range");
-            var (foreground, background) = sorting == Placement.Foreground ? (this, pipeline) : (pipeline, this);
-
-            async Task<IGraphicsEffectSource> Factory() => new CrossFadeEffect
-            {
-                CrossFade = factor,
-                Source1 = await foreground.SourceProducer(),
-                Source2 = await background.SourceProducer(),
-                Name = "Fade"
-            };
-
-            animation = (brush, value, ms) =>
-            {
-                if (value < 0 || value > 1) throw new ArgumentOutOfRangeException(nameof(value), "The factor must be in the [0,1] range");
-                return brush.StartAnimationAsync("Fade.CrossFade", value, TimeSpan.FromMilliseconds(ms));
-            };
-
-            return new PipelineBuilder(Factory, foreground, background, new[] { "Fade.CrossFade" });
-        }
-
-        /// <summary>
-        /// Blends two pipelines using the provided <see cref="Func{T1, T2, TResult}"/> to do so
-        /// </summary>
-        /// <param name="factory">The blend function to use</param>
-        /// <param name="background">The background pipeline to blend with the current instance</param>
-        /// <param name="animations">The list of optional animatable properties in the returned effect</param>
-        /// <param name="initializers">The list of source parameters that require deferred initialization (see <see cref="CompositionEffectSourceParameter"/> for more info)</param>
-        [Pure]
-        public PipelineBuilder Merge(
-            Func<IGraphicsEffectSource, IGraphicsEffectSource, IGraphicsEffectSource> factory,
-            PipelineBuilder background,
-            IEnumerable<string>? animations = null,
-            IEnumerable<BrushProvider>? initializers = null)
-        {
-            async Task<IGraphicsEffectSource> Factory() => factory(await SourceProducer(), await background.SourceProducer());
-
-            return new PipelineBuilder(Factory, this, background, animations?.ToArray(), initializers?.ToDictionary(item => item.Name, item => item.Initializer));
-        }
-
-        /// <summary>
-        /// Blends two pipelines using the provided asynchronous <see cref="Func{T1, T2, TResult}"/> to do so
-        /// </summary>
-        /// <param name="factory">The asynchronous blend function to use</param>
-        /// <param name="background">The background pipeline to blend with the current instance</param>
-        /// <param name="animations">The list of optional animatable properties in the returned effect</param>
-        /// <param name="initializers">The list of source parameters that require deferred initialization (see <see cref="CompositionEffectSourceParameter"/> for more info)</param>
-        [Pure]
-        public PipelineBuilder Merge(
-            Func<IGraphicsEffectSource, IGraphicsEffectSource, Task<IGraphicsEffectSource>> factory,
-            PipelineBuilder background,
-            IEnumerable<string>? animations = null,
-            IEnumerable<BrushProvider>? initializers = null)
-        {
-            async Task<IGraphicsEffectSource> Factory() => await factory(await SourceProducer(), await background.SourceProducer());
-
-            return new PipelineBuilder(Factory, this, background, animations?.ToArray(), initializers?.ToDictionary(item => item.Name, item => item.Initializer));
-        }
-
-        #endregion
-
-        #region Built-in effects
-
-        /// <summary>
-        /// Adds a new <see cref="GaussianBlurEffect"/> to the current pipeline
-        /// </summary>
-        /// <param name="blur">The blur amount to apply</param>
-        /// <param name="mode">The <see cref="EffectBorderMode"/> parameter for the effect, defaults to <see cref="EffectBorderMode.Hard"/></param>
-        /// <param name="optimization">The <see cref="EffectOptimization"/> parameter to use, defaults to <see cref="EffectOptimization.Balanced"/></param>
-        [Pure]
-        public PipelineBuilder Blur(float blur, EffectBorderMode mode = EffectBorderMode.Hard, EffectOptimization optimization = EffectOptimization.Balanced)
-        {
-            // Blur effect
-            async Task<IGraphicsEffectSource> Factory() => new GaussianBlurEffect
-            {
-                BlurAmount = blur,
-                BorderMode = mode,
-                Optimization = optimization,
-                Source = await SourceProducer()
-            };
-
-            return new PipelineBuilder(this, Factory);
-        }
-
-        /// <summary>
-        /// Adds a new <see cref="GaussianBlurEffect"/> to the current pipeline
-        /// </summary>
-        /// <param name="blur">The initial blur amount</param>
-        /// <param name="animation">The optional blur animation for the effect</param>
-        /// <param name="mode">The <see cref="EffectBorderMode"/> parameter for the effect, defaults to <see cref="EffectBorderMode.Hard"/></param>
-        /// <param name="optimization">The <see cref="EffectOptimization"/> parameter to use, defaults to <see cref="EffectOptimization.Balanced"/></param>
-        /// <remarks>Note that each pipeline can only contain a single instance of any of the built-in effects with animation support</remarks>
-        [Pure]
-        public PipelineBuilder Blur(float blur, out EffectAnimation animation, EffectBorderMode mode = EffectBorderMode.Hard, EffectOptimization optimization = EffectOptimization.Balanced)
-        {
-            // Blur effect
-            async Task<IGraphicsEffectSource> Factory() => new GaussianBlurEffect
-            {
-                BlurAmount = blur,
-                BorderMode = mode,
-                Optimization = optimization,
-                Source = await SourceProducer(),
-                Name = "Blur"
-            };
-
-            animation = (brush, value, ms) => brush.StartAnimationAsync("Blur.BlurAmount", value, TimeSpan.FromMilliseconds(ms));
-
-            return new PipelineBuilder(this, Factory, new[] { "Blur.BlurAmount" });
-        }
-
-        /// <summary>
-        /// Adds a new <see cref="SaturationEffect"/> to the current pipeline
-        /// </summary>
-        /// <param name="saturation">The saturation amount for the new effect</param>
-        [Pure]
-        public PipelineBuilder Saturation(float saturation)
-        {
-            if (saturation < 0 || saturation > 1) throw new ArgumentOutOfRangeException(nameof(saturation), "The saturation must be in the [0,1] range");
-            async Task<IGraphicsEffectSource> Factory() => new SaturationEffect
-            {
-                Saturation = saturation,
-                Source = await SourceProducer()
-            };
-
-            return new PipelineBuilder(this, Factory);
-        }
-
-        /// <summary>
-        /// Adds a new <see cref="SaturationEffect"/> to the current pipeline
-        /// </summary>
-        /// <param name="saturation">The initial saturation amount for the new effect</param>
-        /// <param name="animation">The optional saturation animation for the effect</param>
-        /// <remarks>Note that each pipeline can only contain a single instance of any of the built-in effects with animation support</remarks>
-        [Pure]
-        public PipelineBuilder Saturation(float saturation, out EffectAnimation animation)
-        {
-            if (saturation < 0 || saturation > 1) throw new ArgumentOutOfRangeException(nameof(saturation), "The saturation must be in the [0,1] range");
-            async Task<IGraphicsEffectSource> Factory() => new SaturationEffect
-            {
-                Saturation = saturation,
-                Source = await SourceProducer(),
-                Name = "Saturation"
-            };
-
-            animation = (brush, value, ms) =>
-            {
-                if (value < 0 || value > 1) throw new ArgumentOutOfRangeException(nameof(value), "The saturation must be in the [0,1] range");
-                return brush.StartAnimationAsync("Saturation.Saturation", value, TimeSpan.FromMilliseconds(ms));
-            };
-
-            return new PipelineBuilder(this, Factory, new[] { "Saturation.Saturation" });
-        }
-
-        /// <summary>
-        /// Adds a new <see cref="OpacityEffect"/> to the current pipeline
-        /// </summary>
-        /// <param name="opacity">The opacity value to apply to the pipeline</param>
-        [Pure]
-        public PipelineBuilder Opacity(float opacity)
-        {
-            if (opacity < 0 || opacity > 1) throw new ArgumentOutOfRangeException(nameof(opacity), "The opacity must be in the [0,1] range");
-            async Task<IGraphicsEffectSource> Factory() => new OpacityEffect
-            {
-                Opacity = opacity,
-                Source = await SourceProducer()
-            };
-
-            return new PipelineBuilder(this, Factory);
-        }
-
-        /// <summary>
-        /// Adds a new <see cref="OpacityEffect"/> to the current pipeline
-        /// </summary>
-        /// <param name="opacity">The opacity value to apply to the pipeline</param>
-        /// <param name="animation">The optional opacity animation for the effect</param>
-        /// <remarks>Note that each pipeline can only contain a single instance of any of the built-in effects with animation support</remarks>
-        [Pure]
-        public PipelineBuilder Opacity(float opacity, out EffectAnimation animation)
-        {
-            if (opacity < 0 || opacity > 1) throw new ArgumentOutOfRangeException(nameof(opacity), "The opacity must be in the [0,1] range");
-            async Task<IGraphicsEffectSource> Factory() => new OpacityEffect
-            {
-                Opacity = opacity,
-                Source = await SourceProducer(),
-                Name = "Opacity"
-            };
-
-            animation = (brush, value, ms) =>
-            {
-                if (value < 0 || value > 1) throw new ArgumentOutOfRangeException(nameof(value), "The opacity must be in the [0,1] range");
-                return brush.StartAnimationAsync("Opacity.Opacity", value, TimeSpan.FromMilliseconds(ms));
-            };
-
-            return new PipelineBuilder(this, Factory, new[] { "Opacity.Opacity" });
-        }
-
-        /// <summary>
-        /// Applies a tint color on the current pipeline
-        /// </summary>
-        /// <param name="color">The tint color to use</param>
-        /// <param name="mix">The amount of tint to apply over the current effect</param>
-        [Pure]
-        public PipelineBuilder Tint(Color color, float mix) => FromColor(color).Mix(this, mix);
-
-        /// <summary>
-        /// Applies a tint color on the current pipeline
-        /// </summary>
-        /// <param name="color">The tint color to use</param>
-        /// <param name="mix">The initial amount of tint to apply over the current effect</param>
-        /// <param name="animation">The optional tint animation for the effect</param>
-        /// <remarks>Note that each pipeline can only contain a single instance of any of the built-in effects with animation support</remarks>
-        [Pure]
-        public PipelineBuilder Tint(Color color, float mix, out EffectAnimation animation) => FromColor(color).Mix(this, mix, out animation);
-
-        #endregion
-
-        #region Custom effects
-
-        /// <summary>
-        /// Applies a custom effect to the current pipeline
-        /// </summary>
-        /// <param name="factory">A <see cref="Func{T, TResult}"/> that takes the current <see cref="IGraphicsEffectSource"/> instance and produces a new effect to display</param>
-        /// <param name="animations">The list of optional animatable properties in the returned effect</param>
-        /// <param name="initializers">The list of source parameters that require deferred initialization (see <see cref="CompositionEffectSourceParameter"/> for more info)</param>
-        [Pure]
-        public PipelineBuilder Effect(
-            Func<IGraphicsEffectSource, IGraphicsEffectSource> factory,
-            IEnumerable<string>? animations = null,
-            IEnumerable<BrushProvider>? initializers = null)
-        {
-            async Task<IGraphicsEffectSource> Factory() => factory(await SourceProducer());
-
-            return new PipelineBuilder(this, Factory, animations?.ToArray(), initializers?.ToDictionary(item => item.Name, item => item.Initializer));
-        }
-
-        /// <summary>
-        /// Applies a custom effect to the current pipeline
-        /// </summary>
-        /// <param name="factory">An asynchronous <see cref="Func{T, TResult}"/> that takes the current <see cref="IGraphicsEffectSource"/> instance and produces a new effect to display</param>
-        /// <param name="animations">The list of optional animatable properties in the returned effect</param>
-        /// <param name="initializers">The list of source parameters that require deferred initialization (see <see cref="CompositionEffectSourceParameter"/> for more info)</param>
-        [Pure]
-        public PipelineBuilder Effect(
-            Func<IGraphicsEffectSource, Task<IGraphicsEffectSource>> factory,
-            IEnumerable<string>? animations = null,
-            IEnumerable<BrushProvider>? initializers = null)
-        {
-            async Task<IGraphicsEffectSource> Factory() => await factory(await SourceProducer());
-
-            return new PipelineBuilder(this, Factory, animations?.ToArray(), initializers?.ToDictionary(item => item.Name, item => item.Initializer));
-        }
-
-        #endregion
-
-        #region Results
 
         /// <summary>
         /// Builds a <see cref="CompositionBrush"/> instance from the current effects pipeline
@@ -804,8 +126,10 @@ namespace FluentExtensions.UI.Brushes.Pipelines
         [Pure]
         public async Task<CompositionBrush> BuildAsync()
         {
-            // Validate the pipeline and build the effects factory
+            // Validate the pipeline
             if (!(await SourceProducer() is IGraphicsEffect effect)) throw new InvalidOperationException("The pipeline doesn't contain a valid effects sequence");
+
+            // Build the effects factory
             CompositionEffectFactory factory = AnimationProperties.Count > 0
                 ? Window.Current.Compositor.CreateEffectFactory(effect, AnimationProperties)
                 : Window.Current.Compositor.CreateEffectFactory(effect);
@@ -813,7 +137,9 @@ namespace FluentExtensions.UI.Brushes.Pipelines
             // Create the effect factory and apply the final effect
             CompositionEffectBrush effectBrush = factory.CreateBrush();
             foreach (KeyValuePair<string, Func<Task<CompositionBrush>>> pair in LazyParameters)
+            {
                 effectBrush.SetSourceParameter(pair.Key, await pair.Value());
+            }
 
             // Cleanup
             BackdropBrushCache.Cleanup();
@@ -829,8 +155,11 @@ namespace FluentExtensions.UI.Brushes.Pipelines
         public async Task<SpriteVisual> AttachAsync(UIElement target, UIElement? reference = null)
         {
             SpriteVisual visual = Window.Current.Compositor.CreateSpriteVisual();
+
             visual.Brush = await BuildAsync();
+
             ElementCompositionPreview.SetElementChildVisual(target, visual);
+
             if (reference != null) visual.BindSize(reference);
             return visual;
         }
@@ -839,8 +168,9 @@ namespace FluentExtensions.UI.Brushes.Pipelines
         /// Creates a new <see cref="XamlCompositionBrush"/> from the current effects pipeline
         /// </summary>
         [Pure]
-        public XamlCompositionBrush AsBrush() => new XamlCompositionBrush(this);
-
-        #endregion
+        public XamlCompositionBrush AsBrush()
+        {
+            return new XamlCompositionBrush(this);
+        }
     }
 }
