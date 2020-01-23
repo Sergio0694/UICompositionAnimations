@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
+using FluentExtensions.UI.Brushes.Brushes.Effects.Interfaces;
+using FluentExtensions.UI.Brushes.Enums;
 using Microsoft.Graphics.Canvas.Effects;
-using UICompositionAnimations.Brushes.Effects.Interfaces;
-using UICompositionAnimations.Enums;
 
-namespace UICompositionAnimations.Brushes.Effects
+namespace FluentExtensions.UI.Brushes.Brushes.Effects
 {
     /// <summary>
     /// A blend effect that merges the current pipeline with an input one

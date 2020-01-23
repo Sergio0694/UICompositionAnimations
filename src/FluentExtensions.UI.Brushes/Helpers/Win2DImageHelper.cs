@@ -11,16 +11,16 @@ using Windows.Graphics.Imaging;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
+using FluentExtensions.UI.Brushes.Enums;
+using FluentExtensions.UI.Brushes.Helpers.Cache;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.UI;
 using Microsoft.Graphics.Canvas.UI.Composition;
 using Microsoft.Graphics.Canvas.UI.Xaml;
-using UICompositionAnimations.Enums;
-using UICompositionAnimations.Helpers.Cache;
 
 #nullable enable
 
-namespace UICompositionAnimations.Helpers
+namespace FluentExtensions.UI.Brushes.Helpers
 {
     /// <summary>
     /// A helper <see langword="class"/> that loads Win2D images and manages an internal cache of <see cref="CompositionBrush"/> instances with the loaded images

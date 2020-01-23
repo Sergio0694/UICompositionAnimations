@@ -1,8 +1,8 @@
 ﻿using System;
-using UICompositionAnimations.Behaviours;
-using UICompositionAnimations.Brushes.Base;
+using FluentExtensions.UI.Brushes.Behaviours;
+using FluentExtensions.UI.Brushes.Brushes.Base;
 
-namespace UICompositionAnimations.Brushes
+namespace FluentExtensions.UI.Brushes.Brushes
 {
     /// <summary>
     /// A <see cref="XamlCompositionBrush"/> that displays a tiled noise texture

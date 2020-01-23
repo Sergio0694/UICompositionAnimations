@@ -1,6 +1,6 @@
-﻿using UICompositionAnimations.Brushes.Effects.Abstract;
+﻿using FluentExtensions.UI.Brushes.Brushes.Effects.Abstract;
 
-namespace UICompositionAnimations.Brushes.Effects
+namespace FluentExtensions.UI.Brushes.Brushes.Effects
 {
     /// <summary>
     /// A gaussian blur effect

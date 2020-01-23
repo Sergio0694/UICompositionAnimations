@@ -1,6 +1,6 @@
-﻿using UICompositionAnimations.Brushes.Effects.Abstract;
+﻿using FluentExtensions.UI.Brushes.Brushes.Effects.Abstract;
 
-namespace UICompositionAnimations.Brushes.Effects
+namespace FluentExtensions.UI.Brushes.Brushes.Effects
 {
     /// <summary>
     /// An image effect, which displays an image loaded as a Win2D surface

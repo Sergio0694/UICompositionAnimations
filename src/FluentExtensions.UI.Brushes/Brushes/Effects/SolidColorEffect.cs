@@ -1,7 +1,7 @@
 ﻿using Windows.UI;
-using UICompositionAnimations.Brushes.Effects.Interfaces;
+using FluentExtensions.UI.Brushes.Brushes.Effects.Interfaces;
 
-namespace UICompositionAnimations.Brushes.Effects
+namespace FluentExtensions.UI.Brushes.Brushes.Effects
 {
     /// <summary>
     /// A simple effect that renders a solid color on the available surface

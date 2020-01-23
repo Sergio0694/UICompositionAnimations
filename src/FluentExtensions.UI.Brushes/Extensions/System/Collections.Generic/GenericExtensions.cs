@@ -4,7 +4,7 @@ using System.Linq;
 namespace System.Collections.Generic
 {
     /// <summary>
-    /// An extension <see langword="class"/> for the <see cref="Generic"/> <see langword="namespace"/>
+    /// An extension <see langword="class"/> for the <see cref="System.Collections.Generic"/> <see langword="namespace"/>
     /// </summary>
     internal static class GenericExtensions
     {

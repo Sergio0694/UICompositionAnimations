@@ -1,6 +1,6 @@
-﻿using UICompositionAnimations.Brushes.Effects.Abstract;
+﻿using FluentExtensions.UI.Brushes.Brushes.Effects.Abstract;
 
-namespace UICompositionAnimations.Brushes.Effects
+namespace FluentExtensions.UI.Brushes.Brushes.Effects
 {
     /// <summary>
     /// An effect that loads an image and replicates it to cover all the available surface area

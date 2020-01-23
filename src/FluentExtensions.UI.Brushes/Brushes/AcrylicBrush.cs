@@ -1,10 +1,10 @@
 ﻿using System;
 using Windows.UI;
 using Windows.UI.Xaml.Media;
-using UICompositionAnimations.Behaviours;
-using UICompositionAnimations.Brushes.Base;
+using FluentExtensions.UI.Brushes.Behaviours;
+using FluentExtensions.UI.Brushes.Brushes.Base;
 
-namespace UICompositionAnimations.Brushes
+namespace FluentExtensions.UI.Brushes.Brushes
 {
     /// <summary>
     /// A <see cref="XamlCompositionBrush"/> that implements an acrylic effect with customizable parameters
@@ -40,12 +40,12 @@ namespace UICompositionAnimations.Brushes
         /// <inheritdoc/>
         protected override PipelineBuilder OnBrushRequested()
         {
-            switch (Source)
+            return Source switch
             {
-                case AcrylicBackgroundSource.Backdrop: return PipelineBuilder.FromBackdropAcrylic(Tint, (float)TintMix, (float)BlurAmount, TextureUri);
-                case AcrylicBackgroundSource.HostBackdrop: return PipelineBuilder.FromHostBackdropAcrylic(Tint, (float)TintMix, TextureUri);
-                default: throw new ArgumentOutOfRangeException(nameof(Source), $"Invalid acrylic source: {Source}");
-            }
+                AcrylicBackgroundSource.Backdrop => PipelineBuilder.FromBackdropAcrylic(Tint, (float)TintMix, (float)BlurAmount, TextureUri),
+                AcrylicBackgroundSource.HostBackdrop => PipelineBuilder.FromHostBackdropAcrylic(Tint, (float)TintMix, TextureUri),
+                _ => throw new ArgumentOutOfRangeException(nameof(Source), $"Invalid acrylic source: {Source}")
+            };
         }
     }
 }

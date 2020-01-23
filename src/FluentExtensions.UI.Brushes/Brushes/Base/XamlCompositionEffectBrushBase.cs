@@ -1,10 +1,10 @@
 ﻿using System.Threading.Tasks;
 using Windows.UI.Xaml.Media;
-using UICompositionAnimations.Behaviours;
+using FluentExtensions.UI.Brushes.Behaviours;
 
 #nullable enable
 
-namespace UICompositionAnimations.Brushes.Base
+namespace FluentExtensions.UI.Brushes.Brushes.Base
 {
     /// <summary>
     /// A custom <see cref="XamlCompositionBrushBase"/> <see langword="class"/> that's ready to be used with a custom <see cref="PipelineBuilder"/> pipeline

@@ -1,9 +1,9 @@
 ﻿using System;
 using Windows.UI;
 using Windows.UI.Xaml.Media;
-using UICompositionAnimations.Brushes.Effects.Interfaces;
+using FluentExtensions.UI.Brushes.Brushes.Effects.Interfaces;
 
-namespace UICompositionAnimations.Brushes.Effects
+namespace FluentExtensions.UI.Brushes.Brushes.Effects
 {
     /// <summary>
     /// A custom acrylic effect that can be inserted into a pipeline

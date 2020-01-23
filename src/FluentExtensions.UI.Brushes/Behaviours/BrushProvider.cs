@@ -5,7 +5,7 @@ using Windows.UI.Composition;
 
 #nullable enable
 
-namespace UICompositionAnimations.Behaviours
+namespace FluentExtensions.UI.Brushes.Behaviours
 {
     /// <summary>
     /// A simple container <see langword="class"/> used to store info on a custom composition effect to create

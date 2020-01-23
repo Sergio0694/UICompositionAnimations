@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Windows.UI.Composition;
 using Windows.UI.Core;
 
-namespace UICompositionAnimations.Helpers.Cache
+namespace FluentExtensions.UI.Brushes.Helpers.Cache
 {
     /// <summary>
     /// A <see langword="class"/> used to cache reusable <see cref="CompositionObject"/> instances

@@ -1,4 +1,4 @@
-﻿namespace UICompositionAnimations.Enums
+﻿namespace FluentExtensions.UI.Brushes.Enums
 {
     /// <summary>
     /// Indicates the cache mode to use when loading a Win2D image

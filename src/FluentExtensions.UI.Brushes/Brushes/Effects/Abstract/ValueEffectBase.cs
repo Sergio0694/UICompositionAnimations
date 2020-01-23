@@ -1,8 +1,8 @@
-﻿using UICompositionAnimations.Brushes.Effects.Interfaces;
+﻿using FluentExtensions.UI.Brushes.Brushes.Effects.Interfaces;
 
 #nullable enable
 
-namespace UICompositionAnimations.Brushes.Effects.Abstract
+namespace FluentExtensions.UI.Brushes.Brushes.Effects.Abstract
 {
     /// <summary>
     /// A base <see langword="class"/> for an effect that exposes a single <see cref="float"/> parameter

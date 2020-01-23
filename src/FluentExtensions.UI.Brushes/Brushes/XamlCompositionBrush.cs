@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Diagnostics.Contracts;
 using System.Threading.Tasks;
-using UICompositionAnimations.Behaviours;
-using UICompositionAnimations.Brushes.Base;
+using FluentExtensions.UI.Brushes.Behaviours;
+using FluentExtensions.UI.Brushes.Brushes.Base;
 
-namespace UICompositionAnimations.Brushes
+namespace FluentExtensions.UI.Brushes.Brushes
 {
     /// <summary>
     /// A <see langword="delegate"/> that represents a custom effect animation that can be applied to a <see cref="XamlCompositionBrush"/> instance

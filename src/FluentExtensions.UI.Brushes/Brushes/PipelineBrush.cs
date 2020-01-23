@@ -1,68 +1,87 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using Windows.UI.Xaml.Media;
-using UICompositionAnimations.Behaviours;
-using UICompositionAnimations.Brushes.Base;
-using UICompositionAnimations.Brushes.Effects;
-using UICompositionAnimations.Brushes.Effects.Interfaces;
-using LuminanceToAlphaEffect = Microsoft.Graphics.Canvas.Effects.LuminanceToAlphaEffect;
+using FluentExtensions.UI.Brushes.Behaviours;
+using FluentExtensions.UI.Brushes.Brushes.Base;
+using FluentExtensions.UI.Brushes.Brushes.Effects;
+using FluentExtensions.UI.Brushes.Brushes.Effects.Interfaces;
+using Microsoft.Graphics.Canvas.Effects;
+using BlendEffect = FluentExtensions.UI.Brushes.Brushes.Effects.BlendEffect;
+using OpacityEffect = FluentExtensions.UI.Brushes.Brushes.Effects.OpacityEffect;
+using SaturationEffect = FluentExtensions.UI.Brushes.Brushes.Effects.SaturationEffect;
+using TileEffect = FluentExtensions.UI.Brushes.Brushes.Effects.TileEffect;
+using TintEffect = FluentExtensions.UI.Brushes.Brushes.Effects.TintEffect;
 
-namespace UICompositionAnimations.Brushes
+namespace FluentExtensions.UI.Brushes.Brushes
 {
     /// <summary>
     /// A <see cref="Brush"/> that renders a customizable Composition/Win2D effects pipeline
     /// </summary>
     public sealed class PipelineBrush : XamlCompositionEffectBrushBase
     {
+        /// <summary>
+        /// Builds a new effects pipeline from the input effects sequence
+        /// </summary>
+        /// <param name="effects">The input collection of <see cref="IPipelineEffect"/> instance</param>
+        /// <returns>A new <see cref="PipelineBuilder"/> instance with the items in <paramref name="effects"/></returns>
+        [Pure]
+        private static PipelineBuilder Build(IList<IPipelineEffect> effects)
+        {
+            if (effects.Count == 0) throw new ArgumentException("An effects pipeline can't be empty");
+
+            return effects.Skip(1).Aggregate(Start(effects[0]), (b, e) => Append(e, b));
+        }
+
+        /// <summary>
+        /// Starts a new composition pipeline from the given effect
+        /// </summary>
+        /// <param name="effect">The initial <see cref="IPipelineEffect"/> instance</param>
+        /// <returns>A new <see cref="PipelineBuilder"/> instance starting from <paramref name="effect"/></returns>
+        [Pure]
+        private static PipelineBuilder Start(IPipelineEffect effect)
+        {
+            return effect switch
+            {
+                BackdropEffect backdrop when backdrop.Source == AcrylicBackgroundSource.Backdrop => PipelineBuilder.FromBackdropBrush(),
+                BackdropEffect backdrop when backdrop.Source == AcrylicBackgroundSource.HostBackdrop => PipelineBuilder.FromHostBackdropBrush(),
+                SolidColorEffect color => PipelineBuilder.FromColor(color.Color),
+                ImageEffect image => PipelineBuilder.FromImage(image.Uri, image.DPIMode, image.CacheMode),
+                TileEffect tile => PipelineBuilder.FromTiles(tile.Uri, tile.DPIMode, tile.CacheMode),
+                AcrylicEffect acrylic => acrylic.Source switch
+                {
+                    AcrylicBackgroundSource.Backdrop => PipelineBuilder.FromBackdropAcrylic(acrylic.Tint, (float)acrylic.TintMix, (float)acrylic.BlurAmount, acrylic.TextureUri),
+                    AcrylicBackgroundSource.HostBackdrop => PipelineBuilder.FromHostBackdropAcrylic(acrylic.Tint, (float)acrylic.TintMix, acrylic.TextureUri),
+                    _ => throw new ArgumentOutOfRangeException(nameof(acrylic.Source), $"Invalid acrylic source: {acrylic.Source}")
+                },
+                _ => throw new ArgumentException($"Invalid initial pipeline effect: {effect.GetType()}")
+            };
+        }
+
+        /// <summary>
+        /// Appends an effect to an existing composition pipeline
+        /// </summary>
+        /// <param name="effect">The <see cref="IPipelineEffect"/> instance to append to the current pipeline</param>
+        /// <param name="builder">The target <see cref="PipelineBuilder"/> instance to modify</param>
+        /// <returns>The target <see cref="PipelineBuilder"/> instance in use</returns>
+        private static PipelineBuilder Append(IPipelineEffect effect, PipelineBuilder builder)
+        {
+            return effect switch
+            {
+                OpacityEffect opacity => builder.Opacity((float)opacity.Value),
+                LuminanceEffect _ => builder.Effect(source => new LuminanceToAlphaEffect { Source = source }),
+                TintEffect tint => builder.Tint(tint.Color, (float)tint.Opacity),
+                BlurEffect blur => builder.Blur((float)blur.Value),
+                SaturationEffect saturation => builder.Saturation((float)saturation.Value),
+                BlendEffect blend => builder.Blend(Build(blend.Input), blend.Mode, blend.Placement),
+                _ => throw new ArgumentException($"Invalid pipeline effect: {effect.GetType()}")
+            };
+        }
+
         /// <inheritdoc/>
         protected override PipelineBuilder OnBrushRequested()
         {
-            // Starts a new composition pipeline from the given effect
-            PipelineBuilder Start(IPipelineEffect effect)
-            {
-                switch (effect)
-                {
-                    case BackdropEffect backdrop when backdrop.Source == AcrylicBackgroundSource.Backdrop:
-                        return PipelineBuilder.FromBackdropBrush();
-                    case BackdropEffect backdrop when backdrop.Source == AcrylicBackgroundSource.HostBackdrop:
-                        return PipelineBuilder.FromHostBackdropBrush();
-                    case SolidColorEffect color: return PipelineBuilder.FromColor(color.Color);
-                    case ImageEffect image: return PipelineBuilder.FromImage(image.Uri, image.DPIMode, image.CacheMode);
-                    case TileEffect tile: return PipelineBuilder.FromTiles(tile.Uri, tile.DPIMode, tile.CacheMode);
-                    case AcrylicEffect acrylic:
-                        switch (acrylic.Source)
-                        {
-                            case AcrylicBackgroundSource.Backdrop: return PipelineBuilder.FromBackdropAcrylic(acrylic.Tint, (float)acrylic.TintMix, (float)acrylic.BlurAmount, acrylic.TextureUri);
-                            case AcrylicBackgroundSource.HostBackdrop: return PipelineBuilder.FromHostBackdropAcrylic(acrylic.Tint, (float)acrylic.TintMix, acrylic.TextureUri);
-                            default: throw new ArgumentOutOfRangeException(nameof(acrylic.Source), $"Invalid acrylic source: {acrylic.Source}");
-                        }
-                    default: throw new ArgumentException($"Invalid initial pipeline effect: {effect.GetType()}");
-                }
-            }
-
-            // Appends an effect to an existing composition pipeline
-            PipelineBuilder Append(IPipelineEffect effect, PipelineBuilder builder)
-            {
-                switch (effect)
-                {
-                    case OpacityEffect opacity: return builder.Opacity((float)opacity.Value);
-                    case LuminanceEffect _: return builder.Effect(source => new LuminanceToAlphaEffect { Source = source });
-                    case TintEffect tint: return builder.Tint(tint.Color, (float)tint.Opacity);
-                    case BlurEffect blur: return builder.Blur((float)blur.Value);
-                    case SaturationEffect saturation: return builder.Saturation((float)saturation.Value);
-                    case BlendEffect blend: return builder.Blend(Build(blend.Input), blend.Mode, blend.Placement);
-                    default: throw new ArgumentException($"Invalid pipeline effect: {effect.GetType()}");
-                }
-            }
-
-            // Builds a new effects pipeline from the input effects sequence
-            PipelineBuilder Build(IList<IPipelineEffect> effects)
-            {
-                if (effects.Count == 0) throw new ArgumentException("An effects pipeline can't be empty");
-                return effects.Skip(1).Aggregate(Start(effects[0]), (b, e) => Append(e, b));
-            }
-
             return Build(Effects);
         }
 

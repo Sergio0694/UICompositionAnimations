@@ -9,16 +9,16 @@ using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Hosting;
+using FluentExtensions.UI.Brushes.Brushes;
+using FluentExtensions.UI.Brushes.Enums;
+using FluentExtensions.UI.Brushes.Helpers;
+using FluentExtensions.UI.Brushes.Helpers.Cache;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
-using UICompositionAnimations.Brushes;
-using UICompositionAnimations.Enums;
-using UICompositionAnimations.Helpers;
-using UICompositionAnimations.Helpers.Cache;
 
 #nullable enable
 
-namespace UICompositionAnimations.Behaviours
+namespace FluentExtensions.UI.Brushes.Behaviours
 {
     /// <summary>
     /// A <see langword="delegate"/> that represents a custom effect animation that can be applied to a <see cref="CompositionBrush"/>
