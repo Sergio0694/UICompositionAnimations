@@ -7,6 +7,10 @@ It also has a collection of helper methods to load Win2D images, dispatch code t
 
 [![NuGet](https://img.shields.io/nuget/v/UICompositionAnimations.svg)](https://www.nuget.org/packages/UICompositionAnimations/) [![NuGet](https://img.shields.io/nuget/dt/UICompositionAnimations.svg)](https://www.nuget.org/stats/packages/UICompositionAnimations?groupby=Version)
 
+## `UICompositionAnimations` is now part of the Windows Community Toolkit!
+
+All the shared APIs are now removed and available directly from the toolkit, [visit the repo here](https://github.com/windows-toolkit/WindowsCommunityToolkit)! 🚀
+
 ## Used by
 
 | [**OneLocker**](https://www.microsoft.com/store/apps/9nblggh3t7g3?cid=UICompositionAnimations) | [**myTube!**](https://www.microsoft.com/store/apps/9wzdncrcwf3l?cid=UICompositionAnimations) | [**Brainf\*ck#**](https://www.microsoft.com/store/apps/9nblgggzhvq5?cid=UICompositionAnimations) |
