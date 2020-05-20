@@ -39,7 +39,7 @@ namespace Windows.UI.Composition
         /// </summary>
         public float Parameter
         {
-            get => GetValue(ParameterProperty).To<float>();
+            get => (float)GetValue(ParameterProperty);
             set => SetValue(ParameterProperty, value);
         }
 
@@ -55,8 +55,8 @@ namespace Windows.UI.Composition
         private static void OnParameterPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             // Unpack
-            ScalarExpressionAnimation @this = d.To<ScalarExpressionAnimation>();
-            float value = e.NewValue.To<float>();
+            ScalarExpressionAnimation @this = (ScalarExpressionAnimation)d;
+            float value = (float)e.NewValue;
 
             // Update the parameter when needed
             CompositionGetValueStatus status = @this.PropertySet.TryGetScalar(@this.ParameterName, out float old);

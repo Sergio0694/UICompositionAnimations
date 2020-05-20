@@ -82,7 +82,7 @@ namespace UICompositionAnimations.Animations
                     case Side.Left: property = nameof(InsetClip.LeftInset); break;
                     default: throw new ArgumentException("Invalid side", nameof(side));
                 }
-                InsetClip clip = TargetVisual.Clip as InsetClip ?? (TargetVisual.Clip = TargetVisual.Compositor.CreateInsetClip()).To<InsetClip>();
+                InsetClip clip = TargetVisual.Clip as InsetClip ?? (InsetClip)(TargetVisual.Clip = TargetVisual.Compositor.CreateInsetClip());
                 clip.StopAnimation(property);
                 CompositionEasingFunction easingFunction = clip.GetEasingFunction(ease);
 

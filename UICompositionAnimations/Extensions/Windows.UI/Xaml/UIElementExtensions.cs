@@ -115,7 +115,7 @@ namespace Windows.UI.Xaml
         public static T GetTransform<T>([NotNull] this UIElement element, bool reset = true) where T : Transform, new()
         {
             // Return the existing transform object, if it exists
-            if (element.RenderTransform is T && !reset) return element.RenderTransform.To<T>();
+            if (element.RenderTransform is T && !reset) return (T)element.RenderTransform;
 
             // Create a new transform
             T transform = new T();
@@ -230,7 +230,7 @@ namespace Windows.UI.Xaml
             Visual visual = element.GetVisual();
 
             // Set the desired clip
-            InsetClip inset = visual.Clip as InsetClip ?? (visual.Clip = visual.Compositor.CreateInsetClip()).To<InsetClip>();
+            InsetClip inset = visual.Clip as InsetClip ?? (InsetClip)(visual.Clip = visual.Compositor.CreateInsetClip());
             inset.TopInset = (float)clip.Top;
             inset.BottomInset = (float)clip.Bottom;
             inset.LeftInset = (float)clip.Left;
