@@ -124,7 +124,6 @@
     <Compile Include="Animations\CompositionAnimationBuilder.cs" />
     <Compile Include="Animations\Interfaces\IAnimationBuilder.cs" />
     <Compile Include="Animations\XamlAnimationBuilder.cs" />
-    <Compile Include="AttachedProperties\ClipHelper.cs" />
     <Compile Include="Extensions\System\UriExtensions.cs" />
     <Compile Include="Enums\Easing.cs" />
     <Compile Include="Enums\FrameworkLayer.cs" />
