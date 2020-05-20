@@ -124,14 +124,12 @@
     <Compile Include="Animations\CompositionAnimationBuilder.cs" />
     <Compile Include="Animations\Interfaces\IAnimationBuilder.cs" />
     <Compile Include="Animations\XamlAnimationBuilder.cs" />
-    <Compile Include="Extensions\System\UriExtensions.cs" />
     <Compile Include="Enums\Easing.cs" />
     <Compile Include="Enums\FrameworkLayer.cs" />
     <Compile Include="Enums\AnimationType.cs" />
     <Compile Include="Enums\Side.cs" />
     <Compile Include="Extensions\System\Collections.Generic\GenericExtensions.cs" />
     <Compile Include="Extensions\System\Threading.Tasks\TaskCompletionSource.cs" />
-    <Compile Include="Extensions\System\BaseExtensions.cs" />
     <Compile Include="Extensions\System\Unit.cs" />
     <Compile Include="Extensions\EnumExtensions.cs" />
     <Compile Include="Extensions\Windows.UI\Composition\CompositionExtensions.cs" />
