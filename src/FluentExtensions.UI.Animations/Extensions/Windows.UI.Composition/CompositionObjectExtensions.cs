@@ -23,6 +23,21 @@ namespace Windows.UI.Composition
         /// <param name="y2">The Y coordinate of the second control point</param>
         /// <returns>A <see cref="CubicBezierEasingFunction"/> instance with the given control points</returns>
         [Pure]
+        public static CubicBezierEasingFunction GetEasingFunction(this Compositor compositor, float x1, float y1, float x2, float y2)
+        {
+            return compositor.CreateCubicBezierEasingFunction(new Vector2 { X = x1, Y = y1 }, new Vector2 { X = x2, Y = y2 });
+        }
+
+        /// <summary>
+        /// Creates a <see cref="CubicBezierEasingFunction"/> from the input control points
+        /// </summary>
+        /// <param name="source">The source <see cref="CompositionObject"/> used to create the easing function</param>
+        /// <param name="x1">The X coordinate of the first control point</param>
+        /// <param name="y1">The Y coordinate of the first control point</param>
+        /// <param name="x2">The X coordinate of the second control point</param>
+        /// <param name="y2">The Y coordinate of the second control point</param>
+        /// <returns>A <see cref="CubicBezierEasingFunction"/> instance with the given control points</returns>
+        [Pure]
         public static CubicBezierEasingFunction GetEasingFunction(this CompositionObject source, float x1, float y1, float x2, float y2)
         {
             return source.Compositor.CreateCubicBezierEasingFunction(new Vector2 { X = x1, Y = y1 }, new Vector2 { X = x2, Y = y2 });
@@ -49,6 +64,31 @@ namespace Windows.UI.Composition
                 Easing.CircleEaseIn => source.GetEasingFunction(1, 0, 1, 0.8f),
                 Easing.CircleEaseOut => source.GetEasingFunction(0, 0.3f, 0, 1),
                 Easing.CircleEaseInOut => source.GetEasingFunction(0.9f, 0, 0.1f, 1),
+                _ => throw new ArgumentOutOfRangeException(nameof(ease), ease, $"Invalid easing value: {ease}")
+            };
+        }
+
+        /// <summary>
+        /// Creates the appropriate <see cref="CubicBezierEasingFunction"/> from the given easing function name
+        /// </summary>
+        /// <param name="source">The source <see cref="Compositor"/> used to create the easing function</param>
+        /// <param name="ease">The target easing function to create</param>
+        /// <returns>A <see cref="CubicBezierEasingFunction"/> instance with the specified easing value</returns>
+        [Pure]
+        public static CubicBezierEasingFunction GetEasingFunction(this Compositor compositor, Easing ease)
+        {
+            return ease switch
+            {
+                Easing.Linear => compositor.GetEasingFunction(0, 0, 1, 1),
+                Easing.SineEaseIn => compositor.GetEasingFunction(0.4f, 0, 1, 1),
+                Easing.SineEaseOut => compositor.GetEasingFunction(0, 0, 0.6f, 1),
+                Easing.SineEaseInOut => compositor.GetEasingFunction(0.4f, 0, 0.6f, 1),
+                Easing.QuadraticEaseIn => compositor.GetEasingFunction(0.8f, 0, 1, 1),
+                Easing.QuadraticEaseOut => compositor.GetEasingFunction(0, 0, 0.2f, 1),
+                Easing.QuadraticEaseInOut => compositor.GetEasingFunction(0.8f, 0, 0.2f, 1),
+                Easing.CircleEaseIn => compositor.GetEasingFunction(1, 0, 1, 0.8f),
+                Easing.CircleEaseOut => compositor.GetEasingFunction(0, 0.3f, 0, 1),
+                Easing.CircleEaseInOut => compositor.GetEasingFunction(0.9f, 0, 0.1f, 1),
                 _ => throw new ArgumentOutOfRangeException(nameof(ease), ease, $"Invalid easing value: {ease}")
             };
         }
